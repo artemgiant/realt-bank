@@ -38,22 +38,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Девелопери (заглушка)
     Route::get('/developers', function () {
-        return view('properties.index'); // тимчасово
+        return view('pages.properties.index'); // тимчасово
     })->name('developers.index');
 
     // Угоди
     Route::get('/deals', function () {
-        return view('properties.index'); // тимчасово
+        return view('pages.properties.index'); // тимчасово
     })->name('deals.index');
 
     // Задачі
     Route::get('/tasks', function () {
-        return view('properties.index'); // тимчасово
+        return view('pages.properties.index'); // тимчасово
     })->name('tasks.index');
 
     // Агентство
     Route::get('/agency', function () {
-        return view('properties.index'); // тимчасово
+        return view('pages.properties.index'); // тимчасово
     })->name('agency.index');
 
 });
