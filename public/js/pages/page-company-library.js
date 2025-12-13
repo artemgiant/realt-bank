@@ -1,0 +1,70 @@
+"use strict";
+
+import {
+	FileUploader
+} from "./function_on_pages-create.js";
+$(".js-example-responsive3").select2({
+	width: 'resolve',
+	placeholder: 'Выбрать',
+	minimumResultsForSearch: -1,
+});
+
+new FileUploader({
+	inputIdSelector: '#document1',
+	wrapperClassSelector: '.loading-documents',
+	renderContainerSelector: '.location__wrapper-item-1 [data-render-document-1]',
+	errorContainer: '.document[data-document-country] .error-container',
+	maxCountPhoto: 10,
+	checkImageSize: false,
+	eyeLink: true
+	// якщо треба щось дописати то треба дописувати class де зовнішні змінни передавання ззовні(звідси)
+});
+new FileUploader({
+	inputIdSelector: '#document2',
+	wrapperClassSelector: '.loading-documents',
+	renderContainerSelector: '.location__wrapper-item-2 [data-render-document-2]',
+	errorContainer: '.document[data-document-country] .error-container',
+	maxCountPhoto: 10,
+	checkImageSize: false,
+	eyeLink: true
+	// якщо треба щось дописати то треба дописувати class де зовнішні змінни передавання ззовні(звідси)
+});
+new FileUploader({
+	inputIdSelector: '#document3',
+	wrapperClassSelector: '.loading-documents',
+	renderContainerSelector: '.location__wrapper-item-3 [data-render-document-3]',
+	errorContainer: '.document[data-document-country] .error-container',
+	maxCountPhoto: 10,
+	checkImageSize: false,
+	eyeLink: true
+	// якщо треба щось дописати то треба дописувати class де зовнішні змінни передавання ззовні(звідси)
+});
+new FileUploader({
+	inputIdSelector: '#document4',
+	wrapperClassSelector: '.loading-documents',
+	renderContainerSelector: '.location__wrapper-item-4 [data-render-document-4]',
+	errorContainer: '.document[data-document-country] .error-container',
+	maxCountPhoto: 10,
+	checkImageSize: false,
+	eyeLink: true
+	// якщо треба щось дописати то треба дописувати class де зовнішні змінни передавання ззовні(звідси)
+});
+new FileUploader({
+	inputIdSelector: '#document5',
+	wrapperClassSelector: '.loading-documents',
+	renderContainerSelector: '.location__wrapper-item-5 [data-render-document-5]',
+	errorContainer: '.document[data-document-country] .error-container',
+	maxCountPhoto: 10,
+	checkImageSize: false,
+	eyeLink: true
+	// якщо треба щось дописати то треба дописувати class де зовнішні змінни передавання ззовні(звідси)
+});
+new FileUploader({
+	inputIdSelector: '#document6',
+	wrapperClassSelector: '.loading-documents',
+	renderContainerSelector: '.location__wrapper-item-6 [data-render-document-6]',
+	errorContainer: '.document[data-document-country] .error-container',
+	maxCountPhoto: 10,
+	checkImageSize: false,
+	// якщо треба щось дописати то треба дописувати class де зовнішні змінни передавання ззовні(звідси)
+});
