@@ -24,21 +24,21 @@ new class extends Component
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" wire:navigate>
-                        <x-breeze.application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-breeze.nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
-                    </x-breeze.nav-link>
+                    </x-nav-link>
                 </div>
             </div>
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-breeze.dropdown align="right" width="48">
+                <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                             <div x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
@@ -52,18 +52,18 @@ new class extends Component
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-breeze.dropdown-link :href="route('profile.index')" wire:navigate>
+                        <x-dropdown-link :href="route('profile')" wire:navigate>
                             {{ __('Profile') }}
-                        </x-breeze.dropdown-link>
+                        </x-dropdown-link>
 
                         <!-- Authentication -->
                         <button wire:click="logout" class="w-full text-start">
-                            <x-breeze.dropdown-link>
+                            <x-dropdown-link>
                                 {{ __('Log Out') }}
-                            </x-breeze.dropdown-link>
+                            </x-dropdown-link>
                         </button>
                     </x-slot>
-                </x-breeze.dropdown>
+                </x-dropdown>
             </div>
 
             <!-- Hamburger -->
@@ -81,9 +81,9 @@ new class extends Component
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-breeze.responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                 {{ __('Dashboard') }}
-            </x-breeze.responsive-nav-link>
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
@@ -94,15 +94,15 @@ new class extends Component
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-breeze.responsive-nav-link :href="route('profile.index')" wire:navigate>
+                <x-responsive-nav-link :href="route('profile')" wire:navigate>
                     {{ __('Profile') }}
-                </x-breeze.responsive-nav-link>
+                </x-responsive-nav-link>
 
                 <!-- Authentication -->
                 <button wire:click="logout" class="w-full text-start">
-                    <x-breeze.responsive-nav-link>
+                    <x-responsive-nav-link>
                         {{ __('Log Out') }}
-                    </x-breeze.responsive-nav-link>
+                    </x-responsive-nav-link>
                 </button>
             </div>
         </div>

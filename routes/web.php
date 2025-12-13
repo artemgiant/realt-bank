@@ -2,16 +2,25 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome');
+Route::get('/', function () {
+    return view('pages.welcome');
+});
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('pages.dashboard');
+    })->name('dashboard');
 
-Route::view('profile', 'profile')
-    ->middleware(['auth'])
-    ->name('profile');
+    Route::get('/properties', function () {
+        return view('pages.properties.index');
+    })->name('properties.index');
 
+    Route::get('/profile', function () {
+        return view('pages.profile.index');
+    })->name('profile.index');
+});
+
+require __DIR__.'/auth.php';
 
 
 // CRM Routes (потребують авторизації)

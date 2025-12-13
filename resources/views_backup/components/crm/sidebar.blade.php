@@ -99,7 +99,7 @@
                 </a>
             </li>
             <li class="nav-info-item">
-                <a class="nav-info-link" href="{{ route('profile.index') }}">
+                <a class="nav-info-link" href="{{ route('profile') }}">
                     <picture>
                         <source srcset="{{ asset('img/icon/side-bar/default-avatar.svg') }}" type="image/webp">
                         <img src="{{ asset('img/icon/side-bar/default-avatar.svg') }}" alt="">
