@@ -18,6 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', function () {
         return view('pages.profile.index');
     })->name('profile.index');
+
 });
 
 require __DIR__.'/auth.php';
