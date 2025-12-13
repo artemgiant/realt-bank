@@ -1,10 +1,16 @@
 @props([
-    'title' => 'Недвижимость',
-    'tabs' => [],
-    'addButton' => true,
-    'addButtonText' => 'Добавить',
-    'addButtonUrl' => '#'
+'title' => null,
+'tabs' => null,
+'addButton' => true,
+'addButtonText' => 'Добавить',
+'addButtonUrl' => '#'
 ])
+
+@php
+    // Використовуємо props якщо передано, інакше з View Composer
+    $title = $title ?? $pageTitle ?? 'Недвижимость';
+    $tabs = $tabs ?? $pageTabs ?? [];
+@endphp
 
 <header class="header-wrapper">
     <h1 class="header-title">
@@ -15,9 +21,15 @@
         <div class="header-tabs">
             <div class="btn-group">
                 @foreach($tabs as $tab)
-                    <a href="{{ $tab['url'] }}" 
-                       class="btn btn-outline-primary {{ $tab['active'] ?? false ? 'active' : '' }}"
-                       {{ $tab['active'] ?? false ? 'aria-current=page' : '' }}>
+                    @php
+                        $isActive = ($currentRoute ?? '') === $tab['route'];
+                        $url = \Illuminate\Support\Facades\Route::has($tab['route'])
+                            ? route($tab['route'])
+                            : '#';
+                    @endphp
+                    <a href="{{ $url }}"
+                       class="btn btn-outline-primary {{ $isActive ? 'active' : '' }}"
+                            {{ $isActive ? 'aria-current=page' : '' }}>
                         {{ $tab['label'] }}
                     </a>
                 @endforeach

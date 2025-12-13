@@ -7,16 +7,11 @@
 @endpush
 
 @section('header')
-    <x-crm.header 
-        title="Недвижимость"
-        :tabs="[
-            ['label' => 'Объекты', 'url' => route('properties.index'), 'active' => true],
-            ['label' => 'Комплексы', 'url' => '#', 'active' => false],
-            ['label' => 'Девелоперы', 'url' => '#', 'active' => false],
-        ]"
-        :addButton="true"
-        addButtonText="Добавить"
-        addButtonUrl="#"
+    {{-- Табы та title підтягуються автоматично з конфігу --}}
+    <x-crm.header
+            :addButton="true"
+            addButtonText="Добавить"
+            addButtonUrl="#"
     />
 @endsection
 
@@ -32,11 +27,11 @@
                             <img src="{{ asset('img/icon/geo.svg') }}" alt="">
                         </picture>
                     </button>
-                    
+
                     <label class="my-dropdown-label">
                         <input class="my-dropdown-input" type="text" autocomplete="off" placeholder="Введите название">
                     </label>
-                    
+
                     <button class="my-dropdown-btn arrow-down" id="btn-open-menu" type="button">
                         <picture>
                             <source srcset="{{ asset('img/icon/arrow-right-white.svg') }}" type="image/webp">
@@ -55,18 +50,18 @@
     <div class="table-responsive">
         <table id="properties-table" class="table">
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Назва</th>
-                    <th>Тип</th>
-                    <th>Ціна</th>
-                    <th>Локація</th>
-                    <th>Статус</th>
-                    <th>Дії</th>
-                </tr>
+            <tr>
+                <th>ID</th>
+                <th>Назва</th>
+                <th>Тип</th>
+                <th>Ціна</th>
+                <th>Локація</th>
+                <th>Статус</th>
+                <th>Дії</th>
+            </tr>
             </thead>
             <tbody>
-                {{-- Дані будуть завантажуватись через DataTables або Livewire --}}
+            {{-- Дані будуть завантажуватись через DataTables або Livewire --}}
             </tbody>
         </table>
     </div>

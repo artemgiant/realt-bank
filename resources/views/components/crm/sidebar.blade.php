@@ -9,64 +9,28 @@
                     </picture>
                 </a>
             </li>
-            <li class="nav-list-item">
-                <a class="nav-list-link {{ request()->routeIs('properties.*') ? 'active' : '' }}" href="{{ route('properties.index') }}">
-                    <span class="nav-list-icon">
-                        <picture>
-                            <source srcset="{{ asset('img/icon/side-bar/Finanse.svg') }}" type="image/webp">
-                            <img src="{{ asset('img/icon/side-bar/Finanse.svg') }}" alt="">
-                        </picture>
-                    </span>
-                    <span class="nav-list-text">
-                        Недвижимость
-                    </span>
-                </a>
-            </li>
-            <li class="nav-list-item">
-                <a class="nav-list-link {{ request()->routeIs('deals.*') ? 'active' : '' }}" href="#">
-                    <span class="nav-list-icon">
-                        <picture>
-                            <source srcset="{{ asset('img/icon/side-bar/Deals.svg') }}" type="image/webp">
-                            <img src="{{ asset('img/icon/side-bar/Deals.svg') }}" alt="">
-                        </picture>
-                        <span class="my-badge">
-                            15
+            @foreach($sidebarMenu as $menuItem)
+                @php
+                    $routePrefix = explode('.', $menuItem['route'])[0] ?? '';
+                    $isActive = str_starts_with($currentRoute ?? '', $routePrefix);
+                    $url = \Illuminate\Support\Facades\Route::has($menuItem['route'])
+                        ? route($menuItem['route'])
+                        : '#';
+                @endphp
+                <li class="nav-list-item">
+                    <a class="nav-list-link {{ $isActive ? 'active' : '' }}" href="{{ $url }}">
+                        <span class="nav-list-icon">
+                            <picture>
+                                <source srcset="{{ asset($menuItem['icon']) }}" type="image/webp">
+                                <img src="{{ asset($menuItem['icon']) }}" alt="">
+                            </picture>
                         </span>
-                    </span>
-                    <span class="nav-list-text">
-                        Сделки
-                    </span>
-                </a>
-            </li>
-            <li class="nav-list-item">
-                <a class="nav-list-link {{ request()->routeIs('tasks.*') ? 'active' : '' }}" href="#">
-                    <span class="nav-list-icon">
-                        <picture>
-                            <source srcset="{{ asset('img/icon/side-bar/Tasks.svg') }}" type="image/webp">
-                            <img src="{{ asset('img/icon/side-bar/Tasks.svg') }}" alt="">
-                        </picture>
-                        <span class="my-badge">
-                            233
+                        <span class="nav-list-text">
+                            {{ $menuItem['name'] }}
                         </span>
-                    </span>
-                    <span class="nav-list-text">
-                        Задачи
-                    </span>
-                </a>
-            </li>
-            <li class="nav-list-item">
-                <a class="nav-list-link {{ request()->routeIs('agency.*') ? 'active' : '' }}" href="#">
-                    <span class="nav-list-icon">
-                        <picture>
-                            <source srcset="{{ asset('img/icon/side-bar/Company1.svg') }}" type="image/webp">
-                            <img src="{{ asset('img/icon/side-bar/Company1.svg') }}" alt="">
-                        </picture>
-                    </span>
-                    <span class="nav-list-text">
-                        Агентство
-                    </span>
-                </a>
-            </li>
+                    </a>
+                </li>
+            @endforeach
         </ul>
         <ul class="nav-info">
             <li class="nav-info-item">
@@ -87,7 +51,6 @@
                         <source srcset="{{ asset('img/icon/side-bar/mail-white.svg') }}" type="image/webp">
                         <img src="{{ asset('img/icon/side-bar/mail-white.svg') }}" alt="">
                     </picture>
-                    <span class="my-badge"></span>
                 </a>
             </li>
             <li class="nav-info-item">
