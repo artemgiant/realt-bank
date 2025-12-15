@@ -11,7 +11,7 @@
     <x-crm.header
             :addButton="true"
             addButtonText="Добавить"
-            addButtonUrl="#"
+            addButtonUrl="{{ route('properties.create') }}"
     />
 @endsection
 
