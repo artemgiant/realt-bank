@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,8 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/properties/create', 'App\Http\Controllers\PropertyController@create')
         ->name('properties.create');
 
-    Route::post('/properties', 'App\Http\Controllers\PropertyController@store')
-        ->name('properties.store');
+    // Properties CRUD
+    Route::resource('properties', PropertyController::class);
 
 });
 
