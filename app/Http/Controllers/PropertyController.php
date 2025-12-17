@@ -10,6 +10,7 @@ use App\Models\Property\PropertyPhoto;
 use App\Models\Property\PropertyTranslation;
 use App\Models\Reference\Complex;
 use App\Models\Reference\Currency;
+use App\Models\Reference\Developer;
 use App\Models\Reference\Dictionary;
 use App\Models\Reference\Source;
 use Illuminate\Http\RedirectResponse;
@@ -32,6 +33,9 @@ class PropertyController extends Controller
             'translations',
             'user',
             'roomCount',
+            'propertyType',
+            'condition',
+            'buildingType',
         ]);
 
         // ========== Фильтр: Тип сделки ==========
@@ -52,7 +56,7 @@ class PropertyController extends Controller
             $query->where('currency_id', $request->currency_id);
         }
 
-        // ========== Фильтр: Площадь от/до ==========
+        // ========== Фильтр: Площадь общая от/до ==========
         if ($request->filled('area_from')) {
             $query->where('area_total', '>=', $request->area_from);
         }
@@ -60,22 +64,172 @@ class PropertyController extends Controller
             $query->where('area_total', '<=', $request->area_to);
         }
 
-        // ========== Фильтр: Количество комнат ==========
-        if ($request->filled('room_count_id')) {
-            $query->where('room_count_id', $request->room_count_id);
+        // ========== Фильтр: Площадь жилая от/до ==========
+        if ($request->filled('area_living_from')) {
+            $query->where('area_living', '>=', $request->area_living_from);
+        }
+        if ($request->filled('area_living_to')) {
+            $query->where('area_living', '<=', $request->area_living_to);
         }
 
-        // ========== Фильтр: Статус ==========
+        // ========== Фильтр: Площадь кухни от/до ==========
+        if ($request->filled('area_kitchen_from')) {
+            $query->where('area_kitchen', '>=', $request->area_kitchen_from);
+        }
+        if ($request->filled('area_kitchen_to')) {
+            $query->where('area_kitchen', '<=', $request->area_kitchen_to);
+        }
+
+        // ========== Фильтр: Площадь участка от/до ==========
+        if ($request->filled('area_land_from')) {
+            $query->where('area_land', '>=', $request->area_land_from);
+        }
+        if ($request->filled('area_land_to')) {
+            $query->where('area_land', '<=', $request->area_land_to);
+        }
+
+        // ========== Фильтр: Этаж от/до ==========
+        if ($request->filled('floor_from')) {
+            $query->where('floor', '>=', $request->floor_from);
+        }
+        if ($request->filled('floor_to')) {
+            $query->where('floor', '<=', $request->floor_to);
+        }
+
+        // ========== Фильтр: Этажность от/до ==========
+        if ($request->filled('floors_total_from')) {
+            $query->where('floors_total', '>=', $request->floors_total_from);
+        }
+        if ($request->filled('floors_total_to')) {
+            $query->where('floors_total', '<=', $request->floors_total_to);
+        }
+
+        // ========== Фильтр: Цена за м² от/до ==========
+        if ($request->filled('price_per_m2_from') || $request->filled('price_per_m2_to')) {
+            $query->whereNotNull('price')
+                ->whereNotNull('area_total')
+                ->where('area_total', '>', 0);
+
+            if ($request->filled('price_per_m2_from')) {
+                $query->whereRaw('(price / area_total) >= ?', [$request->price_per_m2_from]);
+            }
+            if ($request->filled('price_per_m2_to')) {
+                $query->whereRaw('(price / area_total) <= ?', [$request->price_per_m2_to]);
+            }
+        }
+
+        // ========== Фильтр: Количество комнат (множественный выбор) ==========
+        if ($request->filled('room_count_id')) {
+            $roomCountIds = is_array($request->room_count_id)
+                ? $request->room_count_id
+                : [$request->room_count_id];
+            $query->whereIn('room_count_id', $roomCountIds);
+        }
+
+        // ========== Фильтр: Тип недвижимости (множественный выбор) ==========
+        if ($request->filled('property_type_id')) {
+            $propertyTypeIds = is_array($request->property_type_id)
+                ? $request->property_type_id
+                : [$request->property_type_id];
+            $query->whereIn('property_type_id', $propertyTypeIds);
+        }
+
+        // ========== Фильтр: Состояние (множественный выбор) ==========
+        if ($request->filled('condition_id')) {
+            $conditionIds = is_array($request->condition_id)
+                ? $request->condition_id
+                : [$request->condition_id];
+            $query->whereIn('condition_id', $conditionIds);
+        }
+
+        // ========== Фильтр: Тип здания (множественный выбор) ==========
+        if ($request->filled('building_type_id')) {
+            $buildingTypeIds = is_array($request->building_type_id)
+                ? $request->building_type_id
+                : [$request->building_type_id];
+            $query->whereIn('building_type_id', $buildingTypeIds);
+        }
+
+        // ========== Фильтр: Год постройки (множественный выбор) ==========
+        if ($request->filled('year_built')) {
+            $years = is_array($request->year_built)
+                ? $request->year_built
+                : [$request->year_built];
+            $query->whereIn('year_built', $years);
+        }
+
+        // ========== Фильтр: Тип стен (множественный выбор) ==========
+        if ($request->filled('wall_type_id')) {
+            $wallTypeIds = is_array($request->wall_type_id)
+                ? $request->wall_type_id
+                : [$request->wall_type_id];
+            $query->whereIn('wall_type_id', $wallTypeIds);
+        }
+
+        // ========== Фильтр: Отопление (множественный выбор) ==========
+        if ($request->filled('heating_type_id')) {
+            $heatingTypeIds = is_array($request->heating_type_id)
+                ? $request->heating_type_id
+                : [$request->heating_type_id];
+            $query->whereIn('heating_type_id', $heatingTypeIds);
+        }
+
+        // ========== Фильтр: Ванные комнаты (множественный выбор) ==========
+        if ($request->filled('bathroom_count_id')) {
+            $bathroomCountIds = is_array($request->bathroom_count_id)
+                ? $request->bathroom_count_id
+                : [$request->bathroom_count_id];
+            $query->whereIn('bathroom_count_id', $bathroomCountIds);
+        }
+
+        // ========== Фильтр: Высота потолков (множественный выбор) ==========
+        if ($request->filled('ceiling_height_id')) {
+            $ceilingHeightIds = is_array($request->ceiling_height_id)
+                ? $request->ceiling_height_id
+                : [$request->ceiling_height_id];
+            $query->whereIn('ceiling_height_id', $ceilingHeightIds);
+        }
+
+        // ========== Фильтр: Дополнительно / Особенности (множественный выбор) ==========
+        if ($request->filled('features')) {
+            $featureIds = is_array($request->features)
+                ? $request->features
+                : [$request->features];
+            $query->whereHas('features', function ($q) use ($featureIds) {
+                $q->whereIn('dictionaries.id', $featureIds);
+            });
+        }
+
+        // ========== Фильтр: Девелопер (множественный выбор) ==========
+        if ($request->filled('developer_id')) {
+            $developerIds = is_array($request->developer_id)
+                ? $request->developer_id
+                : [$request->developer_id];
+            $query->whereHas('complex.developer', function ($q) use ($developerIds) {
+                $q->whereIn('developers.id', $developerIds);
+            });
+        }
+
+        // ========== Фильтр: Статус / Объекты ==========
         if ($request->filled('status')) {
             switch ($request->status) {
                 case 'my':
                     $query->where('user_id', auth()->id());
+                    break;
+                case 'my_company':
+                    // TODO: фильтр по компании пользователя
                     break;
                 case 'draft':
                     $query->where('status', 'draft');
                     break;
                 case 'active':
                     $query->where('status', 'active');
+                    break;
+                case 'on_review':
+                    $query->where('status', 'on_review');
+                    break;
+                case 'favorite':
+                    // TODO: фильтр по избранным
                     break;
                 case 'archive':
                     $query->where('status', 'archived');
@@ -89,15 +243,53 @@ class PropertyController extends Controller
             $query->where('id', $request->search_id);
         }
 
+        // ========== Фильтр: Поиск по контакту ==========
+        if ($request->filled('contact_search')) {
+            $search = $request->contact_search;
+            $query->whereHas('contact', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // ========== Фильтр: Дата добавления от/до ==========
+        if ($request->filled('created_from')) {
+            $query->whereDate('created_at', '>=', $request->created_from);
+        }
+        if ($request->filled('created_to')) {
+            $query->whereDate('created_at', '<=', $request->created_to);
+        }
+
         // Сортировка и пагинация
         $properties = $query->latest()->paginate(20)->withQueryString();
+
+        // Список годов для фильтра
+        $years = range(date('Y') + 5, 1950);
 
         // Данные для фильтров
         return view('pages.properties.index', [
             'properties' => $properties,
+
+            // Справочники
             'dealTypes' => Dictionary::getDealTypes(),
-            'currencies' => Currency::active()->get(),
+            'dealKinds' => Dictionary::getDealKinds(),
+            'propertyTypes' => Dictionary::getPropertyTypes(),
+            'conditions' => Dictionary::getConditions(),
+            'buildingTypes' => Dictionary::getBuildingTypes(),
+            'wallTypes' => Dictionary::getWallTypes(),
             'roomCounts' => Dictionary::getRoomCounts(),
+            'heatingTypes' => Dictionary::getHeatingTypes(),
+            'bathroomCounts' => Dictionary::getBathroomCounts(),
+            'ceilingHeights' => Dictionary::getCeilingHeights(),
+            'features' => Dictionary::getFeatures(),
+
+            // Другие данные
+            'currencies' => Currency::active()->get(),
+            'developers' => Developer::active()->orderBy('name')->get(),
+            'years' => $years,
+
+            // Текущие значения фильтров
             'filters' => $request->only([
                 'deal_type_id',
                 'price_from',
@@ -105,9 +297,34 @@ class PropertyController extends Controller
                 'currency_id',
                 'area_from',
                 'area_to',
+                'area_living_from',
+                'area_living_to',
+                'area_kitchen_from',
+                'area_kitchen_to',
+                'area_land_from',
+                'area_land_to',
+                'floor_from',
+                'floor_to',
+                'floors_total_from',
+                'floors_total_to',
+                'price_per_m2_from',
+                'price_per_m2_to',
                 'room_count_id',
+                'property_type_id',
+                'condition_id',
+                'building_type_id',
+                'year_built',
+                'wall_type_id',
+                'heating_type_id',
+                'bathroom_count_id',
+                'ceiling_height_id',
+                'features',
+                'developer_id',
                 'status',
                 'search_id',
+                'contact_search',
+                'created_from',
+                'created_to',
             ]),
         ]);
     }
@@ -247,45 +464,10 @@ class PropertyController extends Controller
 
                 // Defaults
                 'status' => 'draft',
-
-                // ========== ПОТОМ: Location ==========
-                // 'contact_id' => $validated['contact_id'] ?? null,
-                // 'complex_id' => $validated['complex_id'] ?? null,
-                // 'section_id' => $validated['section_id'] ?? null,
-                // 'country_id' => $validated['country_id'] ?? null,
-                // 'region_id' => $validated['region_id'] ?? null,
-                // 'city_id' => $validated['city_id'] ?? null,
-                // 'district_id' => $validated['district_id'] ?? null,
-                // 'zone_id' => $validated['zone_id'] ?? null,
-                // 'street_id' => $validated['street_id'] ?? null,
-                // 'landmark_id' => $validated['landmark_id'] ?? null,
-                // 'building_number' => $validated['building_number'] ?? null,
-                // 'apartment_number' => $validated['apartment_number'] ?? null,
-                // 'location_name' => $validated['location_name'] ?? null,
-                // 'latitude' => $validated['latitude'] ?? null,
-                // 'longitude' => $validated['longitude'] ?? null,
-                // 'external_url' => $validated['external_url'] ?? null,
-                // 'is_visible_to_agents' => $validated['is_visible_to_agents'] ?? false,
-                // 'notes' => $validated['notes'] ?? null,
             ]);
 
             // ========== Сохраняем переводы ==========
             $this->saveTranslations($property, $validated);
-
-            // ========== ПОТОМ: Особенности ==========
-            // if (!empty($validated['features'])) {
-            //     $property->features()->sync($validated['features']);
-            // }
-
-            // ========== ПОТОМ: Фото ==========
-            // if ($request->hasFile('photos')) {
-            //     $this->savePhotos($property, $request->file('photos'));
-            // }
-
-            // ========== ПОТОМ: Документы ==========
-            // if ($request->hasFile('documents')) {
-            //     $this->saveDocuments($property, $request->file('documents'));
-            // }
 
             DB::commit();
 
@@ -310,11 +492,9 @@ class PropertyController extends Controller
         $locales = ['ua', 'ru', 'en'];
 
         foreach ($locales as $locale) {
-            // Для title используем title_ru для всех локалей (пока)
             $title = $validated['title_ru'] ?? null;
             $description = $validated["description_{$locale}"] ?? null;
 
-            // Сохраняем только если есть хотя бы заголовок или описание
             if ($title || $description) {
                 PropertyTranslation::updateOrCreate(
                     [
@@ -340,7 +520,6 @@ class PropertyController extends Controller
         foreach ($photos as $photo) {
             $sortOrder++;
 
-            // Генерируем уникальное имя файла
             $filename = $photo->getClientOriginalName();
             $path = $photo->store("properties/{$property->id}/photos", 'public');
 
@@ -349,7 +528,7 @@ class PropertyController extends Controller
                 'path' => $path,
                 'filename' => $filename,
                 'sort_order' => $sortOrder,
-                'is_main' => $sortOrder === 1, // Первое фото - главное
+                'is_main' => $sortOrder === 1,
             ]);
         }
     }
@@ -393,7 +572,6 @@ class PropertyController extends Controller
                 'features',
             ]),
 
-            // Те же данные что и в create
             'currencies' => Currency::active()->get(),
             'sources' => Source::active()->orderBy('name')->get(),
             'complexes' => Complex::active()->orderBy('name')->get(),
@@ -420,11 +598,8 @@ class PropertyController extends Controller
     public function update(Request $request, Property $property): RedirectResponse
     {
         $validated = $request->validate([
-            // Required
             'deal_type_id' => 'required|exists:dictionaries,id',
             'currency_id' => 'required|exists:currencies,id',
-
-            // Dictionaries (optional)
             'deal_kind_id' => 'nullable|exists:dictionaries,id',
             'building_type_id' => 'nullable|exists:dictionaries,id',
             'property_type_id' => 'nullable|exists:dictionaries,id',
@@ -435,8 +610,6 @@ class PropertyController extends Controller
             'wall_type_id' => 'nullable|exists:dictionaries,id',
             'heating_type_id' => 'nullable|exists:dictionaries,id',
             'source_id' => 'nullable|exists:sources,id',
-
-            // Numbers
             'area_total' => 'nullable|numeric|min:0',
             'area_living' => 'nullable|numeric|min:0',
             'area_kitchen' => 'nullable|numeric|min:0',
@@ -446,8 +619,6 @@ class PropertyController extends Controller
             'year_built' => 'nullable|integer|min:1800|max:' . (date('Y') + 10),
             'price' => 'nullable|numeric|min:0',
             'commission' => 'nullable|numeric|min:0',
-
-            // Text
             'youtube_url' => 'nullable|url|max:255',
             'title_ru' => 'nullable|string|max:255',
             'agent_notes' => 'nullable|string|max:5000',
@@ -455,7 +626,6 @@ class PropertyController extends Controller
             'description_ru' => 'nullable|string|max:10000',
             'description_en' => 'nullable|string|max:10000',
         ], [
-            // Сообщения об ошибках на русском
             'deal_type_id.required' => 'Выберите тип сделки',
             'currency_id.required' => 'Выберите валюту',
         ]);
@@ -463,13 +633,9 @@ class PropertyController extends Controller
         try {
             DB::beginTransaction();
 
-            // Обновляем основные данные
             $property->update([
-                // Required
                 'deal_type_id' => $validated['deal_type_id'],
                 'currency_id' => $validated['currency_id'],
-
-                // Dictionaries
                 'deal_kind_id' => $validated['deal_kind_id'] ?? null,
                 'building_type_id' => $validated['building_type_id'] ?? null,
                 'property_type_id' => $validated['property_type_id'] ?? null,
@@ -480,8 +646,6 @@ class PropertyController extends Controller
                 'wall_type_id' => $validated['wall_type_id'] ?? null,
                 'heating_type_id' => $validated['heating_type_id'] ?? null,
                 'source_id' => $validated['source_id'] ?? null,
-
-                // Numbers
                 'area_total' => $validated['area_total'] ?? null,
                 'area_living' => $validated['area_living'] ?? null,
                 'area_kitchen' => $validated['area_kitchen'] ?? null,
@@ -491,27 +655,11 @@ class PropertyController extends Controller
                 'year_built' => $validated['year_built'] ?? null,
                 'price' => $validated['price'] ?? null,
                 'commission' => $validated['commission'] ?? null,
-
-                // Text
                 'youtube_url' => $validated['youtube_url'] ?? null,
                 'agent_notes' => $validated['agent_notes'] ?? null,
             ]);
 
-            // Обновляем переводы
             $this->saveTranslations($property, $validated);
-
-            // ========== ПОТОМ: Особенности ==========
-            // $property->features()->sync($validated['features'] ?? []);
-
-            // ========== ПОТОМ: Фото ==========
-            // if ($request->hasFile('photos')) {
-            //     $this->savePhotos($property, $request->file('photos'));
-            // }
-
-            // ========== ПОТОМ: Документы ==========
-            // if ($request->hasFile('documents')) {
-            //     $this->saveDocuments($property, $request->file('documents'));
-            // }
 
             DB::commit();
 
@@ -534,20 +682,16 @@ class PropertyController extends Controller
     public function destroy(Property $property): RedirectResponse
     {
         try {
-            // Удаляем файлы фото
             foreach ($property->photos as $photo) {
                 Storage::disk('public')->delete($photo->path);
             }
 
-            // Удаляем файлы документов
             foreach ($property->documents as $document) {
                 Storage::disk('public')->delete($document->path);
             }
 
-            // Удаляем папку объекта
             Storage::disk('public')->deleteDirectory("properties/{$property->id}");
 
-            // Soft delete
             $property->delete();
 
             return redirect()
