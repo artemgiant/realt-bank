@@ -17,13 +17,8 @@ Route::middleware('auth')->group(function () {
 
 
 
-    Route::get('/properties', function () {
-        return view('pages.properties.index');
-    })->name('properties.index');
 
-    Route::get('/dashboard', function () {
-        return view('pages.properties.index');
-    })->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/dashboard', 'App\Http\Controllers\PropertyController@index')->middleware(['auth', 'verified'])->name('dashboard');
 
     Route::get('/properties/create', 'App\Http\Controllers\PropertyController@create')
         ->name('properties.create');

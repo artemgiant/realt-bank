@@ -115,36 +115,13 @@
 
 
                         {{-- Улица --}}
-                        <div class="item selects">
-                            <label class="item-label" for="street_id">Улица</label>
-                            <select id="street_id" name="street_id" class="js-example-responsive3 my-select2">
-                                <option value=""></option>
-                                {{-- Заполняется через AJAX на основе выбранного города --}}
-                            </select>
-                        </div>
+
 
                         {{-- Номер дома / квартиры --}}
-                        <div class="item noresize120">
-                            <span>
-                                <label class="item-label" for="building_number">№ Дом</label> /
-                                <label for="apartment_number">Квартира</label>
-                            </span>
-                            <div class="item-inputText-wrapper shtrih">
-                                <input class="item-inputText" id="building_number" name="building_number" type="text"
-                                       value="{{ old('building_number') }}" autocomplete="off">
-                                <input class="item-inputText" id="apartment_number" name="apartment_number" type="text"
-                                       value="{{ old('apartment_number') }}" autocomplete="off">
-                            </div>
-                        </div>
+
 
                         {{-- Ориентир --}}
-                        <div class="item selects noresize120">
-                            <label class="item-label" for="landmark_id">Ориентир/Станция</label>
-                            <select id="landmark_id" name="landmark_id" class="js-example-responsive3 my-select2">
-                                <option value=""></option>
-                                {{-- Заполняется через AJAX на основе выбранного города --}}
-                            </select>
-                        </div>
+
 
                         {{-- Тип недвижимости --}}
                         <div class="item selects">

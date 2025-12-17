@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePropertyRequest;
 use App\Models\Contact\Contact;
 use App\Models\Location\Country;
 use App\Models\Property\Property;
@@ -17,6 +16,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class PropertyController extends Controller
@@ -24,9 +24,92 @@ class PropertyController extends Controller
     /**
      * Display a listing of the properties.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        return view('pages.properties.index');
+        $query = Property::with([
+            'dealType',
+            'currency',
+            'translations',
+            'user',
+            'roomCount',
+        ]);
+
+        // ========== Фильтр: Тип сделки ==========
+        if ($request->filled('deal_type_id')) {
+            $query->where('deal_type_id', $request->deal_type_id);
+        }
+
+        // ========== Фильтр: Цена от/до ==========
+        if ($request->filled('price_from')) {
+            $query->where('price', '>=', $request->price_from);
+        }
+        if ($request->filled('price_to')) {
+            $query->where('price', '<=', $request->price_to);
+        }
+
+        // ========== Фильтр: Валюта ==========
+        if ($request->filled('currency_id')) {
+            $query->where('currency_id', $request->currency_id);
+        }
+
+        // ========== Фильтр: Площадь от/до ==========
+        if ($request->filled('area_from')) {
+            $query->where('area_total', '>=', $request->area_from);
+        }
+        if ($request->filled('area_to')) {
+            $query->where('area_total', '<=', $request->area_to);
+        }
+
+        // ========== Фильтр: Количество комнат ==========
+        if ($request->filled('room_count_id')) {
+            $query->where('room_count_id', $request->room_count_id);
+        }
+
+        // ========== Фильтр: Статус ==========
+        if ($request->filled('status')) {
+            switch ($request->status) {
+                case 'my':
+                    $query->where('user_id', auth()->id());
+                    break;
+                case 'draft':
+                    $query->where('status', 'draft');
+                    break;
+                case 'active':
+                    $query->where('status', 'active');
+                    break;
+                case 'archive':
+                    $query->where('status', 'archived');
+                    break;
+                // 'all' - без фильтра
+            }
+        }
+
+        // ========== Фильтр: Поиск по ID ==========
+        if ($request->filled('search_id')) {
+            $query->where('id', $request->search_id);
+        }
+
+        // Сортировка и пагинация
+        $properties = $query->latest()->paginate(20)->withQueryString();
+
+        // Данные для фильтров
+        return view('pages.properties.index', [
+            'properties' => $properties,
+            'dealTypes' => Dictionary::getDealTypes(),
+            'currencies' => Currency::active()->get(),
+            'roomCounts' => Dictionary::getRoomCounts(),
+            'filters' => $request->only([
+                'deal_type_id',
+                'price_from',
+                'price_to',
+                'currency_id',
+                'area_from',
+                'area_to',
+                'room_count_id',
+                'status',
+                'search_id',
+            ]),
+        ]);
     }
 
     /**
@@ -35,22 +118,22 @@ class PropertyController extends Controller
     public function create(): View
     {
         return view('pages.properties.create', [
-            // Валюти
+            // Валюты
             'currencies' => Currency::active()->get(),
 
-            // Джерела
+            // Источники
             'sources' => Source::active()->orderBy('name')->get(),
 
-            // Комплекси
+            // Комплексы
             'complexes' => Complex::active()->orderBy('name')->get(),
 
-            // Контакти (для модального вікна)
+            // Контакты (для модального окна)
             'contacts' => Contact::orderBy('name')->limit(100)->get(),
 
-            // Країни
+            // Страны
             'countries' => Country::active()->orderBy('name')->get(),
 
-            // Довідники
+            // Справочники
             'dealTypes' => Dictionary::getDealTypes(),
             'dealKinds' => Dictionary::getDealKinds(),
             'buildingTypes' => Dictionary::getBuildingTypes(),
@@ -63,7 +146,7 @@ class PropertyController extends Controller
             'ceilingHeights' => Dictionary::getCeilingHeights(),
             'features' => Dictionary::getFeatures(),
 
-            // Роки побудови (від поточного до 1950)
+            // Годы постройки (от текущего до 1950)
             'years' => range(date('Y') + 5, 1950),
         ]);
     }
@@ -73,52 +156,80 @@ class PropertyController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Валидация полей
+        $validated = $request->validate([
+            // Required
+            'deal_type_id' => 'required|exists:dictionaries,id',
+            'currency_id' => 'required|exists:currencies,id',
 
-        $validated = $request->validated();
+            // Dictionaries (optional)
+            'deal_kind_id' => 'nullable|exists:dictionaries,id',
+            'building_type_id' => 'nullable|exists:dictionaries,id',
+            'property_type_id' => 'nullable|exists:dictionaries,id',
+            'room_count_id' => 'nullable|exists:dictionaries,id',
+            'condition_id' => 'nullable|exists:dictionaries,id',
+            'bathroom_count_id' => 'nullable|exists:dictionaries,id',
+            'ceiling_height_id' => 'nullable|exists:dictionaries,id',
+            'wall_type_id' => 'nullable|exists:dictionaries,id',
+            'heating_type_id' => 'nullable|exists:dictionaries,id',
+            'source_id' => 'nullable|exists:sources,id',
+
+            // Numbers
+            'area_total' => 'nullable|numeric|min:0',
+            'area_living' => 'nullable|numeric|min:0',
+            'area_kitchen' => 'nullable|numeric|min:0',
+            'area_land' => 'nullable|numeric|min:0',
+            'floor' => 'nullable|integer|min:0',
+            'floors_total' => 'nullable|integer|min:1',
+            'year_built' => 'nullable|integer|min:1800|max:' . (date('Y') + 10),
+            'price' => 'nullable|numeric|min:0',
+            'commission' => 'nullable|numeric|min:0',
+
+            // Text
+            'youtube_url' => 'nullable|url|max:255',
+            'title_ru' => 'nullable|string|max:255',
+            'agent_notes' => 'nullable|string|max:5000',
+            'description_ua' => 'nullable|string|max:10000',
+            'description_ru' => 'nullable|string|max:10000',
+            'description_en' => 'nullable|string|max:10000',
+        ], [
+            // Сообщения об ошибках на русском
+            'deal_type_id.required' => 'Выберите тип сделки',
+            'deal_type_id.exists' => 'Выбранный тип сделки не существует',
+            'currency_id.required' => 'Выберите валюту',
+            'currency_id.exists' => 'Выбранная валюта не существует',
+            'price.numeric' => 'Цена должна быть числом',
+            'price.min' => 'Цена не может быть отрицательной',
+            'area_total.numeric' => 'Площадь должна быть числом',
+            'floor.integer' => 'Этаж должен быть целым числом',
+            'floors_total.integer' => 'Этажность должна быть целым числом',
+            'youtube_url.url' => 'Введите корректную ссылку на YouTube',
+        ]);
 
         try {
             DB::beginTransaction();
 
-            // ========== Створюємо основний запис ==========
+            // ========== Создаем основную запись ==========
             $property = Property::create([
                 'user_id' => auth()->id(),
 
-                // Зв'язки
-                'contact_id' => $validated['contact_id'] ?? null,
-                'source_id' => $validated['source_id'] ?? null,
+                // Required
+                'deal_type_id' => $validated['deal_type_id'],
                 'currency_id' => $validated['currency_id'],
 
-                // Комплекс
-                'complex_id' => $validated['complex_id'] ?? null,
-                'section_id' => $validated['section_id'] ?? null,
-
-                // Локація
-                'country_id' => $validated['country_id'] ?? null,
-                'region_id' => $validated['region_id'] ?? null,
-                'city_id' => $validated['city_id'] ?? null,
-                'district_id' => $validated['district_id'] ?? null,
-                'zone_id' => $validated['zone_id'] ?? null,
-                'street_id' => $validated['street_id'] ?? null,
-                'landmark_id' => $validated['landmark_id'] ?? null,
-                'building_number' => $validated['building_number'] ?? null,
-                'apartment_number' => $validated['apartment_number'] ?? null,
-                'location_name' => $validated['location_name'] ?? null,
-                'latitude' => $validated['latitude'] ?? null,
-                'longitude' => $validated['longitude'] ?? null,
-
-                // Довідники
-                'deal_type_id' => $validated['deal_type_id'],
+                // Dictionaries
                 'deal_kind_id' => $validated['deal_kind_id'] ?? null,
                 'building_type_id' => $validated['building_type_id'] ?? null,
                 'property_type_id' => $validated['property_type_id'] ?? null,
-                'condition_id' => $validated['condition_id'] ?? null,
-                'wall_type_id' => $validated['wall_type_id'] ?? null,
-                'heating_type_id' => $validated['heating_type_id'] ?? null,
                 'room_count_id' => $validated['room_count_id'] ?? null,
+                'condition_id' => $validated['condition_id'] ?? null,
                 'bathroom_count_id' => $validated['bathroom_count_id'] ?? null,
                 'ceiling_height_id' => $validated['ceiling_height_id'] ?? null,
+                'wall_type_id' => $validated['wall_type_id'] ?? null,
+                'heating_type_id' => $validated['heating_type_id'] ?? null,
+                'source_id' => $validated['source_id'] ?? null,
 
-                // Характеристики
+                // Numbers
                 'area_total' => $validated['area_total'] ?? null,
                 'area_living' => $validated['area_living'] ?? null,
                 'area_kitchen' => $validated['area_kitchen'] ?? null,
@@ -126,53 +237,68 @@ class PropertyController extends Controller
                 'floor' => $validated['floor'] ?? null,
                 'floors_total' => $validated['floors_total'] ?? null,
                 'year_built' => $validated['year_built'] ?? null,
-
-                // Ціна
                 'price' => $validated['price'] ?? null,
                 'commission' => $validated['commission'] ?? null,
-                'commission_type' => $validated['commission_type'] ?? 'percent',
+                'commission_type' => 'percent', // По умолчанию
 
-                // Медіа
+                // Text
                 'youtube_url' => $validated['youtube_url'] ?? null,
-                'external_url' => $validated['external_url'] ?? null,
-
-                // Налаштування
-                'is_visible_to_agents' => $validated['is_visible_to_agents'] ?? false,
-                'notes' => $validated['notes'] ?? null,
                 'agent_notes' => $validated['agent_notes'] ?? null,
-                'status' => $validated['status'] ?? 'draft',
+
+                // Defaults
+                'status' => 'draft',
+
+                // ========== ПОТОМ: Location ==========
+                // 'contact_id' => $validated['contact_id'] ?? null,
+                // 'complex_id' => $validated['complex_id'] ?? null,
+                // 'section_id' => $validated['section_id'] ?? null,
+                // 'country_id' => $validated['country_id'] ?? null,
+                // 'region_id' => $validated['region_id'] ?? null,
+                // 'city_id' => $validated['city_id'] ?? null,
+                // 'district_id' => $validated['district_id'] ?? null,
+                // 'zone_id' => $validated['zone_id'] ?? null,
+                // 'street_id' => $validated['street_id'] ?? null,
+                // 'landmark_id' => $validated['landmark_id'] ?? null,
+                // 'building_number' => $validated['building_number'] ?? null,
+                // 'apartment_number' => $validated['apartment_number'] ?? null,
+                // 'location_name' => $validated['location_name'] ?? null,
+                // 'latitude' => $validated['latitude'] ?? null,
+                // 'longitude' => $validated['longitude'] ?? null,
+                // 'external_url' => $validated['external_url'] ?? null,
+                // 'is_visible_to_agents' => $validated['is_visible_to_agents'] ?? false,
+                // 'notes' => $validated['notes'] ?? null,
             ]);
 
-            // ========== Зберігаємо переклади ==========
+            // ========== Сохраняем переводы ==========
             $this->saveTranslations($property, $validated);
 
-            // ========== Зберігаємо особливості ==========
-            if (!empty($validated['features'])) {
-                $property->features()->sync($validated['features']);
-            }
+            // ========== ПОТОМ: Особенности ==========
+            // if (!empty($validated['features'])) {
+            //     $property->features()->sync($validated['features']);
+            // }
 
-            // ========== Зберігаємо фото ==========
-            if ($request->hasFile('photos')) {
-                $this->savePhotos($property, $request->file('photos'));
-            }
+            // ========== ПОТОМ: Фото ==========
+            // if ($request->hasFile('photos')) {
+            //     $this->savePhotos($property, $request->file('photos'));
+            // }
 
-            // ========== Зберігаємо документи ==========
-            if ($request->hasFile('documents')) {
-                $this->saveDocuments($property, $request->file('documents'));
-            }
+            // ========== ПОТОМ: Документы ==========
+            // if ($request->hasFile('documents')) {
+            //     $this->saveDocuments($property, $request->file('documents'));
+            // }
 
             DB::commit();
 
             return redirect()
                 ->route('properties.index')
-                ->with('success', 'Об\'єкт успішно створено!');
+                ->with('success', 'Объект успешно создан!');
 
         } catch (\Exception $e) {
             DB::rollBack();
 
             return back()
                 ->withInput()
-                ->with('error', 'Помилка при створенні об\'єкта: ' . $e->getMessage());
+                ->with('error', 'Ошибка при создании объекта: ' . $e->getMessage());
         }
     }
 
@@ -184,10 +310,11 @@ class PropertyController extends Controller
         $locales = ['ua', 'ru', 'en'];
 
         foreach ($locales as $locale) {
-            $title = $validated["title_{$locale}"] ?? null;
+            // Для title используем title_ru для всех локалей (пока)
+            $title = $validated['title_ru'] ?? null;
             $description = $validated["description_{$locale}"] ?? null;
 
-            // Зберігаємо тільки якщо є хоча б заголовок або опис
+            // Сохраняем только если есть хотя бы заголовок или описание
             if ($title || $description) {
                 PropertyTranslation::updateOrCreate(
                     [
@@ -213,7 +340,7 @@ class PropertyController extends Controller
         foreach ($photos as $photo) {
             $sortOrder++;
 
-            // Генеруємо унікальне ім'я файлу
+            // Генерируем уникальное имя файла
             $filename = $photo->getClientOriginalName();
             $path = $photo->store("properties/{$property->id}/photos", 'public');
 
@@ -222,7 +349,7 @@ class PropertyController extends Controller
                 'path' => $path,
                 'filename' => $filename,
                 'sort_order' => $sortOrder,
-                'is_main' => $sortOrder === 1, // Перше фото - головне
+                'is_main' => $sortOrder === 1, // Первое фото - главное
             ]);
         }
     }
@@ -266,7 +393,7 @@ class PropertyController extends Controller
                 'features',
             ]),
 
-            // Ті самі дані що і в create
+            // Те же данные что и в create
             'currencies' => Currency::active()->get(),
             'sources' => Source::active()->orderBy('name')->get(),
             'complexes' => Complex::active()->orderBy('name')->get(),
@@ -292,40 +419,69 @@ class PropertyController extends Controller
      */
     public function update(Request $request, Property $property): RedirectResponse
     {
-        $validated = $request->validated();
+        $validated = $request->validate([
+            // Required
+            'deal_type_id' => 'required|exists:dictionaries,id',
+            'currency_id' => 'required|exists:currencies,id',
+
+            // Dictionaries (optional)
+            'deal_kind_id' => 'nullable|exists:dictionaries,id',
+            'building_type_id' => 'nullable|exists:dictionaries,id',
+            'property_type_id' => 'nullable|exists:dictionaries,id',
+            'room_count_id' => 'nullable|exists:dictionaries,id',
+            'condition_id' => 'nullable|exists:dictionaries,id',
+            'bathroom_count_id' => 'nullable|exists:dictionaries,id',
+            'ceiling_height_id' => 'nullable|exists:dictionaries,id',
+            'wall_type_id' => 'nullable|exists:dictionaries,id',
+            'heating_type_id' => 'nullable|exists:dictionaries,id',
+            'source_id' => 'nullable|exists:sources,id',
+
+            // Numbers
+            'area_total' => 'nullable|numeric|min:0',
+            'area_living' => 'nullable|numeric|min:0',
+            'area_kitchen' => 'nullable|numeric|min:0',
+            'area_land' => 'nullable|numeric|min:0',
+            'floor' => 'nullable|integer|min:0',
+            'floors_total' => 'nullable|integer|min:1',
+            'year_built' => 'nullable|integer|min:1800|max:' . (date('Y') + 10),
+            'price' => 'nullable|numeric|min:0',
+            'commission' => 'nullable|numeric|min:0',
+
+            // Text
+            'youtube_url' => 'nullable|url|max:255',
+            'title_ru' => 'nullable|string|max:255',
+            'agent_notes' => 'nullable|string|max:5000',
+            'description_ua' => 'nullable|string|max:10000',
+            'description_ru' => 'nullable|string|max:10000',
+            'description_en' => 'nullable|string|max:10000',
+        ], [
+            // Сообщения об ошибках на русском
+            'deal_type_id.required' => 'Выберите тип сделки',
+            'currency_id.required' => 'Выберите валюту',
+        ]);
 
         try {
             DB::beginTransaction();
 
-            // Оновлюємо основні дані
+            // Обновляем основные данные
             $property->update([
-                'contact_id' => $validated['contact_id'] ?? null,
-                'source_id' => $validated['source_id'] ?? null,
-                'currency_id' => $validated['currency_id'],
-                'complex_id' => $validated['complex_id'] ?? null,
-                'section_id' => $validated['section_id'] ?? null,
-                'country_id' => $validated['country_id'] ?? null,
-                'region_id' => $validated['region_id'] ?? null,
-                'city_id' => $validated['city_id'] ?? null,
-                'district_id' => $validated['district_id'] ?? null,
-                'zone_id' => $validated['zone_id'] ?? null,
-                'street_id' => $validated['street_id'] ?? null,
-                'landmark_id' => $validated['landmark_id'] ?? null,
-                'building_number' => $validated['building_number'] ?? null,
-                'apartment_number' => $validated['apartment_number'] ?? null,
-                'location_name' => $validated['location_name'] ?? null,
-                'latitude' => $validated['latitude'] ?? null,
-                'longitude' => $validated['longitude'] ?? null,
+                // Required
                 'deal_type_id' => $validated['deal_type_id'],
+                'currency_id' => $validated['currency_id'],
+
+                // Dictionaries
                 'deal_kind_id' => $validated['deal_kind_id'] ?? null,
                 'building_type_id' => $validated['building_type_id'] ?? null,
                 'property_type_id' => $validated['property_type_id'] ?? null,
-                'condition_id' => $validated['condition_id'] ?? null,
-                'wall_type_id' => $validated['wall_type_id'] ?? null,
-                'heating_type_id' => $validated['heating_type_id'] ?? null,
                 'room_count_id' => $validated['room_count_id'] ?? null,
+                'condition_id' => $validated['condition_id'] ?? null,
                 'bathroom_count_id' => $validated['bathroom_count_id'] ?? null,
                 'ceiling_height_id' => $validated['ceiling_height_id'] ?? null,
+                'wall_type_id' => $validated['wall_type_id'] ?? null,
+                'heating_type_id' => $validated['heating_type_id'] ?? null,
+                'source_id' => $validated['source_id'] ?? null,
+
+                // Numbers
                 'area_total' => $validated['area_total'] ?? null,
                 'area_living' => $validated['area_living'] ?? null,
                 'area_kitchen' => $validated['area_kitchen'] ?? null,
@@ -335,43 +491,40 @@ class PropertyController extends Controller
                 'year_built' => $validated['year_built'] ?? null,
                 'price' => $validated['price'] ?? null,
                 'commission' => $validated['commission'] ?? null,
-                'commission_type' => $validated['commission_type'] ?? 'percent',
+
+                // Text
                 'youtube_url' => $validated['youtube_url'] ?? null,
-                'external_url' => $validated['external_url'] ?? null,
-                'is_visible_to_agents' => $validated['is_visible_to_agents'] ?? false,
-                'notes' => $validated['notes'] ?? null,
                 'agent_notes' => $validated['agent_notes'] ?? null,
-                'status' => $validated['status'] ?? $property->status,
             ]);
 
-            // Оновлюємо переклади
+            // Обновляем переводы
             $this->saveTranslations($property, $validated);
 
-            // Оновлюємо особливості
-            $property->features()->sync($validated['features'] ?? []);
+            // ========== ПОТОМ: Особенности ==========
+            // $property->features()->sync($validated['features'] ?? []);
 
-            // Додаємо нові фото
-            if ($request->hasFile('photos')) {
-                $this->savePhotos($property, $request->file('photos'));
-            }
+            // ========== ПОТОМ: Фото ==========
+            // if ($request->hasFile('photos')) {
+            //     $this->savePhotos($property, $request->file('photos'));
+            // }
 
-            // Додаємо нові документи
-            if ($request->hasFile('documents')) {
-                $this->saveDocuments($property, $request->file('documents'));
-            }
+            // ========== ПОТОМ: Документы ==========
+            // if ($request->hasFile('documents')) {
+            //     $this->saveDocuments($property, $request->file('documents'));
+            // }
 
             DB::commit();
 
             return redirect()
                 ->route('properties.index')
-                ->with('success', 'Об\'єкт успішно оновлено!');
+                ->with('success', 'Объект успешно обновлен!');
 
         } catch (\Exception $e) {
             DB::rollBack();
 
             return back()
                 ->withInput()
-                ->with('error', 'Помилка при оновленні об\'єкта: ' . $e->getMessage());
+                ->with('error', 'Ошибка при обновлении объекта: ' . $e->getMessage());
         }
     }
 
@@ -381,17 +534,17 @@ class PropertyController extends Controller
     public function destroy(Property $property): RedirectResponse
     {
         try {
-            // Видаляємо файли фото
+            // Удаляем файлы фото
             foreach ($property->photos as $photo) {
                 Storage::disk('public')->delete($photo->path);
             }
 
-            // Видаляємо файли документів
+            // Удаляем файлы документов
             foreach ($property->documents as $document) {
                 Storage::disk('public')->delete($document->path);
             }
 
-            // Видаляємо папку об'єкта
+            // Удаляем папку объекта
             Storage::disk('public')->deleteDirectory("properties/{$property->id}");
 
             // Soft delete
@@ -399,10 +552,10 @@ class PropertyController extends Controller
 
             return redirect()
                 ->route('properties.index')
-                ->with('success', 'Об\'єкт успішно видалено!');
+                ->with('success', 'Объект успешно удален!');
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Помилка при видаленні об\'єкта: ' . $e->getMessage());
+            return back()->with('error', 'Ошибка при удалении объекта: ' . $e->getMessage());
         }
     }
 }
