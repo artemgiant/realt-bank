@@ -14,7 +14,6 @@
                 <p>Локация</p>
             </div>
         </th>
-
         <th>
             <div class="thead-wrapper type">
                 <p>Тип</p>
@@ -50,73 +49,101 @@
                 <p>Контакт</p>
             </div>
         </th>
-
     </tr>
     </thead>
     <tbody>
     @forelse($properties as $property)
         <tr>
-            <td>{{ $property->id }}</td>
-            <td><span class="text-muted">-</span></td>
+            {{-- Checkbox --}}
             <td>
-                @if($property->dealType)
-                    <span class="badge bg-primary">{{ $property->dealType->name }}</span>
-                @else
+                <div class="tbody-wrapper checkBox">
+                    <label class="my-custom-input">
+                        <input type="checkbox" value="{{ $property->id }}">
+                        <span class="my-custom-box"></span>
+                    </label>
+                </div>
+            </td>
+
+            {{-- Локация (пока пустое) --}}
+            <td>
+                <div class="tbody-wrapper location">
                     <span class="text-muted">-</span>
-                @endif
+                </div>
             </td>
 
+            {{-- Тип сделки --}}
             <td>
-                @if($property->area_total)
-                    {{ $property->area_total }} м²
-                @else
+                <div class="tbody-wrapper type">
+                    @if($property->dealType)
+                        <p>{{ $property->dealType->name }}</p>
+                    @else
+                        <span class="text-muted">-</span>
+                    @endif
+                </div>
+            </td>
+
+            {{-- Площадь --}}
+            <td>
+                <div class="tbody-wrapper area">
+                    @if($property->area_total)
+                        <p>{{ $property->area_total }} м²</p>
+                    @else
+                        <span class="text-muted">-</span>
+                    @endif
+                </div>
+            </td>
+
+            {{-- Состояние --}}
+            <td>
+                <div class="tbody-wrapper condition">
+                    @if($property->condition)
+                        <p>{{ $property->condition->name }}</p>
+                    @else
+                        <span class="text-muted">-</span>
+                    @endif
+                </div>
+            </td>
+
+            {{-- Этаж --}}
+            <td>
+                <div class="tbody-wrapper floor">
+                    @if($property->floor)
+                        <p>{{ $property->floor }}@if($property->floors_total)/{{ $property->floors_total }}@endif</p>
+                    @else
+                        <span class="text-muted">-</span>
+                    @endif
+                </div>
+            </td>
+
+            {{-- Фото (пока пустое) --}}
+            <td>
+                <div class="tbody-wrapper photo">
                     <span class="text-muted">-</span>
-                @endif
+                </div>
             </td>
 
+            {{-- Цена --}}
             <td>
-                @if($property->condition_id)
-                    {{ $property->condition->name }}
-                @else
+                <div class="tbody-wrapper price">
+                    @if($property->price)
+                        <p>{{ number_format($property->price, 0, '.', ' ') }}</p>
+                        <span>{{ $property->currency?->symbol ?? '$' }}</span>
+                    @else
+                        <span class="text-muted">-</span>
+                    @endif
+                </div>
+            </td>
+
+            {{-- Контакт (пока пустое) --}}
+            <td>
+                <div class="tbody-wrapper contact">
                     <span class="text-muted">-</span>
-                @endif
-            </td>
-
-
-            {{--                    floor--}}
-
-            <td>
-                @if($property->floor)
-                    {{ $property->floor }}
-                @else
-                    <span class="text-muted">-</span>
-                @endif
-            </td>
-
-            <td>
-                <span class="text-muted">-</span>
-            </td>
-
-
-            <td>
-                @if($property->price)
-                    {{ number_format($property->price, 0, '.', ' ') }}
-                    {{ $property->currency?->symbol ?? '$' }}
-                @else
-                    <span class="text-muted">-</span>
-                @endif
-            </td>
-
-            <td>
-                <span class="text-muted">-</span>
-            </td>
-            <td>
-                {{ $property->created_at->format('d.m.Y') }}
+                </div>
             </td>
         </tr>
     @empty
         <tr>
-            <td colspan="8" class="text-center py-4">
+            <td colspan="9" class="text-center py-4">
                 <div class="text-muted">
                     <p class="mb-2">Объекты не найдены</p>
                     <a href="{{ route('properties.create') }}" class="btn btn-primary">

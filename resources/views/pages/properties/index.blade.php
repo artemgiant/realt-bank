@@ -51,7 +51,7 @@
 
 
 @push('scripts')
-    <script src="{{ asset('js/pages/page-home-table.js') }}"></script>
+    <script src="{{ asset('js/pages/properties/index/page-home-table.js') }}"></script>
     <script src="{{ asset('js/pages/filter1.min.js') }}"></script>
     <script src="{{ asset('js/pages/full-filter.min.js') }}"></script>
     <script src="{{ asset('js/pages/my-dropdown.min.js') }}"></script>
