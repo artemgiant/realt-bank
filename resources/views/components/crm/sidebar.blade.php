@@ -61,13 +61,24 @@
                     </picture>
                 </a>
             </li>
+            {{-- Аватар с dropdown меню --}}
             <li class="nav-info-item">
-                <a class="nav-info-link" >
-                    <picture>
-                        <source srcset="{{ asset('img/icon/side-bar/default-avatar.svg') }}" type="image/webp">
-                        <img src="{{ asset('img/icon/side-bar/default-avatar.svg') }}" alt="">
-                    </picture>
-                </a>
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle nav-info-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <picture>
+                            <source srcset="{{ asset('img/icon/side-bar/default-avatar.svg') }}" type="image/webp">
+                            <img src="{{ asset('img/icon/side-bar/default-avatar.svg') }}" alt="">
+                        </picture>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-item">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </li>
         </ul>
     </nav>
