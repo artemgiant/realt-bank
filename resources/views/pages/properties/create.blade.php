@@ -259,9 +259,9 @@
                             <label class="item-label" for="year_built">Год постройки</label>
                             <select id="year_built" name="year_built" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
-                                @foreach($years as $year)
-                                    <option value="{{ $year }}" {{ old('year_built') == $year ? 'selected' : '' }}>
-                                        {{ $year }}
+                                @foreach($yearsBuilt as $yearBuilt)
+                                    <option value="{{ $yearBuilt->id }}" {{ old('year_built') == $yearBuilt->id ? 'selected' : '' }}>
+                                        {{ $yearBuilt->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -467,9 +467,7 @@
                                 <button class="btn btn-outline-primary" type="button">
                                     Отменить изменения
                                 </button>
-                                <button class="btn btn-outline-danger" type="button">
-                                    Удалить объект
-                                </button>
+
                             </div>
                             <div class="photo-info-btnGroup-right">
                                 <button class="btn btn-outline-success" type="button">

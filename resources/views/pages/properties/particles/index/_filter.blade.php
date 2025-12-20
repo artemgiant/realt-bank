@@ -179,7 +179,7 @@
                             @php
                                 $selectedYears = (array)($filters['year_built'] ?? []);
                                 $yearText = count($selectedYears) > 0
-                                    ? implode(', ', $selectedYears)
+                                    ? $yearsBuilt->whereIn('id', $selectedYears)->pluck('name')->implode(', ')
                                     : 'Все';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
@@ -187,13 +187,13 @@
                             </button>
                             <div class="multiple-menu-wrapper">
                                 <ul class="multiple-menu-list" style="max-height: 200px; overflow-y: auto;">
-                                    @foreach(array_slice($years, 0, 30) as $year)
+                                    @foreach($yearsBuilt as $yearBuilt)
                                         <li class="multiple-menu-item">
                                             <label class="my-custom-input">
-                                                <input type="checkbox" name="year_built[]" value="{{ $year }}"
-                                                        {{ in_array($year, $selectedYears) ? 'checked' : '' }}>
+                                                <input type="checkbox" name="year_built[]" value="{{ $yearBuilt->id }}"
+                                                        {{ in_array($yearBuilt->id, $selectedYears) ? 'checked' : '' }}>
                                                 <span class="my-custom-box"></span>
-                                                <span class="my-custom-text">{{ $year }}</span>
+                                                <span class="my-custom-text">{{ $yearBuilt->name }}</span>
                                             </label>
                                         </li>
                                     @endforeach

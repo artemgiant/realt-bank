@@ -265,7 +265,7 @@ class PropertyController extends Controller
         $properties = $query->latest()->paginate(20)->withQueryString();
 
         // Список годов для фильтра
-        $years = range(date('Y') + 5, 1950);
+        $yearsBuilt = Dictionary::getYearsBuilt();
 
         // Данные для фильтров
         return view('pages.properties.index', [
@@ -287,7 +287,7 @@ class PropertyController extends Controller
             // Другие данные
             'currencies' => Currency::active()->get(),
             'developers' => Developer::active()->orderBy('name')->get(),
-            'years' => $years,
+            'yearsBuilt' => $yearsBuilt,
 
             // Текущие значения фильтров
             'filters' => $request->only([
@@ -364,7 +364,7 @@ class PropertyController extends Controller
             'features' => Dictionary::getFeatures(),
 
             // Годы постройки (от текущего до 1950)
-            'years' => range(date('Y') + 5, 1950),
+            'yearsBuilt' => Dictionary::getYearsBuilt(),
         ]);
     }
 
@@ -588,7 +588,7 @@ class PropertyController extends Controller
             'bathroomCounts' => Dictionary::getBathroomCounts(),
             'ceilingHeights' => Dictionary::getCeilingHeights(),
             'features' => Dictionary::getFeatures(),
-            'years' => range(date('Y') + 5, 1950),
+            'yearsBuilt' => Dictionary::getYearsBuilt(),
         ]);
     }
 
