@@ -398,7 +398,7 @@ class PropertyController extends Controller
             'area_land' => 'nullable|numeric|min:0',
             'floor' => 'nullable|integer|min:0',
             'floors_total' => 'nullable|integer|min:1',
-            'year_built' => 'nullable|integer|min:1800|max:' . (date('Y') + 10),
+            'year_built' => 'nullable|exists:dictionaries,id',
             'price' => 'nullable|numeric|min:0',
             'commission' => 'nullable|numeric|min:0',
 
@@ -418,7 +418,7 @@ class PropertyController extends Controller
             'price.numeric' => 'Цена должна быть числом',
             'price.min' => 'Цена не может быть отрицательной',
             'area_total.numeric' => 'Площадь должна быть числом',
-            'floor.integer' => 'Этаж должен быть целым числом',
+            'year_built.exists' => 'Выбранный год постройки не существует',
             'floors_total.integer' => 'Этажность должна быть целым числом',
             'youtube_url.url' => 'Введите корректную ссылку на YouTube',
         ]);
