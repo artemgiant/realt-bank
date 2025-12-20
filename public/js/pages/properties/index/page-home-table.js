@@ -1,6 +1,6 @@
 $(document).ready(function() {
     // Инициализация DataTables
-    var table = $('#example').DataTable({
+    const table = $('#example').DataTable({
         searching: false,
         ordering: false,
         processing: false,
@@ -12,26 +12,22 @@ $(document).ready(function() {
         }
     });
 
-    // Обновление счетчика записей
     table.on('draw', function() {
-        var info = table.page.info();
+        const info = table.page.info();
         $('#example_info').html('Всего: <b>' + info.recordsDisplay + '</b>');
     });
 
-    // Выбор всех checkbox в thead
     $('thead .my-custom-input input').on('change', function() {
-        var isChecked = $(this).prop('checked');
+        const isChecked = $(this).prop('checked');
         $('tbody .my-custom-input input').prop('checked', isChecked);
     });
 
-    // Синхронизация checkbox в thead при изменении в tbody
     $('tbody').on('change', '.my-custom-input input', function() {
-        var allChecked = $('tbody .my-custom-input input:checked').length === $('tbody .my-custom-input input').length;
+        const allChecked = $('tbody .my-custom-input input:checked').length === $('tbody .my-custom-input input').length;
         $('thead .my-custom-input input').prop('checked', allChecked);
     });
 
-    // Инициализация tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function(tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });

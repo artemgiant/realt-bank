@@ -1,4 +1,5 @@
 <table id="example" class="table table-hover">
+
     <thead>
     <tr>
         <th>
@@ -126,8 +127,7 @@
             <td>
                 <div class="tbody-wrapper price">
                     @if($property->price)
-                        <p>{{ number_format($property->price, 0, '.', ' ') }}</p>
-                        <span>{{ $property->currency?->symbol ?? '$' }}</span>
+                        <p>{{ number_format($property->price, 0, '.', ' ') }} {{ $property->currency?->symbol ?? '$' }}</p>
                     @else
                         <span class="text-muted">-</span>
                     @endif

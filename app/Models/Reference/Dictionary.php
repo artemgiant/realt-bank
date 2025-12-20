@@ -25,18 +25,19 @@ class Dictionary extends Model
 
     // ========== Dictionary Types ==========
 
-    public const TYPE_DEAL_TYPE = 'deal_type';           // Тип угоди
-    public const TYPE_DEAL_KIND = 'deal_kind';           // Вид угоди
-    public const TYPE_BUILDING_TYPE = 'building_type';   // Тип будівлі
-    public const TYPE_PROPERTY_TYPE = 'property_type';   // Тип нерухомості
-    public const TYPE_CONDITION = 'condition';           // Стан
-    public const TYPE_WALL_TYPE = 'wall_type';           // Тип стін
-    public const TYPE_HEATING_TYPE = 'heating_type';     // Опалення
-    public const TYPE_ROOM_COUNT = 'room_count';         // Кількість кімнат
-    public const TYPE_BATHROOM_COUNT = 'bathroom_count'; // Кількість ванних
-    public const TYPE_CEILING_HEIGHT = 'ceiling_height'; // Висота стелі
-    public const TYPE_FEATURE = 'feature';               // Особливості
-    public const TYPE_CONTACT_TAG = 'contact_tag';       // Теги контактів
+    public const TYPE_DEAL_TYPE = 'deal_type';           // Тип сделки
+    public const TYPE_DEAL_KIND = 'deal_kind';           // Вид сделки
+    public const TYPE_BUILDING_TYPE = 'building_type';   // Тип здания
+    public const TYPE_PROPERTY_TYPE = 'property_type';   // Тип недвижимости
+    public const TYPE_CONDITION = 'condition';           // Состояние
+    public const TYPE_WALL_TYPE = 'wall_type';           // Тип стен
+    public const TYPE_HEATING_TYPE = 'heating_type';     // Отопление
+    public const TYPE_ROOM_COUNT = 'room_count';         // Количество комнат
+    public const TYPE_BATHROOM_COUNT = 'bathroom_count'; // Количество ванных
+    public const TYPE_CEILING_HEIGHT = 'ceiling_height'; // Высота потолков
+    public const TYPE_FEATURE = 'feature';               // Особенности
+    public const TYPE_CONTACT_TAG = 'contact_tag';       // Теги контактов
+    public const TYPE_YEAR_BUILT = 'year_built';         // Год постройки
 
     // ========== Scopes ==========
 
@@ -123,6 +124,11 @@ class Dictionary extends Model
     public static function getContactTags(): Collection
     {
         return static::getByType(self::TYPE_CONTACT_TAG);
+    }
+
+    public static function getYearsBuilt(): Collection
+    {
+        return static::getByType(self::TYPE_YEAR_BUILT);
     }
 
     // ========== Helper for Select Options ==========
