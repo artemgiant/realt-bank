@@ -16,6 +16,7 @@ use App\Models\Reference\Dictionary;
 use App\Models\Reference\Section;
 use App\Models\Reference\Source;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -24,7 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Property extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory;
 
     protected $fillable = [
         // Зв'язки
@@ -32,11 +33,11 @@ class Property extends Model
         'contact_id',
         'source_id',
         'currency_id',
-        
+
         // Комплекс
         'complex_id',
         'section_id',
-        
+
         // Локація
         'country_id',
         'region_id',
@@ -50,7 +51,7 @@ class Property extends Model
         'location_name',
         'latitude',
         'longitude',
-        
+
         // Довідники
         'deal_type_id',
         'deal_kind_id',
@@ -62,7 +63,7 @@ class Property extends Model
         'room_count_id',
         'bathroom_count_id',
         'ceiling_height_id',
-        
+
         // Характеристики
         'area_total',
         'area_living',
@@ -71,16 +72,16 @@ class Property extends Model
         'floor',
         'floors_total',
         'year_built',
-        
+
         // Ціна
         'price',
         'commission',
         'commission_type',
-        
+
         // Медіа
         'youtube_url',
         'external_url',
-        
+
         // Налаштування
         'is_visible_to_agents',
         'notes',
@@ -289,7 +290,7 @@ class Property extends Model
 
     public function getMainPhotoAttribute(): ?PropertyPhoto
     {
-        return $this->photos->firstWhere('is_main', true) 
+        return $this->photos->firstWhere('is_main', true)
             ?? $this->photos->first();
     }
 

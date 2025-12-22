@@ -8,9 +8,9 @@ $(document).ready(function() {
         processing: true,
         serverSide: true,
         searching: false, // Отключаем встроенный поиск (используем свои фильтры)
-        ordering: true,
+        ordering: false,
         paging: true,
-        pageLength: 20,
+        pageLength: 10,
         pagingType: 'simple_numbers',
         info: true,
 

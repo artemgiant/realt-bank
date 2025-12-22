@@ -48,6 +48,7 @@ include make/filament.mk
 include make/logs.mk
 include make/testing.mk
 include make/utils.mk
+include make/factory.mk
 
 # ============================================================================
 # ДОПОМОГА
