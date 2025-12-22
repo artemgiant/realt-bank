@@ -3,6 +3,23 @@ $(document).ready(function() {
     // URL для AJAX запросов
     const ajaxUrl = '/properties/ajax-data';
 
+    // ========== Debounce функция ==========
+    // Задержка перед выполнением запроса после окончания ввода
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Задержка в миллисекундах (600ms)
+    const DEBOUNCE_DELAY = 600;
+
     // Инициализация DataTables с Server-Side Processing
     const table = $('#example').DataTable({
         processing: true,
@@ -181,6 +198,9 @@ $(document).ready(function() {
 
             // Сбрасываем чекбокс "выбрать все"
             $('#select-all-checkbox').prop('checked', false);
+
+            // Обновляем счетчик фильтров после каждой перезагрузки
+            updateFilterCounter();
         }
     });
 
@@ -193,6 +213,16 @@ $(document).ready(function() {
             values.push($(this).val());
         });
         return values.length > 0 ? values : null;
+    }
+
+    // Функция перезагрузки таблицы с debounce для текстовых полей
+    const debouncedReload = debounce(function() {
+        table.ajax.reload();
+    }, DEBOUNCE_DELAY);
+
+    // Функция мгновенной перезагрузки (для select и checkbox)
+    function reloadTable() {
+        table.ajax.reload();
     }
 
     // ========== Обработчики событий ==========
@@ -215,21 +245,117 @@ $(document).ready(function() {
         table.ajax.reload();
     });
 
-    // Обновление таблицы при изменении select в хедере
-    $('#deal_type_id, #currency_id').on('change', function() {
-        table.ajax.reload();
+    // ========== Автоматическая фильтрация ==========
+
+    // Текстовые поля с debounce (цена, площадь, этаж и т.д.)
+    const textInputSelectors = [
+        '#price_from',
+        '#price_to',
+        '[name="area_from"]',
+        '[name="area_to"]',
+        '[name="area_living_from"]',
+        '[name="area_living_to"]',
+        '[name="area_kitchen_from"]',
+        '[name="area_kitchen_to"]',
+        '[name="area_land_from"]',
+        '[name="area_land_to"]',
+        '[name="floor_from"]',
+        '[name="floor_to"]',
+        '[name="floors_total_from"]',
+        '[name="floors_total_to"]',
+        '[name="price_per_m2_from"]',
+        '[name="price_per_m2_to"]',
+        '[name="search_id"]',
+        '[name="contact_search"]'
+    ].join(', ');
+
+    // Обработчик ввода для текстовых полей (с задержкой)
+    $('#filter-form').on('input', textInputSelectors, function() {
+        debouncedReload();
     });
 
-    // Кнопка "Применить" в расширенном фильтре
-    $('.full-filter .btn-primary[type="submit"]').on('click', function(e) {
-        e.preventDefault();
-        table.ajax.reload();
+    // Select поля - мгновенная реакция
+    $('#filter-form').on('change', '#deal_type_id, #currency_id, #status, #full-filter-currency', function() {
+        reloadTable();
     });
 
-    // Кнопка сброса фильтров
+    // Чекбоксы фильтров - мгновенная реакция
+    const checkboxSelectors = [
+        '[name="property_type_id[]"]',
+        '[name="condition_id[]"]',
+        '[name="building_type_id[]"]',
+        '[name="year_built[]"]',
+        '[name="wall_type_id[]"]',
+        '[name="room_count_id[]"]',
+        '[name="heating_type_id[]"]',
+        '[name="bathroom_count_id[]"]',
+        '[name="ceiling_height_id[]"]',
+        '[name="features[]"]',
+        '[name="developer_id[]"]'
+    ].join(', ');
+
+    $('#filter-form').on('change', checkboxSelectors, function() {
+        reloadTable();
+    });
+
+    // Daterangepicker - фильтрация после выбора дат
+    $('#datapiker1').on('apply.daterangepicker', function(ev, picker) {
+        $('#created_from').val(picker.startDate.format('YYYY-MM-DD'));
+        $('#created_to').val(picker.endDate.format('YYYY-MM-DD'));
+        reloadTable();
+    });
+
+    $('#datapiker1').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+        $('#created_from').val('');
+        $('#created_to').val('');
+        reloadTable();
+    });
+
+    // ========== Кнопки поиска (для совместимости) ==========
+
+    // Кнопка поиска по ID
+    $('#search-id-btn').on('click', function() {
+        reloadTable();
+    });
+
+    // Кнопка поиска по контакту
+    $('#search-contact-btn').on('click', function() {
+        reloadTable();
+    });
+
+    // Enter в поле поиска по ID
+    $('#search_id').on('keypress', function(e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            reloadTable();
+        }
+    });
+
+    // Enter в поле поиска по контакту
+    $('#contact_search').on('keypress', function(e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            reloadTable();
+        }
+    });
+
+    // ========== Сброс фильтров ==========
+
+    // Кнопка сброса в счетчике фильтров
     $('#delete-params-on-filter').on('click', function(e) {
         e.preventDefault();
+        resetFilters();
+    });
 
+    // Кнопка "Сбросить" в расширенном фильтре
+    $('#reset-filters-btn').on('click', function(e) {
+        e.preventDefault();
+        resetFilters();
+    });
+
+    // Функция сброса всех фильтров
+    function resetFilters() {
         // Сбрасываем все поля формы
         $('#filter-form')[0].reset();
 
@@ -239,29 +365,51 @@ $(document).ready(function() {
         // Снимаем все чекбоксы
         $('#filter-form input[type="checkbox"]').prop('checked', false);
 
+        // Очищаем скрытые поля дат
+        $('#created_from').val('');
+        $('#created_to').val('');
+
         // Перезагружаем таблицу
         table.ajax.reload();
 
         // Скрываем счетчик фильтров
         $('.full-filter-counter').hide();
-    });
+    }
+
+    // ========== Счетчик активных фильтров ==========
 
     // Обновление счетчика активных фильтров
     function updateFilterCounter() {
         let count = 0;
 
-        // Считаем заполненные поля
+        // Считаем заполненные текстовые поля
         $('#filter-form input[type="text"]').each(function() {
-            if ($(this).val()) count++;
+            if ($(this).val() && $(this).attr('name') !== 'search-additionally' && $(this).attr('name') !== 'search-developer') {
+                count++;
+            }
         });
 
-        // Считаем выбранные select
+        // Считаем скрытые поля дат
+        if ($('#created_from').val()) count++;
+        if ($('#created_to').val()) count++;
+
+        // Считаем выбранные select (кроме валюты по умолчанию)
         $('#filter-form select').each(function() {
-            if ($(this).val()) count++;
+            const val = $(this).val();
+            const name = $(this).attr('name') || $(this).attr('id');
+            // Пропускаем валюту если она первая по умолчанию
+            if (val && name !== 'currency_id' && name !== 'full-filter-currency') {
+                count++;
+            }
         });
 
-        // Считаем отмеченные чекбоксы
-        count += $('#filter-form input[type="checkbox"]:checked').length;
+        // Считаем отмеченные чекбоксы фильтров (не select-all)
+        $('#filter-form input[type="checkbox"]:checked').each(function() {
+            const name = $(this).attr('name');
+            if (name && name !== 'select-all-checkbox' && !$(this).hasClass('row-checkbox')) {
+                count++;
+            }
+        });
 
         // Обновляем отображение
         if (count > 0) {

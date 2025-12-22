@@ -556,10 +556,6 @@
                         <button type="button" id="reset-filters-btn" class="btn btn-outline-primary">Сбросить</button>
                     </div>
 
-                    {{-- Кнопка применения --}}
-                    <div class="item filter-btn">
-                        <button class="btn btn-primary" type="submit">Применить</button>
-                    </div>
                 </div>
             </div>
         </div>
