@@ -23,6 +23,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/properties/create', 'App\Http\Controllers\PropertyController@create')
         ->name('properties.create');
 
+    // AJAX endpoint для DataTables
+    Route::get('/properties/ajax-data', [PropertyController::class, 'ajaxData'])
+        ->name('properties.ajax-data');
+
     // Properties CRUD
     Route::resource('properties', PropertyController::class);
 

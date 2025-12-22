@@ -13,6 +13,7 @@ use App\Models\Reference\Currency;
 use App\Models\Reference\Developer;
 use App\Models\Reference\Dictionary;
 use App\Models\Reference\Source;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +28,98 @@ class PropertyController extends Controller
      */
     public function index(Request $request): View
     {
+        // Список годов для фильтра
+        $yearsBuilt = Dictionary::getYearsBuilt();
+
+        // Данные для фильтров (без самих properties - они загрузятся через AJAX)
+        return view('pages.properties.index', [
+            // Справочники
+            'dealTypes' => Dictionary::getDealTypes(),
+            'dealKinds' => Dictionary::getDealKinds(),
+            'propertyTypes' => Dictionary::getPropertyTypes(),
+            'conditions' => Dictionary::getConditions(),
+            'buildingTypes' => Dictionary::getBuildingTypes(),
+            'wallTypes' => Dictionary::getWallTypes(),
+            'roomCounts' => Dictionary::getRoomCounts(),
+            'heatingTypes' => Dictionary::getHeatingTypes(),
+            'bathroomCounts' => Dictionary::getBathroomCounts(),
+            'ceilingHeights' => Dictionary::getCeilingHeights(),
+            'features' => Dictionary::getFeatures(),
+
+            // Другие данные
+            'currencies' => Currency::active()->get(),
+            'developers' => Developer::active()->orderBy('name')->get(),
+            'yearsBuilt' => $yearsBuilt,
+
+            // Текущие значения фильтров
+            'filters' => $request->only([
+                'deal_type_id',
+                'price_from',
+                'price_to',
+                'currency_id',
+                'area_from',
+                'area_to',
+                'area_living_from',
+                'area_living_to',
+                'area_kitchen_from',
+                'area_kitchen_to',
+                'area_land_from',
+                'area_land_to',
+                'floor_from',
+                'floor_to',
+                'floors_total_from',
+                'floors_total_to',
+                'price_per_m2_from',
+                'price_per_m2_to',
+                'room_count_id',
+                'property_type_id',
+                'condition_id',
+                'building_type_id',
+                'year_built',
+                'wall_type_id',
+                'heating_type_id',
+                'bathroom_count_id',
+                'ceiling_height_id',
+                'features',
+                'developer_id',
+                'status',
+                'search_id',
+                'contact_search',
+                'created_from',
+                'created_to',
+            ]),
+        ]);
+    }
+
+    /**
+     * AJAX endpoint для DataTables Server-Side
+     */
+    public function ajaxData(Request $request): JsonResponse
+    {
+        // Параметры DataTables
+        $draw = $request->input('draw', 1);
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 20);
+        $searchValue = $request->input('search.value', '');
+        $orderColumnIndex = $request->input('order.0.column', 0);
+        $orderDirection = $request->input('order.0.dir', 'desc');
+
+        // Маппинг колонок для сортировки
+        $columns = [
+            0 => 'id',
+            1 => 'id', // location - сортировка по id
+            2 => 'deal_type_id',
+            3 => 'area_total',
+            4 => 'condition_id',
+            5 => 'floor',
+            6 => 'id', // photo
+            7 => 'price',
+            8 => 'contact_id',
+        ];
+
+        $orderColumn = $columns[$orderColumnIndex] ?? 'id';
+
+        // Базовый запрос
         $query = Property::with([
             'dealType',
             'currency',
@@ -36,8 +129,74 @@ class PropertyController extends Controller
             'propertyType',
             'condition',
             'buildingType',
+            'city',
+            'street',
+            'contact',
+            'photos',
         ]);
 
+        // ========== Применяем фильтры ==========
+        $this->applyFilters($query, $request);
+
+        // ========== Глобальный поиск DataTables ==========
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('id', 'like', "%{$searchValue}%")
+                    ->orWhereHas('translations', function ($tq) use ($searchValue) {
+                        $tq->where('title', 'like', "%{$searchValue}%");
+                    })
+                    ->orWhereHas('street', function ($sq) use ($searchValue) {
+                        $sq->where('name', 'like', "%{$searchValue}%");
+                    })
+                    ->orWhereHas('city', function ($cq) use ($searchValue) {
+                        $cq->where('name', 'like', "%{$searchValue}%");
+                    });
+            });
+        }
+
+        // Общее количество записей (без фильтров)
+        $recordsTotal = Property::count();
+
+        // Количество после фильтрации
+        $recordsFiltered = $query->count();
+
+        // Сортировка и пагинация
+        $properties = $query
+            ->orderBy($orderColumn, $orderDirection)
+            ->skip($start)
+            ->take($length)
+            ->get();
+
+        // Формируем данные для DataTables
+        $data = [];
+        foreach ($properties as $property) {
+            $data[] = [
+                'id' => $property->id,
+                'checkbox' => $property->id,
+                'location' => $this->formatLocation($property),
+                'deal_type' => $property->dealType?->name ?? '-',
+                'area' => $property->area_total ? $property->area_total . ' м²' : '-',
+                'condition' => $property->condition?->name ?? '-',
+                'floor' => $this->formatFloor($property),
+                'photo' => $this->formatPhoto($property),
+                'price' => $this->formatPrice($property),
+                'contact' => $this->formatContact($property),
+            ];
+        }
+
+        return response()->json([
+            'draw' => intval($draw),
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $data,
+        ]);
+    }
+
+    /**
+     * Применение фильтров к запросу
+     */
+    private function applyFilters($query, Request $request): void
+    {
         // ========== Фильтр: Тип сделки ==========
         if ($request->filled('deal_type_id')) {
             $query->where('deal_type_id', $request->deal_type_id);
@@ -260,73 +419,83 @@ class PropertyController extends Controller
         if ($request->filled('created_to')) {
             $query->whereDate('created_at', '<=', $request->created_to);
         }
+    }
 
-        // Сортировка и пагинация
-        $properties = $query->latest()->paginate(20)->withQueryString();
+    /**
+     * Форматирование локации для таблицы
+     */
+    private function formatLocation(Property $property): string
+    {
+        $parts = [];
 
-        // Список годов для фильтра
-        $yearsBuilt = Dictionary::getYearsBuilt();
+        if ($property->street) {
+            $parts[] = $property->street->name;
+        }
+        if ($property->building_number) {
+            $parts[] = $property->building_number;
+        }
+        if ($property->city) {
+            $parts[] = $property->city->name;
+        }
 
-        // Данные для фильтров
-        return view('pages.properties.index', [
-            'properties' => $properties,
+        return !empty($parts) ? implode(', ', $parts) : '-';
+    }
 
-            // Справочники
-            'dealTypes' => Dictionary::getDealTypes(),
-            'dealKinds' => Dictionary::getDealKinds(),
-            'propertyTypes' => Dictionary::getPropertyTypes(),
-            'conditions' => Dictionary::getConditions(),
-            'buildingTypes' => Dictionary::getBuildingTypes(),
-            'wallTypes' => Dictionary::getWallTypes(),
-            'roomCounts' => Dictionary::getRoomCounts(),
-            'heatingTypes' => Dictionary::getHeatingTypes(),
-            'bathroomCounts' => Dictionary::getBathroomCounts(),
-            'ceilingHeights' => Dictionary::getCeilingHeights(),
-            'features' => Dictionary::getFeatures(),
+    /**
+     * Форматирование этажа для таблицы
+     */
+    private function formatFloor(Property $property): string
+    {
+        if (!$property->floor) {
+            return '-';
+        }
 
-            // Другие данные
-            'currencies' => Currency::active()->get(),
-            'developers' => Developer::active()->orderBy('name')->get(),
-            'yearsBuilt' => $yearsBuilt,
+        $floor = $property->floor;
+        if ($property->floors_total) {
+            $floor .= '/' . $property->floors_total;
+        }
 
-            // Текущие значения фильтров
-            'filters' => $request->only([
-                'deal_type_id',
-                'price_from',
-                'price_to',
-                'currency_id',
-                'area_from',
-                'area_to',
-                'area_living_from',
-                'area_living_to',
-                'area_kitchen_from',
-                'area_kitchen_to',
-                'area_land_from',
-                'area_land_to',
-                'floor_from',
-                'floor_to',
-                'floors_total_from',
-                'floors_total_to',
-                'price_per_m2_from',
-                'price_per_m2_to',
-                'room_count_id',
-                'property_type_id',
-                'condition_id',
-                'building_type_id',
-                'year_built',
-                'wall_type_id',
-                'heating_type_id',
-                'bathroom_count_id',
-                'ceiling_height_id',
-                'features',
-                'developer_id',
-                'status',
-                'search_id',
-                'contact_search',
-                'created_from',
-                'created_to',
-            ]),
-        ]);
+        return $floor;
+    }
+
+    /**
+     * Форматирование фото для таблицы
+     */
+    private function formatPhoto(Property $property): string
+    {
+        $mainPhoto = $property->photos->firstWhere('is_main', true)
+            ?? $property->photos->first();
+
+        if ($mainPhoto) {
+            return '<img src="' . Storage::url($mainPhoto->path) . '" alt="" class="table-photo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">';
+        }
+
+        return '-';
+    }
+
+    /**
+     * Форматирование цены для таблицы
+     */
+    private function formatPrice(Property $property): string
+    {
+        if (!$property->price) {
+            return '-';
+        }
+
+        $symbol = $property->currency?->symbol ?? '$';
+        return number_format($property->price, 0, '.', ' ') . ' ' . $symbol;
+    }
+
+    /**
+     * Форматирование контакта для таблицы
+     */
+    private function formatContact(Property $property): string
+    {
+        if (!$property->contact) {
+            return '-';
+        }
+
+        return $property->contact->name ?? '-';
     }
 
     /**

@@ -33,7 +33,7 @@
 
     <!-- Фильтры -->
     <!-- початок filter	-->
-        @include('pages/properties/particles/index/_filter')
+    @include('pages/properties/particles/index/_filter')
     <!-- кінець filter	-->
 
     <!-- Таблица объектов -->
@@ -41,12 +41,7 @@
         @include('pages/properties/particles/index/_table')
     </div>
 
-    <!-- Пагинация -->
-    @if($properties->hasPages())
-        <div class="d-flex justify-content-center mt-4">
-            {{ $properties->links() }}
-        </div>
-    @endif
+    {{-- Пагинация теперь рендерится через DataTables --}}
 @endsection
 
 
