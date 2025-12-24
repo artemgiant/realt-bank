@@ -46,7 +46,14 @@
 
 
 @push('scripts')
+    {{-- Модули таблицы (порядок важен!) --}}
+    <script src="{{ asset('js/pages/properties/index/table-renderers.js') }}"></script>
+    <script src="{{ asset('js/pages/properties/index/table-config.js') }}"></script>
+    <script src="{{ asset('js/pages/properties/index/table-filters.js') }}"></script>
+    <script src="{{ asset('js/pages/properties/index/table-tags.js') }}"></script>
     <script src="{{ asset('js/pages/properties/index/page-home-table.js') }}"></script>
+
+    {{-- Остальные скрипты --}}
     <script src="{{ asset('js/pages/filter1.min.js') }}"></script>
     <script src="{{ asset('js/pages/full-filter.min.js') }}"></script>
     <script src="{{ asset('js/pages/my-dropdown.min.js') }}"></script>

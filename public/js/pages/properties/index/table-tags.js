@@ -1,0 +1,188 @@
+/**
+ * Работа с тегами фильтров
+ * Объект доступен через window.PropertyTags
+ */
+window.PropertyTags = {
+
+    // Селектор контейнера тегов
+    containerSelector: '.filter-tags',
+
+    // SVG иконка закрытия для тегов
+    closeIconSvg: '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+        '<path d="M0.878207 9.87891C0.653517 9.87891 0.428717 9.79318 0.257263 9.62173C-0.0857544 9.27871 -0.0857544 8.72285 0.257263 8.37984L8.37992 0.257181C8.72294 -0.085727 9.27879 -0.085727 9.62181 0.257181C9.96472 0.600089 9.96472 1.15605 9.62181 1.49896L1.49915 9.62162C1.3277 9.79318 1.1029 9.87891 0.878207 9.87891Z" fill="#AAAAAA"></path>' +
+        '<path d="M9.00086 9.8788C8.77606 9.8788 8.55137 9.79307 8.37992 9.62162L0.257263 1.49896C-0.0857544 1.15605 -0.0857544 0.600089 0.257263 0.257181C0.600171 -0.085727 1.15613 -0.085727 1.49904 0.257181L9.6217 8.37984C9.96461 8.72285 9.96461 9.27871 9.6217 9.62173C9.45035 9.79307 9.22566 9.8788 9.00086 9.8788Z" fill="#AAAAAA"></path>' +
+        '</svg>',
+
+    // Конфигурация чекбокс-фильтров
+    checkboxFilters: [
+        { name: 'property_type_id[]', label: 'Тип недвижимости' },
+        { name: 'condition_id[]', label: 'Состояние' },
+        { name: 'building_type_id[]', label: 'Тип здания' },
+        { name: 'year_built[]', label: 'Год постройки' },
+        { name: 'wall_type_id[]', label: 'Тип стен' },
+        { name: 'room_count_id[]', label: 'Кол-во комнат' },
+        { name: 'heating_type_id[]', label: 'Отопление' },
+        { name: 'bathroom_count_id[]', label: 'Ванные комнаты' },
+        { name: 'ceiling_height_id[]', label: 'Высота потолков' },
+        { name: 'features[]', label: 'Дополнительно' },
+        { name: 'developer_id[]', label: 'Девелопер' }
+    ],
+
+    // Конфигурация range-фильтров (от/до)
+    rangeFilters: [
+        { nameFrom: 'price_from', nameTo: 'price_to', label: 'Цена', idFrom: 'price_from', idTo: 'price_to' },
+        { nameFrom: 'area_from', nameTo: 'area_to', label: 'Площадь общая' },
+        { nameFrom: 'area_living_from', nameTo: 'area_living_to', label: 'Площадь жилая' },
+        { nameFrom: 'area_kitchen_from', nameTo: 'area_kitchen_to', label: 'Площадь кухни' },
+        { nameFrom: 'area_land_from', nameTo: 'area_land_to', label: 'Площадь участка' },
+        { nameFrom: 'floor_from', nameTo: 'floor_to', label: 'Этаж' },
+        { nameFrom: 'floors_total_from', nameTo: 'floors_total_to', label: 'Этажность' },
+        { nameFrom: 'price_per_m2_from', nameTo: 'price_per_m2_to', label: 'Цена за м²' }
+    ],
+
+    // Конфигурация select-фильтров
+    selectFilters: [
+        { id: 'deal_type_id', label: 'Тип сделки' },
+        { id: 'status', label: 'Объекты' }
+    ],
+
+    // Конфигурация текстовых фильтров поиска
+    searchFilters: [
+        { name: 'search_id', label: 'ID' },
+        { name: 'contact_search', label: 'Контакт' }
+    ],
+
+    // Создание HTML тега
+    create: function(text, filterType, filterValue) {
+        return '<div class="badge rounded-pill" data-filter-type="' + filterType + '" data-filter-value="' + filterValue + '">' +
+            text +
+            '<button type="button" aria-label="Close">' + this.closeIconSvg + '</button>' +
+            '</div>';
+    },
+
+    // Обновление тегов для всех фильтров
+    update: function() {
+        var self = this;
+        var $container = $(this.containerSelector);
+        $container.empty();
+
+        // ========== Чекбокс-фильтры ==========
+        this.checkboxFilters.forEach(function(filter) {
+            $('[name="' + filter.name + '"]:checked').each(function() {
+                var $checkbox = $(this);
+                var value = $checkbox.val();
+                var text = $checkbox.closest('label').find('.my-custom-text').text();
+                $container.append(self.create(text, 'checkbox', filter.name + '|' + value));
+            });
+        });
+
+        // ========== Range-фильтры (от/до) ==========
+        this.rangeFilters.forEach(function(filter) {
+            var $inputFrom = filter.idFrom
+                ? $('#' + filter.idFrom)
+                : $('[name="' + filter.nameFrom + '"]');
+            var $inputTo = filter.idTo
+                ? $('#' + filter.idTo)
+                : $('[name="' + filter.nameTo + '"]');
+
+            var valueFrom = $inputFrom.val();
+            var valueTo = $inputTo.val();
+
+            if (valueFrom || valueTo) {
+                var text = filter.label + ': ';
+                if (valueFrom && valueTo) {
+                    text += 'от ' + valueFrom + ' до ' + valueTo;
+                } else if (valueFrom) {
+                    text += 'от ' + valueFrom;
+                } else {
+                    text += 'до ' + valueTo;
+                }
+                $container.append(self.create(text, 'range', filter.nameFrom + '|' + filter.nameTo));
+            }
+        });
+
+        // ========== Select-фильтры ==========
+        this.selectFilters.forEach(function(filter) {
+            var $select = $('#' + filter.id);
+            var value = $select.val();
+            if (value) {
+                var text = $select.find('option:selected').text();
+                $container.append(self.create(filter.label + ': ' + text, 'select', filter.id));
+            }
+        });
+
+        // ========== Текстовые фильтры поиска ==========
+        this.searchFilters.forEach(function(filter) {
+            var $input = $('[name="' + filter.name + '"]');
+            var value = $input.val();
+            if (value) {
+                $container.append(self.create(filter.label + ': ' + value, 'search', filter.name));
+            }
+        });
+
+        // ========== Фильтр дат ==========
+        var dateFrom = $('#created_from').val();
+        var dateTo = $('#created_to').val();
+        if (dateFrom || dateTo) {
+            var text = 'Дата: ';
+            if (dateFrom && dateTo) {
+                text += dateFrom + ' - ' + dateTo;
+            } else if (dateFrom) {
+                text += 'с ' + dateFrom;
+            } else {
+                text += 'до ' + dateTo;
+            }
+            $container.append(self.create(text, 'date', 'created_from|created_to'));
+        }
+    },
+
+    // Удаление тега и очистка соответствующего фильтра
+    remove: function(filterType, filterValue) {
+        switch (filterType) {
+            case 'checkbox':
+                // Формат: "name|value"
+                var checkboxParts = filterValue.split('|');
+                var checkboxName = checkboxParts[0];
+                var checkboxValue = checkboxParts[1];
+                $('[name="' + checkboxName + '"][value="' + checkboxValue + '"]').prop('checked', false);
+                break;
+
+            case 'range':
+                // Формат: "nameFrom|nameTo"
+                var rangeParts = filterValue.split('|');
+                var nameFrom = rangeParts[0];
+                var nameTo = rangeParts[1];
+                // Проверяем есть ли id или используем name
+                var $fromById = $('#' + nameFrom);
+                var $toById = $('#' + nameTo);
+                if ($fromById.length) {
+                    $fromById.val('');
+                } else {
+                    $('[name="' + nameFrom + '"]').val('');
+                }
+                if ($toById.length) {
+                    $toById.val('');
+                } else {
+                    $('[name="' + nameTo + '"]').val('');
+                }
+                break;
+
+            case 'select':
+                // Формат: "selectId"
+                $('#' + filterValue).val('').trigger('change');
+                break;
+
+            case 'search':
+                // Формат: "inputName"
+                $('[name="' + filterValue + '"]').val('');
+                break;
+
+            case 'date':
+                // Формат: "created_from|created_to"
+                $('#created_from').val('');
+                $('#created_to').val('');
+                $('#datapiker1').val('');
+                break;
+        }
+    }
+};
