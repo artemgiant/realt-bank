@@ -289,8 +289,14 @@ async function saveContact(form) {
 	document.querySelectorAll('#add-contact-modal .tel-contact').forEach((input, index) => {
 		const phone = input.value.trim();
 		if (phone) {
+			// Добавляем +380 если номер не начинается с +
+			let fullPhone = phone;
+			if (!phone.startsWith('+')) {
+				fullPhone = '+380' + phone.replace(/^0/, ''); // убираем ведущий 0 если есть
+				console.log(fullPhone);
+			}
 			phones.push({
-				phone: phone,
+				phone: fullPhone,
 				is_primary: index === 0
 			});
 		}
