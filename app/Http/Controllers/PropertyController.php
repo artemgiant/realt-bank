@@ -405,10 +405,14 @@ class PropertyController extends Controller
         // ========== Фильтр: Поиск по контакту ==========
         if ($request->filled('contact_search')) {
             $search = $request->contact_search;
-            $query->whereHas('contact', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
+            $query->whereHas('contacts', function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('inn', 'like', "%{$search}%")
+                    ->orWhereHas('phones', function ($pq) use ($search) {
+                        $pq->where('phone', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -588,6 +592,10 @@ class PropertyController extends Controller
             'description_ua' => 'nullable|string|max:10000',
             'description_ru' => 'nullable|string|max:10000',
             'description_en' => 'nullable|string|max:10000',
+
+            // Контакты
+            'contact_ids' => 'nullable|array',
+            'contact_ids.*' => 'exists:contacts,id',
         ], [
             // Сообщения об ошибках на русском
             'deal_type_id.required' => 'Выберите тип сделки',
@@ -600,6 +608,8 @@ class PropertyController extends Controller
             'year_built.exists' => 'Выбранный год постройки не существует',
             'floors_total.integer' => 'Этажность должна быть целым числом',
             'youtube_url.url' => 'Введите корректную ссылку на YouTube',
+            'contact_ids.array' => 'Неверный формат контактов',
+            'contact_ids.*.exists' => 'Выбранный контакт не существует',
         ]);
 
         try {
@@ -647,6 +657,11 @@ class PropertyController extends Controller
 
             // ========== Сохраняем переводы ==========
             $this->saveTranslations($property, $validated);
+
+            // ========== Привязываем контакты ==========
+            if (!empty($validated['contact_ids'])) {
+                $property->contacts()->attach($validated['contact_ids']);
+            }
 
             DB::commit();
 
@@ -749,12 +764,13 @@ class PropertyController extends Controller
                 'photos',
                 'documents',
                 'features',
+                'contacts.phones',
             ]),
 
             'currencies' => Currency::active()->get(),
             'sources' => Source::active()->orderBy('name')->get(),
             'complexes' => Complex::active()->orderBy('name')->get(),
-            'contacts' => Contact::orderBy('name')->limit(100)->get(),
+            'contacts' => Contact::with('phones')->orderBy('last_name')->orderBy('first_name')->limit(100)->get(),
             'countries' => Country::active()->orderBy('name')->get(),
             'dealTypes' => Dictionary::getDealTypes(),
             'dealKinds' => Dictionary::getDealKinds(),
@@ -804,9 +820,15 @@ class PropertyController extends Controller
             'description_ua' => 'nullable|string|max:10000',
             'description_ru' => 'nullable|string|max:10000',
             'description_en' => 'nullable|string|max:10000',
+
+            // Контакты
+            'contact_ids' => 'nullable|array',
+            'contact_ids.*' => 'exists:contacts,id',
         ], [
             'deal_type_id.required' => 'Выберите тип сделки',
             'currency_id.required' => 'Выберите валюту',
+            'contact_ids.array' => 'Неверный формат контактов',
+            'contact_ids.*.exists' => 'Выбранный контакт не существует',
         ]);
 
         try {
@@ -839,6 +861,14 @@ class PropertyController extends Controller
             ]);
 
             $this->saveTranslations($property, $validated);
+
+            // ========== Синхронизируем контакты ==========
+            if (isset($validated['contact_ids'])) {
+                $property->contacts()->sync($validated['contact_ids']);
+            } else {
+                // Если контакты не переданы - отвязываем все
+                $property->contacts()->detach();
+            }
 
             DB::commit();
 
