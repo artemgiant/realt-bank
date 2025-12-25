@@ -486,15 +486,26 @@ class PropertyController extends Controller
         return number_format($property->price, 0, '.', ' ') . ' ' . $symbol;
     }
 
-    private function formatContact(Property $property): string
+    /**
+     * Форматирование контакта для таблицы
+     * Возвращает массив данных для рендеринга на клиенте
+     */
+    private function formatContact(Property $property): array
     {
         $contact = $property->contacts->first();
 
         if (!$contact) {
-            return '-';
+            return [
+                'has_contact' => false,
+            ];
         }
 
-        return $contact->full_name;
+        return [
+            'has_contact' => true,
+            'full_name' => $contact->full_name,
+            'contact_type_name' => $contact->contact_type_name,
+            'phone' => $contact->primary_phone,
+        ];
     }
 
     /**

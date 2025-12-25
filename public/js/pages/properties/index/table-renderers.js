@@ -64,8 +64,22 @@ window.PropertyRenderers = {
 
     // Контакт
     contact: function(data, type, row) {
+        // Проверяем есть ли контакт
+        if (!data || !data.has_contact) {
+            return '<div class="tbody-wrapper contact"><span class="text-muted">-</span></div>';
+        }
+
+        // Формируем ссылку на телефон
+        var phoneHtml = '';
+        if (data.phone) {
+            var phoneClean = data.phone.replace(/[^0-9+]/g, '');
+            phoneHtml = '<a href="tel:' + phoneClean + '">' + data.phone + '</a>';
+        }
+
         return '<div class="tbody-wrapper contact">' +
-            (data !== '-' ? '<p>' + data + '</p>' : '<span class="text-muted">-</span>') +
+            '<p class="link-name">' + (data.full_name || '-') + '</p>' +
+            '<p data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="' + (data.contact_type_name || '') + '">' + (data.contact_type_name || '-') + '</p>' +
+            phoneHtml +
             '</div>';
     }
 };
