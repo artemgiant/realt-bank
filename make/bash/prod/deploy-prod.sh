@@ -31,7 +31,7 @@ composer install --optimize-autoloader
 php artisan optimize:clear
 
 
-sudo supervisorctl reread
-sudo supervisorctl update
-sudo supervisorctl restart horizon
-sudo supervisorctl status
+#sudo supervisorctl reread
+#sudo supervisorctl update
+#sudo supervisorctl restart horizon
+#sudo supervisorctl status

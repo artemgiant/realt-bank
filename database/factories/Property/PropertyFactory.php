@@ -27,6 +27,11 @@ class PropertyFactory extends Factory
     protected $model = Property::class;
 
     /**
+     * Типы недвижимости для квартир (80% объектов)
+     */
+    private array $apartmentTypes = ['Квартира', 'Пентхаус', 'Квартира на земле', 'Студия'];
+
+    /**
      * Определение состояния модели по умолчанию
      */
     public function definition(): array
@@ -40,10 +45,28 @@ class PropertyFactory extends Factory
         $district = $city ? District::where('city_id', $city->id)->inRandomOrder()->first() : null;
         $street = $city ? Street::where('city_id', $city->id)->inRandomOrder()->first() : null;
 
-        // Справочники
-        $dealType = Dictionary::where('type', 'deal_type')->inRandomOrder()->first();
+        // 80% - Продажа квартир, 20% - случайный тип
+        $isApartmentSale = $this->faker->boolean(80);
+
+        if ($isApartmentSale) {
+            // Продажа квартир
+            $dealType = Dictionary::where('type', 'deal_type')
+                ->where('name', 'like', '%Продажа квартир%')
+                ->first();
+
+            // Тип недвижимости: Квартира, Пентхаус, Квартира на земле, Студия
+            $propertyType = Dictionary::where('type', 'property_type')
+                ->whereIn('name', $this->apartmentTypes)
+                ->inRandomOrder()
+                ->first();
+        } else {
+            // Случайный тип сделки и недвижимости
+            $dealType = Dictionary::where('type', 'deal_type')->inRandomOrder()->first();
+            $propertyType = Dictionary::where('type', 'property_type')->inRandomOrder()->first();
+        }
+
+        // Остальные справочники
         $dealKind = Dictionary::where('type', 'deal_kind')->inRandomOrder()->first();
-        $propertyType = Dictionary::where('type', 'property_type')->inRandomOrder()->first();
         $buildingType = Dictionary::where('type', 'building_type')->inRandomOrder()->first();
         $condition = Dictionary::where('type', 'condition')->inRandomOrder()->first();
         $wallType = Dictionary::where('type', 'wall_type')->inRandomOrder()->first();
@@ -145,6 +168,26 @@ class PropertyFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => 'archived',
+        ]);
+    }
+
+    /**
+     * Объект продажа квартир (100%)
+     */
+    public function apartmentSale(): static
+    {
+        $dealType = Dictionary::where('type', 'deal_type')
+            ->where('name', 'like', '%Продажа квартир%')
+            ->first();
+
+        $propertyType = Dictionary::where('type', 'property_type')
+            ->whereIn('name', $this->apartmentTypes)
+            ->inRandomOrder()
+            ->first();
+
+        return $this->state(fn (array $attributes) => [
+            'deal_type_id' => $dealType?->id ?? $attributes['deal_type_id'],
+            'property_type_id' => $propertyType?->id ?? $attributes['property_type_id'],
         ]);
     }
 

@@ -21,8 +21,8 @@ NC := \033[0m
 
 # Dev сервер
 SERVER_USER_DEV := root
-SERVER_HOST_DEV :=
-SERVER_PATH_DEV :=
+SERVER_HOST_DEV :=172.104.159.238
+SERVER_PATH_DEV :=/var/www/realt-bank
 SSH_KEY_DEV := ~/.ssh/id_rsa
 DEPLOY_SCRIPT_DEV := make/bash/dev/deploy-dev.sh
 CUSTOM_SCRIPT_DEV := make/bash/dev/castom-dev.sh
