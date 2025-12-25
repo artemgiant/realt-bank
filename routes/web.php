@@ -41,6 +41,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/contacts/ajax-search', [App\Http\Controllers\ContactController::class, 'ajaxSearch'])
         ->name('contacts.ajax-search');
 
+// Поиск контакта по номеру телефона
+    Route::get('/contacts/ajax-search-by-phone', [App\Http\Controllers\ContactController::class, 'ajaxSearchByPhone'])
+        ->name('contacts.ajax-search-by-phone');
+
 // Создание контакта через AJAX (из модального окна)
     Route::post('/contacts/ajax-store', [App\Http\Controllers\ContactController::class, 'ajaxStore'])
         ->name('contacts.ajax-store');

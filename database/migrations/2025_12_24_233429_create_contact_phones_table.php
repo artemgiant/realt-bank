@@ -8,37 +8,24 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * Pivot таблица для связи многие-ко-многим между Property и Contact
+     * Таблица телефонов контактов (у одного контакта может быть несколько номеров)
      */
     public function up(): void
     {
-        Schema::create('property_contact', function (Blueprint $table) {
+        Schema::create('contact_phones', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')
-                ->constrained('properties')
-                ->cascadeOnDelete()
-                ->comment('ID объекта недвижимости');
             $table->foreignId('contact_id')
                 ->constrained('contacts')
                 ->cascadeOnDelete()
                 ->comment('ID контакта');
+            $table->string('phone', 50)->comment('Номер телефона');
+            $table->boolean('is_primary')->default(false)->comment('Основной номер');
             $table->timestamps();
 
-            // Уникальный индекс для предотвращения дублей
-            $table->unique(['property_id', 'contact_id']);
-
-            // Индексы для быстрого поиска
-            $table->index('property_id');
+            // Индексы
             $table->index('contact_id');
+            $table->index('phone');
         });
-
-        // Удаляем старую колонку contact_id из properties (если существует)
-        if (Schema::hasColumn('properties', 'contact_id')) {
-            Schema::table('properties', function (Blueprint $table) {
-                $table->dropForeign(['contact_id']);
-                $table->dropColumn('contact_id');
-            });
-        }
     }
 
     /**
@@ -46,15 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('property_contact');
-
-        // Восстанавливаем колонку contact_id в properties
-        Schema::table('properties', function (Blueprint $table) {
-            $table->foreignId('contact_id')
-                ->nullable()
-                ->after('user_id')
-                ->constrained('contacts')
-                ->nullOnDelete();
-        });
+        Schema::dropIfExists('contact_phones');
     }
 };

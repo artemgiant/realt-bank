@@ -508,39 +508,6 @@
     <script src="{{ asset('js/pages/my-dropdown.min.js') }}"></script>
     <script src="{{ asset('js/pages/modal-geo.min.js') }}"></script>
     <script src="{{ asset('js/pages/page-create.min.js') }}" type="module"></script>
+    <script src="{{ asset('js/pages/add-contact-modal.js') }}" type="module"></script>
 
-    {{-- Координаты для гео-модалки --}}
-    <script>
-        // Сохраняем координаты в hidden fields
-        document.addEventListener('DOMContentLoaded', function() {
-            const saveGeoBtn = document.getElementById('save-geo-btn');
-            if (saveGeoBtn) {
-                saveGeoBtn.addEventListener('click', function() {
-                    const lat = document.getElementById('latitude');
-                    const lng = document.getElementById('longitude');
-
-                    // Создаем hidden inputs если их нет
-                    let latInput = document.querySelector('input[name="latitude"]');
-                    let lngInput = document.querySelector('input[name="longitude"]');
-
-                    if (!latInput) {
-                        latInput = document.createElement('input');
-                        latInput.type = 'hidden';
-                        latInput.name = 'latitude';
-                        document.getElementById('property-form').appendChild(latInput);
-                    }
-
-                    if (!lngInput) {
-                        lngInput = document.createElement('input');
-                        lngInput.type = 'hidden';
-                        lngInput.name = 'longitude';
-                        document.getElementById('property-form').appendChild(lngInput);
-                    }
-
-                    latInput.value = lat.value;
-                    lngInput.value = lng.value;
-                });
-            }
-        });
-    </script>
 @endpush

@@ -54,6 +54,71 @@ class ContactController extends Controller
     }
 
     /**
+     * Поиск контакта по номеру телефона
+     * GET /contacts/ajax-search-by-phone?phone=+380...
+     */
+    public function ajaxSearchByPhone(Request $request): JsonResponse
+    {
+        $phone = $request->input('phone', '');
+
+        // Очищаем номер от лишних символов для поиска
+        $phoneClean = preg_replace('/[^0-9+]/', '', $phone);
+
+        if (strlen($phoneClean) < 6) {
+            return response()->json([
+                'success' => false,
+                'found' => false,
+                'message' => 'Номер телефона слишком короткий',
+            ]);
+        }
+
+        // Ищем контакт по номеру телефона
+        $contactPhone = ContactPhone::where('phone', 'like', '%' . $phoneClean . '%')
+            ->orWhere('phone', 'like', '%' . $phone . '%')
+            ->first();
+
+        if (!$contactPhone) {
+            return response()->json([
+                'success' => true,
+                'found' => false,
+                'message' => 'Контакт не найден',
+            ]);
+        }
+
+        $contact = $contactPhone->contact;
+        $contact->load('phones');
+
+        return response()->json([
+            'success' => true,
+            'found' => true,
+            'message' => 'Контакт найден',
+            'contact' => [
+                'id' => $contact->id,
+                'first_name' => $contact->first_name,
+                'last_name' => $contact->last_name,
+                'middle_name' => $contact->middle_name,
+                'full_name' => $contact->full_name,
+                'short_name' => $contact->short_name,
+                'email' => $contact->email,
+                'contact_type' => $contact->contact_type,
+                'contact_type_name' => $contact->contact_type_name,
+                'tags' => $contact->tags,
+                'telegram' => $contact->telegram,
+                'viber' => $contact->viber,
+                'whatsapp' => $contact->whatsapp,
+                'passport' => $contact->passport,
+                'inn' => $contact->inn,
+                'comment' => $contact->comment,
+                'photo' => $contact->photo,
+                'photo_url' => $contact->photo ? Storage::url($contact->photo) : null,
+                'phones' => $contact->phones,
+                'primary_phone' => $contact->primary_phone,
+                'messengers' => $contact->messengers,
+            ],
+        ]);
+    }
+
+    /**
      * Создание контакта через AJAX (модальное окно)
      * POST /contacts/ajax-store
      */
