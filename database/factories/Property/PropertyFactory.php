@@ -14,6 +14,7 @@ use App\Models\Reference\Currency;
 use App\Models\Reference\Dictionary;
 use App\Models\Reference\Source;
 use App\Models\User;
+use Database\Factories\Contact\ContactFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -58,7 +59,6 @@ class PropertyFactory extends Factory
         return [
             // Связи
             'user_id' => $user?->id ?? 1,
-            'contact_id' => null,
             'source_id' => Source::where('is_active', true)->inRandomOrder()->first()?->id,
             'currency_id' => $currency?->id,
 
@@ -149,16 +149,6 @@ class PropertyFactory extends Factory
     }
 
     /**
-     * Объект с контактом
-     */
-    public function withContact(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'contact_id' => Contact::inRandomOrder()->first()?->id,
-        ]);
-    }
-
-    /**
      * Объект продажа
      */
     public function forSale(): static
@@ -215,30 +205,31 @@ class PropertyFactory extends Factory
     }
 
     /**
-     * Создание объекта с фото
+     * Создание объекта с контактами (создает новые контакты)
      */
-    public function withPhotos(int $count = 3): static
+    public function withContacts(int $count = 1): static
     {
         return $this->afterCreating(function (Property $property) use ($count) {
-            PropertyPhotoFactory::new()
+            $contacts = ContactFactory::new()
                 ->count($count)
-                ->sequence(fn ($sequence) => [
-                    'sort_order' => $sequence->index + 1,
-                    'is_main' => $sequence->index === 0,
-                ])
-                ->create(['property_id' => $property->id]);
+                ->withPhones(2)
+                ->create();
+
+            $property->contacts()->attach($contacts->pluck('id'));
         });
     }
 
     /**
-     * Создание объекта с документами
+     * Привязать существующие контакты к объекту
      */
-    public function withDocuments(int $count = 2): static
+    public function withExistingContacts(int $count = 1): static
     {
         return $this->afterCreating(function (Property $property) use ($count) {
-            PropertyDocumentFactory::new()
-                ->count($count)
-                ->create(['property_id' => $property->id]);
+            $contacts = Contact::inRandomOrder()->limit($count)->get();
+
+            if ($contacts->isNotEmpty()) {
+                $property->contacts()->attach($contacts->pluck('id'));
+            }
         });
     }
 
@@ -248,9 +239,7 @@ class PropertyFactory extends Factory
     public function complete(): static
     {
         return $this
-            ->withContact()
             ->withTranslations()
-            ->withPhotos(5)
-            ->withDocuments(2);
+            ->withContacts(1);
     }
 }
