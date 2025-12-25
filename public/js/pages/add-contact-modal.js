@@ -474,7 +474,7 @@ function removeContactFromPage(contactId) {
 	const card = container?.querySelector(`[data-contact-id="${contactId}"]`);
 	if (card) card.remove();
 
-	// Если контактов больше нет - показываем блок "добавить"
+	// Если контактов больше нет - показываем блок "добавить" и скрываем кнопку
 	const remainingCards = container?.querySelectorAll('.contact-card');
 	if (!remainingCards || remainingCards.length === 0) {
 		if (addBlock) addBlock.classList.remove('d-none');

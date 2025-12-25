@@ -12,7 +12,7 @@
                 <div class="info-title-wrapper">
                     <h2 class="info-title">Контакт</h2>
                     <button class="btn btn-add-client" type="button" data-bs-toggle="modal" data-bs-target="#add-contact-modal">
-                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M4.47186 9.47374C4.35814 9.36002 4.28775 9.20285 4.28775 9.0293C4.28775 8.68208 4.56908 8.40075 4.9163 8.40075L13.1385 8.40075C13.4856 8.4008 13.767 8.68213 13.767 9.0293C13.767 9.3764 13.4856 9.65779 13.1385 9.65779H4.91636C4.74275 9.65785 4.58558 9.58746 4.47186 9.47374Z" fill="#AAAAAA"></path>
                             <path d="M8.583 13.5848C8.46922 13.471 8.39889 13.3139 8.39889 13.1403L8.39889 4.91816C8.39883 4.571 8.68022 4.28961 9.02739 4.28967C9.37449 4.28967 9.65588 4.57106 9.65588 4.91816L9.65588 13.1403C9.65583 13.4875 9.37449 13.7688 9.02733 13.7689C8.85389 13.7689 8.69678 13.6985 8.583 13.5848Z" fill="#AAAAAA"></path>
                         </svg>
@@ -32,15 +32,15 @@
         </ul>
 
         {{-- Кнопка добавления еще одного контакта (показывается когда есть хотя бы один) --}}
-        <div id="add-more-contact-btn" class="mt-2 d-none">
-            <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#add-contact-modal">
-                <svg width="14" height="14" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="me-1">
-                    <path d="M4.47186 9.47374C4.35814 9.36002 4.28775 9.20285 4.28775 9.0293C4.28775 8.68208 4.56908 8.40075 4.9163 8.40075L13.1385 8.40075C13.4856 8.4008 13.767 8.68213 13.767 9.0293C13.767 9.3764 13.4856 9.65779 13.1385 9.65779H4.91636C4.74275 9.65785 4.58558 9.58746 4.47186 9.47374Z" fill="currentColor"></path>
-                    <path d="M8.583 13.5848C8.46922 13.471 8.39889 13.3139 8.39889 13.1403L8.39889 4.91816C8.39883 4.571 8.68022 4.28961 9.02739 4.28967C9.37449 4.28967 9.65588 4.57106 9.65588 4.91816L9.65588 13.1403C9.65583 13.4875 9.37449 13.7688 9.02733 13.7689C8.85389 13.7689 8.69678 13.6985 8.583 13.5848Z" fill="currentColor"></path>
+        <div id="add-more-contact-btn" class="d-none">
+            <button class="btn btn-add-client" type="button" data-bs-toggle="modal" data-bs-target="#add-contact-modal">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.47186 9.47374C4.35814 9.36002 4.28775 9.20285 4.28775 9.0293C4.28775 8.68208 4.56908 8.40075 4.9163 8.40075L13.1385 8.40075C13.4856 8.4008 13.767 8.68213 13.767 9.0293C13.767 9.3764 13.4856 9.65779 13.1385 9.65779H4.91636C4.74275 9.65785 4.58558 9.58746 4.47186 9.47374Z" fill="#AAAAAA"></path>
+                    <path d="M8.583 13.5848C8.46922 13.471 8.39889 13.3139 8.39889 13.1403L8.39889 4.91816C8.39883 4.571 8.68022 4.28961 9.02739 4.28967C9.37449 4.28967 9.65588 4.57106 9.65588 4.91816L9.65588 13.1403C9.65583 13.4875 9.37449 13.7688 9.02733 13.7689C8.85389 13.7689 8.69678 13.6985 8.583 13.5848Z" fill="#AAAAAA"></path>
                 </svg>
-                Добавить контакт
             </button>
         </div>
+
 
         <div class="left-items-wrapper">
             <div class="item">
@@ -58,6 +58,51 @@
             </div>
         </div>
     </div>
+
+
+    <div class="right">
+        <ul class="block-info">
+            <li class="block-info-item">
+                <div class="info-title-wrapper">
+                    <h2 class="info-title">Агент</h2>
+                    <button class="btn  btn-edit-client" type="button" data-bs-toggle="modal" data-bs-target="#transfer-to-agent">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#EF9629" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"></path>
+                            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="info-avatar">
+                    <picture>
+                        <source srcset="{{ asset('img/icon/default-avatar-table.svg') }}" type="image/webp">
+                        <img src="{{ asset('img/icon/default-avatar-table.svg') }}" alt="Avatar">
+                    </picture>
+                </div>
+                <div class="info-contacts">
+                    <p class="info-contacts-name">Длинноеимя Доброльский</p>
+                    <p class="info-description">Real Estate Name</p>
+                    <a href="tel:+381231257869" class="info-contacts-tel">+38 (123) 125 - 78 - 69</a>
+                </div>
+                <div class="info-links">
+                    <a href="https://wa.me/380XXXXXXXXX">
+                        <picture><source srcset="./img/icon/icon-table/cnapchat.svg" type="image/webp"><img src="./img/icon/icon-table/cnapchat.svg" alt=""></picture>
+                    </a>
+                    <a href="viber://chat?number=%2B380XXXXXXXXX">
+                        <picture><source srcset="./img/icon/icon-table/viber.svg" type="image/webp"><img src="./img/icon/icon-table/viber.svg" alt=""></picture>
+                    </a>
+                    <a href="https://t.me/+380XXXXXXXXX">
+                        <picture><source srcset="./img/icon/icon-table/tg.svg" type="image/webp"><img src="./img/icon/icon-table/tg.svg" alt=""></picture>
+                    </a>
+                </div>
+            </li>
+        </ul>
+        <div class="item">
+            <label for="personal-notes">Заметки</label>
+            <div class="item-inputText-wrapper">
+                <textarea class="item-textareaText " id="personal-notes" autocomplete="off" placeholder="Введите текст"></textarea>
+            </div>
+        </div>
+    </div>
 </div>
 
 {{-- Шаблон для карточки контакта (используется JS) --}}
@@ -72,7 +117,7 @@
                     </svg>
                 </button>
                 <button class="btn btn-remove-client" type="button" data-remove-contact>
-                    <svg width="14" height="14" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M0.878207 9.87891C0.653517 9.87891 0.428717 9.79318 0.257263 9.62173C-0.0857544 9.27871 -0.0857544 8.72285 0.257263 8.37984L8.37992 0.257181C8.72294 -0.085727 9.27879 -0.085727 9.62181 0.257181C9.96472 0.600089 9.96472 1.15605 9.62181 1.49896L1.49915 9.62162C1.3277 9.79318 1.1029 9.87891 0.878207 9.87891Z" fill="#AAAAAA"/>
                         <path d="M9.00086 9.8788C8.77606 9.8788 8.55137 9.79307 8.37992 9.62162L0.257263 1.49896C-0.0857544 1.15605 -0.0857544 0.600089 0.257263 0.257181C0.600171 -0.085727 1.15613 -0.085727 1.49904 0.257181L9.6217 8.37984C9.96461 8.72285 9.96461 9.27871 9.6217 9.62173C9.45035 9.79307 9.22566 9.8788 9.00086 9.8788Z" fill="#AAAAAA"/>
                     </svg>
