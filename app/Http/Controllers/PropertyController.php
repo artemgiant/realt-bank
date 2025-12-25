@@ -131,8 +131,8 @@ class PropertyController extends Controller
             'buildingType',
             'city',
             'street',
-            'contact',
             'photos',
+            'contacts.phones',
         ]);
 
         // ========== Применяем фильтры ==========
@@ -486,16 +486,15 @@ class PropertyController extends Controller
         return number_format($property->price, 0, '.', ' ') . ' ' . $symbol;
     }
 
-    /**
-     * Форматирование контакта для таблицы
-     */
     private function formatContact(Property $property): string
     {
-        if (!$property->contact) {
+        $contact = $property->contacts->first();
+
+        if (!$contact) {
             return '-';
         }
 
-        return $property->contact->name ?? '-';
+        return $contact->full_name;
     }
 
     /**
@@ -514,7 +513,7 @@ class PropertyController extends Controller
             'complexes' => Complex::active()->orderBy('name')->get(),
 
             // Контакты (для модального окна)
-            'contacts' => Contact::orderBy('name')->limit(100)->get(),
+            'contacts' => Contact::with('phones')->orderBy('last_name')->orderBy('first_name')->limit(100)->get(),
 
             // Страны
             'countries' => Country::active()->orderBy('name')->get(),

@@ -30,7 +30,6 @@ class Property extends Model
     protected $fillable = [
         // Зв'язки
         'user_id',
-        'contact_id',
         'source_id',
         'currency_id',
 
@@ -108,9 +107,15 @@ class Property extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function contact(): BelongsTo
+    public function contacts(): BelongsToMany
     {
-        return $this->belongsTo(Contact::class);
+        return $this->belongsToMany(Contact::class, 'property_contact')
+            ->withTimestamps();
+    }
+
+    public function getPrimaryContactAttribute(): ?Contact
+    {
+        return $this->contacts->first();
     }
 
     public function source(): BelongsTo
