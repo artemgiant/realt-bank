@@ -174,7 +174,7 @@ class PropertyController extends Controller
                 'id' => $property->id,
                 'checkbox' => $property->id,
                 'location' => $this->formatLocation($property),
-                'deal_type' => $property->dealType?->name ?? '-',
+                'property_type' => $property->propertyType?->name ?? '-',
                 'area' => $property->area_total ? $property->area_total . ' м²' : '-',
                 'condition' => $property->condition?->name ?? '-',
                 'floor' => $this->formatFloor($property),

@@ -22,8 +22,8 @@ window.PropertyTableConfig = {
                 render: R.location
             },
             {
-                data: 'deal_type',
-                render: R.dealType
+                data: 'property_type',
+                render: R.propertyType
             },
             {
                 data: 'area',

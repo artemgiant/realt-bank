@@ -5,7 +5,6 @@
             {{-- Тип сделки --}}
             <label for="deal_type_id" class="blue-select2">
                 <select id="deal_type_id" name="deal_type_id" class="js-example-responsive2" autocomplete="off">
-                    <option value="">Все типы сделок</option>
                     @foreach($dealTypes as $dealType)
                         <option value="{{ $dealType->id }}" {{ ($filters['deal_type_id'] ?? '') == $dealType->id ? 'selected' : '' }}>
                             {{ $dealType->name }}
@@ -94,7 +93,7 @@
                                 $selectedPropertyTypes = (array)($filters['property_type_id'] ?? []);
                                 $propertyTypeText = count($selectedPropertyTypes) > 0
                                     ? $propertyTypes->whereIn('id', $selectedPropertyTypes)->pluck('name')->implode(', ')
-                                    : 'Все';
+                                    : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
                                 {{ Str::limit($propertyTypeText, 20) }}
@@ -124,7 +123,7 @@
                                 $selectedConditions = (array)($filters['condition_id'] ?? []);
                                 $conditionText = count($selectedConditions) > 0
                                     ? $conditions->whereIn('id', $selectedConditions)->pluck('name')->implode(', ')
-                                    : 'Все';
+                                    : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
                                 {{ Str::limit($conditionText, 20) }}
@@ -154,7 +153,7 @@
                                 $selectedBuildingTypes = (array)($filters['building_type_id'] ?? []);
                                 $buildingTypeText = count($selectedBuildingTypes) > 0
                                     ? $buildingTypes->whereIn('id', $selectedBuildingTypes)->pluck('name')->implode(', ')
-                                    : 'Все';
+                                    : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
                                 {{ Str::limit($buildingTypeText, 20) }}
@@ -184,7 +183,7 @@
                                 $selectedYears = (array)($filters['year_built'] ?? []);
                                 $yearText = count($selectedYears) > 0
                                     ? $yearsBuilt->whereIn('id', $selectedYears)->pluck('name')->implode(', ')
-                                    : 'Все';
+                                    : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
                                 {{ Str::limit($yearText, 20) }}
@@ -214,7 +213,7 @@
                                 $selectedWallTypes = (array)($filters['wall_type_id'] ?? []);
                                 $wallTypeText = count($selectedWallTypes) > 0
                                     ? $wallTypes->whereIn('id', $selectedWallTypes)->pluck('name')->implode(', ')
-                                    : 'Все';
+                                    : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
                                 {{ Str::limit($wallTypeText, 20) }}
@@ -244,7 +243,7 @@
                                 $selectedRoomCounts = (array)($filters['room_count_id'] ?? []);
                                 $roomCountText = count($selectedRoomCounts) > 0
                                     ? $roomCounts->whereIn('id', $selectedRoomCounts)->pluck('name')->implode(', ')
-                                    : 'Все';
+                                    : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
                                 {{ Str::limit($roomCountText, 20) }}
@@ -340,7 +339,7 @@
                                 $selectedHeatingTypes = (array)($filters['heating_type_id'] ?? []);
                                 $heatingTypeText = count($selectedHeatingTypes) > 0
                                     ? $heatingTypes->whereIn('id', $selectedHeatingTypes)->pluck('name')->implode(', ')
-                                    : 'Все';
+                                    : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
                                 {{ Str::limit($heatingTypeText, 20) }}
@@ -370,7 +369,7 @@
                                 $selectedBathroomCounts = (array)($filters['bathroom_count_id'] ?? []);
                                 $bathroomCountText = count($selectedBathroomCounts) > 0
                                     ? $bathroomCounts->whereIn('id', $selectedBathroomCounts)->pluck('name')->implode(', ')
-                                    : 'Все';
+                                    : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
                                 {{ Str::limit($bathroomCountText, 20) }}
@@ -400,7 +399,7 @@
                                 $selectedCeilingHeights = (array)($filters['ceiling_height_id'] ?? []);
                                 $ceilingHeightText = count($selectedCeilingHeights) > 0
                                     ? $ceilingHeights->whereIn('id', $selectedCeilingHeights)->pluck('name')->implode(', ')
-                                    : 'Все';
+                                    : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
                                 {{ Str::limit($ceilingHeightText, 20) }}
@@ -433,17 +432,7 @@
                         </div>
                     </div>
 
-                    {{-- Валюта в расширенном фильтре --}}
-                    <div class="item">
-                        <label class="item-label" for="full-filter-currency">Валюта</label>
-                        <select id="full-filter-currency" class="js-example-responsive2" autocomplete="off" >
-                            @foreach($currencies as $currency)
-                                <option value="{{ $currency->id }}" {{ ($filters['currency_id'] ?? '') == $currency->id ? 'selected' : '' }}>
-                                    {{ $currency->code }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+
 
                     {{-- Дополнительно / Особенности --}}
                     <div class="item">
@@ -453,7 +442,7 @@
                                 $selectedFeatures = (array)($filters['features'] ?? []);
                                 $featureText = count($selectedFeatures) > 0
                                     ? $features->whereIn('id', $selectedFeatures)->pluck('name')->implode(', ')
-                                    : 'Все';
+                                    : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
                                 {{ Str::limit($featureText, 20) }}
@@ -487,7 +476,7 @@
                                 $selectedDevelopers = (array)($filters['developer_id'] ?? []);
                                 $developerText = count($selectedDevelopers) > 0
                                     ? $developers->whereIn('id', $selectedDevelopers)->pluck('name')->implode(', ')
-                                    : 'Все';
+                                    : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
                                 {{ Str::limit($developerText, 20) }}

@@ -21,7 +21,7 @@ window.PropertyRenderers = {
     },
 
     // Тип сделки
-    dealType: function(data, type, row) {
+    propertyType: function(data, type, row) {
         return '<div class="tbody-wrapper type">' +
             (data !== '-' ? '<p>' + data + '</p>' : '<span class="text-muted">-</span>') +
             '</div>';
