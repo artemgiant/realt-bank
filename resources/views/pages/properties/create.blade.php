@@ -508,6 +508,15 @@
     <script src="{{ asset('js/pages/my-dropdown.min.js') }}"></script>
     <script src="{{ asset('js/pages/modal-geo.min.js') }}"></script>
     <script src="{{ asset('js/pages/page-create.min.js') }}" type="module"></script>
-    <script src="{{ asset('js/pages/add-contact-modal.js') }}" type="module"></script>
+
+    {{-- Модуль контактов (порядок важен!) --}}
+    <script src="{{ asset('js/pages/properties/create/modal/add-contact/config.js') }}"></script>
+    <script src="{{ asset('js/pages/properties/create/modal/add-contact/utils.js') }}"></script>
+    <script src="{{ asset('js/pages/properties/create/modal/add-contact/components.js') }}"></script>
+    <script src="{{ asset('js/pages/properties/create/modal/add-contact/api.js') }}"></script>
+    <script src="{{ asset('js/pages/properties/create/modal/add-contact/form.js') }}"></script>
+    <script src="{{ asset('js/pages/properties/create/modal/add-contact/contact-list.js') }}"></script>
+    <script src="{{ asset('js/pages/properties/create/modal/add-contact/handlers.js') }}"></script>
+    <script src="{{ asset('js/pages/properties/create/modal/add-contact/main.js') }}"></script>
 
 @endpush
