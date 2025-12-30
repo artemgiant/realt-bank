@@ -139,18 +139,26 @@
                         </div>
                     </div>
 
-                    {{-- ========== ЛОКАЦИЯ (Каскадный поиск) ========== --}}
+                    {{-- ========== ЛОКАЦИЯ (Область + Адрес) ========== --}}
                     <div class="create-filter-row">
                         <div class="item w100">
                             <div class="location-cascade-wrapper">
 
-                                {{-- Населенный пункт --}}
-                                <div class="location-field city-field">
-                                    <label class="location-field-label">Населенный пункт</label>
+                                {{-- Область --}}
+                                <div class="item selects" style="min-width: 200px;">
+                                    <label class="item-label" for="region_id">Область</label>
+                                    <select id="region_id" name="region_id" class="js-example-responsive3 my-select2">
+                                        {{-- Заполняется через JS --}}
+                                    </select>
+                                </div>
+
+                                {{-- Локация (город, улица, дом) --}}
+                                <div class="location-field" style="flex: 1; min-width: 300px;">
+                                    <label class="location-field-label">Локация (город, улица, дом)</label>
                                     <div class="location-input-wrapper">
                                         <input type="text"
                                                class="location-field-input"
-                                               placeholder="Введите название..."
+                                               placeholder="Введите адрес..."
                                                autocomplete="off">
                                         <span class="location-field-icon">
                                             <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -168,89 +176,14 @@
                                     </div>
                                 </div>
 
-                                {{-- Район --}}
-                                <div class="location-field district-field">
-                                    <label class="location-field-label">Район <span class="optional">(необязательно)</span></label>
-                                    <div class="location-input-wrapper">
-                                        <input type="text"
-                                               class="location-field-input"
-                                               placeholder="Сначала выберите город"
-                                               autocomplete="off"
-                                               disabled>
-                                        <span class="location-field-icon">
-                                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M15.1171 16C15.0002 16.0003 14.8845 15.9774 14.7767 15.9327C14.6687 15.888 14.5707 15.8223 14.4884 15.7396L11.465 12.7218C10.224 13.6956 8.6916 14.224 7.11391 14.2222C5.70692 14.2222 4.33151 13.8052 3.16164 13.0238C1.99176 12.2424 1.07995 11.1318 0.541519 9.83244C0.00308508 8.53306 -0.137797 7.1032 0.136693 5.7238C0.411184 4.34438 1.08872 3.07731 2.08362 2.0828C3.07852 1.08829 4.34609 0.411022 5.72606 0.136639C7.106 -0.137743 8.53643 0.00308386 9.83632 0.541306C11.1362 1.07953 12.2472 1.99098 13.029 3.16039C13.8106 4.3298 14.2278 5.70467 14.2278 7.11111C14.231 8.69031 13.7023 10.2245 12.7268 11.4667L15.7458 14.4889C15.8679 14.6135 15.9508 14.7714 15.9839 14.9427C16.017 15.114 15.9988 15.2914 15.9318 15.4524C15.8647 15.6136 15.7517 15.7515 15.6069 15.8488C15.462 15.9462 15.2916 15.9988 15.1171 16ZM7.11391 1.77778C6.05867 1.77778 5.02712 2.09058 4.14971 2.67661C3.2723 3.26264 2.58844 4.0956 2.18462 5.07013C1.78079 6.04467 1.67513 7.11706 1.881 8.15155C2.08687 9.18613 2.59502 10.1364 3.34119 10.8823C4.08737 11.6283 5.03806 12.1362 6.07302 12.342C7.10796 12.5477 8.18073 12.4421 9.1557 12.0385C10.1307 11.6348 10.9639 10.9512 11.5502 10.0741C12.1364 9.19706 12.4493 8.16595 12.4493 7.11111C12.4477 5.69713 11.885 4.34154 10.8848 3.3417C9.88461 2.34186 8.52843 1.77943 7.11391 1.77778Z" fill="currentColor"/>
-                                            </svg>
-                                        </span>
-                                        <span class="location-field-spinner"></span>
-                                        <button type="button" class="location-field-clear">
-                                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M0.878207 9.87891C0.653517 9.87891 0.428717 9.79318 0.257263 9.62173C-0.0857544 9.27871 -0.0857544 8.72285 0.257263 8.37984L8.37992 0.257181C8.72294 -0.085727 9.27879 -0.085727 9.62181 0.257181C9.96472 0.600089 9.96472 1.15605 9.62181 1.49896L1.49915 9.62162C1.3277 9.79318 1.1029 9.87891 0.878207 9.87891Z" fill="currentColor"/>
-                                                <path d="M9.00086 9.8788C8.77606 9.8788 8.55137 9.79307 8.37992 9.62162L0.257263 1.49896C-0.0857544 1.15605 -0.0857544 0.600089 0.257263 0.257181C0.600171 -0.085727 1.15613 -0.085727 1.49904 0.257181L9.6217 8.37984C9.96461 8.72285 9.96461 9.27871 9.6217 9.62173C9.45035 9.79307 9.22566 9.8788 9.00086 9.8788Z" fill="currentColor"/>
-                                            </svg>
-                                        </button>
-                                        <div class="location-field-dropdown"></div>
-                                    </div>
-                                </div>
-
-                                {{-- Улица --}}
-                                <div class="location-field street-field">
-                                    <label class="location-field-label">Улица</label>
-                                    <div class="location-input-wrapper">
-                                        <input type="text"
-                                               class="location-field-input"
-                                               placeholder="Сначала выберите город"
-                                               autocomplete="off"
-                                               disabled>
-                                        <span class="location-field-icon">
-                                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M15.1171 16C15.0002 16.0003 14.8845 15.9774 14.7767 15.9327C14.6687 15.888 14.5707 15.8223 14.4884 15.7396L11.465 12.7218C10.224 13.6956 8.6916 14.224 7.11391 14.2222C5.70692 14.2222 4.33151 13.8052 3.16164 13.0238C1.99176 12.2424 1.07995 11.1318 0.541519 9.83244C0.00308508 8.53306 -0.137797 7.1032 0.136693 5.7238C0.411184 4.34438 1.08872 3.07731 2.08362 2.0828C3.07852 1.08829 4.34609 0.411022 5.72606 0.136639C7.106 -0.137743 8.53643 0.00308386 9.83632 0.541306C11.1362 1.07953 12.2472 1.99098 13.029 3.16039C13.8106 4.3298 14.2278 5.70467 14.2278 7.11111C14.231 8.69031 13.7023 10.2245 12.7268 11.4667L15.7458 14.4889C15.8679 14.6135 15.9508 14.7714 15.9839 14.9427C16.017 15.114 15.9988 15.2914 15.9318 15.4524C15.8647 15.6136 15.7517 15.7515 15.6069 15.8488C15.462 15.9462 15.2916 15.9988 15.1171 16ZM7.11391 1.77778C6.05867 1.77778 5.02712 2.09058 4.14971 2.67661C3.2723 3.26264 2.58844 4.0956 2.18462 5.07013C1.78079 6.04467 1.67513 7.11706 1.881 8.15155C2.08687 9.18613 2.59502 10.1364 3.34119 10.8823C4.08737 11.6283 5.03806 12.1362 6.07302 12.342C7.10796 12.5477 8.18073 12.4421 9.1557 12.0385C10.1307 11.6348 10.9639 10.9512 11.5502 10.0741C12.1364 9.19706 12.4493 8.16595 12.4493 7.11111C12.4477 5.69713 11.885 4.34154 10.8848 3.3417C9.88461 2.34186 8.52843 1.77943 7.11391 1.77778Z" fill="currentColor"/>
-                                            </svg>
-                                        </span>
-                                        <span class="location-field-spinner"></span>
-                                        <button type="button" class="location-field-clear">
-                                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M0.878207 9.87891C0.653517 9.87891 0.428717 9.79318 0.257263 9.62173C-0.0857544 9.27871 -0.0857544 8.72285 0.257263 8.37984L8.37992 0.257181C8.72294 -0.085727 9.27879 -0.085727 9.62181 0.257181C9.96472 0.600089 9.96472 1.15605 9.62181 1.49896L1.49915 9.62162C1.3277 9.79318 1.1029 9.87891 0.878207 9.87891Z" fill="currentColor"/>
-                                                <path d="M9.00086 9.8788C8.77606 9.8788 8.55137 9.79307 8.37992 9.62162L0.257263 1.49896C-0.0857544 1.15605 -0.0857544 0.600089 0.257263 0.257181C0.600171 -0.085727 1.15613 -0.085727 1.49904 0.257181L9.6217 8.37984C9.96461 8.72285 9.96461 9.27871 9.6217 9.62173C9.45035 9.79307 9.22566 9.8788 9.00086 9.8788Z" fill="currentColor"/>
-                                            </svg>
-                                        </button>
-                                        <div class="location-field-dropdown"></div>
-                                    </div>
-                                </div>
-
-
-                                <div class="item selects noresize120">
-                                    <label class="item-label" for="metro">Ориентир/Станция</label>
-                                    <select id="metro" class="js-example-responsive3 my-select2" autocomplete="off">
-                                        <option></option>
-                                        <option>
-                                            Ориентир/Станция 1
-                                        </option>
-                                    </select>
-                                </div>
-
-
-
-                                <div class="item noresize120">
-						<span>
-							<label class="item-label" for="number-house">№ Дом</label> /
-							<label for="number-apartment">Квартира</label>
-						</span>
-                                    <div class="item-inputText-wrapper shtrih">
-                                        <input class="item-inputText" id="number-house" type="text" autocomplete="off">
-                                        <input class="item-inputText" id="number-apartment" type="text" autocomplete="off">
-                                    </div>
-                                </div>
-
-
-                                {{-- Hidden inputs для формы --}}
+                                {{-- Hidden inputs --}}
+                                <input type="hidden" name="region_name" value="{{ old('region_name') }}">
+                                <input type="hidden" name="location_display" value="{{ old('location_display') }}">
                                 <input type="hidden" name="city_name" value="{{ old('city_name') }}">
-                                <input type="hidden" name="city_lat" value="{{ old('city_lat') }}">
-                                <input type="hidden" name="city_lng" value="{{ old('city_lng') }}">
-                                <input type="hidden" name="district_name" value="{{ old('district_name') }}">
                                 <input type="hidden" name="street_name" value="{{ old('street_name') }}">
-                                <input type="hidden" name="street_lat" value="{{ old('street_lat') }}">
-                                <input type="hidden" name="street_lng" value="{{ old('street_lng') }}">
+                                <input type="hidden" name="building_number" value="{{ old('building_number') }}">
+                                <input type="hidden" name="latitude" value="{{ old('latitude') }}">
+                                <input type="hidden" name="longitude" value="{{ old('longitude') }}">
                             </div>
                         </div>
                     </div>
@@ -574,6 +507,6 @@
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/handlers.js') }}"></script>
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/main.js') }}"></script>
 
-    {{-- Каскадный поиск локации через Nominatim --}}
+    {{-- Поиск локации через Nominatim --}}
     <script src="{{ asset('js/pages/properties/create/location-search.js') }}"></script>
 @endpush

@@ -1,93 +1,105 @@
 /**
- * Стили для каскадного поиска локации через Nominatim
- * Три поля: Населенный пункт, Район, Улица
+ * Стили для поиска локации
+ * Два поля: Область (select) + Локация (input с поиском)
  */
 
-/* ========== Общий контейнер локации ========== */
+/* ========== Wrapper ========== */
 .location-cascade-wrapper {
     display: flex;
-    flex-wrap: wrap;
     gap: 15px;
+    align-items: flex-start;
+    flex-wrap: wrap;
     width: 100%;
 }
 
-/* ========== Отдельное поле поиска ========== */
+/* ========== Поле локации ========== */
 .location-field {
     position: relative;
-    flex: 1;
-    min-width: 200px;
-}
-
-.location-field.city-field {
-    flex: 1.2;
-}
-
-.location-field.district-field {
-    flex: 1;
-}
-
-.location-field.street-field {
-    flex: 1.5;
 }
 
 .location-field-label {
     display: block;
     margin-bottom: 8px;
     font-size: 14px;
-    font-weight: 400;
     color: #333;
 }
 
-.location-field-label .optional {
-    color: #999;
-    font-weight: normal;
-    font-size: 12px;
-}
-
-/* ========== Контейнер инпута ========== */
+/* ========== Input wrapper ========== */
 .location-input-wrapper {
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
-/* ========== Поле ввода (стиль как у select2) ========== */
 .location-field-input {
     width: 100%;
-    height: 30px;
-    padding: 0 35px 0 12px;
-    border: 0 solid #ddd;
+    height: 38px;
+    padding: 0 70px 0 35px;
+    border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
     line-height: 36px;
-    transition: border-color 0.2s;
     background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
     box-sizing: border-box;
 }
 
 .location-field-input:focus {
     outline: none;
     border-color: #3585F5;
+    box-shadow: 0 0 0 1px rgba(53, 133, 245, 0.2);
 }
 
 .location-field-input::placeholder {
     color: #aaa;
 }
 
-.location-field-input:disabled {
-    background: #f5f5f5;
-    cursor: not-allowed;
-    color: #999;
+/* Состояние с выбранным значением */
+.location-input-wrapper.has-value .location-field-input {
+    background-color: #e8f4fd;
+    border-color: #3585F5;
 }
 
-/* ========== Иконка поиска ========== */
+/* ========== Иконки ========== */
 .location-field-icon {
     position: absolute;
-    right: 10px;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
     color: #aaa;
     pointer-events: none;
     display: flex;
     align-items: center;
+    justify-content: center;
+}
+
+/* Кнопка очистки */
+.location-field-clear {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    background: #eee;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    transition: background 0.2s;
+}
+
+.location-field-clear:hover {
+    background: #ddd;
+    color: #333;
+}
+
+.location-input-wrapper.has-value .location-field-clear {
+    display: flex;
 }
 
 /* ========== Спиннер загрузки ========== */
@@ -96,19 +108,20 @@
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
-    border: 2px solid #ddd;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #eee;
     border-top-color: #3585F5;
     border-radius: 50%;
-    animation: location-spin 0.8s linear infinite;
     display: none;
+    animation: location-spin 0.8s linear infinite;
 }
 
 .location-input-wrapper.is-loading .location-field-spinner {
     display: block;
 }
 
+.location-input-wrapper.is-loading .location-field-clear,
 .location-input-wrapper.is-loading .location-field-icon {
     display: none;
 }
@@ -117,55 +130,20 @@
     to { transform: translateY(-50%) rotate(360deg); }
 }
 
-/* ========== Кнопка очистки ========== */
-.location-field-clear {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: #888;
-    cursor: pointer;
-    padding: 4px;
-    line-height: 1;
-    display: none;
-    transition: color 0.2s;
-}
-
-.location-field-clear:hover {
-    color: #e74c3c;
-}
-
-.location-input-wrapper.has-value .location-field-clear {
-    display: block;
-}
-
-.location-input-wrapper.has-value .location-field-icon {
-    display: none;
-}
-
-/* ========== Стиль инпута с выбранным значением ========== */
-.location-input-wrapper.has-value .location-field-input {
-    background: #f0f7ff;
-    border-color: #3585F5;
-    color: #333;
-}
-
-/* ========== Выпадающий список ========== */
+/* ========== Dropdown ========== */
 .location-field-dropdown {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
+    margin-top: 4px;
     background: #fff;
     border: 1px solid #ddd;
-    border-top: none;
-    border-radius: 0 0 4px 4px;
+    border-radius: 4px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    max-height: 220px;
-    overflow-y: auto;
     z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
     display: none;
 }
 
@@ -173,50 +151,51 @@
     display: block;
 }
 
-/* ========== Элемент списка ========== */
+/* ========== Список результатов ========== */
+.location-dropdown-list {
+    padding: 4px 0;
+}
+
 .location-dropdown-item {
     padding: 10px 12px;
     cursor: pointer;
-    border-bottom: 1px solid #f0f0f0;
-    transition: background-color 0.15s;
-}
-
-.location-dropdown-item:last-child {
-    border-bottom: none;
+    transition: background 0.15s;
 }
 
 .location-dropdown-item:hover,
 .location-dropdown-item.is-active {
-    background-color: #f5f9ff;
+    background: #f5f5f5;
 }
 
-.location-dropdown-item-name {
+.location-item-main {
     font-size: 14px;
     color: #333;
-    margin-bottom: 2px;
+    font-weight: 500;
 }
 
-.location-dropdown-item-type {
-    font-size: 11px;
+.location-item-sub {
+    font-size: 12px;
     color: #888;
+    margin-top: 2px;
 }
 
-/* ========== Сообщение "не найдено" / "загрузка" ========== */
-.location-dropdown-empty,
-.location-dropdown-loading {
-    padding: 12px;
+/* ========== Пустое состояние ========== */
+.location-dropdown-empty {
+    padding: 16px 12px;
     text-align: center;
     color: #888;
     font-size: 13px;
 }
 
-/* ========== Адаптив ========== */
+/* ========== Адаптивность ========== */
 @media (max-width: 768px) {
     .location-cascade-wrapper {
         flex-direction: column;
     }
 
-    .location-field {
-        min-width: 100%;
+    .location-cascade-wrapper > .item,
+    .location-cascade-wrapper > .location-field {
+        width: 100%;
+        min-width: 100% !important;
     }
 }
