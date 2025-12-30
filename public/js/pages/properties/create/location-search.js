@@ -135,8 +135,18 @@ window.LocationCascade = {
                 self._onKeydown(field, e);
             });
 
-            // Фокус
+            // Фокус - для района загружаем список сразу
             input.addEventListener('focus', function() {
+                // Для района: загрузить список при фокусе если есть город
+                if (field === 'district' && self.state.city && !self.state.district) {
+                    var query = input.value.trim();
+                    if (query.length === 0) {
+                        self._loadDistricts();
+                        return;
+                    }
+                }
+
+                // Для других полей: открыть dropdown если есть результаты
                 if (self.state.results[field].length > 0) {
                     self._openDropdown(field);
                 }
@@ -175,6 +185,12 @@ window.LocationCascade = {
 
         // Очищаем предыдущий таймер
         clearTimeout(this.state.timers[field]);
+
+        // Для района: если пусто и есть город - загружаем список районов
+        if (field === 'district' && query.length === 0 && this.state.city) {
+            this._loadDistricts();
+            return;
+        }
 
         // Проверяем минимальную длину
         if (query.length < this.config.minQueryLength) {
@@ -244,6 +260,47 @@ window.LocationCascade = {
         items[newIdx].scrollIntoView({ block: 'nearest' });
     },
 
+    // ========== Загрузка районов города ==========
+    _loadDistricts: function() {
+        var self = this;
+
+        if (!this.state.city) return;
+
+        // Показываем спиннер
+        this._setInputLoading('district', true);
+
+        // Запрос районов города
+        var params = new URLSearchParams({
+            format: 'json',
+            addressdetails: 1,
+            countrycodes: this.config.countryCode,
+            limit: 20,
+            'accept-language': 'uk'
+        });
+
+        // Ищем районы в городе
+        params.set('q', 'район, ' + this.state.city.name);
+
+        var url = this.config.apiUrl + '?' + params.toString();
+
+        fetch(url, {
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                self._setInputLoading('district', false);
+                self._renderResults('district', data);
+            })
+            .catch(function(error) {
+                console.error('LocationCascade: district load error', error);
+                self._setInputLoading('district', false);
+            });
+    },
+
     // ========== Поиск через Nominatim ==========
     _search: function(field, query) {
         var self = this;
@@ -295,8 +352,8 @@ window.LocationCascade = {
                 break;
 
             case 'street':
-                // Поиск улиц - добавляем "вулиця" для точности
-                var streetQuery = 'вулиця ' + query;
+                // Поиск улиц - без префикса для поиска по части названия
+                var streetQuery = query;
                 if (this.state.city) {
                     streetQuery += ', ' + this.state.city.name;
                 }
@@ -497,9 +554,18 @@ window.LocationCascade = {
 
         switch (field) {
             case 'city':
-                // Для города показываем область
-                if (address.state) parts.push(address.state);
-                if (address.county) parts.push(address.county);
+                // Для города показываем область/регион
+                if (address.state) {
+                    parts.push(address.state);
+                } else if (address.region) {
+                    parts.push(address.region);
+                } else if (address.county) {
+                    parts.push(address.county);
+                }
+                // Добавляем страну если нет области
+                if (parts.length === 0 && address.country) {
+                    parts.push(address.country);
+                }
                 break;
 
             case 'district':
@@ -511,6 +577,7 @@ window.LocationCascade = {
                 // Для улицы показываем район и город
                 if (address.suburb) parts.push(address.suburb);
                 else if (address.borough) parts.push(address.borough);
+                else if (address.neighbourhood) parts.push(address.neighbourhood);
                 if (address.city) parts.push(address.city);
                 break;
 
@@ -519,13 +586,26 @@ window.LocationCascade = {
                 if (address.city) parts.push(address.city);
         }
 
-        return parts.join(', ') || item.type || '';
+        return parts.join(', ') || '';
     },
 
     // ========== Выбор результата ==========
     _selectResult: function(field, item) {
         var self = this;
         var address = item.address || {};
+
+        // При выборе города - сбрасываем район и улицу
+        if (field === 'city') {
+            this._clearField('district', true);  // true = не обновлять состояния (сделаем в конце)
+            this._clearField('street', true);
+            this._clearField('building', true);
+        }
+
+        // При выборе района - сбрасываем улицу
+        if (field === 'district') {
+            this._clearField('street', true);
+            this._clearField('building', true);
+        }
 
         // Сохраняем выбранное значение
         this.state[field] = {
@@ -639,32 +719,37 @@ window.LocationCascade = {
     },
 
     // ========== Очистка поля ==========
-    _clearField: function(field) {
+    _clearField: function(field, skipUpdate) {
         // Очищаем значение
         this.state[field] = null;
 
-        // Очищаем зависимые поля
-        if (field === 'city') {
-            this.state.district = null;
-            this.state.street = null;
+        // Для building очищаем строку
+        if (field === 'building') {
             this.state.building = '';
-            this._updateFieldUI('district');
-            this._updateFieldUI('street');
             if (this.elements.building) {
                 this.elements.building.input.value = '';
             }
-        } else if (field === 'district') {
-            // Район очищаем, улицу оставляем
+            if (!skipUpdate) {
+                this._updateHiddenInputs();
+                this._updateDebug();
+            }
+            return;
         }
 
-        // Обновляем UI
+        // Очищаем UI поля
         this._updateFieldUI(field);
-        this._updateFieldStates();
-        this._updateHiddenInputs();
-        this._updateDebug();
 
-        // Фокус на инпут
-        this.elements[field].input.focus();
+        // Если не пропускаем обновления
+        if (!skipUpdate) {
+            this._updateFieldStates();
+            this._updateHiddenInputs();
+            this._updateDebug();
+
+            // Фокус на инпут
+            if (this.elements[field] && this.elements[field].input) {
+                this.elements[field].input.focus();
+            }
+        }
 
         console.log('LocationCascade: cleared ' + field);
     },
