@@ -275,32 +275,28 @@ window.LocationCascade = {
             format: 'json',
             addressdetails: 1,
             countrycodes: this.config.countryCode,
-            limit: this.config.limit
+            limit: this.config.limit,
+            'accept-language': 'uk'  // Украинский язык для результатов
         });
 
         switch (field) {
             case 'city':
                 // Поиск населенных пунктов
-                params.set('q', query);
-                params.set('featuretype', 'city');
-                // Ищем города, поселки, села
+                params.set('q', query + ', Україна');
                 break;
 
             case 'district':
                 // Поиск районов в выбранном городе
                 if (this.state.city) {
-                    params.set('q', query + ', ' + this.state.city.name);
+                    params.set('q', 'район ' + query + ', ' + this.state.city.name);
                 } else {
-                    params.set('q', query);
+                    params.set('q', 'район ' + query);
                 }
                 break;
 
             case 'street':
-                // Поиск улиц
-                var streetQuery = query;
-                if (this.state.district) {
-                    streetQuery += ', ' + this.state.district.name;
-                }
+                // Поиск улиц - добавляем "вулиця" для точности
+                var streetQuery = 'вулиця ' + query;
                 if (this.state.city) {
                     streetQuery += ', ' + this.state.city.name;
                 }
@@ -338,11 +334,11 @@ window.LocationCascade = {
             div.setAttribute('data-index', index);
 
             var name = self._getDisplayName(field, item);
-            var type = self._getTypeLabel(item);
+            var type = self._getTypeLabel(field, item);
 
             div.innerHTML =
                 '<div class="location-dropdown-item-name">' + self._escapeHtml(name) + '</div>' +
-                '<div class="location-dropdown-item-type">' + self._escapeHtml(type) + '</div>';
+                (type ? '<div class="location-dropdown-item-type">' + self._escapeHtml(type) + '</div>' : '');
 
             div.addEventListener('click', function() {
                 self._selectResult(field, item);
@@ -356,10 +352,12 @@ window.LocationCascade = {
 
     // ========== Фильтрация результатов по типу ==========
     _filterResults: function(field, results) {
+        var filtered = [];
+
         switch (field) {
             case 'city':
                 // Все населенные пункты - города, поселки, села, административные единицы
-                return results.filter(function(item) {
+                filtered = results.filter(function(item) {
                     var type = item.type || '';
                     var cls = item.class || '';
                     var addresstype = item.addresstype || '';
@@ -377,10 +375,11 @@ window.LocationCascade = {
                         type === 'hamlet' ||
                         type === 'administrative';
                 });
+                break;
 
             case 'district':
                 // Районы, микрорайоны
-                return results.filter(function(item) {
+                filtered = results.filter(function(item) {
                     var type = item.type || '';
                     var name = (item.display_name || '').toLowerCase();
                     return type === 'suburb' ||
@@ -391,22 +390,81 @@ window.LocationCascade = {
                         name.indexOf('мікрорайон') !== -1 ||
                         name.indexOf('микрорайон') !== -1;
                 });
+                break;
 
             case 'street':
-                // Улицы
-                return results.filter(function(item) {
+                // Улицы - расширенный фильтр
+                filtered = results.filter(function(item) {
                     var cls = item.class || '';
                     var type = item.type || '';
+                    var addresstype = item.addresstype || '';
+                    var address = item.address || {};
+
+                    // Пропускаем если есть road в адресе или это дорога
                     return cls === 'highway' ||
+                        cls === 'place' ||
+                        addresstype === 'road' ||
+                        addresstype === 'street' ||
                         type === 'street' ||
                         type === 'road' ||
                         type === 'residential' ||
-                        type === 'pedestrian';
+                        type === 'pedestrian' ||
+                        type === 'primary' ||
+                        type === 'secondary' ||
+                        type === 'tertiary' ||
+                        type === 'unclassified' ||
+                        address.road;
                 });
+                break;
 
             default:
-                return results;
+                filtered = results;
         }
+
+        // Дедупликация по имени + району
+        return this._deduplicateResults(field, filtered);
+    },
+
+    // ========== Дедупликация результатов ==========
+    _deduplicateResults: function(field, results) {
+        var seen = {};
+        var unique = [];
+
+        results.forEach(function(item) {
+            var address = item.address || {};
+            var key = '';
+
+            switch (field) {
+                case 'city':
+                    // Ключ: название города
+                    key = (address.city || address.town || address.village || item.name || '').toLowerCase();
+                    break;
+
+                case 'district':
+                    // Ключ: название района + город
+                    var districtName = address.suburb || address.borough || address.neighbourhood || item.name || '';
+                    var cityName = address.city || '';
+                    key = (districtName + '|' + cityName).toLowerCase();
+                    break;
+
+                case 'street':
+                    // Ключ: название улицы + район
+                    var streetName = address.road || item.name || '';
+                    var suburb = address.suburb || address.borough || '';
+                    key = (streetName + '|' + suburb).toLowerCase();
+                    break;
+
+                default:
+                    key = item.display_name || '';
+            }
+
+            if (key && !seen[key]) {
+                seen[key] = true;
+                unique.push(item);
+            }
+        });
+
+        return unique;
     },
 
     // ========== Получение отображаемого имени ==========
@@ -432,18 +490,36 @@ window.LocationCascade = {
         }
     },
 
-    // ========== Получение метки типа ==========
-    _getTypeLabel: function(item) {
+    // ========== Получение метки типа (подсказка под названием) ==========
+    _getTypeLabel: function(field, item) {
         var address = item.address || {};
         var parts = [];
 
-        if (address.state) parts.push(address.state);
-        if (address.county) parts.push(address.county);
-        if (address.city) parts.push(address.city);
-        if (address.town) parts.push(address.town);
-        if (address.suburb) parts.push(address.suburb);
+        switch (field) {
+            case 'city':
+                // Для города показываем область
+                if (address.state) parts.push(address.state);
+                if (address.county) parts.push(address.county);
+                break;
 
-        return parts.slice(0, 2).join(', ') || item.type || '';
+            case 'district':
+                // Для района показываем город
+                if (address.city) parts.push(address.city);
+                break;
+
+            case 'street':
+                // Для улицы показываем район и город
+                if (address.suburb) parts.push(address.suburb);
+                else if (address.borough) parts.push(address.borough);
+                if (address.city) parts.push(address.city);
+                break;
+
+            default:
+                if (address.state) parts.push(address.state);
+                if (address.city) parts.push(address.city);
+        }
+
+        return parts.join(', ') || item.type || '';
     },
 
     // ========== Выбор результата ==========
