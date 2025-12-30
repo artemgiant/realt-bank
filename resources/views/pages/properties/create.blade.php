@@ -4,6 +4,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/pages/page-create.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pages/properties/location-search.css') }}">
 @endpush
 
 @section('header')
@@ -61,13 +62,8 @@
             <div class="create-filter">
                 <div class="create-filter-data">
 
-
-
-
                     {{-- Основная информация (Контакт и Агент) --}}
-
                     @include('pages.properties.particles.create._contact_and_agent')
-
 
                     {{-- Детальная информация --}}
                     <h3 class="create-filter-title">
@@ -116,12 +112,6 @@
                             </select>
                         </div>
 
-
-
-
-                        {{-- Ориентир --}}
-
-
                         {{-- Тип недвижимости --}}
                         <div class="item selects">
                             <label class="item-label" for="property_type_id">Тип недвижимости</label>
@@ -147,316 +137,118 @@
                                 @endforeach
                             </select>
                         </div>
+                    </div>
 
+                    {{-- ========== ЛОКАЦИЯ (Каскадный поиск) ========== --}}
+                    <div class="create-filter-row">
+                        <div class="item w100">
+                            <label class="item-label">Локация</label>
+                            <div class="location-cascade-wrapper">
 
-
-                        {{-- Локация --}}
-                        <div class="item w50">
-                            <label>Локация</label>
-                            <div class="my-dropdown">
-                                <div class="my-dropdown-input-wrapper">
-                                    <!-- 05.06.2025		-->
-                                    <button class="my-dropdown-geo-btn" data-bs-toggle="modal" data-bs-target="#geoModal">
-                                        <picture><source srcset="./img/icon/geo.svg" type="image/webp"><img src="./img/icon/geo.svg" alt=""></picture>
-                                    </button>
-                                    <!-- 05.06.2025		-->
-
-                                    <label class="my-dropdown-label">
-                                        <input class="my-dropdown-input" type="text" autocomplete="off" placeholder="Введите название">
-                                    </label>
-                                    <!--		28.03.2025 оновив-->
-                                    <button class="my-dropdown-btn arrow-down" id="btn-open-menu" type="button">
-                                        <picture><source srcset="./img/icon/arrow-right-white.svg" type="image/webp"><img src="./img/icon/arrow-right-white.svg" alt=""></picture>
-                                    </button>
-                                    <!--		28.03.2025 оновив-->
-                                </div>
-                                <div class="my-dropdown-list-wrapper" style="display: none">
-                                    <div class="my-dropdown-list">
-                                        <div class="scroller">
-                                            <div class="my-dropdown-item">
-                                                <label class="my-dropdown-item-label-radio">
-                                                    <input class="my-dropdown-item-radio" type="radio" name="country">
-                                                    <span class="my-dropdown-item-radio-text">
-							Україна (<span>24</span>)
-						</span>
-                                                </label>
-                                                <div class="my-dropdown-next-list" style="display: none">
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-radio">
-                                                            <input class="my-dropdown-item-radio" type="radio" name="district">
-                                                            <span class="my-dropdown-item-radio-text">
-									Дніпропетровська обл. (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-radio">
-                                                            <input class="my-dropdown-item-radio" type="radio" name="district">
-                                                            <span class="my-dropdown-item-radio-text">
-									Одеська обл. (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="my-dropdown-item">
-                                                <label class="my-dropdown-item-label-radio">
-                                                    <input class="my-dropdown-item-radio" type="radio" name="country">
-                                                    <span class="my-dropdown-item-radio-text">
-						Великобритания (<span>24</span>)
-					</span>
-                                                </label>
-                                                <div class="my-dropdown-next-list" style="display: none">
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-radio">
-                                                            <input class="my-dropdown-item-radio" type="radio" name="district">
-                                                            <span class="my-dropdown-item-radio-text">
-									Дніпропетровська обл. (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-radio">
-                                                            <input class="my-dropdown-item-radio" type="radio" name="district">
-                                                            <span class="my-dropdown-item-radio-text">
-									Одеська обл. (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="my-dropdown-list second" style="display: none">
-                                        <div class="scroller">
-                                            <div class="my-dropdown-item">
-                                                <label class="my-dropdown-item-label-checkbox">
-                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                    <span class="my-dropdown-item-checkbox-text">
-							Дніпро (<span>24</span>)
-						</span>
-                                                </label>
-                                                <div class="my-dropdown-next-list" style="display: none">
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									АНД район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Індустріальний район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                        <div class="my-dropdown-next-next-list" style="display: none">
-                                                            <div class="my-dropdown-item">
-                                                                <label class="my-dropdown-item-label-checkbox">
-                                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                                    <span class="my-dropdown-item-checkbox-text">
-											Лівобережний 3 (<span>24</span>)
-										</span>
-                                                                </label>
-                                                            </div>
-                                                            <div class="my-dropdown-item">
-                                                                <label class="my-dropdown-item-label-checkbox">
-                                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                                    <span class="my-dropdown-item-checkbox-text">
-											Лівобережний 2 (<span>24</span>)
-										</span>
-                                                                </label>
-                                                            </div>
-                                                            <div class="my-dropdown-item">
-                                                                <label class="my-dropdown-item-label-checkbox">
-                                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                                    <span class="my-dropdown-item-checkbox-text">
-											Лівобережний 1 (<span>24</span>)
-										</span>
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Центральний район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Новокадацький район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Шевченківський район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="my-dropdown-item">
-                                                <label class="my-dropdown-item-label-checkbox">
-                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                    <span class="my-dropdown-item-checkbox-text">
-						Одесса (<span>24</span>)
-					</span>
-                                                </label>
-                                                <div class="my-dropdown-next-list" style="display: none">
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									АНД район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Індустріальний район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Центральний район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Новокадацький район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Шевченківський район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="my-dropdown-item">
-                                                <label class="my-dropdown-item-label-checkbox">
-                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                    <span class="my-dropdown-item-checkbox-text">
-						Київ (<span>24</span>)
-					</span>
-                                                </label>
-                                            </div>
-                                            <div class="my-dropdown-item">
-                                                <label class="my-dropdown-item-label-checkbox">
-                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                    <span class="my-dropdown-item-checkbox-text">
-						Харків (<span>24</span>)
-					</span>
-                                                </label>
-                                                <div class="my-dropdown-next-list" style="display: none">
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									АНД район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Індустріальний район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Центральний район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Новокадацький район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Шевченківський район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                {{-- Населенный пункт --}}
+                                <div class="location-field city-field">
+                                    <label class="location-field-label">Населенный пункт</label>
+                                    <div class="location-input-wrapper">
+                                        <input type="text"
+                                               class="location-field-input"
+                                               placeholder="Введите название..."
+                                               autocomplete="off">
+                                        <span class="location-field-icon">
+                                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M15.1171 16C15.0002 16.0003 14.8845 15.9774 14.7767 15.9327C14.6687 15.888 14.5707 15.8223 14.4884 15.7396L11.465 12.7218C10.224 13.6956 8.6916 14.224 7.11391 14.2222C5.70692 14.2222 4.33151 13.8052 3.16164 13.0238C1.99176 12.2424 1.07995 11.1318 0.541519 9.83244C0.00308508 8.53306 -0.137797 7.1032 0.136693 5.7238C0.411184 4.34438 1.08872 3.07731 2.08362 2.0828C3.07852 1.08829 4.34609 0.411022 5.72606 0.136639C7.106 -0.137743 8.53643 0.00308386 9.83632 0.541306C11.1362 1.07953 12.2472 1.99098 13.029 3.16039C13.8106 4.3298 14.2278 5.70467 14.2278 7.11111C14.231 8.69031 13.7023 10.2245 12.7268 11.4667L15.7458 14.4889C15.8679 14.6135 15.9508 14.7714 15.9839 14.9427C16.017 15.114 15.9988 15.2914 15.9318 15.4524C15.8647 15.6136 15.7517 15.7515 15.6069 15.8488C15.462 15.9462 15.2916 15.9988 15.1171 16ZM7.11391 1.77778C6.05867 1.77778 5.02712 2.09058 4.14971 2.67661C3.2723 3.26264 2.58844 4.0956 2.18462 5.07013C1.78079 6.04467 1.67513 7.11706 1.881 8.15155C2.08687 9.18613 2.59502 10.1364 3.34119 10.8823C4.08737 11.6283 5.03806 12.1362 6.07302 12.342C7.10796 12.5477 8.18073 12.4421 9.1557 12.0385C10.1307 11.6348 10.9639 10.9512 11.5502 10.0741C12.1364 9.19706 12.4493 8.16595 12.4493 7.11111C12.4477 5.69713 11.885 4.34154 10.8848 3.3417C9.88461 2.34186 8.52843 1.77943 7.11391 1.77778Z" fill="currentColor"/>
+                                            </svg>
+                                        </span>
+                                        <span class="location-field-spinner"></span>
+                                        <button type="button" class="location-field-clear">
+                                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M0.878207 9.87891C0.653517 9.87891 0.428717 9.79318 0.257263 9.62173C-0.0857544 9.27871 -0.0857544 8.72285 0.257263 8.37984L8.37992 0.257181C8.72294 -0.085727 9.27879 -0.085727 9.62181 0.257181C9.96472 0.600089 9.96472 1.15605 9.62181 1.49896L1.49915 9.62162C1.3277 9.79318 1.1029 9.87891 0.878207 9.87891Z" fill="currentColor"/>
+                                                <path d="M9.00086 9.8788C8.77606 9.8788 8.55137 9.79307 8.37992 9.62162L0.257263 1.49896C-0.0857544 1.15605 -0.0857544 0.600089 0.257263 0.257181C0.600171 -0.085727 1.15613 -0.085727 1.49904 0.257181L9.6217 8.37984C9.96461 8.72285 9.96461 9.27871 9.6217 9.62173C9.45035 9.79307 9.22566 9.8788 9.00086 9.8788Z" fill="currentColor"/>
+                                            </svg>
+                                        </button>
+                                        <div class="location-field-dropdown"></div>
                                     </div>
                                 </div>
-                                <div class="my-dropdown-search-wrapper" style="display: none">
-                                    <div class="my-dropdown-search-list">
-                                        <div class="scroller">
-                                            <div class="my-dropdown-search-item">
-                                                <div class="eqweqw">
-                                                    Одесская обл (24)
-                                                </div>
-                                            </div>
-                                        </div>
+
+                                {{-- Район --}}
+                                <div class="location-field district-field">
+                                    <label class="location-field-label">Район <span class="optional">(необязательно)</span></label>
+                                    <div class="location-input-wrapper">
+                                        <input type="text"
+                                               class="location-field-input"
+                                               placeholder="Сначала выберите город"
+                                               autocomplete="off"
+                                               disabled>
+                                        <span class="location-field-icon">
+                                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M15.1171 16C15.0002 16.0003 14.8845 15.9774 14.7767 15.9327C14.6687 15.888 14.5707 15.8223 14.4884 15.7396L11.465 12.7218C10.224 13.6956 8.6916 14.224 7.11391 14.2222C5.70692 14.2222 4.33151 13.8052 3.16164 13.0238C1.99176 12.2424 1.07995 11.1318 0.541519 9.83244C0.00308508 8.53306 -0.137797 7.1032 0.136693 5.7238C0.411184 4.34438 1.08872 3.07731 2.08362 2.0828C3.07852 1.08829 4.34609 0.411022 5.72606 0.136639C7.106 -0.137743 8.53643 0.00308386 9.83632 0.541306C11.1362 1.07953 12.2472 1.99098 13.029 3.16039C13.8106 4.3298 14.2278 5.70467 14.2278 7.11111C14.231 8.69031 13.7023 10.2245 12.7268 11.4667L15.7458 14.4889C15.8679 14.6135 15.9508 14.7714 15.9839 14.9427C16.017 15.114 15.9988 15.2914 15.9318 15.4524C15.8647 15.6136 15.7517 15.7515 15.6069 15.8488C15.462 15.9462 15.2916 15.9988 15.1171 16ZM7.11391 1.77778C6.05867 1.77778 5.02712 2.09058 4.14971 2.67661C3.2723 3.26264 2.58844 4.0956 2.18462 5.07013C1.78079 6.04467 1.67513 7.11706 1.881 8.15155C2.08687 9.18613 2.59502 10.1364 3.34119 10.8823C4.08737 11.6283 5.03806 12.1362 6.07302 12.342C7.10796 12.5477 8.18073 12.4421 9.1557 12.0385C10.1307 11.6348 10.9639 10.9512 11.5502 10.0741C12.1364 9.19706 12.4493 8.16595 12.4493 7.11111C12.4477 5.69713 11.885 4.34154 10.8848 3.3417C9.88461 2.34186 8.52843 1.77943 7.11391 1.77778Z" fill="currentColor"/>
+                                            </svg>
+                                        </span>
+                                        <span class="location-field-spinner"></span>
+                                        <button type="button" class="location-field-clear">
+                                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M0.878207 9.87891C0.653517 9.87891 0.428717 9.79318 0.257263 9.62173C-0.0857544 9.27871 -0.0857544 8.72285 0.257263 8.37984L8.37992 0.257181C8.72294 -0.085727 9.27879 -0.085727 9.62181 0.257181C9.96472 0.600089 9.96472 1.15605 9.62181 1.49896L1.49915 9.62162C1.3277 9.79318 1.1029 9.87891 0.878207 9.87891Z" fill="currentColor"/>
+                                                <path d="M9.00086 9.8788C8.77606 9.8788 8.55137 9.79307 8.37992 9.62162L0.257263 1.49896C-0.0857544 1.15605 -0.0857544 0.600089 0.257263 0.257181C0.600171 -0.085727 1.15613 -0.085727 1.49904 0.257181L9.6217 8.37984C9.96461 8.72285 9.96461 9.27871 9.6217 9.62173C9.45035 9.79307 9.22566 9.8788 9.00086 9.8788Z" fill="currentColor"/>
+                                            </svg>
+                                        </button>
+                                        <div class="location-field-dropdown"></div>
                                     </div>
                                 </div>
+
+                                {{-- Улица --}}
+                                <div class="location-field street-field">
+                                    <label class="location-field-label">Улица</label>
+                                    <div class="location-input-wrapper">
+                                        <input type="text"
+                                               class="location-field-input"
+                                               placeholder="Сначала выберите город"
+                                               autocomplete="off"
+                                               disabled>
+                                        <span class="location-field-icon">
+                                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M15.1171 16C15.0002 16.0003 14.8845 15.9774 14.7767 15.9327C14.6687 15.888 14.5707 15.8223 14.4884 15.7396L11.465 12.7218C10.224 13.6956 8.6916 14.224 7.11391 14.2222C5.70692 14.2222 4.33151 13.8052 3.16164 13.0238C1.99176 12.2424 1.07995 11.1318 0.541519 9.83244C0.00308508 8.53306 -0.137797 7.1032 0.136693 5.7238C0.411184 4.34438 1.08872 3.07731 2.08362 2.0828C3.07852 1.08829 4.34609 0.411022 5.72606 0.136639C7.106 -0.137743 8.53643 0.00308386 9.83632 0.541306C11.1362 1.07953 12.2472 1.99098 13.029 3.16039C13.8106 4.3298 14.2278 5.70467 14.2278 7.11111C14.231 8.69031 13.7023 10.2245 12.7268 11.4667L15.7458 14.4889C15.8679 14.6135 15.9508 14.7714 15.9839 14.9427C16.017 15.114 15.9988 15.2914 15.9318 15.4524C15.8647 15.6136 15.7517 15.7515 15.6069 15.8488C15.462 15.9462 15.2916 15.9988 15.1171 16ZM7.11391 1.77778C6.05867 1.77778 5.02712 2.09058 4.14971 2.67661C3.2723 3.26264 2.58844 4.0956 2.18462 5.07013C1.78079 6.04467 1.67513 7.11706 1.881 8.15155C2.08687 9.18613 2.59502 10.1364 3.34119 10.8823C4.08737 11.6283 5.03806 12.1362 6.07302 12.342C7.10796 12.5477 8.18073 12.4421 9.1557 12.0385C10.1307 11.6348 10.9639 10.9512 11.5502 10.0741C12.1364 9.19706 12.4493 8.16595 12.4493 7.11111C12.4477 5.69713 11.885 4.34154 10.8848 3.3417C9.88461 2.34186 8.52843 1.77943 7.11391 1.77778Z" fill="currentColor"/>
+                                            </svg>
+                                        </span>
+                                        <span class="location-field-spinner"></span>
+                                        <button type="button" class="location-field-clear">
+                                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M0.878207 9.87891C0.653517 9.87891 0.428717 9.79318 0.257263 9.62173C-0.0857544 9.27871 -0.0857544 8.72285 0.257263 8.37984L8.37992 0.257181C8.72294 -0.085727 9.27879 -0.085727 9.62181 0.257181C9.96472 0.600089 9.96472 1.15605 9.62181 1.49896L1.49915 9.62162C1.3277 9.79318 1.1029 9.87891 0.878207 9.87891Z" fill="currentColor"/>
+                                                <path d="M9.00086 9.8788C8.77606 9.8788 8.55137 9.79307 8.37992 9.62162L0.257263 1.49896C-0.0857544 1.15605 -0.0857544 0.600089 0.257263 0.257181C0.600171 -0.085727 1.15613 -0.085727 1.49904 0.257181L9.6217 8.37984C9.96461 8.72285 9.96461 9.27871 9.6217 9.62173C9.45035 9.79307 9.22566 9.8788 9.00086 9.8788Z" fill="currentColor"/>
+                                            </svg>
+                                        </button>
+                                        <div class="location-field-dropdown"></div>
+                                    </div>
+                                </div>
+
+                                {{-- Номер дома --}}
+                                <div class="location-field building-field">
+                                    <label class="location-field-label">№ Дома</label>
+                                    <div class="location-input-wrapper">
+                                        <input type="text"
+                                               class="location-field-input"
+                                               placeholder="—"
+                                               autocomplete="off"
+                                               disabled>
+                                    </div>
+                                </div>
+
+                                {{-- Hidden inputs для формы --}}
+                                <input type="hidden" name="city_name" value="{{ old('city_name') }}">
+                                <input type="hidden" name="city_lat" value="{{ old('city_lat') }}">
+                                <input type="hidden" name="city_lng" value="{{ old('city_lng') }}">
+                                <input type="hidden" name="district_name" value="{{ old('district_name') }}">
+                                <input type="hidden" name="street_name" value="{{ old('street_name') }}">
+                                <input type="hidden" name="street_lat" value="{{ old('street_lat') }}">
+                                <input type="hidden" name="street_lng" value="{{ old('street_lng') }}">
+                                <input type="hidden" name="building_number" value="{{ old('building_number') }}">
+
+                                {{-- Debug блок (для отладки) --}}
+                                <div class="location-coords-debug d-none"></div>
                             </div>
                         </div>
+                    </div>
+                    {{-- ========== /ЛОКАЦИЯ ========== --}}
 
-                        {{-- Улица --}}
-                        <div class="item selects">
-                            <label class="item-label" for="street">Улица</label>
-                            <select id="street" class="js-example-responsive3 my-select2" autocomplete="off">
-                                <option value=""></option>
-                                <option value="company">
-                                    Тенистая
-                                </option>
-                            </select>
-                        </div>
-
-                        {{-- Номер дома / квартиры --}}
-
-                        <div class="item noresize120">
-						<span>
-							<label class="item-label" for="number-house">№ Дом</label> /
-							<label for="number-apartment">Квартира</label>
-						</span>
-                            <div class="item-inputText-wrapper shtrih">
-                                <input class="item-inputText" id="number-house" type="text" autocomplete="off">
-                                <input class="item-inputText" id="number-apartment" type="text" autocomplete="off">
-                            </div>
-                        </div>
-
-
-
-
+                    <div class="create-filter-row">
                         {{-- Состояние --}}
                         <div class="item selects">
                             <label class="item-label" for="condition_id">Состояние</label>
@@ -630,41 +422,12 @@
                                 @endforeach
                             </select>
                         </div>
-
-                        {{-- Особенности --}}
-{{--                        <div class="item">--}}
-{{--                            <span class="item-label">Особенности</span>--}}
-{{--                            <div class="multiple-menu">--}}
-{{--                                <button class="multiple-menu-btn" data-open-menu="false" type="button">--}}
-{{--                                    Выберите параметры--}}
-{{--                                </button>--}}
-{{--                                <div class="multiple-menu-wrapper">--}}
-{{--                                    <label>--}}
-{{--                                        <input class="multiple-menu-search" autocomplete="off" name="search-additionally" type="text" placeholder="Поиск">--}}
-{{--                                    </label>--}}
-{{--                                    <ul class="multiple-menu-list">--}}
-{{--                                        @foreach($features as $feature)--}}
-{{--                                            <li class="multiple-menu-item">--}}
-{{--                                                <label class="my-custom-input">--}}
-{{--                                                    <input type="checkbox" name="features[]" value="{{ $feature->id }}"--}}
-{{--                                                            {{ in_array($feature->id, old('features', [])) ? 'checked' : '' }}>--}}
-{{--                                                    <span class="my-custom-box"></span>--}}
-{{--                                                    <span class="my-custom-text">{{ $feature->name }}</span>--}}
-{{--                                                </label>--}}
-{{--                                            </li>--}}
-{{--                                        @endforeach--}}
-{{--                                    </ul>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
                     </div>
                 </div>
 
                 {{-- Теги фильтра --}}
                 <div class="create-filter-tags">
-                    <div class="filter-tags" id="applied-filters">
-                        {{-- Теги будут добавлены JS --}}
-                    </div>
+                    <div class="filter-tags" id="applied-filters"></div>
                 </div>
 
                 {{-- Описание и фото --}}
@@ -707,13 +470,7 @@
                                                 data-bs-target="#en-tab-pane-description-advertising" type="button" role="tab"
                                                 aria-controls="en-tab-pane-description-advertising" aria-selected="false">EN</button>
                                     </li>
-{{--                                    <li class="nav-item">--}}
-{{--                                        <button id="generation-ai-about-developer" class="nav-link ai" type="button">--}}
-{{--                                            <span>AI Text</span>--}}
-{{--                                        </button>--}}
-{{--                                    </li>--}}
                                 </ul>
-
                                 <div class="tab-content">
                                     <div class="tab-pane fade" id="ua-tab-pane-description-advertising" role="tabpanel"
                                          aria-labelledby="ua-tab-description-advertising" tabindex="0">
@@ -741,7 +498,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="tab-pane fade" id="en-tab-pane-description-advertising" role="tabpanel"
                                          aria-labelledby="en-tab-description-advertising" tabindex="0">
                                         <div class="tab-content-right">
@@ -759,23 +515,16 @@
                             </div>
                         </div>
                     </div>
-
-                    {{-- Загрузка документов --}}
                 </div>
 
-                {{-- Фото объекта --}}
+                {{-- Кнопки действий --}}
                 <div class="create-filter-photo">
-
-                    {{-- Кнопки действий --}}
-
-
                     <div class="photo-info-btnGroup">
                         <div class="photo-info-btnGroup-wrapper">
                             <div class="photo-info-btnGroup-left">
                                 <button class="btn btn-outline-primary" type="button">
                                     Отменить изменения
                                 </button>
-
                             </div>
                             <div class="photo-info-btnGroup-right">
                                 <button class="btn btn-outline-success" type="button">
@@ -787,9 +536,6 @@
                             </div>
                         </div>
                     </div>
-
-
-
                 </div>
             </div>
         </form>
@@ -810,7 +556,7 @@
     <script src="{{ asset('js/pages/modal-geo.min.js') }}"></script>
     <script src="{{ asset('js/pages/page-create.min.js') }}" type="module"></script>
 
-    {{-- Модуль контактов (порядок важен!) --}}
+    {{-- Модуль контактов --}}
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/config.js') }}"></script>
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/utils.js') }}"></script>
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/components.js') }}"></script>
@@ -820,4 +566,6 @@
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/handlers.js') }}"></script>
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/main.js') }}"></script>
 
+    {{-- Каскадный поиск локации через Nominatim --}}
+    <script src="{{ asset('js/pages/properties/create/location-search.js') }}"></script>
 @endpush
