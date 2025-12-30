@@ -118,14 +118,6 @@
 
 
 
-                        {{-- Локация --}}
-
-
-                        {{-- Улица --}}
-
-
-                        {{-- Номер дома / квартиры --}}
-
 
                         {{-- Ориентир --}}
 
@@ -155,6 +147,315 @@
                                 @endforeach
                             </select>
                         </div>
+
+
+
+                        {{-- Локация --}}
+                        <div class="item w50">
+                            <label>Локация</label>
+                            <div class="my-dropdown">
+                                <div class="my-dropdown-input-wrapper">
+                                    <!-- 05.06.2025		-->
+                                    <button class="my-dropdown-geo-btn" data-bs-toggle="modal" data-bs-target="#geoModal">
+                                        <picture><source srcset="./img/icon/geo.svg" type="image/webp"><img src="./img/icon/geo.svg" alt=""></picture>
+                                    </button>
+                                    <!-- 05.06.2025		-->
+
+                                    <label class="my-dropdown-label">
+                                        <input class="my-dropdown-input" type="text" autocomplete="off" placeholder="Введите название">
+                                    </label>
+                                    <!--		28.03.2025 оновив-->
+                                    <button class="my-dropdown-btn arrow-down" id="btn-open-menu" type="button">
+                                        <picture><source srcset="./img/icon/arrow-right-white.svg" type="image/webp"><img src="./img/icon/arrow-right-white.svg" alt=""></picture>
+                                    </button>
+                                    <!--		28.03.2025 оновив-->
+                                </div>
+                                <div class="my-dropdown-list-wrapper" style="display: none">
+                                    <div class="my-dropdown-list">
+                                        <div class="scroller">
+                                            <div class="my-dropdown-item">
+                                                <label class="my-dropdown-item-label-radio">
+                                                    <input class="my-dropdown-item-radio" type="radio" name="country">
+                                                    <span class="my-dropdown-item-radio-text">
+							Україна (<span>24</span>)
+						</span>
+                                                </label>
+                                                <div class="my-dropdown-next-list" style="display: none">
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-radio">
+                                                            <input class="my-dropdown-item-radio" type="radio" name="district">
+                                                            <span class="my-dropdown-item-radio-text">
+									Дніпропетровська обл. (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-radio">
+                                                            <input class="my-dropdown-item-radio" type="radio" name="district">
+                                                            <span class="my-dropdown-item-radio-text">
+									Одеська обл. (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="my-dropdown-item">
+                                                <label class="my-dropdown-item-label-radio">
+                                                    <input class="my-dropdown-item-radio" type="radio" name="country">
+                                                    <span class="my-dropdown-item-radio-text">
+						Великобритания (<span>24</span>)
+					</span>
+                                                </label>
+                                                <div class="my-dropdown-next-list" style="display: none">
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-radio">
+                                                            <input class="my-dropdown-item-radio" type="radio" name="district">
+                                                            <span class="my-dropdown-item-radio-text">
+									Дніпропетровська обл. (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-radio">
+                                                            <input class="my-dropdown-item-radio" type="radio" name="district">
+                                                            <span class="my-dropdown-item-radio-text">
+									Одеська обл. (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="my-dropdown-list second" style="display: none">
+                                        <div class="scroller">
+                                            <div class="my-dropdown-item">
+                                                <label class="my-dropdown-item-label-checkbox">
+                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                    <span class="my-dropdown-item-checkbox-text">
+							Дніпро (<span>24</span>)
+						</span>
+                                                </label>
+                                                <div class="my-dropdown-next-list" style="display: none">
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									АНД район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									Індустріальний район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                        <div class="my-dropdown-next-next-list" style="display: none">
+                                                            <div class="my-dropdown-item">
+                                                                <label class="my-dropdown-item-label-checkbox">
+                                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                                    <span class="my-dropdown-item-checkbox-text">
+											Лівобережний 3 (<span>24</span>)
+										</span>
+                                                                </label>
+                                                            </div>
+                                                            <div class="my-dropdown-item">
+                                                                <label class="my-dropdown-item-label-checkbox">
+                                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                                    <span class="my-dropdown-item-checkbox-text">
+											Лівобережний 2 (<span>24</span>)
+										</span>
+                                                                </label>
+                                                            </div>
+                                                            <div class="my-dropdown-item">
+                                                                <label class="my-dropdown-item-label-checkbox">
+                                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                                    <span class="my-dropdown-item-checkbox-text">
+											Лівобережний 1 (<span>24</span>)
+										</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									Центральний район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									Новокадацький район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									Шевченківський район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="my-dropdown-item">
+                                                <label class="my-dropdown-item-label-checkbox">
+                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                    <span class="my-dropdown-item-checkbox-text">
+						Одесса (<span>24</span>)
+					</span>
+                                                </label>
+                                                <div class="my-dropdown-next-list" style="display: none">
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									АНД район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									Індустріальний район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									Центральний район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									Новокадацький район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									Шевченківський район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="my-dropdown-item">
+                                                <label class="my-dropdown-item-label-checkbox">
+                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                    <span class="my-dropdown-item-checkbox-text">
+						Київ (<span>24</span>)
+					</span>
+                                                </label>
+                                            </div>
+                                            <div class="my-dropdown-item">
+                                                <label class="my-dropdown-item-label-checkbox">
+                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                    <span class="my-dropdown-item-checkbox-text">
+						Харків (<span>24</span>)
+					</span>
+                                                </label>
+                                                <div class="my-dropdown-next-list" style="display: none">
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									АНД район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									Індустріальний район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									Центральний район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									Новокадацький район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="my-dropdown-item">
+                                                        <label class="my-dropdown-item-label-checkbox">
+                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
+                                                            <span class="my-dropdown-item-checkbox-text">
+									Шевченківський район (<span>24</span>)
+								</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="my-dropdown-search-wrapper" style="display: none">
+                                    <div class="my-dropdown-search-list">
+                                        <div class="scroller">
+                                            <div class="my-dropdown-search-item">
+                                                <div class="eqweqw">
+                                                    Одесская обл (24)
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Улица --}}
+                        <div class="item selects">
+                            <label class="item-label" for="street">Улица</label>
+                            <select id="street" class="js-example-responsive3 my-select2" autocomplete="off">
+                                <option value=""></option>
+                                <option value="company">
+                                    Тенистая
+                                </option>
+                            </select>
+                        </div>
+
+                        {{-- Номер дома / квартиры --}}
+
+                        <div class="item noresize120">
+						<span>
+							<label class="item-label" for="number-house">№ Дом</label> /
+							<label for="number-apartment">Квартира</label>
+						</span>
+                            <div class="item-inputText-wrapper shtrih">
+                                <input class="item-inputText" id="number-house" type="text" autocomplete="off">
+                                <input class="item-inputText" id="number-apartment" type="text" autocomplete="off">
+                            </div>
+                        </div>
+
+
+
 
                         {{-- Состояние --}}
                         <div class="item selects">
