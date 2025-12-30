@@ -219,6 +219,18 @@
                                 </div>
 
 
+                                <div class="item selects noresize120">
+                                    <label class="item-label" for="metro">Ориентир/Станция</label>
+                                    <select id="metro" class="js-example-responsive3 my-select2" autocomplete="off">
+                                        <option></option>
+                                        <option>
+                                            Ориентир/Станция 1
+                                        </option>
+                                    </select>
+                                </div>
+
+
+
                                 <div class="item noresize120">
 						<span>
 							<label class="item-label" for="number-house">№ Дом</label> /
