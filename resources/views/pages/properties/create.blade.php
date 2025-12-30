@@ -142,7 +142,6 @@
                     {{-- ========== ЛОКАЦИЯ (Каскадный поиск) ========== --}}
                     <div class="create-filter-row">
                         <div class="item w100">
-                            <label class="item-label">Локация</label>
                             <div class="location-cascade-wrapper">
 
                                 {{-- Населенный пункт --}}
@@ -219,17 +218,18 @@
                                     </div>
                                 </div>
 
-                                {{-- Номер дома --}}
-                                <div class="location-field building-field">
-                                    <label class="location-field-label">№ Дома</label>
-                                    <div class="location-input-wrapper">
-                                        <input type="text"
-                                               class="location-field-input"
-                                               placeholder="—"
-                                               autocomplete="off"
-                                               disabled>
+
+                                <div class="item noresize120">
+						<span>
+							<label class="item-label" for="number-house">№ Дом</label> /
+							<label for="number-apartment">Квартира</label>
+						</span>
+                                    <div class="item-inputText-wrapper shtrih">
+                                        <input class="item-inputText" id="number-house" type="text" autocomplete="off">
+                                        <input class="item-inputText" id="number-apartment" type="text" autocomplete="off">
                                     </div>
                                 </div>
+
 
                                 {{-- Hidden inputs для формы --}}
                                 <input type="hidden" name="city_name" value="{{ old('city_name') }}">
@@ -239,10 +239,6 @@
                                 <input type="hidden" name="street_name" value="{{ old('street_name') }}">
                                 <input type="hidden" name="street_lat" value="{{ old('street_lat') }}">
                                 <input type="hidden" name="street_lng" value="{{ old('street_lng') }}">
-                                <input type="hidden" name="building_number" value="{{ old('building_number') }}">
-
-                                {{-- Debug блок (для отладки) --}}
-                                <div class="location-coords-debug d-none"></div>
                             </div>
                         </div>
                     </div>

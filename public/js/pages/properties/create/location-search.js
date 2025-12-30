@@ -30,7 +30,6 @@ window.LocationCascade = {
         city: null,        // { name, displayName, lat, lon, osmId }
         district: null,    // { name, displayName, lat, lon, osmId }
         street: null,      // { name, displayName, lat, lon, osmId }
-        building: '',
 
         // Таймеры debounce
         timers: {
@@ -89,14 +88,6 @@ window.LocationCascade = {
             }
         });
 
-        // Поле номера дома
-        var buildingField = container.querySelector('.location-field.building-field');
-        if (buildingField) {
-            this.elements.building = {
-                input: buildingField.querySelector('.location-field-input')
-            };
-        }
-
         // Hidden inputs
         this.elements.hidden = {
             cityName: container.querySelector('input[name="city_name"]'),
@@ -105,12 +96,8 @@ window.LocationCascade = {
             districtName: container.querySelector('input[name="district_name"]'),
             streetName: container.querySelector('input[name="street_name"]'),
             streetLat: container.querySelector('input[name="street_lat"]'),
-            streetLng: container.querySelector('input[name="street_lng"]'),
-            buildingNumber: container.querySelector('input[name="building_number"]')
+            streetLng: container.querySelector('input[name="street_lng"]')
         };
-
-        // Debug блок
-        this.elements.debug = container.querySelector('.location-coords-debug');
     },
 
     // ========== Привязка событий ==========
@@ -159,15 +146,6 @@ window.LocationCascade = {
                 });
             }
         });
-
-        // Поле номера дома
-        if (this.elements.building && this.elements.building.input) {
-            this.elements.building.input.addEventListener('input', function(e) {
-                self.state.building = e.target.value;
-                self._updateHiddenInputs();
-                self._updateDebug();
-            });
-        }
 
         // Клик вне - закрыть все dropdown
         document.addEventListener('click', function(e) {
@@ -598,13 +576,11 @@ window.LocationCascade = {
         if (field === 'city') {
             this._clearField('district', true);  // true = не обновлять состояния (сделаем в конце)
             this._clearField('street', true);
-            this._clearField('building', true);
         }
 
         // При выборе района - сбрасываем улицу
         if (field === 'district') {
             this._clearField('street', true);
-            this._clearField('building', true);
         }
 
         // Сохраняем выбранное значение
@@ -642,9 +618,6 @@ window.LocationCascade = {
 
         // Обновляем hidden inputs
         this._updateHiddenInputs();
-
-        // Обновляем debug
-        this._updateDebug();
 
         // Закрываем dropdown
         this._closeDropdown(field);
@@ -704,37 +677,12 @@ window.LocationCascade = {
                 streetInput.placeholder = 'Сначала выберите город';
             }
         }
-
-        // Номер дома - доступен только если выбрана улица
-        if (this.elements.building) {
-            var buildingInput = this.elements.building.input;
-            if (this.state.street) {
-                buildingInput.disabled = false;
-                buildingInput.placeholder = '№';
-            } else {
-                buildingInput.disabled = true;
-                buildingInput.placeholder = '—';
-            }
-        }
     },
 
     // ========== Очистка поля ==========
     _clearField: function(field, skipUpdate) {
         // Очищаем значение
         this.state[field] = null;
-
-        // Для building очищаем строку
-        if (field === 'building') {
-            this.state.building = '';
-            if (this.elements.building) {
-                this.elements.building.input.value = '';
-            }
-            if (!skipUpdate) {
-                this._updateHiddenInputs();
-                this._updateDebug();
-            }
-            return;
-        }
 
         // Очищаем UI поля
         this._updateFieldUI(field);
@@ -743,7 +691,6 @@ window.LocationCascade = {
         if (!skipUpdate) {
             this._updateFieldStates();
             this._updateHiddenInputs();
-            this._updateDebug();
 
             // Фокус на инпут
             if (this.elements[field] && this.elements[field].input) {
@@ -770,36 +717,6 @@ window.LocationCascade = {
         if (h.streetName) h.streetName.value = this.state.street ? this.state.street.name : '';
         if (h.streetLat) h.streetLat.value = this.state.street ? this.state.street.lat : '';
         if (h.streetLng) h.streetLng.value = this.state.street ? this.state.street.lon : '';
-
-        // Номер дома
-        if (h.buildingNumber) h.buildingNumber.value = this.state.building;
-    },
-
-    // ========== Обновление debug блока ==========
-    _updateDebug: function() {
-        if (!this.elements.debug) return;
-
-        var info = [];
-
-        if (this.state.city) {
-            info.push('Город: ' + this.state.city.name + ' (' + this.state.city.lat + ', ' + this.state.city.lon + ')');
-        }
-        if (this.state.district) {
-            info.push('Район: ' + this.state.district.name);
-        }
-        if (this.state.street) {
-            info.push('Улица: ' + this.state.street.name + ' (' + this.state.street.lat + ', ' + this.state.street.lon + ')');
-        }
-        if (this.state.building) {
-            info.push('Дом: ' + this.state.building);
-        }
-
-        if (info.length > 0) {
-            this.elements.debug.textContent = info.join(' | ');
-            this.elements.debug.classList.remove('d-none');
-        } else {
-            this.elements.debug.classList.add('d-none');
-        }
     },
 
     // ========== Показать/скрыть спиннер ==========
