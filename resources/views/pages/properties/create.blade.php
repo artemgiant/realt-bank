@@ -146,7 +146,7 @@
 
                                 {{-- Область --}}
                                 <div class="item selects" style="min-width: 200px;">
-                                    <label class="item-label" for="region_id">Область</label>
+                                    <label class="item-label" for="region_id">Регион</label>
                                     <select id="region_id" name="region_id" class="js-example-responsive3 my-select2">
                                         {{-- Заполняется через JS --}}
                                     </select>
@@ -154,7 +154,7 @@
 
                                 {{-- Локация (город, улица, дом) --}}
                                 <div class="location-field" style="flex: 1; min-width: 300px;">
-                                    <label class="location-field-label">Локация (город, улица, дом)</label>
+                                    <label class="location-field-label">Локация (улица, дом)</label>
                                     <div class="location-input-wrapper">
                                         <input type="text"
                                                class="location-field-input"

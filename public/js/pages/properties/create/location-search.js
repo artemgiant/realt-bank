@@ -283,17 +283,19 @@ window.LocationCascade = {
         // Показываем спиннер
         this._setLoading(true);
 
-        // Формируем запрос с учетом области (на русском)
+        // Формируем структурный запрос
         var regionName = this.state.region ? this.state.region.name : '';
-        var searchQuery = query + ', ' + regionName + ', Украина';
 
         var params = new URLSearchParams({
             format: 'json',
             addressdetails: 1,
             countrycodes: this.config.countryCode,
             limit: this.config.limit,
-            'accept-language': 'ru',  // Русский язык
-            q: searchQuery
+            'accept-language': 'ru',
+            // Структурный запрос
+            street: query,           // улица и номер дома
+            state: regionName,       // область
+            country: 'Украина'       // страна
         });
 
         var url = this.config.apiUrl + '?' + params.toString();
@@ -301,7 +303,7 @@ window.LocationCascade = {
         // DEBUG: выводим запрос в консоль (декодированный)
         console.log('=== LocationCascade SEARCH ===');
         console.log('User input:', query);
-        console.log('Search query:', searchQuery);
+        console.log('Structured query: street="' + query + '", state="' + regionName + '", country="Украина"');
         console.log('Full URL (decoded):', decodeURIComponent(url));
 
         fetch(url, {
