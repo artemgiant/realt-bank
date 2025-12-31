@@ -395,6 +395,14 @@ window.LocationCascade = {
                 suburb: address.suburb || address.city_district
             });
 
+            // Пропускаем результаты с украинскими/английскими названиями
+            // Проверяем наличие украинских букв: і, ї, є, ґ
+            var displayName = item.display_name || '';
+            if (/[іїєґІЇЄҐ]/.test(displayName)) {
+                console.log('  -> Skipped (Ukrainian locale)');
+                return;
+            }
+
             // Формируем уникальный ключ
             var key = (address.road || address.street || '') + '|' +
                 (address.house_number || '') + '|' +
