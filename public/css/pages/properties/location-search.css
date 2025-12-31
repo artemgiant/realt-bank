@@ -11,10 +11,12 @@
 /* ========== Поле ввода ========== */
 .location-search-wrapper .location-search-input {
     width: 100%;
-    padding: 8px 40px 8px 12px;
+    height: 30px;
+    padding: 0 36px 0 12px;
     border: 1px solid #ddd;
     border-radius: 6px;
-
+    font-size: 14px;
+    line-height: 28px;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -31,12 +33,18 @@
 /* ========== Иконка поиска ========== */
 .location-search-wrapper .location-search-icon {
     position: absolute;
-    right: 12px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     color: #aaa;
     pointer-events: none;
     transition: opacity 0.2s;
+    line-height: 0;
+}
+
+.location-search-wrapper .location-search-icon svg {
+    width: 12px;
+    height: 12px;
 }
 
 .location-search-wrapper.is-loading .location-search-icon,
@@ -47,11 +55,11 @@
 /* ========== Спиннер загрузки ========== */
 .location-search-wrapper .location-search-spinner {
     position: absolute;
-    right: 12px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     border: 2px solid #ddd;
     border-top-color: #3585F5;
     border-radius: 50%;
@@ -74,8 +82,8 @@
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     padding: 0;
     border: none;
     background: #eee;
@@ -94,8 +102,8 @@
 }
 
 .location-search-wrapper .location-search-clear svg {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 
 .location-search-wrapper.has-value .location-search-clear {
@@ -141,7 +149,7 @@
 }
 
 .location-search-wrapper .location-item-main {
-
+    font-size: 14px;
     font-weight: 500;
     color: #333;
 }
@@ -157,7 +165,7 @@
     padding: 16px 12px;
     text-align: center;
     color: #888;
-
+    font-size: 14px;
 }
 
 /* ========== Состояние с выбранным значением ========== */
