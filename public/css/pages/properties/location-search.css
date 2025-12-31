@@ -1,0 +1,167 @@
+/**
+ * Стили для поиска локации
+ */
+
+/* ========== Обертка ========== */
+.location-search-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* ========== Поле ввода ========== */
+.location-search-wrapper .location-search-input {
+    width: 100%;
+    padding: 8px 40px 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.location-search-wrapper .location-search-input:focus {
+    outline: none;
+    border-color: #3585F5;
+    box-shadow: 0 0 0 3px rgba(53, 133, 245, 0.1);
+}
+
+.location-search-wrapper .location-search-input::placeholder {
+    color: #aaa;
+}
+
+/* ========== Иконка поиска ========== */
+.location-search-wrapper .location-search-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.location-search-wrapper.is-loading .location-search-icon,
+.location-search-wrapper.has-value .location-search-icon {
+    opacity: 0;
+}
+
+/* ========== Спиннер загрузки ========== */
+.location-search-wrapper .location-search-spinner {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ddd;
+    border-top-color: #3585F5;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.location-search-wrapper.is-loading .location-search-spinner {
+    opacity: 1;
+    animation: location-spin 0.6s linear infinite;
+}
+
+@keyframes location-spin {
+    to { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* ========== Кнопка очистки ========== */
+.location-search-wrapper .location-search-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    background: #eee;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, background 0.2s;
+}
+
+.location-search-wrapper .location-search-clear:hover {
+    background: #ddd;
+}
+
+.location-search-wrapper .location-search-clear svg {
+    width: 8px;
+    height: 8px;
+}
+
+.location-search-wrapper.has-value .location-search-clear {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ========== Dropdown ========== */
+.location-search-wrapper .location-search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+}
+
+.location-search-wrapper .location-search-dropdown.is-open {
+    display: block;
+}
+
+/* ========== Список результатов ========== */
+.location-search-wrapper .location-dropdown-list {
+    padding: 4px 0;
+}
+
+.location-search-wrapper .location-dropdown-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.location-search-wrapper .location-dropdown-item:hover,
+.location-search-wrapper .location-dropdown-item.is-active {
+    background: #f5f8ff;
+}
+
+.location-search-wrapper .location-item-main {
+
+    font-weight: 500;
+    color: #333;
+}
+
+.location-search-wrapper .location-item-sub {
+    font-size: 12px;
+    color: #888;
+    margin-top: 2px;
+}
+
+/* ========== Пустой результат ========== */
+.location-search-wrapper .location-dropdown-empty {
+    padding: 16px 12px;
+    text-align: center;
+    color: #888;
+
+}
+
+/* ========== Состояние с выбранным значением ========== */
+.location-search-wrapper.has-value .location-search-input {
+    padding-right: 36px;
+    background-color: #f9fafb;
+}

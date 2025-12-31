@@ -34,6 +34,16 @@ Route::middleware('auth')->group(function () {
     Route::resource('properties', PropertyController::class);
 
 
+    // Поиск улиц (для autocomplete)
+    Route::get('/location/search', [App\Http\Controllers\LocationController::class, 'search'])
+        ->name('location.search');
+
+// Получение данных улицы по ID
+    Route::get('/location/street/{id}', [App\Http\Controllers\LocationController::class, 'show'])
+        ->name('location.show');
+
+
+
 
 
 // ========== Contacts AJAX endpoints ==========
