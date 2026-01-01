@@ -196,6 +196,7 @@ class PropertyController extends Controller
                     'living' => $property->area_living ? ceil($property->area_living) : null,
                     'kitchen' => $property->area_kitchen ? ceil($property->area_kitchen) : null,
                 ],
+                'area_land' => $property->area_land ? ceil($property->area_land) : null,
                 'price_per_m2' => $property->price_per_m2 ? number_format($property->price_per_m2, 0, '.', ' ') : null,
                 'condition' => $property->condition?->name ?? '-',
                 'floor' => $this->formatFloor($property),
