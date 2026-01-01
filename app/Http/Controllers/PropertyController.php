@@ -103,6 +103,12 @@ class PropertyController extends Controller
         $searchValue = $request->input('search.value', '');
         $orderColumnIndex = $request->input('order.0.column', 0);
         $orderDirection = $request->input('order.0.dir', 'desc');
+        // ========== Кастомная сортировка ==========
+        $sortField = $request->input('sort_field', 'created_at');
+        $sortDir = $request->input('sort_dir', 'desc');
+        $sortDir = in_array($sortDir, ['asc', 'desc']) ? $sortDir : 'desc';
+        // Валидация направления сортировки
+        $sortDir = in_array($sortDir, ['asc', 'desc']) ? $sortDir : 'desc';
 
         // Маппинг колонок для сортировки
         $columns = [
@@ -116,6 +122,14 @@ class PropertyController extends Controller
             7 => 'price',
             8 => 'contact_id',
         ];
+
+        // Валидация поля сортировки
+        $allowedSortFields = ['created_at', 'price', 'area_total', 'price_per_m2'];
+        if (!in_array($sortField, $allowedSortFields)) {
+            $sortField = 'created_at';
+        }
+
+
 
         $orderColumn = $columns[$orderColumnIndex] ?? 'id';
 
@@ -147,7 +161,7 @@ class PropertyController extends Controller
                         $sq->where('name', 'like', "%{$searchValue}%");
                     })
                     ->orWhereHas('city', function ($cq) use ($searchValue) {
-                        $cq->where('name', 'like', "%{$searchValue}%");
+                        $cq->where('name', 'like', "%{$searchValuajaxDatae}%");
                     });
             });
         }
@@ -158,9 +172,11 @@ class PropertyController extends Controller
         // Количество после фильтрации
         $recordsFiltered = $query->count();
 
-        // Сортировка и пагинация
+        // Сортировка
+        $query->orderBy($sortField, $sortDir);
+
+// Пагинация
         $properties = $query
-            ->orderBy($orderColumn, $orderDirection)
             ->skip($start)
             ->take($length)
             ->get();
@@ -180,6 +196,7 @@ class PropertyController extends Controller
                     'living' => $property->area_living ? ceil($property->area_living) : null,
                     'kitchen' => $property->area_kitchen ? ceil($property->area_kitchen) : null,
                 ],
+                'price_per_m2' => $property->price_per_m2 ? number_format($property->price_per_m2, 0, '.', ' ') : null,
                 'condition' => $property->condition?->name ?? '-',
                 'floor' => $this->formatFloor($property),
                 'photo' => $this->formatPhoto($property),
@@ -630,6 +647,7 @@ class PropertyController extends Controller
                 'floors_total' => $validated['floors_total'] ?? null,
                 'year_built' => $validated['year_built'] ?? null,
                 'price' => $validated['price'] ?? null,
+                'price_per_m2' => $pricePerM2,
                 'commission' => $validated['commission'] ?? null,
                 'commission_type' => 'percent', // По умолчанию
 
@@ -731,170 +749,9 @@ class PropertyController extends Controller
         }
     }
 
-    /**
-     * Display the specified property.
-     */
-    public function show(Property $property): View
-    {
-        return view('pages.properties.show', compact('property'));
-    }
 
-    /**
-     * Show the form for editing the specified property.
-     */
-    public function edit(Property $property): View
-    {
-        return view('pages.properties.edit', [
-            'property' => $property->load([
-                'translations',
-                'photos',
-                'documents',
-                'features',
-                'contacts.phones',
-            ]),
 
-            'currencies' => Currency::active()->get(),
-            'sources' => Source::active()->orderBy('name')->get(),
-            'complexes' => Complex::active()->orderBy('name')->get(),
-            'contacts' => Contact::with('phones')->orderBy('last_name')->orderBy('first_name')->limit(100)->get(),
-            'countries' => Country::active()->orderBy('name')->get(),
-            'dealTypes' => Dictionary::getDealTypes(),
-            'dealKinds' => Dictionary::getDealKinds(),
-            'buildingTypes' => Dictionary::getBuildingTypes(),
-            'propertyTypes' => Dictionary::getPropertyTypes(),
-            'conditions' => Dictionary::getConditions(),
-            'wallTypes' => Dictionary::getWallTypes(),
-            'heatingTypes' => Dictionary::getHeatingTypes(),
-            'roomCounts' => Dictionary::getRoomCounts(),
-            'bathroomCounts' => Dictionary::getBathroomCounts(),
-            'ceilingHeights' => Dictionary::getCeilingHeights(),
-            'features' => Dictionary::getFeatures(),
-            'yearsBuilt' => Dictionary::getYearsBuilt(),
-        ]);
-    }
 
-    /**
-     * Update the specified property in storage.
-     */
-    public function update(Request $request, Property $property): RedirectResponse
-    {
-        $validated = $request->validate([
-            'deal_type_id' => 'required|exists:dictionaries,id',
-            'currency_id' => 'required|exists:currencies,id',
-            'deal_kind_id' => 'nullable|exists:dictionaries,id',
-            'building_type_id' => 'nullable|exists:dictionaries,id',
-            'property_type_id' => 'nullable|exists:dictionaries,id',
-            'room_count_id' => 'nullable|exists:dictionaries,id',
-            'condition_id' => 'nullable|exists:dictionaries,id',
-            'bathroom_count_id' => 'nullable|exists:dictionaries,id',
-            'ceiling_height_id' => 'nullable|exists:dictionaries,id',
-            'wall_type_id' => 'nullable|exists:dictionaries,id',
-            'heating_type_id' => 'nullable|exists:dictionaries,id',
-            'source_id' => 'nullable|exists:sources,id',
-            'area_total' => 'nullable|numeric|min:0',
-            'area_living' => 'nullable|numeric|min:0',
-            'area_kitchen' => 'nullable|numeric|min:0',
-            'area_land' => 'nullable|numeric|min:0',
-            'floor' => 'nullable|integer|min:0',
-            'floors_total' => 'nullable|integer|min:1',
-            'year_built' => 'nullable|integer|min:1800|max:' . (date('Y') + 10),
-            'price' => 'nullable|numeric|min:0',
-            'commission' => 'nullable|numeric|min:0',
-            'youtube_url' => 'nullable|url|max:255',
-            'title_ru' => 'nullable|string|max:255',
-            'agent_notes' => 'nullable|string|max:5000',
-            'description_ua' => 'nullable|string|max:10000',
-            'description_ru' => 'nullable|string|max:10000',
-            'description_en' => 'nullable|string|max:10000',
 
-            // Контакты
-            'contact_ids' => 'nullable|array',
-            'contact_ids.*' => 'exists:contacts,id',
-        ], [
-            'deal_type_id.required' => 'Выберите тип сделки',
-            'currency_id.required' => 'Выберите валюту',
-            'contact_ids.array' => 'Неверный формат контактов',
-            'contact_ids.*.exists' => 'Выбранный контакт не существует',
-        ]);
 
-        try {
-            DB::beginTransaction();
-
-            $property->update([
-                'deal_type_id' => $validated['deal_type_id'],
-                'currency_id' => $validated['currency_id'],
-                'deal_kind_id' => $validated['deal_kind_id'] ?? null,
-                'building_type_id' => $validated['building_type_id'] ?? null,
-                'property_type_id' => $validated['property_type_id'] ?? null,
-                'room_count_id' => $validated['room_count_id'] ?? null,
-                'condition_id' => $validated['condition_id'] ?? null,
-                'bathroom_count_id' => $validated['bathroom_count_id'] ?? null,
-                'ceiling_height_id' => $validated['ceiling_height_id'] ?? null,
-                'wall_type_id' => $validated['wall_type_id'] ?? null,
-                'heating_type_id' => $validated['heating_type_id'] ?? null,
-                'source_id' => $validated['source_id'] ?? null,
-                'area_total' => $validated['area_total'] ?? null,
-                'area_living' => $validated['area_living'] ?? null,
-                'area_kitchen' => $validated['area_kitchen'] ?? null,
-                'area_land' => $validated['area_land'] ?? null,
-                'floor' => $validated['floor'] ?? null,
-                'floors_total' => $validated['floors_total'] ?? null,
-                'year_built' => $validated['year_built'] ?? null,
-                'price' => $validated['price'] ?? null,
-                'commission' => $validated['commission'] ?? null,
-                'youtube_url' => $validated['youtube_url'] ?? null,
-                'agent_notes' => $validated['agent_notes'] ?? null,
-            ]);
-
-            $this->saveTranslations($property, $validated);
-
-            // ========== Синхронизируем контакты ==========
-            if (isset($validated['contact_ids'])) {
-                $property->contacts()->sync($validated['contact_ids']);
-            } else {
-                // Если контакты не переданы - отвязываем все
-                $property->contacts()->detach();
-            }
-
-            DB::commit();
-
-            return redirect()
-                ->route('properties.index')
-                ->with('success', 'Объект успешно обновлен!');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return back()
-                ->withInput()
-                ->with('error', 'Ошибка при обновлении объекта: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Remove the specified property from storage.
-     */
-    public function destroy(Property $property): RedirectResponse
-    {
-        try {
-            foreach ($property->photos as $photo) {
-                Storage::disk('public')->delete($photo->path);
-            }
-
-            foreach ($property->documents as $document) {
-                Storage::disk('public')->delete($document->path);
-            }
-
-            Storage::disk('public')->deleteDirectory("properties/{$property->id}");
-
-            $property->delete();
-
-            return redirect()
-                ->route('properties.index')
-                ->with('success', 'Объект успешно удален!');
-
-        } catch (\Exception $e) {
-            return back()->with('error', 'Ошибка при удалении объекта: ' . $e->getMessage());
-        }
-    }
 }

@@ -74,6 +74,7 @@ class Property extends Model
 
         // Ціна
         'price',
+        'price_per_m2',
         'commission',
         'commission_type',
 
@@ -95,6 +96,7 @@ class Property extends Model
         'area_living' => 'decimal:2',
         'area_kitchen' => 'decimal:2',
         'area_land' => 'decimal:2',
+        'price_per_m2' => 'decimal:2',
         'price' => 'decimal:2',
         'commission' => 'decimal:2',
         'is_visible_to_agents' => 'boolean',

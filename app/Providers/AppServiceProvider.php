@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use App\Models\Property\Property;
+use App\Observers\PropertyObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerMenuComposer();
+        Property::observe(PropertyObserver::class);
     }
 
     /**

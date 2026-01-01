@@ -111,6 +111,29 @@ $(document).ready(function() {
         table.ajax.reload();
     });
 
+    // ========== Сортировка ==========
+
+    // Обработчик клика на пункты сортировки
+    $(document).on('click', '.sort-option', function(e) {
+        e.preventDefault();
+
+        var $this = $(this);
+        var sortField = $this.data('sort-field');
+        var sortDir = $this.data('sort-dir');
+
+        // Устанавливаем сортировку
+        Filters.setSort(sortField, sortDir);
+
+        // Убираем active класс со всех пунктов
+        $('.sort-option').removeClass('active');
+
+        // Добавляем active класс текущему пункту
+        $this.addClass('active');
+
+        // Перезагружаем таблицу
+        reloadTable();
+    });
+
     // ========== Автоматическая фильтрация ==========
 
     // Обработчик ввода для текстовых полей (с задержкой)
@@ -186,6 +209,8 @@ $(document).ready(function() {
         e.preventDefault();
         Filters.reset();
         Tags.update();
+        // Убираем active класс со всех пунктов сортировки
+        $('.sort-option').removeClass('active');
         table.ajax.reload();
     });
 
@@ -194,6 +219,8 @@ $(document).ready(function() {
         e.preventDefault();
         Filters.reset();
         Tags.update();
+        // Убираем active класс со всех пунктов сортировки
+        $('.sort-option').removeClass('active');
         table.ajax.reload();
     });
 

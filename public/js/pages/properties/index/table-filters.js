@@ -7,6 +7,10 @@ window.PropertyFilters = {
     // Селектор формы фильтров
     formSelector: '#filter-form',
 
+    // Текущая сортировка
+    sortField: 'created_at',
+    sortDir: 'desc',
+
     // Получение значений отмеченных чекбоксов
     getCheckedValues: function(selector) {
         var values = [];
@@ -19,6 +23,10 @@ window.PropertyFilters = {
     // Сбор всех параметров фильтров для AJAX запроса
     collectFilterData: function(d) {
         var $form = $(this.formSelector);
+
+        // Сортировка
+        d.sort_field = this.sortField;
+        d.sort_dir = this.sortDir;
 
         // Основные фильтры из хедера
         d.deal_type_id = $form.find('#deal_type_id').val();
@@ -67,6 +75,12 @@ window.PropertyFilters = {
         return d;
     },
 
+    // Установка сортировки
+    setSort: function(field, dir) {
+        this.sortField = field;
+        this.sortDir = dir;
+    },
+
     // Сброс всех фильтров
     reset: function() {
         var $form = $(this.formSelector);
@@ -83,6 +97,10 @@ window.PropertyFilters = {
         // Очищаем скрытые поля дат
         $('#created_from').val('');
         $('#created_to').val('');
+
+        // Сбрасываем сортировку на дефолтную
+        this.sortField = 'created_at';
+        this.sortDir = 'desc';
 
         // Скрываем счетчик фильтров
         $('.full-filter-counter').hide();

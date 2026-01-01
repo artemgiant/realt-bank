@@ -49,6 +49,11 @@ window.PropertyTableConfig = {
             {
                 data: 'contact',
                 render: R.contact
+            },
+            {
+                data: 'actions',
+                orderable: false,
+                render: R.actions
             }
         ];
     },
