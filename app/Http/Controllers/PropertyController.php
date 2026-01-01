@@ -129,8 +129,6 @@ class PropertyController extends Controller
             'propertyType',
             'condition',
             'buildingType',
-            'city',
-            'street',
             'photos',
             'contacts.phones',
         ]);
@@ -173,9 +171,15 @@ class PropertyController extends Controller
             $data[] = [
                 'id' => $property->id,
                 'checkbox' => $property->id,
-                'location' => $this->formatLocation($property),
+                'location' => '-',
                 'property_type' => $property->propertyType?->name ?? '-',
-                'area' => $property->area_total ? $property->area_total . ' м²' : '-',
+                'room_count' => $property->roomCount?->name ?? null,
+                'wall_type' => $property->wallType?->name ?? null,
+                'area' => [
+                    'total' => $property->area_total ? ceil($property->area_total) : null,
+                    'living' => $property->area_living ? ceil($property->area_living) : null,
+                    'kitchen' => $property->area_kitchen ? ceil($property->area_kitchen) : null,
+                ],
                 'condition' => $property->condition?->name ?? '-',
                 'floor' => $this->formatFloor($property),
                 'photo' => $this->formatPhoto($property),
@@ -425,25 +429,7 @@ class PropertyController extends Controller
         }
     }
 
-    /**
-     * Форматирование локации для таблицы
-     */
-    private function formatLocation(Property $property): string
-    {
-        $parts = [];
 
-        if ($property->street) {
-            $parts[] = $property->street->name;
-        }
-        if ($property->building_number) {
-            $parts[] = $property->building_number;
-        }
-        if ($property->city) {
-            $parts[] = $property->city->name;
-        }
-
-        return !empty($parts) ? implode(', ', $parts) : '-';
-    }
 
     /**
      * Форматирование этажа для таблицы

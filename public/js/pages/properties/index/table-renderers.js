@@ -22,22 +22,31 @@ window.PropertyRenderers = {
 
     // Тип сделки
     propertyType: function(data, type, row) {
+        var roomCount = row.room_count ? '<span>' + row.room_count + '</span>' : '';
         return '<div class="tbody-wrapper type">' +
-            (data !== '-' ? '<p>' + data + '</p>' : '<span class="text-muted">-</span>') +
+            (data !== '-' ? '<p>' + data  + '</p>' + roomCount : '<span class="text-muted">-</span>') +
             '</div>';
     },
 
     // Площадь
     area: function(data, type, row) {
+        var parts = [];
+        if (data.total) parts.push(data.total);
+        if (data.living) parts.push(data.living);
+        if (data.kitchen) parts.push(data.kitchen);
+
+        var areaText = parts.length > 0 ? parts.join('/') + ' м²' : '-';
+
         return '<div class="tbody-wrapper area">' +
-            (data !== '-' ? '<p>' + data + '</p>' : '<span class="text-muted">-</span>') +
+            (areaText !== '-' ? '<p>' + areaText + '</p>' : '<span class="text-muted">-</span>') +
             '</div>';
     },
 
     // Состояние
     condition: function(data, type, row) {
+        var wallType = row.wall_type ? '<span>' + row.wall_type + '</span>' : '';
         return '<div class="tbody-wrapper condition">' +
-            (data !== '-' ? '<p>' + data + '</p>' : '<span class="text-muted">-</span>') +
+            (data !== '-' ? '<p>' + data + '</p>' + wallType : '<span class="text-muted">-</span>') +
             '</div>';
     },
 
