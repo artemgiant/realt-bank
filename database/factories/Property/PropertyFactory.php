@@ -96,7 +96,6 @@ class PropertyFactory extends Factory
             'district_id' => $district?->id,
             'zone_id' => null,
             'street_id' => $street?->id,
-            'landmark_id' => null,
             'building_number' => $this->faker->boolean(80) ? $this->faker->buildingNumber() : null,
             'apartment_number' => $this->faker->boolean(50) ? $this->faker->numberBetween(1, 200) : null,
             'location_name' => null,

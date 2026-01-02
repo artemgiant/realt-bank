@@ -2,34 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Location\LibStreet;
+use App\Models\Location\Street;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LocationController extends Controller
 {
     /**
-     * Поиск улиц по названию
+     * Поиск улиц для autocomplete
      * GET /location/search?q=поисковый_запрос
      */
     public function search(Request $request): JsonResponse
     {
-        $search = $request->input('q', '');
+        $query = $request->input('q', '');
         $limit = $request->input('limit', 15);
 
-        // Минимум 2 символа для поиска
-        if (mb_strlen($search) < 2) {
+        if (strlen($query) < 2) {
             return response()->json([
-                'success' => true,
+                'success' => false,
+                'message' => 'Минимум 2 символа для поиска',
                 'results' => [],
-                'message' => 'Введите минимум 2 символа',
             ]);
         }
 
-        $streets = LibStreet::with(['zone', 'region', 'town'])
+        $streets = Street::with(['city', 'district', 'zone'])
             ->active()
-            ->search($search)
-            ->orderBy('name')
+            ->search($query)
             ->limit($limit)
             ->get();
 
@@ -37,12 +35,12 @@ class LocationController extends Controller
             return [
                 'id' => $street->id,
                 'name' => $street->name,
+                'city_id' => $street->city_id,
+                'city_name' => $street->city?->name,
+                'district_id' => $street->district_id,
+                'district_name' => $street->district?->name,
                 'zone_id' => $street->zone_id,
                 'zone_name' => $street->zone?->name,
-                'region_id' => $street->region_id,
-                'region_name' => $street->region?->name,
-                'town_id' => $street->town_id,
-                'town_name' => $street->town?->name,
                 'full_address' => $street->full_address,
                 'short_address' => $street->short_address,
             ];
@@ -61,9 +59,7 @@ class LocationController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $street = LibStreet::with(['zone', 'region', 'town'])
-            ->active()
-            ->find($id);
+        $street = Street::with(['city', 'district', 'zone'])->find($id);
 
         if (!$street) {
             return response()->json([
@@ -77,12 +73,12 @@ class LocationController extends Controller
             'street' => [
                 'id' => $street->id,
                 'name' => $street->name,
+                'city_id' => $street->city_id,
+                'city_name' => $street->city?->name,
+                'district_id' => $street->district_id,
+                'district_name' => $street->district?->name,
                 'zone_id' => $street->zone_id,
                 'zone_name' => $street->zone?->name,
-                'region_id' => $street->region_id,
-                'region_name' => $street->region?->name,
-                'town_id' => $street->town_id,
-                'town_name' => $street->town?->name,
                 'full_address' => $street->full_address,
                 'short_address' => $street->short_address,
             ],

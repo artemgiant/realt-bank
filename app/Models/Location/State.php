@@ -3,15 +3,20 @@
 namespace App\Models\Location;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Country extends Model
+class State extends Model
 {
-    protected $table = 'countries';
+    use SoftDeletes;
+
+    protected $table = 'states';
 
     protected $fillable = [
         'name',
         'code',
+        'country_id',
         'is_active',
     ];
 
@@ -21,9 +26,14 @@ class Country extends Model
 
     // ========== Relationships ==========
 
-    public function states(): HasMany
+    public function country(): BelongsTo
     {
-        return $this->hasMany(State::class);
+        return $this->belongsTo(Country::class);
+    }
+
+    public function cities(): HasMany
+    {
+        return $this->hasMany(City::class);
     }
 
     // ========== Scopes ==========

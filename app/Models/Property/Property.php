@@ -6,8 +6,7 @@ use App\Models\Contact\Contact;
 use App\Models\Location\City;
 use App\Models\Location\Country;
 use App\Models\Location\District;
-use App\Models\Location\Landmark;
-use App\Models\Location\Region;
+use App\Models\Location\State;
 use App\Models\Location\Street;
 use App\Models\Location\Zone;
 use App\Models\Reference\Complex;
@@ -28,7 +27,7 @@ class Property extends Model
     use SoftDeletes, HasFactory;
 
     protected $fillable = [
-        // Зв'язки
+        // Связи
         'user_id',
         'source_id',
         'currency_id',
@@ -37,21 +36,20 @@ class Property extends Model
         'complex_id',
         'section_id',
 
-        // Локація
+        // Локация
         'country_id',
-        'region_id',
+        'state_id',
         'city_id',
         'district_id',
         'zone_id',
         'street_id',
-        'landmark_id',
         'building_number',
         'apartment_number',
         'location_name',
         'latitude',
         'longitude',
 
-        // Довідники
+        // Справочники
         'deal_type_id',
         'deal_kind_id',
         'building_type_id',
@@ -72,17 +70,17 @@ class Property extends Model
         'floors_total',
         'year_built',
 
-        // Ціна
+        // Цена
         'price',
         'price_per_m2',
         'commission',
         'commission_type',
 
-        // Медіа
+        // Медиа
         'youtube_url',
         'external_url',
 
-        // Налаштування
+        // Настройки
         'is_visible_to_agents',
         'notes',
         'agent_notes',
@@ -149,9 +147,9 @@ class Property extends Model
         return $this->belongsTo(Country::class);
     }
 
-    public function region(): BelongsTo
+    public function state(): BelongsTo
     {
-        return $this->belongsTo(Region::class);
+        return $this->belongsTo(State::class);
     }
 
     public function city(): BelongsTo
