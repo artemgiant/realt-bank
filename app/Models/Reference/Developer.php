@@ -2,16 +2,21 @@
 
 namespace App\Models\Reference;
 
+use App\Models\Contact\Contact;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Developer extends Model
 {
+    use SoftDeletes;
+
+    protected $table = 'developers';
+
     protected $fillable = [
         'name',
-        'slug',
-        'phone',
-        'email',
+        'contact_id',
         'website',
         'description',
         'is_active',
@@ -22,6 +27,11 @@ class Developer extends Model
     ];
 
     // ========== Relationships ==========
+
+    public function contact(): BelongsTo
+    {
+        return $this->belongsTo(Contact::class);
+    }
 
     public function complexes(): HasMany
     {
@@ -35,17 +45,8 @@ class Developer extends Model
         return $query->where('is_active', true);
     }
 
-    // ========== Static Methods ==========
-
-    public static function getSelectOptions()
+    public function scopeSearch($query, string $search)
     {
-        return static::active()->orderBy('name')->pluck('name', 'id');
-    }
-
-    // ========== Accessors ==========
-
-    public function getComplexesCountAttribute(): int
-    {
-        return $this->complexes()->count();
+        return $query->where('name', 'like', "%{$search}%");
     }
 }

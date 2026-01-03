@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Import\ComplexImportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Route;
@@ -78,6 +79,16 @@ Route::middleware('auth')->group(function () {
 // Отвязать контакт от объекта
     Route::delete('/properties/{property}/contacts/{contact}', [App\Http\Controllers\ContactController::class, 'detachFromProperty'])
         ->name('properties.contacts.detach');
+
+
+
+
+    // Импорт комплексов
+    Route::prefix('import')->name('import.')->group(function () {
+        Route::get('complexes', [ComplexImportController::class, 'index'])->name('complexes.index');
+        Route::post('complexes', [ComplexImportController::class, 'import'])->name('complexes.import');
+    });
+
 
 });
 

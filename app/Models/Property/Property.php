@@ -9,10 +9,10 @@ use App\Models\Location\District;
 use App\Models\Location\State;
 use App\Models\Location\Street;
 use App\Models\Location\Zone;
+use App\Models\Reference\Block;
 use App\Models\Reference\Complex;
 use App\Models\Reference\Currency;
 use App\Models\Reference\Dictionary;
-use App\Models\Reference\Section;
 use App\Models\Reference\Source;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -34,7 +34,7 @@ class Property extends Model
 
         // Комплекс
         'complex_id',
-        'section_id',
+        'block_id',
 
         // Локация
         'country_id',
@@ -135,9 +135,9 @@ class Property extends Model
         return $this->belongsTo(Complex::class);
     }
 
-    public function section(): BelongsTo
+    public function block(): BelongsTo
     {
-        return $this->belongsTo(Section::class);
+        return $this->belongsTo(Block::class);
     }
 
     // ========== Relationships: Location ==========

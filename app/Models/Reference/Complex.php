@@ -2,20 +2,29 @@
 
 namespace App\Models\Reference;
 
+use App\Models\Location\City;
+use App\Models\Location\District;
+use App\Models\Location\Zone;
 use App\Models\Property\Property;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Complex extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'complexes';
 
     protected $fillable = [
-        'developer_id',
         'name',
-        'slug',
+        'developer_id',
+        'city_id',
+        'district_id',
+        'zone_id',
         'description',
+        'website',
         'is_active',
     ];
 
@@ -30,9 +39,24 @@ class Complex extends Model
         return $this->belongsTo(Developer::class);
     }
 
-    public function sections(): HasMany
+    public function city(): BelongsTo
     {
-        return $this->hasMany(Section::class)->orderBy('sort_order');
+        return $this->belongsTo(City::class);
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class);
+    }
+
+    public function zone(): BelongsTo
+    {
+        return $this->belongsTo(Zone::class);
+    }
+
+    public function blocks(): HasMany
+    {
+        return $this->hasMany(Block::class);
     }
 
     public function properties(): HasMany
@@ -52,25 +76,27 @@ class Complex extends Model
         return $query->where('developer_id', $developerId);
     }
 
-    // ========== Static Methods ==========
-
-    public static function getSelectOptions()
+    public function scopeByCity($query, int $cityId)
     {
-        return static::active()->orderBy('name')->pluck('name', 'id');
+        return $query->where('city_id', $cityId);
+    }
+
+    public function scopeSearch($query, string $search)
+    {
+        return $query->where('name', 'like', "%{$search}%");
     }
 
     // ========== Accessors ==========
 
-    public function getPropertiesCountAttribute(): int
-    {
-        return $this->properties()->count();
-    }
-
+    /**
+     * Название с застройщиком
+     */
     public function getFullNameAttribute(): string
     {
         if ($this->developer) {
-            return $this->name . ' (' . $this->developer->name . ')';
+            return $this->developer->name . ' - ' . $this->name;
         }
+
         return $this->name;
     }
 }
