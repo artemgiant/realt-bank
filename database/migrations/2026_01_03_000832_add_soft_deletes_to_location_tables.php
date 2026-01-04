@@ -15,19 +15,9 @@ return new class extends Migration
             });
         }
 
-        // Developers
-        if (!Schema::hasColumn('developers', 'deleted_at')) {
-            Schema::table('developers', function (Blueprint $table) {
-                $table->softDeletes();
-            });
-        }
 
-        // Complexes
-        if (!Schema::hasColumn('complexes', 'deleted_at')) {
-            Schema::table('complexes', function (Blueprint $table) {
-                $table->softDeletes();
-            });
-        }
+
+
     }
 
     public function down(): void
@@ -36,12 +26,6 @@ return new class extends Migration
             $table->dropSoftDeletes();
         });
 
-        Schema::table('developers', function (Blueprint $table) {
-            $table->dropSoftDeletes();
-        });
 
-        Schema::table('complexes', function (Blueprint $table) {
-            $table->dropSoftDeletes();
-        });
     }
 };
