@@ -250,6 +250,32 @@ class ComplexImportService
     }
 
     /**
+     * Парсинг названия с альтернативой в скобках
+     * "Пересыпский (Суворовский)" => ["Пересыпский", "Суворовский"]
+     */
+    protected function parseNameWithAlternative(string $name): array
+    {
+        $names = [];
+
+        // Основное название (до скобки)
+        if (preg_match('/^([^(]+)/', $name, $matches)) {
+            $names[] = trim($matches[1]);
+        }
+
+        // Альтернативное название (в скобках)
+        if (preg_match('/\(([^)]+)\)/', $name, $matches)) {
+            $names[] = trim($matches[1]);
+        }
+
+        // Если скобок нет - просто название
+        if (empty($names)) {
+            $names[] = trim($name);
+        }
+
+        return $names;
+    }
+
+    /**
      * Поиск района
      */
     protected function findDistrict(string $name, int $cityId): ?District
@@ -257,9 +283,23 @@ class ComplexImportService
         $key = mb_strtolower($name) . '_' . $cityId;
 
         if (!isset($this->cache['districts'][$key])) {
-            $this->cache['districts'][$key] = District::where('name', 'like', "%{$name}%")
-                ->where('city_id', $cityId)
-                ->first();
+            $district = null;
+
+            // Парсим название с альтернативой
+            $names = $this->parseNameWithAlternative($name);
+
+            // Ищем по каждому варианту названия
+            foreach ($names as $searchName) {
+                $district = District::where('name', 'like', "%{$searchName}%")
+                    ->where('city_id', $cityId)
+                    ->first();
+
+                if ($district) {
+                    break;
+                }
+            }
+
+            $this->cache['districts'][$key] = $district;
         }
 
         return $this->cache['districts'][$key];
