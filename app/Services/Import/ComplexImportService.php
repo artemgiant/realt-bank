@@ -70,10 +70,29 @@ class ComplexImportService
 
         foreach ($rows as $index => $row) {
             $rowNumber = $index + 2; // +2 потому что массив с 0, и пропустили заголовок
+
+            // Пропускаем пустые строки
+            if ($this->isEmptyRow($row)) {
+                continue;
+            }
+
             $this->processRow($rowNumber, $headers, $row);
         }
 
         return $this->result;
+    }
+
+    /**
+     * Проверка на пустую строку
+     */
+    protected function isEmptyRow(array $row): bool
+    {
+        foreach ($row as $cell) {
+            if ($cell !== null && trim((string) $cell) !== '') {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
