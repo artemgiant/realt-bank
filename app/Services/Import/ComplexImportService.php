@@ -13,6 +13,7 @@ use App\Models\Reference\Complex;
 use App\Models\Reference\Developer;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ComplexImportService
@@ -25,11 +26,13 @@ class ComplexImportService
             'developers' => 0,
             'complexes' => 0,
             'blocks' => 0,
+            'streets' => 0,
         ],
         'skipped' => [
             'developers' => 0,
             'complexes' => 0,
             'blocks' => 0,
+            'streets' => 0,
         ],
         'errors' => [],
         'total_rows' => 0,
@@ -112,6 +115,7 @@ class ComplexImportService
         $this->findOrCreateBlock(
             $data['block'],
             $complex->id,
+            $developer->id,
             $location['street_id'],
             $data['house'] ?? null
         );
@@ -119,6 +123,8 @@ class ComplexImportService
 
     /**
      * Поиск локации по данным строки
+     * Country и State - только поиск (ошибка если не найдены)
+     * District, Zone, Street - создаются если не найдены
      */
     protected function findLocation(int $rowNumber, array $data): ?array
     {
@@ -131,7 +137,7 @@ class ComplexImportService
             'street_id' => null,
         ];
 
-        // Country
+        // Country - только поиск
         if (!empty($data['country'])) {
             $country = $this->findCountry($data['country']);
             if (!$country) {
@@ -141,7 +147,7 @@ class ComplexImportService
             $result['country_id'] = $country->id;
         }
 
-        // State
+        // State - только поиск
         if (!empty($data['state'])) {
             $state = $this->findState($data['state'], $result['country_id']);
             if (!$state) {
@@ -151,7 +157,7 @@ class ComplexImportService
             $result['state_id'] = $state->id;
         }
 
-        // City (обязательно)
+        // City (обязательно) - только поиск
         if (empty($data['city'])) {
             $this->addError($rowNumber, 'Город не указан');
             return null;
@@ -164,7 +170,7 @@ class ComplexImportService
         }
         $result['city_id'] = $city->id;
 
-        // District
+        // District - только поиск
         if (!empty($data['district'])) {
             $district = $this->findDistrict($data['district'], $result['city_id']);
             if (!$district) {
@@ -174,23 +180,19 @@ class ComplexImportService
             $result['district_id'] = $district->id;
         }
 
-        // Zone
+        // Zone - только поиск
         if (!empty($data['zone'])) {
             $zone = $this->findZone($data['zone'], $result['city_id'], $result['district_id']);
             if (!$zone) {
-                $this->addError($rowNumber, "Зона \"{$data['zone']}\" не найдена в районе \"{$data['district']}\"");
+                $this->addError($rowNumber, "Зона \"{$data['zone']}\" не найдена");
                 return null;
             }
             $result['zone_id'] = $zone->id;
         }
 
-        // Street
+        // Street - создаём если не найдена
         if (!empty($data['street'])) {
-            $street = $this->findStreet($data['street'], $result['city_id'], $result['district_id'], $result['zone_id']);
-            if (!$street) {
-                $this->addError($rowNumber, "Улица \"{$data['street']}\" не найдена");
-                return null;
-            }
+            $street = $this->findOrCreateStreet($data['street'], $result['city_id'], $result['district_id'], $result['zone_id']);
             $result['street_id'] = $street->id;
         }
 
@@ -310,18 +312,60 @@ class ComplexImportService
     }
 
     /**
+     * Найти или создать улицу
+     */
+    protected function findOrCreateStreet(string $name, int $cityId, ?int $districtId, ?int $zoneId): Street
+    {
+        $key = mb_strtolower($name) . '_' . $cityId . '_' . $districtId . '_' . $zoneId;
+
+        if (!isset($this->cache['streets'][$key])) {
+            $query = Street::where('name', $name)
+                ->where('city_id', $cityId);
+
+            if ($districtId) {
+                $query->where('district_id', $districtId);
+            }
+
+            if ($zoneId) {
+                $query->where('zone_id', $zoneId);
+            }
+
+            $street = $query->first();
+
+            if (!$street) {
+                $street = Street::create([
+                    'name' => $name,
+                    'city_id' => $cityId,
+                    'district_id' => $districtId,
+                    'zone_id' => $zoneId,
+                ]);
+                $this->result['created']['streets']++;
+            } else {
+                $this->result['skipped']['streets']++;
+            }
+
+            $this->cache['streets'][$key] = $street;
+        }
+
+        return $this->cache['streets'][$key];
+    }
+
+    /**
      * Найти или создать застройщика
      */
     protected function findOrCreateDeveloper(string $name): Developer
     {
-        $key = mb_strtolower($name);
+        $slug = Str::slug($name);
+        $key = $slug;
 
         if (!isset($this->cache['developers'][$key])) {
-            $developer = Developer::where('name', $name)->first();
+            // Ищем по slug (уникальный индекс)
+            $developer = Developer::where('slug', $slug)->first();
 
             if (!$developer) {
                 $developer = Developer::create([
                     'name' => $name,
+                    'slug' => $slug,
                     'is_active' => true,
                 ]);
                 $this->result['created']['developers']++;
@@ -337,6 +381,7 @@ class ComplexImportService
 
     /**
      * Найти или создать комплекс
+     * Уникальный индекс: developer_id, city_id, district_id, zone_id, slug
      */
     protected function findOrCreateComplex(
         string $name,
@@ -345,16 +390,22 @@ class ComplexImportService
         ?int $districtId,
         ?int $zoneId
     ): Complex {
-        $key = mb_strtolower($name) . '_' . $developerId;
+        $slug = Str::slug($name);
+        $key = $slug . '_' . $developerId . '_' . $cityId . '_' . $districtId . '_' . $zoneId;
 
         if (!isset($this->cache['complexes'][$key])) {
-            $complex = Complex::where('name', $name)
-                ->where('developer_id', $developerId)
+            // Ищем по полям уникального индекса
+            $complex = Complex::where('developer_id', $developerId)
+                ->where('city_id', $cityId)
+                ->where('district_id', $districtId)
+                ->where('zone_id', $zoneId)
+                ->where('slug', $slug)
                 ->first();
 
             if (!$complex) {
                 $complex = Complex::create([
                     'name' => $name,
+                    'slug' => $slug,
                     'developer_id' => $developerId,
                     'city_id' => $cityId,
                     'district_id' => $districtId,
@@ -374,21 +425,30 @@ class ComplexImportService
 
     /**
      * Найти или создать блок
+     * Уникальный индекс: complex_id, street_id, slug, building_number
      */
     protected function findOrCreateBlock(
         string $name,
         int $complexId,
+        int $developerId,
         ?int $streetId,
         ?string $buildingNumber
     ): Block {
-        $block = Block::where('name', $name)
-            ->where('complex_id', $complexId)
+        $slug = Str::slug($name);
+
+        // Ищем по полям уникального индекса
+        $block = Block::where('complex_id', $complexId)
+            ->where('street_id', $streetId)
+            ->where('slug', $slug)
+            ->where('building_number', $buildingNumber)
             ->first();
 
         if (!$block) {
             $block = Block::create([
                 'name' => $name,
+                'slug' => $slug,
                 'complex_id' => $complexId,
+                'developer_id' => $developerId,
                 'street_id' => $streetId,
                 'building_number' => $buildingNumber,
                 'is_active' => true,

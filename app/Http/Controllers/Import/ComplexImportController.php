@@ -31,14 +31,14 @@ class ComplexImportController extends Controller
             'file.max' => 'Размер файла не должен превышать 10MB',
         ]);
 
-        try {
+//        try {
             $result = $service->import($request->file('file'));
 
             return view('pages.import.complexes.result', compact('result'));
-        } catch (\Exception $e) {
-            return back()
-                ->withInput()
-                ->withErrors(['file' => 'Ошибка при обработке файла: ' . $e->getMessage()]);
-        }
+//        } catch (\Exception $e) {
+//            return back()
+//                ->withInput()
+//                ->withErrors(['file' => 'Ошибка при обработке файла: ' . $e->getMessage()]);
+//        }
     }
 }

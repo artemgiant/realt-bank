@@ -19,6 +19,7 @@ class Block extends Model
         'name',
         'complex_id',
         'street_id',
+        'slug',
         'building_number',
         'floors_total',
         'year_built',

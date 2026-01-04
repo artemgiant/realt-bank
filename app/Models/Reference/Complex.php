@@ -25,6 +25,7 @@ class Complex extends Model
         'zone_id',
         'description',
         'website',
+        'slug',
         'is_active',
     ];
 

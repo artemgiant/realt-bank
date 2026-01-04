@@ -19,6 +19,7 @@ class Developer extends Model
         'contact_id',
         'website',
         'description',
+        'slug',
         'is_active',
     ];
 

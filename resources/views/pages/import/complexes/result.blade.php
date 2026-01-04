@@ -52,7 +52,7 @@
                     <div class="card border-0 bg-warning bg-opacity-10">
                         <div class="card-body text-center">
                             <div class="h2 mb-0 text-warning">
-                                {{ $result['skipped']['developers'] + $result['skipped']['complexes'] + $result['skipped']['blocks'] }}
+                                {{ $result['skipped']['developers'] + $result['skipped']['complexes'] + $result['skipped']['blocks'] + $result['skipped']['streets'] }}
                             </div>
                             <div class="text-muted">Пропущено (уже есть)</div>
                         </div>
@@ -69,7 +69,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <div class="row text-center">
+                    <div class="row text-center mb-3">
                         <div class="col-md-4">
                             <div class="border rounded p-3">
                                 <div class="h3 mb-1 text-success">{{ $result['created']['developers'] }}</div>
@@ -89,11 +89,27 @@
                             </div>
                         </div>
                     </div>
+                    {{-- Локации --}}
+                    @if ($result['created']['streets'] > 0)
+                        <hr>
+                        <h6 class="text-muted mb-3">Локации</h6>
+                        <div class="row text-center">
+                            <div class="col-md-4 offset-md-4">
+                                <div class="border rounded p-3">
+                                    <div class="h3 mb-1 text-success">{{ $result['created']['streets'] }}</div>
+                                    <div class="text-muted">Улиц</div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
 
             {{-- Пропущенные объекты --}}
-            @if ($result['skipped']['developers'] > 0 || $result['skipped']['complexes'] > 0 || $result['skipped']['blocks'] > 0)
+            @php
+                $totalSkipped = $result['skipped']['developers'] + $result['skipped']['complexes'] + $result['skipped']['blocks'] + $result['skipped']['streets'];
+            @endphp
+            @if ($totalSkipped > 0)
                 <div class="card mb-4">
                     <div class="card-header bg-warning">
                         <h5 class="card-title mb-0">
@@ -102,7 +118,7 @@
                         </h5>
                     </div>
                     <div class="card-body">
-                        <div class="row text-center">
+                        <div class="row text-center mb-3">
                             <div class="col-md-4">
                                 <div class="border rounded p-3">
                                     <div class="h3 mb-1 text-warning">{{ $result['skipped']['developers'] }}</div>
@@ -122,6 +138,19 @@
                                 </div>
                             </div>
                         </div>
+                        {{-- Локации --}}
+                        @if ($result['skipped']['streets'] > 0)
+                            <hr>
+                            <h6 class="text-muted mb-3">Локации</h6>
+                            <div class="row text-center">
+                                <div class="col-md-4 offset-md-4">
+                                    <div class="border rounded p-3">
+                                        <div class="h3 mb-1 text-warning">{{ $result['skipped']['streets'] }}</div>
+                                        <div class="text-muted">Улиц</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif
