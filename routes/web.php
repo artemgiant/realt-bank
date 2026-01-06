@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ComplexController;
 use App\Http\Controllers\Import\ComplexImportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
@@ -81,7 +82,9 @@ Route::middleware('auth')->group(function () {
         ->name('properties.contacts.detach');
 
 
-
+// Комплексы и блоки (AJAX для Select2)
+    Route::get('/complexes/search', [ComplexController::class, 'search'])->name('complexes.search');
+    Route::get('/blocks/search', [ComplexController::class, 'searchBlocks'])->name('blocks.search');
 
     // Импорт комплексов
     Route::prefix('import')->name('import.')->group(function () {

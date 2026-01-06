@@ -117,22 +117,19 @@
                             </select>
                         </div>
 
+                        {{-- Комплекс --}}
                         <div class="item selects">
-                            <label class="item-label" for="complex">Комплекс</label>
-                            <select id="complex" class="js-example-responsive3 my-select2" autocomplete="off">
+                            <label class="item-label" for="complex_id">Комплекс</label>
+                            <select id="complex_id" name="complex_id" class="form-control" autocomplete="off">
                                 <option value=""></option>
-                                <option value="company">
-                                    Южная Пальмира
-                                </option>
                             </select>
                         </div>
+
+                        {{-- Секция / Корпус (Блок) --}}
                         <div class="item selects w33">
-                            <label class="item-label" for="body-section">Секция / Корпус</label>
-                            <select id="body-section" class="js-example-responsive3 my-select2" autocomplete="off">
+                            <label class="item-label" for="block_id">Секция / Корпус</label>
+                            <select id="block_id" name="block_id" class="form-control" autocomplete="off" disabled>
                                 <option value=""></option>
-                                <option value="company">
-                                    Светлый совиньон коттеджный городок 15
-                                </option>
                             </select>
                         </div>
 
@@ -600,5 +597,8 @@
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/contact-list.js') }}"></script>
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/handlers.js') }}"></script>
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/main.js') }}"></script>
+
+
+    <script src="{{ asset('js/pages/properties/create/complex-block.js') }}"></script>
 
 @endpush
