@@ -1,0 +1,184 @@
+/* ================================================================== */
+/* Классы ширины полей формы создания объекта                        */
+/* Добавить в конец файла page-create.css                            */
+/* ================================================================== */
+
+/* Ширина полей в процентах (с учетом gap 16px) */
+
+.create-filter-row .item.w2 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 calc(2% - 14px);
+    flex: 0 0 calc(2% - 14px);
+    min-width: 100px;
+}
+
+.create-filter-row .item.w7 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 calc(7% - 14px);
+    flex: 0 0 calc(7% - 14px);
+    min-width: 100px;
+}
+
+.create-filter-row .item.w5 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 calc(5% - 14px);
+    flex: 0 0 calc(5% - 14px);
+    min-width: 100px;
+}
+
+
+.create-filter-row .item.w10 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 calc(10% - 14px);
+    flex: 0 0 calc(10% - 14px);
+    min-width: 100px;
+}
+
+.create-filter-row .item.w12 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 calc(12% - 14px);
+    flex: 0 0 calc(12% - 14px);
+    min-width: 110px;
+}
+
+.create-filter-row .item.w14 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 calc(14% - 14px);
+    flex: 0 0 calc(14% - 14px);
+    min-width: 110px;
+}
+
+
+.create-filter-row .item.w15 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 calc(15% - 14px);
+    flex: 0 0 calc(15% - 14px);
+    min-width: 130px;
+}
+
+.create-filter-row .item.w16 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 calc(16.666% - 14px);
+    flex: 0 0 calc(16.666% - 14px);
+    min-width: 140px;
+}
+
+.create-filter-row .item.w20 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 calc(20% - 14px);
+    flex: 0 0 calc(20% - 14px);
+    min-width: 160px;
+}
+
+.create-filter-row .item.w30 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 calc(30% - 14px);
+    flex: 0 0 calc(30% - 14px);
+    min-width: 220px;
+}
+
+.create-filter-row .item.w33 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 calc(33.5% - 14px);
+    flex: 0 0 calc(33.5% - 14px);
+    min-width: 220px;
+}
+
+
+.create-filter-row .item.w35 {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 calc(35% - 14px);
+    flex: 1 1 calc(35% - 14px);
+    min-width: 280px;
+}
+
+.create-filter-row .item.w40 {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 calc(40% - 14px);
+    flex: 1 1 calc(40% - 14px);
+    min-width: 300px;
+}
+
+/* ================================================================== */
+/* Адаптивность для мобильных устройств                              */
+/* ================================================================== */
+
+@media screen and (max-width: 1200px) {
+    .create-filter-row .item.w10,
+    .create-filter-row .item.w12,
+    .create-filter-row .item.w15,
+    .create-filter-row .item.w16 {
+        -webkit-box-flex: 1;
+        -ms-flex: 1 1 calc(25% - 14px);
+        flex: 1 1 calc(25% - 14px);
+    }
+
+    .create-filter-row .item.w20,
+    .create-filter-row .item.w30 {
+        -webkit-box-flex: 1;
+        -ms-flex: 1 1 calc(33.333% - 14px);
+        flex: 1 1 calc(33.333% - 14px);
+    }
+
+    .create-filter-row .item.w35,
+    .create-filter-row .item.w40 {
+        -webkit-box-flex: 1;
+        -ms-flex: 1 1 calc(50% - 14px);
+        flex: 1 1 calc(50% - 14px);
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .create-filter-row .item.w10,
+    .create-filter-row .item.w12,
+    .create-filter-row .item.w15,
+    .create-filter-row .item.w16,
+    .create-filter-row .item.w20 {
+        -webkit-box-flex: 1;
+        -ms-flex: 1 1 calc(33.333% - 14px);
+        flex: 1 1 calc(33.333% - 14px);
+    }
+
+    .create-filter-row .item.w30,
+    .create-filter-row .item.w35,
+    .create-filter-row .item.w40 {
+        -webkit-box-flex: 1;
+        -ms-flex: 1 1 calc(50% - 14px);
+        flex: 1 1 calc(50% - 14px);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .create-filter-row .item.w10,
+    .create-filter-row .item.w12,
+    .create-filter-row .item.w15,
+    .create-filter-row .item.w16,
+    .create-filter-row .item.w20,
+    .create-filter-row .item.w30 {
+        -webkit-box-flex: 1;
+        -ms-flex: 1 1 calc(50% - 14px);
+        flex: 1 1 calc(50% - 14px);
+    }
+
+    .create-filter-row .item.w35,
+    .create-filter-row .item.w40 {
+        -webkit-box-flex: 1;
+        -ms-flex: 1 1 100%;
+        flex: 1 1 100%;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .create-filter-row .item.w10,
+    .create-filter-row .item.w12,
+    .create-filter-row .item.w15,
+    .create-filter-row .item.w16,
+    .create-filter-row .item.w20,
+    .create-filter-row .item.w30,
+    .create-filter-row .item.w35,
+    .create-filter-row .item.w40 {
+        -webkit-box-flex: 1;
+        -ms-flex: 1 1 100%;
+        flex: 1 1 100%;
+    }
+}

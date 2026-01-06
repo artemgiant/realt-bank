@@ -5,6 +5,7 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/pages/properties/create/page-create.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pages/properties/create/location-search.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pages/properties/create/field-widths.css') }}">
 @endpush
 
 @section('header')
@@ -62,21 +63,21 @@
             <div class="create-filter">
                 <div class="create-filter-data">
 
-
-
-
                     {{-- Основная информация (Контакт и Агент) --}}
-
                     @include('pages.properties.particles.create._contact_and_agent')
-
 
                     {{-- Детальная информация --}}
                     <h3 class="create-filter-title">
                         <span>Подробно</span>
                     </h3>
                     <div class="create-filter-row">
+
+                        {{-- ================================================================== --}}
+                        {{-- ГРУППА 1: Тип сделки и комплекс --}}
+                        {{-- ================================================================== --}}
+
                         {{-- Тип сделки --}}
-                        <div class="item selects blue-select2">
+                        <div class="item selects blue-select2 w16">
                             <label class="item-label" for="deal_type_id">Тип сделки <span class="text-danger">*</span></label>
                             <select id="deal_type_id" name="deal_type_id" class="js-example-responsive2" required>
                                 <option value="">Выберите тип сделки</option>
@@ -92,7 +93,7 @@
                         </div>
 
                         {{-- Вид сделки --}}
-                        <div class="item selects">
+                        <div class="item selects w16">
                             <label class="item-label" for="deal_kind_id">Вид сделки</label>
                             <select id="deal_kind_id" name="deal_kind_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -105,7 +106,7 @@
                         </div>
 
                         {{-- Тип здания --}}
-                        <div class="item selects">
+                        <div class="item selects w16">
                             <label class="item-label" for="building_type_id">Тип здания</label>
                             <select id="building_type_id" name="building_type_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -118,7 +119,7 @@
                         </div>
 
                         {{-- Комплекс --}}
-                        <div class="item selects">
+                        <div class="item selects w16">
                             <label class="item-label" for="complex_id">Комплекс</label>
                             <select id="complex_id" name="complex_id" class="form-control" autocomplete="off">
                                 <option value=""></option>
@@ -126,19 +127,19 @@
                         </div>
 
                         {{-- Секция / Корпус (Блок) --}}
-                        <div class="item selects w33">
+                        <div class="item selects w16">
                             <label class="item-label" for="block_id">Секция / Корпус</label>
                             <select id="block_id" name="block_id" class="form-control" autocomplete="off" disabled>
                                 <option value=""></option>
                             </select>
                         </div>
 
-
-                        {{-- Ориентир --}}
-
+                        {{-- ================================================================== --}}
+                        {{-- ГРУППА 2: Тип недвижимости и характеристики --}}
+                        {{-- ================================================================== --}}
 
                         {{-- Тип недвижимости --}}
-                        <div class="item selects">
+                        <div class="item selects w16">
                             <label class="item-label" for="property_type_id">Тип недвижимости</label>
                             <select id="property_type_id" name="property_type_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -150,9 +151,15 @@
                             </select>
                         </div>
 
+                        {{-- ================================================================== --}}
+                        {{-- ГРУППА 3: Локация --}}
+                        {{-- ================================================================== --}}
+
+                        @include('pages.properties.particles.create._location_block')
+
                         {{-- Количество комнат --}}
-                        <div class="item selects">
-                            <label class="item-label" for="room_count_id">Количество комнат</label>
+                        <div class="item selects w16">
+                            <label class="item-label" for="room_count_id">Кол-во комнат</label>
                             <select id="room_count_id" name="room_count_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
                                 @foreach($roomCounts as $roomCount)
@@ -164,30 +171,21 @@
                         </div>
 
 
-
-                        {{-- ========== ЛОКАЦИЯ (Поиск улицы) ========== --}}
-                        @include('pages.properties.particles.create._location_block')
-                        {{-- ========== /ЛОКАЦИЯ ========== --}}
-
-
-                        {{-- Номер дома / квартиры --}}
-
-                        <div class="item noresize120">
-						<span>
-							<label class="item-label" for="number-house">№ Дом</label> /
-							<label for="number-apartment">Квартира</label>
-						</span>
-                            <div class="item-inputText-wrapper shtrih">
-                                <input class="item-inputText" id="number-house" type="text" autocomplete="off">
-                                <input class="item-inputText" id="number-apartment" type="text" autocomplete="off">
-                            </div>
+                        {{-- Количество ванных --}}
+                        <div class="item selects w16">
+                            <label class="item-label" for="bathroom_count_id">Кол-во ванных</label>
+                            <select id="bathroom_count_id" name="bathroom_count_id" class="js-example-responsive3 my-select2">
+                                <option value=""></option>
+                                @foreach($bathroomCounts as $bathroomCount)
+                                    <option value="{{ $bathroomCount->id }}" {{ old('bathroom_count_id') == $bathroomCount->id ? 'selected' : '' }}>
+                                        {{ $bathroomCount->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
 
-
-
-
                         {{-- Состояние --}}
-                        <div class="item selects">
+                        <div class="item selects w20">
                             <label class="item-label" for="condition_id">Состояние</label>
                             <select id="condition_id" name="condition_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -199,47 +197,14 @@
                             </select>
                         </div>
 
-                        {{-- Количество ванных --}}
-                        <div class="item selects noresize170">
-                            <label class="item-label" for="bathroom_count_id">Количество ванных комнат</label>
-                            <select id="bathroom_count_id" name="bathroom_count_id" class="js-example-responsive3 my-select2">
-                                <option value=""></option>
-                                @foreach($bathroomCounts as $bathroomCount)
-                                    <option value="{{ $bathroomCount->id }}" {{ old('bathroom_count_id') == $bathroomCount->id ? 'selected' : '' }}>
-                                        {{ $bathroomCount->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
 
-                        {{-- Высота потолка --}}
-                        <div class="item selects">
-                            <label class="item-label" for="ceiling_height_id">Высота потолка</label>
-                            <select id="ceiling_height_id" name="ceiling_height_id" class="js-example-responsive3 my-select2">
-                                <option value=""></option>
-                                @foreach($ceilingHeights as $ceilingHeight)
-                                    <option value="{{ $ceilingHeight->id }}" {{ old('ceiling_height_id') == $ceilingHeight->id ? 'selected' : '' }}>
-                                        {{ $ceilingHeight->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
 
-                        {{-- Тип стен --}}
-                        <div class="item selects">
-                            <label class="item-label" for="wall_type_id">Тип стен</label>
-                            <select id="wall_type_id" name="wall_type_id" class="js-example-responsive3 my-select2">
-                                <option value=""></option>
-                                @foreach($wallTypes as $wallType)
-                                    <option value="{{ $wallType->id }}" {{ old('wall_type_id') == $wallType->id ? 'selected' : '' }}>
-                                        {{ $wallType->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                        {{-- ================================================================== --}}
+                        {{-- ГРУППА 4: Площади --}}
+                        {{-- ================================================================== --}}
 
                         {{-- Площади --}}
-                        <div class="item w33 noresize200">
+                        <div class="item w14">
                             <span>
                                 <label for="area_total">Площадь общая</label> /
                                 <label for="area_living">жилая</label> /
@@ -256,16 +221,20 @@
                         </div>
 
                         {{-- Площадь участка --}}
-                        <div class="item noresize120">
+                        <div class="item w7">
                             <label for="area_land">Площадь участка</label>
                             <div class="item-inputText-wrapper">
                                 <input class="item-inputText" id="area_land" name="area_land" type="text"
-                                       value="{{ old('area_land') }}" autocomplete="off" placeholder="Укажите значение">
+                                       value="{{ old('area_land') }}" autocomplete="off" placeholder="Сотки">
                             </div>
                         </div>
 
+                        {{-- ================================================================== --}}
+                        {{-- ГРУППА 5: Этажи и конструкция --}}
+                        {{-- ================================================================== --}}
+
                         {{-- Этажи --}}
-                        <div class="item noresize120">
+                        <div class="item w10">
                             <span>
                                 <label class="item-label" for="floor">Этаж</label> /
                                 <label for="floors_total">Этажность</label>
@@ -278,8 +247,34 @@
                             </div>
                         </div>
 
+                        {{-- Высота потолка --}}
+                        <div class="item selects w12">
+                            <label class="item-label" for="ceiling_height_id">Высота потолка</label>
+                            <select id="ceiling_height_id" name="ceiling_height_id" class="js-example-responsive3 my-select2">
+                                <option value=""></option>
+                                @foreach($ceilingHeights as $ceilingHeight)
+                                    <option value="{{ $ceilingHeight->id }}" {{ old('ceiling_height_id') == $ceilingHeight->id ? 'selected' : '' }}>
+                                        {{ $ceilingHeight->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- Тип стен --}}
+                        <div class="item selects w12">
+                            <label class="item-label" for="wall_type_id">Тип стен</label>
+                            <select id="wall_type_id" name="wall_type_id" class="js-example-responsive3 my-select2">
+                                <option value=""></option>
+                                @foreach($wallTypes as $wallType)
+                                    <option value="{{ $wallType->id }}" {{ old('wall_type_id') == $wallType->id ? 'selected' : '' }}>
+                                        {{ $wallType->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         {{-- Отопление --}}
-                        <div class="item selects">
+                        <div class="item selects w12">
                             <label class="item-label" for="heating_type_id">Отопление</label>
                             <select id="heating_type_id" name="heating_type_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -292,7 +287,7 @@
                         </div>
 
                         {{-- Год постройки --}}
-                        <div class="item selects">
+                        <div class="item selects w12">
                             <label class="item-label" for="year_built">Год постройки</label>
                             <select id="year_built" name="year_built" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -304,8 +299,12 @@
                             </select>
                         </div>
 
+                        {{-- ================================================================== --}}
+                        {{-- ГРУППА 6: Цена и финансы --}}
+                        {{-- ================================================================== --}}
+
                         {{-- Валюта --}}
-                        <div class="item selects">
+                        <div class="item selects w5">
                             <label class="item-label" for="currency_id">Валюта <span class="text-danger">*</span></label>
                             <select id="currency_id" name="currency_id" class="js-example-responsive2" required>
                                 @foreach($currencies as $currency)
@@ -318,11 +317,11 @@
                         </div>
 
                         {{-- Цена --}}
-                        <div class="item">
+                        <div class="item w5">
                             <label class="green" for="price">Цена</label>
                             <div class="item-inputText-wrapper">
                                 <input class="item-inputText" id="price" name="price" type="text"
-                                       value="{{ old('price') }}" autocomplete="off" placeholder="Введите значение">
+                                       value="{{ old('price') }}" autocomplete="off" placeholder="">
                             </div>
                             @error('price')
                             <span class="text-danger small">{{ $message }}</span>
@@ -330,25 +329,20 @@
                         </div>
 
                         {{-- Комиссия --}}
-                        <div class="item noresize170">
-                            <label for="commission">Комиссия от владельца</label>
+                        <div class="item w5">
+                            <label for="commission">Комиссия</label>
                             <div class="item-inputText-wrapper">
                                 <input class="item-inputText" id="commission" name="commission" type="text"
-                                       value="{{ old('commission') }}" autocomplete="off" placeholder="Введите значение">
+                                       value="{{ old('commission') }}" autocomplete="off" placeholder="%">
                             </div>
                         </div>
 
-                        {{-- Видео YouTube --}}
-                        <div class="item">
-                            <label for="youtube_url">Видео YouTube</label>
-                            <div class="item-inputText-wrapper">
-                                <input class="item-inputText" id="youtube_url" name="youtube_url" type="url"
-                                       value="{{ old('youtube_url') }}" autocomplete="off" placeholder="https://linkname.youtube.com">
-                            </div>
-                        </div>
+                        {{-- ================================================================== --}}
+                        {{-- ГРУППА 7: Дополнительно --}}
+                        {{-- ================================================================== --}}
 
                         {{-- Источник --}}
-                        <div class="item selects">
+                        <div class="item selects w20">
                             <label class="item-label" for="source_id">Источник</label>
                             <select id="source_id" name="source_id" class="js-example-responsive2 my-select2">
                                 <option value=""></option>
@@ -360,32 +354,15 @@
                             </select>
                         </div>
 
-                        {{-- Особенности --}}
-                        {{--                        <div class="item">--}}
-                        {{--                            <span class="item-label">Особенности</span>--}}
-                        {{--                            <div class="multiple-menu">--}}
-                        {{--                                <button class="multiple-menu-btn" data-open-menu="false" type="button">--}}
-                        {{--                                    Выберите параметры--}}
-                        {{--                                </button>--}}
-                        {{--                                <div class="multiple-menu-wrapper">--}}
-                        {{--                                    <label>--}}
-                        {{--                                        <input class="multiple-menu-search" autocomplete="off" name="search-additionally" type="text" placeholder="Поиск">--}}
-                        {{--                                    </label>--}}
-                        {{--                                    <ul class="multiple-menu-list">--}}
-                        {{--                                        @foreach($features as $feature)--}}
-                        {{--                                            <li class="multiple-menu-item">--}}
-                        {{--                                                <label class="my-custom-input">--}}
-                        {{--                                                    <input type="checkbox" name="features[]" value="{{ $feature->id }}"--}}
-                        {{--                                                            {{ in_array($feature->id, old('features', [])) ? 'checked' : '' }}>--}}
-                        {{--                                                    <span class="my-custom-box"></span>--}}
-                        {{--                                                    <span class="my-custom-text">{{ $feature->name }}</span>--}}
-                        {{--                                                </label>--}}
-                        {{--                                            </li>--}}
-                        {{--                                        @endforeach--}}
-                        {{--                                    </ul>--}}
-                        {{--                                </div>--}}
-                        {{--                            </div>--}}
-                        {{--                        </div>--}}
+                        {{-- Видео YouTube --}}
+                        <div class="item w40">
+                            <label for="youtube_url">Видео YouTube</label>
+                            <div class="item-inputText-wrapper">
+                                <input class="item-inputText" id="youtube_url" name="youtube_url" type="url"
+                                       value="{{ old('youtube_url') }}" autocomplete="off" placeholder="https://youtube.com/...">
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -436,11 +413,6 @@
                                                 data-bs-target="#en-tab-pane-description-advertising" type="button" role="tab"
                                                 aria-controls="en-tab-pane-description-advertising" aria-selected="false">EN</button>
                                     </li>
-                                    {{--                                    <li class="nav-item">--}}
-                                    {{--                                        <button id="generation-ai-about-developer" class="nav-link ai" type="button">--}}
-                                    {{--                                            <span>AI Text</span>--}}
-                                    {{--                                        </button>--}}
-                                    {{--                                    </li>--}}
                                 </ul>
 
                                 <div class="tab-content">
@@ -496,15 +468,12 @@
                 <div class="create-filter-photo">
 
                     {{-- Кнопки действий --}}
-
-
                     <div class="photo-info-btnGroup">
                         <div class="photo-info-btnGroup-wrapper">
                             <div class="photo-info-btnGroup-left">
                                 <button class="btn btn-outline-primary" type="button">
                                     Отменить изменения
                                 </button>
-
                             </div>
                             <div class="photo-info-btnGroup-right">
                                 <button class="btn btn-outline-success" type="button">
@@ -516,8 +485,6 @@
                             </div>
                         </div>
                     </div>
-
-
 
                 </div>
             </div>
@@ -550,7 +517,5 @@
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/handlers.js') }}"></script>
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/main.js') }}"></script>
 
-
     <script src="{{ asset('js/pages/properties/create/complex-block.js') }}"></script>
-
 @endpush

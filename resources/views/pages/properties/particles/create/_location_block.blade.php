@@ -1,5 +1,5 @@
 {{-- ========== ЛОКАЦИЯ (Область + Улица) ========== --}}
-<div class="item selects" style="min-width: 250px;">
+<div class="item selects w16">
     <label class="item-label">Область</label>
     <div class="state-search-wrapper">
         <input type="text"
@@ -37,7 +37,7 @@
     </div>
 </div>
 
-<div class="item" style="flex: 1; min-width: 400px;">
+<div class="item w33">
     <label class="item-label">Локация (улица)</label>
     <div class="location-search-wrapper">
         <input type="text"
@@ -76,6 +76,18 @@
         <input type="hidden" name="district_name" value="{{ old('district_name') }}">
         <input type="hidden" name="city_id" value="{{ old('city_id') }}">
         <input type="hidden" name="city_name" value="{{ old('city_name') }}">
+    </div>
+</div>
+
+{{-- Номер дома / квартиры --}}
+<div class="item w16">
+    <span>
+        <label class="item-label" for="number-house">№ Дом</label> /
+        <label for="number-apartment">Квартира</label>
+    </span>
+    <div class="item-inputText-wrapper shtrih">
+        <input class="item-inputText" id="number-house" name="building_number" type="text" autocomplete="off" value="{{ old('building_number') }}">
+        <input class="item-inputText" id="number-apartment" name="apartment_number" type="text" autocomplete="off" value="{{ old('apartment_number') }}">
     </div>
 </div>
 {{-- ========== /ЛОКАЦИЯ ========== --}}
