@@ -208,6 +208,13 @@
                                     <input type="hidden" name="region_name" value="{{ old('region_name') }}">
                                     <input type="hidden" name="town_id" value="{{ old('town_id') }}">
                                     <input type="hidden" name="town_name" value="{{ old('town_name') }}">
+
+
+
+                                    <input type="hidden" name="city_id" value="{{ old('city_id') }}">
+                                    <input type="hidden" name="city_name" value="{{ old('city_name') }}">
+                                    <input type="hidden" name="district_id" value="{{ old('district_id') }}">
+                                    <input type="hidden" name="district_name" value="{{ old('district_name') }}">
                                 </div>
                             </div>
 

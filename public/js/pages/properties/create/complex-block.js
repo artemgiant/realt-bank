@@ -24,6 +24,8 @@
             zoneName: 'input[name="zone_name"]',
             districtId: 'input[name="district_id"]',
             districtName: 'input[name="district_name"]',
+            cityId: 'input[name="city_id"]',
+            cityName: 'input[name="city_name"]',
         },
         select2: {
             language: 'ru',
@@ -188,10 +190,19 @@
      * Заполнение полей локации из данных блока
      */
     function fillLocationFromBlock(blockData) {
+        // Формируем полный адрес: улица, зона, район, город
+        const addressParts = [];
+        if (blockData.street_name) addressParts.push(blockData.street_name);
+        if (blockData.zone_name) addressParts.push(blockData.zone_name);
+        if (blockData.district_name) addressParts.push(blockData.district_name);
+        if (blockData.city_name) addressParts.push(blockData.city_name);
+
+        const fullAddress = addressParts.join(', ');
+
         // Заполняем поле поиска локации (видимое)
         const $locationInput = $(CONFIG.selectors.locationInput);
-        if ($locationInput.length && blockData.street_name) {
-            $locationInput.val(blockData.street_name);
+        if ($locationInput.length && fullAddress) {
+            $locationInput.val(fullAddress);
         }
 
         // Заполняем номер дома
@@ -207,6 +218,8 @@
         $(CONFIG.selectors.zoneName).val(blockData.zone_name || '');
         $(CONFIG.selectors.districtId).val(blockData.district_id || '');
         $(CONFIG.selectors.districtName).val(blockData.district_name || '');
+        $(CONFIG.selectors.cityId).val(blockData.city_id || '');
+        $(CONFIG.selectors.cityName).val(blockData.city_name || '');
 
         // Показываем кнопку очистки в поле локации
         const $clearBtn = $locationInput.siblings('.location-search-clear');
@@ -227,6 +240,8 @@
         $(CONFIG.selectors.zoneName).val('');
         $(CONFIG.selectors.districtId).val('');
         $(CONFIG.selectors.districtName).val('');
+        $(CONFIG.selectors.cityId).val('');
+        $(CONFIG.selectors.cityName).val('');
     }
 
     /**
