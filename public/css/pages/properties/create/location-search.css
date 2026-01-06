@@ -1,15 +1,17 @@
 /**
- * Стили для поиска локации
+ * Стили для поиска локации (улица и область)
  */
 
-/* ========== Обертка ========== */
-.location-search-wrapper {
+/* ========== Общие стили для обоих wrapper ========== */
+.location-search-wrapper,
+.state-search-wrapper {
     position: relative;
     width: 100%;
 }
 
 /* ========== Поле ввода ========== */
-.location-search-wrapper .location-search-input {
+.location-search-wrapper .location-search-input,
+.state-search-wrapper .state-search-input {
     width: 100%;
     height: 30px;
     padding: 0 36px 0 12px;
@@ -20,18 +22,21 @@
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.location-search-wrapper .location-search-input:focus {
+.location-search-wrapper .location-search-input:focus,
+.state-search-wrapper .state-search-input:focus {
     outline: none;
     border-color: #3585F5;
     box-shadow: 0 0 0 3px rgba(53, 133, 245, 0.1);
 }
 
-.location-search-wrapper .location-search-input::placeholder {
+.location-search-wrapper .location-search-input::placeholder,
+.state-search-wrapper .state-search-input::placeholder {
     color: #aaa;
 }
 
 /* ========== Иконка поиска ========== */
-.location-search-wrapper .location-search-icon {
+.location-search-wrapper .location-search-icon,
+.state-search-wrapper .state-search-icon {
     position: absolute;
     right: 10px;
     top: 50%;
@@ -42,18 +47,22 @@
     line-height: 0;
 }
 
-.location-search-wrapper .location-search-icon svg {
+.location-search-wrapper .location-search-icon svg,
+.state-search-wrapper .state-search-icon svg {
     width: 12px;
     height: 12px;
 }
 
 .location-search-wrapper.is-loading .location-search-icon,
-.location-search-wrapper.has-value .location-search-icon {
+.location-search-wrapper.has-value .location-search-icon,
+.state-search-wrapper.is-loading .state-search-icon,
+.state-search-wrapper.has-value .state-search-icon {
     opacity: 0;
 }
 
 /* ========== Спиннер загрузки ========== */
-.location-search-wrapper .location-search-spinner {
+.location-search-wrapper .location-search-spinner,
+.state-search-wrapper .state-search-spinner {
     position: absolute;
     right: 10px;
     top: 50%;
@@ -67,7 +76,8 @@
     pointer-events: none;
 }
 
-.location-search-wrapper.is-loading .location-search-spinner {
+.location-search-wrapper.is-loading .location-search-spinner,
+.state-search-wrapper.is-loading .state-search-spinner {
     opacity: 1;
     animation: location-spin 0.6s linear infinite;
 }
@@ -77,7 +87,8 @@
 }
 
 /* ========== Кнопка очистки ========== */
-.location-search-wrapper .location-search-clear {
+.location-search-wrapper .location-search-clear,
+.state-search-wrapper .state-search-clear {
     position: absolute;
     right: 8px;
     top: 50%;
@@ -97,22 +108,26 @@
     transition: opacity 0.2s, background 0.2s;
 }
 
-.location-search-wrapper .location-search-clear:hover {
+.location-search-wrapper .location-search-clear:hover,
+.state-search-wrapper .state-search-clear:hover {
     background: #ddd;
 }
 
-.location-search-wrapper .location-search-clear svg {
+.location-search-wrapper .location-search-clear svg,
+.state-search-wrapper .state-search-clear svg {
     width: 6px;
     height: 6px;
 }
 
-.location-search-wrapper.has-value .location-search-clear {
+.location-search-wrapper.has-value .location-search-clear,
+.state-search-wrapper.has-value .state-search-clear {
     opacity: 1;
     pointer-events: auto;
 }
 
 /* ========== Dropdown ========== */
-.location-search-wrapper .location-search-dropdown {
+.location-search-wrapper .location-search-dropdown,
+.state-search-wrapper .state-search-dropdown {
     position: absolute;
     top: 100%;
     left: 0;
@@ -128,40 +143,48 @@
     display: none;
 }
 
-.location-search-wrapper .location-search-dropdown.is-open {
+.location-search-wrapper .location-search-dropdown.is-open,
+.state-search-wrapper .state-search-dropdown.is-open {
     display: block;
 }
 
 /* ========== Список результатов ========== */
-.location-search-wrapper .location-dropdown-list {
+.location-search-wrapper .location-dropdown-list,
+.state-search-wrapper .state-dropdown-list {
     padding: 4px 0;
 }
 
-.location-search-wrapper .location-dropdown-item {
+.location-search-wrapper .location-dropdown-item,
+.state-search-wrapper .state-dropdown-item {
     padding: 10px 12px;
     cursor: pointer;
     transition: background 0.15s;
 }
 
 .location-search-wrapper .location-dropdown-item:hover,
-.location-search-wrapper .location-dropdown-item.is-active {
+.location-search-wrapper .location-dropdown-item.is-active,
+.state-search-wrapper .state-dropdown-item:hover,
+.state-search-wrapper .state-dropdown-item.is-active {
     background: #f5f8ff;
 }
 
-.location-search-wrapper .location-item-main {
+.location-search-wrapper .location-item-main,
+.state-search-wrapper .state-item-main {
     font-size: 14px;
     font-weight: 500;
     color: #333;
 }
 
-.location-search-wrapper .location-item-sub {
+.location-search-wrapper .location-item-sub,
+.state-search-wrapper .state-item-sub {
     font-size: 12px;
     color: #888;
     margin-top: 2px;
 }
 
 /* ========== Пустой результат ========== */
-.location-search-wrapper .location-dropdown-empty {
+.location-search-wrapper .location-dropdown-empty,
+.state-search-wrapper .state-dropdown-empty {
     padding: 16px 12px;
     text-align: center;
     color: #888;
@@ -169,7 +192,8 @@
 }
 
 /* ========== Состояние с выбранным значением ========== */
-.location-search-wrapper.has-value .location-search-input {
+.location-search-wrapper.has-value .location-search-input,
+.state-search-wrapper.has-value .state-search-input {
     padding-right: 36px;
     background-color: #f9fafb;
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Location\State;
 use App\Models\Location\Street;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -10,11 +11,12 @@ class LocationController extends Controller
 {
     /**
      * Поиск улиц для autocomplete
-     * GET /location/search?q=поисковый_запрос
+     * GET /location/search?q=поисковый_запрос&state_id=ID_области
      */
     public function search(Request $request): JsonResponse
     {
         $query = $request->input('q', '');
+        $stateId = $request->input('state_id');
         $limit = $request->input('limit', 15);
 
         if (strlen($query) < 2) {
@@ -25,11 +27,18 @@ class LocationController extends Controller
             ]);
         }
 
-        $streets = Street::with(['city', 'district', 'zone'])
+        $streetsQuery = Street::with(['city', 'district', 'zone'])
             ->active()
-            ->search($query)
-            ->limit($limit)
-            ->get();
+            ->search($query);
+
+        // Фильтрация по области через город
+        if ($stateId) {
+            $streetsQuery->whereHas('city', function ($q) use ($stateId) {
+                $q->where('state_id', $stateId);
+            });
+        }
+
+        $streets = $streetsQuery->limit($limit)->get();
 
         $results = $streets->map(function ($street) {
             return [
@@ -81,6 +90,106 @@ class LocationController extends Controller
                 'zone_name' => $street->zone?->name,
                 'full_address' => $street->full_address,
                 'short_address' => $street->short_address,
+            ],
+        ]);
+    }
+
+    /**
+     * Поиск областей для autocomplete
+     * GET /location/states/search?q=поисковый_запрос
+     */
+    public function searchStates(Request $request): JsonResponse
+    {
+        $query = $request->input('q', '');
+        $limit = $request->input('limit', 15);
+
+        $statesQuery = State::with('country')->active();
+
+        if (strlen($query) >= 1) {
+            $statesQuery->where('name', 'like', "%{$query}%");
+        }
+
+        $states = $statesQuery->orderBy('name')->limit($limit)->get();
+
+        $results = $states->map(function ($state) {
+            return [
+                'id' => $state->id,
+                'name' => $state->name,
+                'code' => $state->code,
+                'country_id' => $state->country_id,
+                'country_name' => $state->country?->name,
+                'full_name' => $state->name . ', ' . ($state->country?->name ?? ''),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'results' => $results,
+            'total' => $results->count(),
+        ]);
+    }
+
+    /**
+     * Получение области по умолчанию (Одесская область)
+     * GET /location/states/default
+     */
+    public function getDefaultState(): JsonResponse
+    {
+        // Ищем Одесскую область
+        $state = State::with('country')
+            ->active()
+            ->where('name', 'like', '%Одес%')
+            ->first();
+
+        if (!$state) {
+            // Если не найдена - берем первую активную
+            $state = State::with('country')->active()->first();
+        }
+
+        if (!$state) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Область не найдена',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'state' => [
+                'id' => $state->id,
+                'name' => $state->name,
+                'code' => $state->code,
+                'country_id' => $state->country_id,
+                'country_name' => $state->country?->name,
+                'full_name' => $state->name . ', ' . ($state->country?->name ?? ''),
+            ],
+        ]);
+    }
+
+    /**
+     * Получение области по ID
+     * GET /location/states/{id}
+     */
+    public function showState(int $id): JsonResponse
+    {
+        $state = State::with('country')->find($id);
+
+        if (!$state) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Область не найдена',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'state' => [
+                'id' => $state->id,
+                'name' => $state->name,
+                'code' => $state->code,
+                'country_id' => $state->country_id,
+                'country_name' => $state->country?->name,
+                'full_name' => $state->name . ', ' . ($state->country?->name ?? ''),
             ],
         ]);
     }

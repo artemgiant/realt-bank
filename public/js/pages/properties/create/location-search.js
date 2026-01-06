@@ -1,378 +1,598 @@
 /**
- * Поиск локации через локальную базу данных
- * Одно поле поиска по улицам Одесской области
- *
- * Объект доступен через window.LocationSearch
+ * Location Search Module
+ * Поиск области и улицы с автозаполнением
  */
-window.LocationSearch = {
 
-    // ========== Конфигурация ==========
-    config: {
-        // URL для поиска
-        searchUrl: '/location/search',
-
-        // Лимит результатов
-        limit: 15,
-
-        // Задержка перед запросом (мс)
-        debounceDelay: 300,
-
-        // Минимальная длина запроса
-        minQueryLength: 2
+// ========== Конфигурация ==========
+const LocationConfig = {
+    // API endpoints
+    api: {
+        streetSearch: '/location/search',
+        stateSearch: '/location/states/search',
+        stateDefault: '/location/states/default',
     },
-
-    // ========== Состояние ==========
-    state: {
-        // Выбранная улица
-        selectedStreet: null,
-
-        // Таймер debounce
-        timer: null,
-
-        // Текущие результаты поиска
-        results: [],
-
-        // Активный индекс в dropdown
-        activeIndex: -1
+    // Задержка перед поиском (ms)
+    debounceDelay: 300,
+    // Минимум символов для поиска
+    minChars: {
+        street: 2,
+        state: 1,
     },
+};
 
-    // ========== DOM элементы ==========
-    elements: {},
-
-    // ========== Инициализация ==========
-    init: function() {
-        var wrapper = document.querySelector('.location-search-wrapper');
-        if (!wrapper) {
-            console.warn('LocationSearch: wrapper not found');
-            return;
-        }
-
-        this._cacheElements(wrapper);
-        this._bindEvents();
-
-        console.log('LocationSearch: initialized');
-    },
-
-    // ========== Кэширование DOM элементов ==========
-    _cacheElements: function(wrapper) {
-        this.elements.wrapper = wrapper;
-        this.elements.input = wrapper.querySelector('.location-search-input');
-        this.elements.dropdown = wrapper.querySelector('.location-search-dropdown');
-        this.elements.clearBtn = wrapper.querySelector('.location-search-clear');
-
-        // Hidden inputs
-        this.elements.hidden = {
-            streetId: wrapper.querySelector('input[name="street_id"]'),
-            streetName: wrapper.querySelector('input[name="street_name"]'),
-            zoneId: wrapper.querySelector('input[name="zone_id"]'),
-            zoneName: wrapper.querySelector('input[name="zone_name"]'),
-            regionId: wrapper.querySelector('input[name="lib_region_id"]'),
-            regionName: wrapper.querySelector('input[name="region_name"]'),
-            townId: wrapper.querySelector('input[name="town_id"]'),
-            townName: wrapper.querySelector('input[name="town_name"]')
+// ========== Утилиты ==========
+const LocationUtils = {
+    /**
+     * Debounce функция
+     */
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
         };
     },
 
-    // ========== Привязка событий ==========
-    _bindEvents: function() {
-        var self = this;
-
-        if (!this.elements.input) return;
-
-        // Ввод текста
-        this.elements.input.addEventListener('input', function(e) {
-            self._onInput(e.target.value);
-        });
-
-        // Навигация клавиатурой
-        this.elements.input.addEventListener('keydown', function(e) {
-            self._onKeydown(e);
-        });
-
-        // Фокус - показать результаты если есть
-        this.elements.input.addEventListener('focus', function() {
-            if (self.state.results.length > 0) {
-                self._openDropdown();
-            }
-        });
-
-        // Кнопка очистки
-        if (this.elements.clearBtn) {
-            this.elements.clearBtn.addEventListener('click', function() {
-                self._clear();
-            });
-        }
-
-        // Клик вне - закрыть dropdown
-        document.addEventListener('click', function(e) {
-            if (!self.elements.wrapper.contains(e.target)) {
-                self._closeDropdown();
-            }
-        });
+    /**
+     * Получение CSRF токена
+     */
+    getCsrfToken() {
+        return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     },
 
-    // ========== Обработка ввода ==========
-    _onInput: function(query) {
-        var self = this;
+    /**
+     * Fetch с обработкой ошибок
+     */
+    async fetchJson(url, options = {}) {
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': this.getCsrfToken(),
+                    ...options.headers,
+                },
+                ...options,
+            });
 
-        // Очищаем предыдущий таймер
-        clearTimeout(this.state.timer);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-        // Сбрасываем выбранную улицу при вводе
-        if (this.state.selectedStreet) {
-            this.state.selectedStreet = null;
-            this.elements.wrapper.classList.remove('has-value');
-            this._clearHiddenInputs();
+            return await response.json();
+        } catch (error) {
+            console.error('Fetch error:', error);
+            return { success: false, error: error.message };
         }
+    },
+};
 
-        // Проверяем минимальную длину
-        if (query.length < this.config.minQueryLength) {
-            this._closeDropdown();
+// ========== Класс поиска области ==========
+class StateSearchManager {
+    constructor() {
+        this.wrapper = document.querySelector('.state-search-wrapper');
+        if (!this.wrapper) return;
+
+        this.input = this.wrapper.querySelector('.state-search-input');
+        this.dropdown = this.wrapper.querySelector('.state-search-dropdown');
+        this.clearBtn = this.wrapper.querySelector('.state-search-clear');
+
+        // Hidden inputs
+        this.stateIdInput = document.querySelector('input[name="state_id"]');
+        this.stateNameInput = document.querySelector('input[name="state_name"]');
+        this.countryIdInput = document.querySelector('input[name="country_id"]');
+        this.countryNameInput = document.querySelector('input[name="country_name"]');
+
+        // Состояние
+        this.selectedState = null;
+        this.results = [];
+        this.activeIndex = -1;
+
+        // Callback при выборе области
+        this.onStateSelect = null;
+
+        this.init();
+    }
+
+    init() {
+        this.bindEvents();
+        this.loadDefaultState();
+    }
+
+    bindEvents() {
+        // Ввод текста
+        this.input.addEventListener('input', LocationUtils.debounce(() => {
+            this.search(this.input.value);
+        }, LocationConfig.debounceDelay));
+
+        // Фокус
+        this.input.addEventListener('focus', () => {
+            if (this.results.length > 0) {
+                this.openDropdown();
+            } else if (this.input.value.length >= LocationConfig.minChars.state) {
+                this.search(this.input.value);
+            }
+        });
+
+        // Клик вне dropdown
+        document.addEventListener('click', (e) => {
+            if (!this.wrapper.contains(e.target)) {
+                this.closeDropdown();
+            }
+        });
+
+        // Клавиатурная навигация
+        this.input.addEventListener('keydown', (e) => this.handleKeydown(e));
+
+        // Кнопка очистки
+        this.clearBtn.addEventListener('click', () => this.clear());
+    }
+
+    /**
+     * Загрузка области по умолчанию (Одесская)
+     */
+    async loadDefaultState() {
+        // Если уже есть выбранное значение из old() - не загружаем дефолтное
+        if (this.stateIdInput.value) {
+            this.input.value = this.stateNameInput.value;
+            this.wrapper.classList.add('has-value');
+            this.selectedState = {
+                id: this.stateIdInput.value,
+                name: this.stateNameInput.value,
+                country_id: this.countryIdInput.value,
+                country_name: this.countryNameInput.value,
+            };
             return;
         }
 
-        // Показываем спиннер
-        this._setLoading(true);
+        const data = await LocationUtils.fetchJson(LocationConfig.api.stateDefault);
 
-        // Устанавливаем таймер debounce
-        this.state.timer = setTimeout(function() {
-            self._search(query);
-        }, this.config.debounceDelay);
-    },
+        if (data.success && data.state) {
+            this.selectState(data.state);
+        }
+    }
 
-    // ========== Обработка клавиатуры ==========
-    _onKeydown: function(e) {
-        var results = this.state.results;
-        var activeIndex = this.state.activeIndex;
+    /**
+     * Поиск областей
+     */
+    async search(query) {
+        if (query.length < LocationConfig.minChars.state) {
+            this.closeDropdown();
+            return;
+        }
+
+        this.setLoading(true);
+
+        const url = `${LocationConfig.api.stateSearch}?q=${encodeURIComponent(query)}`;
+        const data = await LocationUtils.fetchJson(url);
+
+        this.setLoading(false);
+
+        if (data.success) {
+            this.results = data.results;
+            this.renderResults();
+            this.openDropdown();
+        }
+    }
+
+    /**
+     * Рендер результатов
+     */
+    renderResults() {
+        if (this.results.length === 0) {
+            this.dropdown.innerHTML = `
+                <div class="state-dropdown-empty">
+                    Области не найдены
+                </div>
+            `;
+            return;
+        }
+
+        const html = `
+            <div class="state-dropdown-list">
+                ${this.results.map((state, index) => `
+                    <div class="state-dropdown-item ${index === this.activeIndex ? 'is-active' : ''}"
+                         data-index="${index}">
+                        <div class="state-item-main">${state.name}</div>
+                        <div class="state-item-sub">${state.country_name || ''}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        this.dropdown.innerHTML = html;
+
+        // Bind click events
+        this.dropdown.querySelectorAll('.state-dropdown-item').forEach((item) => {
+            item.addEventListener('click', () => {
+                const index = parseInt(item.dataset.index);
+                this.selectState(this.results[index]);
+            });
+        });
+    }
+
+    /**
+     * Выбор области
+     */
+    selectState(state) {
+        this.selectedState = state;
+
+        // Заполняем input
+        this.input.value = state.name;
+
+        // Заполняем hidden inputs
+        this.stateIdInput.value = state.id;
+        this.stateNameInput.value = state.name;
+        this.countryIdInput.value = state.country_id || '';
+        this.countryNameInput.value = state.country_name || '';
+
+        // Обновляем UI
+        this.wrapper.classList.add('has-value');
+        this.closeDropdown();
+
+        // Callback для фильтрации улиц
+        if (this.onStateSelect) {
+            this.onStateSelect(state);
+        }
+
+        // Диспатчим событие для других модулей
+        document.dispatchEvent(new CustomEvent('stateSelected', { detail: state }));
+    }
+
+    /**
+     * Очистка
+     */
+    clear() {
+        this.selectedState = null;
+        this.input.value = '';
+        this.stateIdInput.value = '';
+        this.stateNameInput.value = '';
+        this.countryIdInput.value = '';
+        this.countryNameInput.value = '';
+        this.wrapper.classList.remove('has-value');
+        this.results = [];
+        this.closeDropdown();
+
+        // Диспатчим событие
+        document.dispatchEvent(new CustomEvent('stateCleared'));
+    }
+
+    /**
+     * Обработка клавиш
+     */
+    handleKeydown(e) {
+        if (!this.dropdown.classList.contains('is-open')) return;
 
         switch (e.key) {
             case 'ArrowDown':
                 e.preventDefault();
-                if (activeIndex < results.length - 1) {
-                    this.state.activeIndex++;
-                    this._highlightResult();
-                }
+                this.activeIndex = Math.min(this.activeIndex + 1, this.results.length - 1);
+                this.renderResults();
                 break;
-
             case 'ArrowUp':
                 e.preventDefault();
-                if (activeIndex > 0) {
-                    this.state.activeIndex--;
-                    this._highlightResult();
-                }
+                this.activeIndex = Math.max(this.activeIndex - 1, 0);
+                this.renderResults();
                 break;
-
             case 'Enter':
                 e.preventDefault();
-                if (activeIndex >= 0 && results[activeIndex]) {
-                    this._selectResult(results[activeIndex]);
+                if (this.activeIndex >= 0 && this.results[this.activeIndex]) {
+                    this.selectState(this.results[this.activeIndex]);
                 }
                 break;
-
             case 'Escape':
-                this._closeDropdown();
+                this.closeDropdown();
                 break;
         }
-    },
+    }
 
-    // ========== Поиск через AJAX ==========
-    _search: function(query) {
-        var self = this;
+    setLoading(loading) {
+        this.wrapper.classList.toggle('is-loading', loading);
+    }
 
-        var url = this.config.searchUrl + '?q=' + encodeURIComponent(query) + '&limit=' + this.config.limit;
+    openDropdown() {
+        this.dropdown.classList.add('is-open');
+    }
 
-        fetch(url, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
+    closeDropdown() {
+        this.dropdown.classList.remove('is-open');
+        this.activeIndex = -1;
+    }
+
+    /**
+     * Получить текущую выбранную область
+     */
+    getSelectedState() {
+        return this.selectedState;
+    }
+}
+
+// ========== Класс поиска улицы ==========
+class StreetSearchManager {
+    constructor(stateSearchManager) {
+        this.wrapper = document.querySelector('.location-search-wrapper');
+        if (!this.wrapper) return;
+
+        this.input = this.wrapper.querySelector('.location-search-input');
+        this.dropdown = this.wrapper.querySelector('.location-search-dropdown');
+        this.clearBtn = this.wrapper.querySelector('.location-search-clear');
+
+        // Hidden inputs
+        this.streetIdInput = this.wrapper.querySelector('input[name="street_id"]');
+        this.streetNameInput = this.wrapper.querySelector('input[name="street_name"]');
+        this.zoneIdInput = this.wrapper.querySelector('input[name="zone_id"]');
+        this.zoneNameInput = this.wrapper.querySelector('input[name="zone_name"]');
+        this.districtIdInput = this.wrapper.querySelector('input[name="district_id"]');
+        this.districtNameInput = this.wrapper.querySelector('input[name="district_name"]');
+        this.cityIdInput = this.wrapper.querySelector('input[name="city_id"]');
+        this.cityNameInput = this.wrapper.querySelector('input[name="city_name"]');
+
+        // Связь с поиском области
+        this.stateSearchManager = stateSearchManager;
+
+        // Состояние
+        this.selectedStreet = null;
+        this.results = [];
+        this.activeIndex = -1;
+
+        this.init();
+    }
+
+    init() {
+        this.bindEvents();
+        this.restoreFromOld();
+    }
+
+    /**
+     * Восстановление из old() если есть
+     */
+    restoreFromOld() {
+        if (this.streetIdInput.value) {
+            // Формируем полный адрес из сохраненных данных
+            const addressParts = [this.streetNameInput.value];
+            if (this.zoneNameInput.value) {
+                addressParts.push(this.zoneNameInput.value);
             }
-        })
-            .then(function(response) {
-                return response.json();
-            })
-            .then(function(data) {
-                self._setLoading(false);
+            if (this.districtNameInput.value) {
+                addressParts.push(this.districtNameInput.value);
+            }
+            if (this.cityNameInput.value) {
+                addressParts.push(this.cityNameInput.value);
+            }
 
-                if (data.success) {
-                    self._renderResults(data.results);
-                } else {
-                    self._renderError(data.message || 'Ошибка поиска');
-                }
-            })
-            .catch(function(error) {
-                console.error('LocationSearch: search error', error);
-                self._setLoading(false);
-                self._renderError('Ошибка соединения');
-            });
-    },
+            this.input.value = addressParts.join(', ');
+            this.wrapper.classList.add('has-value');
+            this.selectedStreet = {
+                id: this.streetIdInput.value,
+                name: this.streetNameInput.value,
+                zone_name: this.zoneNameInput.value,
+                district_name: this.districtNameInput.value,
+                city_name: this.cityNameInput.value,
+            };
+        }
+    }
 
-    // ========== Отрисовка результатов ==========
-    _renderResults: function(results) {
-        var self = this;
-        var dropdown = this.elements.dropdown;
+    bindEvents() {
+        // Ввод текста
+        this.input.addEventListener('input', LocationUtils.debounce(() => {
+            this.search(this.input.value);
+        }, LocationConfig.debounceDelay));
 
-        this.state.results = results;
-        this.state.activeIndex = -1;
+        // Фокус
+        this.input.addEventListener('focus', () => {
+            if (this.results.length > 0) {
+                this.openDropdown();
+            } else if (this.input.value.length >= LocationConfig.minChars.street) {
+                this.search(this.input.value);
+            }
+        });
 
-        // Очищаем dropdown
-        dropdown.innerHTML = '';
+        // Клик вне dropdown
+        document.addEventListener('click', (e) => {
+            if (!this.wrapper.contains(e.target)) {
+                this.closeDropdown();
+            }
+        });
 
-        if (results.length === 0) {
-            dropdown.innerHTML = '<div class="location-dropdown-empty">Ничего не найдено</div>';
-            this._openDropdown();
+        // Клавиатурная навигация
+        this.input.addEventListener('keydown', (e) => this.handleKeydown(e));
+
+        // Кнопка очистки
+        this.clearBtn.addEventListener('click', () => this.clear());
+
+        // Слушаем выбор области - очищаем улицу
+        document.addEventListener('stateSelected', () => {
+            this.clear();
+        });
+
+        document.addEventListener('stateCleared', () => {
+            this.clear();
+        });
+    }
+
+    /**
+     * Поиск улиц
+     */
+    async search(query) {
+        if (query.length < LocationConfig.minChars.street) {
+            this.closeDropdown();
             return;
         }
 
-        // Создаем список
-        var list = document.createElement('div');
-        list.className = 'location-dropdown-list';
+        this.setLoading(true);
 
-        results.forEach(function(item, index) {
-            var div = document.createElement('div');
-            div.className = 'location-dropdown-item';
-            div.setAttribute('data-index', index);
+        // Формируем URL с фильтром по области
+        let url = `${LocationConfig.api.streetSearch}?q=${encodeURIComponent(query)}`;
 
-            // Основной текст - название улицы
-            // Дополнительный - зона и район
-            div.innerHTML =
-                '<div class="location-item-main">' + item.name + '</div>' +
-                '<div class="location-item-sub">' + self._formatSubtext(item) + '</div>';
+        // Добавляем state_id если выбрана область
+        const selectedState = this.stateSearchManager?.getSelectedState();
+        if (selectedState?.id) {
+            url += `&state_id=${selectedState.id}`;
+        }
 
-            // Клик по результату
-            div.addEventListener('click', function() {
-                self._selectResult(item);
+        const data = await LocationUtils.fetchJson(url);
+
+        this.setLoading(false);
+
+        if (data.success) {
+            this.results = data.results;
+            this.renderResults();
+            this.openDropdown();
+        }
+    }
+
+    /**
+     * Рендер результатов
+     */
+    renderResults() {
+        if (this.results.length === 0) {
+            this.dropdown.innerHTML = `
+                <div class="location-dropdown-empty">
+                    Улицы не найдены
+                </div>
+            `;
+            return;
+        }
+
+        const html = `
+            <div class="location-dropdown-list">
+                ${this.results.map((street, index) => `
+                    <div class="location-dropdown-item ${index === this.activeIndex ? 'is-active' : ''}"
+                         data-index="${index}">
+                        <div class="location-item-main">${street.name}</div>
+                        <div class="location-item-sub">${[street.zone_name, street.district_name, street.city_name].filter(Boolean).join(', ')}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        this.dropdown.innerHTML = html;
+
+        // Bind click events
+        this.dropdown.querySelectorAll('.location-dropdown-item').forEach((item) => {
+            item.addEventListener('click', () => {
+                const index = parseInt(item.dataset.index);
+                this.selectStreet(this.results[index]);
             });
-
-            list.appendChild(div);
         });
+    }
 
-        dropdown.appendChild(list);
-        this._openDropdown();
-    },
+    /**
+     * Выбор улицы
+     */
+    selectStreet(street) {
+        this.selectedStreet = street;
 
-    // ========== Форматирование подтекста ==========
-    _formatSubtext: function(item) {
-        var parts = [];
-
-        if (item.zone_name) {
-            parts.push(item.zone_name);
+        // Формируем полный адрес: улица, зона, район, город
+        const addressParts = [street.name];
+        if (street.zone_name) {
+            addressParts.push(street.zone_name);
         }
-        if (item.region_name) {
-            parts.push(item.region_name);
+        if (street.district_name) {
+            addressParts.push(street.district_name);
         }
-        if (item.town_name) {
-            parts.push(item.town_name);
+        if (street.city_name) {
+            addressParts.push(street.city_name);
         }
 
-        return parts.join(', ');
-    },
+        // Заполняем input полным адресом
+        this.input.value = addressParts.join(', ');
 
-    // ========== Подсветка результата ==========
-    _highlightResult: function() {
-        var dropdown = this.elements.dropdown;
-        var items = dropdown.querySelectorAll('.location-dropdown-item');
-        var activeIndex = this.state.activeIndex;
-
-        items.forEach(function(item, index) {
-            if (index === activeIndex) {
-                item.classList.add('is-active');
-                item.scrollIntoView({ block: 'nearest' });
-            } else {
-                item.classList.remove('is-active');
-            }
-        });
-    },
-
-    // ========== Выбор результата ==========
-    _selectResult: function(item) {
-        // Сохраняем выбранное значение
-        this.state.selectedStreet = item;
+        // Заполняем hidden inputs
+        this.streetIdInput.value = street.id;
+        this.streetNameInput.value = street.name;
+        this.zoneIdInput.value = street.zone_id || '';
+        this.zoneNameInput.value = street.zone_name || '';
+        this.districtIdInput.value = street.district_id || '';
+        this.districtNameInput.value = street.district_name || '';
+        this.cityIdInput.value = street.city_id || '';
+        this.cityNameInput.value = street.city_name || '';
 
         // Обновляем UI
-        this.elements.input.value = item.full_address;
-        this.elements.wrapper.classList.add('has-value');
+        this.wrapper.classList.add('has-value');
+        this.closeDropdown();
 
-        // Обновляем hidden inputs
-        this._updateHiddenInputs(item);
-
-        // Закрываем dropdown
-        this._closeDropdown();
-
-        console.log('LocationSearch: selected', item);
-    },
-
-    // ========== Обновление hidden inputs ==========
-    _updateHiddenInputs: function(item) {
-        var h = this.elements.hidden;
-
-        if (h.streetId) h.streetId.value = item.id || '';
-        if (h.streetName) h.streetName.value = item.name || '';
-        if (h.zoneId) h.zoneId.value = item.zone_id || '';
-        if (h.zoneName) h.zoneName.value = item.zone_name || '';
-        if (h.regionId) h.regionId.value = item.region_id || '';
-        if (h.regionName) h.regionName.value = item.region_name || '';
-        if (h.townId) h.townId.value = item.town_id || '';
-        if (h.townName) h.townName.value = item.town_name || '';
-    },
-
-    // ========== Очистка hidden inputs ==========
-    _clearHiddenInputs: function() {
-        var h = this.elements.hidden;
-
-        if (h.streetId) h.streetId.value = '';
-        if (h.streetName) h.streetName.value = '';
-        if (h.zoneId) h.zoneId.value = '';
-        if (h.zoneName) h.zoneName.value = '';
-        if (h.regionId) h.regionId.value = '';
-        if (h.regionName) h.regionName.value = '';
-        if (h.townId) h.townId.value = '';
-        if (h.townName) h.townName.value = '';
-    },
-
-    // ========== Полная очистка ==========
-    _clear: function() {
-        this.state.selectedStreet = null;
-        this.state.results = [];
-        this.state.activeIndex = -1;
-
-        this.elements.input.value = '';
-        this.elements.wrapper.classList.remove('has-value');
-        this.elements.dropdown.innerHTML = '';
-
-        this._clearHiddenInputs();
-        this._closeDropdown();
-    },
-
-    // ========== Открыть dropdown ==========
-    _openDropdown: function() {
-        this.elements.dropdown.classList.add('is-open');
-    },
-
-    // ========== Закрыть dropdown ==========
-    _closeDropdown: function() {
-        this.elements.dropdown.classList.remove('is-open');
-        this.state.activeIndex = -1;
-    },
-
-    // ========== Показать/скрыть спиннер ==========
-    _setLoading: function(isLoading) {
-        if (isLoading) {
-            this.elements.wrapper.classList.add('is-loading');
-        } else {
-            this.elements.wrapper.classList.remove('is-loading');
-        }
-    },
-
-    // ========== Показать ошибку ==========
-    _renderError: function(message) {
-        var dropdown = this.elements.dropdown;
-        dropdown.innerHTML = '<div class="location-dropdown-empty">' + message + '</div>';
-        this._openDropdown();
+        // Диспатчим событие
+        document.dispatchEvent(new CustomEvent('streetSelected', { detail: street }));
     }
-};
 
-// ========== Автоинициализация ==========
-document.addEventListener('DOMContentLoaded', function() {
-    window.LocationSearch.init();
+    /**
+     * Очистка
+     */
+    clear() {
+        this.selectedStreet = null;
+        this.input.value = '';
+        this.streetIdInput.value = '';
+        this.streetNameInput.value = '';
+        this.zoneIdInput.value = '';
+        this.zoneNameInput.value = '';
+        this.districtIdInput.value = '';
+        this.districtNameInput.value = '';
+        this.cityIdInput.value = '';
+        this.cityNameInput.value = '';
+        this.wrapper.classList.remove('has-value');
+        this.results = [];
+        this.closeDropdown();
+    }
+
+    /**
+     * Обработка клавиш
+     */
+    handleKeydown(e) {
+        if (!this.dropdown.classList.contains('is-open')) return;
+
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                this.activeIndex = Math.min(this.activeIndex + 1, this.results.length - 1);
+                this.renderResults();
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                this.activeIndex = Math.max(this.activeIndex - 1, 0);
+                this.renderResults();
+                break;
+            case 'Enter':
+                e.preventDefault();
+                if (this.activeIndex >= 0 && this.results[this.activeIndex]) {
+                    this.selectStreet(this.results[this.activeIndex]);
+                }
+                break;
+            case 'Escape':
+                this.closeDropdown();
+                break;
+        }
+    }
+
+    setLoading(loading) {
+        this.wrapper.classList.toggle('is-loading', loading);
+    }
+
+    openDropdown() {
+        this.dropdown.classList.add('is-open');
+    }
+
+    closeDropdown() {
+        this.dropdown.classList.remove('is-open');
+        this.activeIndex = -1;
+    }
+}
+
+// ========== Инициализация ==========
+document.addEventListener('DOMContentLoaded', () => {
+    // Инициализируем поиск области
+    const stateSearch = new StateSearchManager();
+
+    // Инициализируем поиск улицы с передачей менеджера области
+    const streetSearch = new StreetSearchManager(stateSearch);
+
+    // Экспортируем для внешнего использования
+    window.LocationSearch = {
+        state: stateSearch,
+        street: streetSearch,
+    };
 });
