@@ -118,7 +118,7 @@
                             <tr>
                                 <td><code>street</code></td>
                                 <td><span class="badge bg-secondary">Нет</span></td>
-                                <td>Улица (должна существовать в базе)</td>
+                                <td>Улица (создаётся если не существует)</td>
                             </tr>
                             <tr>
                                 <td><code>house</code></td>
@@ -132,16 +132,103 @@
                     <div class="alert alert-info mt-3 mb-0">
                         <i class="bi bi-info-circle me-1"></i>
                         <strong>Важно:</strong> Первая строка файла должна содержать заголовки колонок.
-                        Локации (страна, область, город, район, зона, улица) должны уже существовать в базе данных.
+                        Локации (страна, область, город, район, зона) должны уже существовать в базе данных.
+                        Улицы создаются автоматически если не найдены.
                     </div>
                 </div>
             </div>
 
-            {{-- Пример --}}
+            {{-- Пример данных --}}
             <div class="card mt-4">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Пример данных</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class=
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                            <tr>
+                                <th>developer</th>
+                                <th>complex</th>
+                                <th>block</th>
+                                <th>country</th>
+                                <th>state</th>
+                                <th>city</th>
+                                <th>district</th>
+                                <th>zone</th>
+                                <th>street</th>
+                                <th>house</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Kadorr Group</td>
+                                <td>Kadorr City</td>
+                                <td>Секция 1</td>
+                                <td>Украина</td>
+                                <td>Одесская</td>
+                                <td>Одесса</td>
+                                <td>Приморский</td>
+                                <td>Аркадия</td>
+                                <td>Генуэзская</td>
+                                <td>24</td>
+                            </tr>
+                            <tr>
+                                <td>Kadorr Group</td>
+                                <td>Kadorr City</td>
+                                <td>Секция 2</td>
+                                <td>Украина</td>
+                                <td>Одесская</td>
+                                <td>Одесса</td>
+                                <td>Приморский</td>
+                                <td>Аркадия</td>
+                                <td>Генуэзская</td>
+                                <td>24А</td>
+                            </tr>
+                            <tr>
+                                <td>Будова</td>
+                                <td>Море Парк</td>
+                                <td>Литер А</td>
+                                <td>Украина</td>
+                                <td>Одесская</td>
+                                <td>Одесса</td>
+                                <td>Киевский</td>
+                                <td></td>
+                                <td>Люстдорфская дорога</td>
+                                <td>100</td>
+                            </tr>
+                            <tr>
+                                <td>Гефест</td>
+                                <td>Гефест</td>
+                                <td>Корпус 1</td>
+                                <td></td>
+                                <td></td>
+                                <td>Одесса</td>
+                                <td>Пересыпский (Суворовский)</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="alert alert-warning mt-3 mb-0">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        <strong>Обратите внимание:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Пустые ячейки допускаются для необязательных полей</li>
+                            <li>Район можно указывать с альтернативным названием в скобках: <code>Пересыпский (Суворовский)</code></li>
+                            <li>Регистр букв не важен для поиска локаций</li>
+                            <li>Застройщик, комплекс и блок создаются автоматически если не существуют</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
