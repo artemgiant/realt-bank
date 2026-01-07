@@ -549,6 +549,7 @@ class PropertyController extends Controller
             'bathroomCounts' => Dictionary::getBathroomCounts(),
             'ceilingHeights' => Dictionary::getCeilingHeights(),
             'features' => Dictionary::getFeatures(),
+            'contactTypes' => Dictionary::getContactTypes(),
 
             // Годы постройки (от текущего до 1950)
             'yearsBuilt' => Dictionary::getYearsBuilt(),

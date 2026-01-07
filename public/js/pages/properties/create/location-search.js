@@ -1,6 +1,6 @@
 /**
  * Location Search Module
- * Поиск области и улицы с автозаполнением
+ * Поиск региона и улицы с автозаполнением
  */
 
 // ========== Конфигурация ==========
@@ -71,7 +71,7 @@ const LocationUtils = {
     },
 };
 
-// ========== Класс поиска области ==========
+// ========== Класс поиска региона ==========
 class StateSearchManager {
     constructor() {
         this.wrapper = document.querySelector('.state-search-wrapper');
@@ -92,7 +92,7 @@ class StateSearchManager {
         this.results = [];
         this.activeIndex = -1;
 
-        // Callback при выборе области
+        // Callback при выборе региона
         this.onStateSelect = null;
 
         this.init();
@@ -133,7 +133,7 @@ class StateSearchManager {
     }
 
     /**
-     * Загрузка области по умолчанию (Одесская)
+     * Загрузка региона по умолчанию (Одесский регион)
      */
     async loadDefaultState() {
         // Если уже есть выбранное значение из old() - не загружаем дефолтное
@@ -157,7 +157,7 @@ class StateSearchManager {
     }
 
     /**
-     * Поиск областей
+     * Поиск регионов
      */
     async search(query) {
         if (query.length < LocationConfig.minChars.state) {
@@ -186,7 +186,7 @@ class StateSearchManager {
         if (this.results.length === 0) {
             this.dropdown.innerHTML = `
                 <div class="state-dropdown-empty">
-                    Области не найдены
+                    Регионы не найдены
                 </div>
             `;
             return;
@@ -216,7 +216,7 @@ class StateSearchManager {
     }
 
     /**
-     * Выбор области
+     * Выбор региона
      */
     selectState(state) {
         this.selectedState = state;
@@ -304,7 +304,7 @@ class StateSearchManager {
     }
 
     /**
-     * Получить текущую выбранную область
+     * Получить текущий выбранный регион
      */
     getSelectedState() {
         return this.selectedState;
@@ -331,7 +331,7 @@ class StreetSearchManager {
         this.cityIdInput = this.wrapper.querySelector('input[name="city_id"]');
         this.cityNameInput = this.wrapper.querySelector('input[name="city_name"]');
 
-        // Связь с поиском области
+        // Связь с поиском региона
         this.stateSearchManager = stateSearchManager;
 
         // Состояние
@@ -404,7 +404,7 @@ class StreetSearchManager {
         // Кнопка очистки
         this.clearBtn.addEventListener('click', () => this.clear());
 
-        // Слушаем выбор области - очищаем улицу
+        // Слушаем выбор региона - очищаем улицу
         document.addEventListener('stateSelected', () => {
             this.clear();
         });
@@ -425,10 +425,10 @@ class StreetSearchManager {
 
         this.setLoading(true);
 
-        // Формируем URL с фильтром по области
+        // Формируем URL с фильтром по региону
         let url = `${LocationConfig.api.streetSearch}?q=${encodeURIComponent(query)}`;
 
-        // Добавляем state_id если выбрана область
+        // Добавляем state_id если выбран регион
         const selectedState = this.stateSearchManager?.getSelectedState();
         if (selectedState?.id) {
             url += `&state_id=${selectedState.id}`;
@@ -584,10 +584,10 @@ class StreetSearchManager {
 
 // ========== Инициализация ==========
 document.addEventListener('DOMContentLoaded', () => {
-    // Инициализируем поиск области
+    // Инициализируем поиск региона
     const stateSearch = new StateSearchManager();
 
-    // Инициализируем поиск улицы с передачей менеджера области
+    // Инициализируем поиск улицы с передачей менеджера региона
     const streetSearch = new StreetSearchManager(stateSearch);
 
     // Экспортируем для внешнего использования

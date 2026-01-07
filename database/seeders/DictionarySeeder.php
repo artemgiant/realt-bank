@@ -249,6 +249,14 @@ class DictionarySeeder extends Seeder
                 'Проблемный',
                 'Постоянный клиент',
             ],
+
+            // Тип контакта
+            Dictionary::TYPE_CONTACT_TYPE => [
+                'Владелец',
+                'Агент',
+                'Девелопер',
+            ],
+
         ];
 
         foreach ($dictionaries as $type => $items) {

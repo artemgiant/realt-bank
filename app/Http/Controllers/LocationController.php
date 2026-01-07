@@ -11,7 +11,7 @@ class LocationController extends Controller
 {
     /**
      * Поиск улиц для autocomplete
-     * GET /location/search?q=поисковый_запрос&state_id=ID_области
+     * GET /location/search?q=поисковый_запрос&state_id=ID_региона
      */
     public function search(Request $request): JsonResponse
     {
@@ -31,7 +31,7 @@ class LocationController extends Controller
             ->active()
             ->search($query);
 
-        // Фильтрация по области через город
+        // Фильтрация по региону через город
         if ($stateId) {
             $streetsQuery->whereHas('city', function ($q) use ($stateId) {
                 $q->where('state_id', $stateId);
@@ -95,7 +95,7 @@ class LocationController extends Controller
     }
 
     /**
-     * Поиск областей для autocomplete
+     * Поиск регионов для autocomplete
      * GET /location/states/search?q=поисковый_запрос
      */
     public function searchStates(Request $request): JsonResponse
@@ -130,26 +130,26 @@ class LocationController extends Controller
     }
 
     /**
-     * Получение области по умолчанию (Одесская область)
+     * Получение региона по умолчанию (Одесский регион)
      * GET /location/states/default
      */
     public function getDefaultState(): JsonResponse
     {
-        // Ищем Одесскую область
+        // Ищем Одесский регион
         $state = State::with('country')
             ->active()
             ->where('name', 'like', '%Одес%')
             ->first();
 
         if (!$state) {
-            // Если не найдена - берем первую активную
+            // Если не найден - берем первый активный
             $state = State::with('country')->active()->first();
         }
 
         if (!$state) {
             return response()->json([
                 'success' => false,
-                'message' => 'Область не найдена',
+                'message' => 'Регион не найден',
             ], 404);
         }
 
@@ -167,7 +167,7 @@ class LocationController extends Controller
     }
 
     /**
-     * Получение области по ID
+     * Получение региона по ID
      * GET /location/states/{id}
      */
     public function showState(int $id): JsonResponse
@@ -177,7 +177,7 @@ class LocationController extends Controller
         if (!$state) {
             return response()->json([
                 'success' => false,
-                'message' => 'Область не найдена',
+                'message' => 'Регион не найден',
             ], 404);
         }
 

@@ -38,6 +38,7 @@ class Dictionary extends Model
     public const TYPE_FEATURE = 'feature';               // Особенности
     public const TYPE_CONTACT_TAG = 'contact_tag';       // Теги контактов
     public const TYPE_YEAR_BUILT = 'year_built';         // Год постройки
+    public const TYPE_CONTACT_TYPE = 'contact_type';     // Тип контакта
 
     // ========== Scopes ==========
 
@@ -54,6 +55,11 @@ class Dictionary extends Model
     public function scopeOrdered($query)
     {
         return $query->orderBy('sort_order')->orderBy('name');
+    }
+
+    public static function getContactTypes(): Collection
+    {
+        return static::getByType(self::TYPE_CONTACT_TYPE);
     }
 
     // ========== Static Methods ==========

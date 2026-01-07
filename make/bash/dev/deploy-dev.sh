@@ -28,6 +28,9 @@ php artisan migrate
 #php artisan tinker --execute="App\Models\Property\Property::factory()->count(100)->withContacts(1)->create();"
 
 
+#php artisan db:seed --class=CountrySeeder
+#TRUNCATE TABLE states;
+
 # Оновити Composer залежності
 composer install --optimize-autoloader
 

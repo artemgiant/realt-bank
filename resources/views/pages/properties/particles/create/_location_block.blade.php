@@ -1,10 +1,10 @@
 {{-- ========== ЛОКАЦИЯ (Область + Улица) ========== --}}
 <div class="item selects w16">
-    <label class="item-label">Область</label>
+    <label class="item-label">Регион</label>
     <div class="state-search-wrapper">
         <input type="text"
                class="state-search-input"
-               placeholder="Введите название области..."
+               placeholder="Введите название региона..."
                autocomplete="off"
                value="{{ old('state_name') }}">
 
@@ -29,7 +29,7 @@
         {{-- Dropdown с результатами --}}
         <div class="state-search-dropdown"></div>
 
-        {{-- Hidden inputs для сохранения данных области --}}
+        {{-- Hidden inputs для сохранения данных региона --}}
         <input type="hidden" name="state_id" id="state_id" value="{{ old('state_id') }}">
         <input type="hidden" name="state_name" id="state_name" value="{{ old('state_name') }}">
         <input type="hidden" name="country_id" id="country_id" value="{{ old('country_id') }}">

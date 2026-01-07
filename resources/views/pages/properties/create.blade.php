@@ -343,6 +343,20 @@
                             </div>
                         </div>
 
+
+                        {{-- Тип контакта --}}
+                        <div class="item selects">
+                            <label class="item-label" for="contact_type_id">Тип контакта</label>
+                            <select id="contact_type_id" name="contact_type_id" class="js-example-responsive3 my-select2">
+                                <option value=""></option>
+                                @foreach($contactTypes as $contactType)
+                                    <option value="{{ $contactType->id }}" {{ old('contact_type_id') == $contactType->id ? 'selected' : '' }}>
+                                        {{ $contactType->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         {{-- ================================================================== --}}
                         {{-- ГРУППА 7: Дополнительно --}}
                         {{-- ================================================================== --}}
