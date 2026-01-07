@@ -6,6 +6,12 @@
     <link rel="stylesheet" href="{{ asset('css/pages/properties/create/page-create.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pages/properties/create/location-search.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pages/properties/create/field-widths.css') }}">
+
+
+{{--Плагин по редактированию изображений--}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-image-editor/3.15.0/tui-image-editor.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-color-picker/2.2.6/tui-color-picker.min.css">
+
 @endpush
 
 @section('header')
@@ -558,7 +564,6 @@
     @include('pages.properties.modals.contact-modal')
     @include('pages.properties.modals.employee-modal')
     @include('pages.properties.modals.transfer-agent-modal')
-    @include('pages.properties.modals.geo-modal')
 @endsection
 
 @push('scripts')
@@ -566,9 +571,10 @@
     <script src="{{ asset('js/pages/filter1.min.js') }}"></script>
     <script src="{{ asset('js/pages/full-filter.min.js') }}"></script>
     <script src="{{ asset('js/pages/my-dropdown.min.js') }}"></script>
-    <script src="{{ asset('js/pages/modal-geo.min.js') }}"></script>
     <script src="{{ asset('js/pages/page-create.min.js') }}" type="module"></script>
-    <script src="{{ asset('js/pages/properties/create/location-search.js') }}" type="module"></script>
+
+
+
 
     {{-- Модуль контактов (порядок важен!) --}}
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/config.js') }}"></script>
@@ -580,5 +586,23 @@
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/handlers.js') }}"></script>
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/main.js') }}"></script>
 
+
+
+{{--    LOcation SEARCH--}}
     <script src="{{ asset('js/pages/properties/create/complex-block.js') }}"></script>
+    <script src="{{ asset('js/pages/properties/create/location-search.js') }}" type="module"></script>
+
+
+    {{--Плагин по редактированию изображений--}}
+    <!-- Спочатку залежності -->
+    <script src="{{ asset('js/lib/tui-code-snippet.min.js') }}"></script>
+    <script src="{{ asset('js/lib/fabric.min.js') }}"></script>
+    <script src="{{ asset('js/lib/tui-color-picker.min.js') }}"></script>
+    <!-- Потім основний редактор -->
+    <script src="{{ asset('js/lib/tui-image-editor.min.js') }}"></script>
+    <script src="{{ asset('js/lib/heic2any.min.js') }}"></script>
+
+
+
+
 @endpush
