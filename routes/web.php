@@ -3,7 +3,8 @@
 use App\Http\Controllers\ComplexController;
 use App\Http\Controllers\Import\ComplexImportController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\Property\PropertyController;
+use App\Http\Controllers\Property\PropertyDocumentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,9 +21,9 @@ Route::middleware('auth')->group(function () {
 
 
 
-    Route::get('/dashboard', 'App\Http\Controllers\PropertyController@index')->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/dashboard', [PropertyController::class,'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
-    Route::get('/properties/create', 'App\Http\Controllers\PropertyController@create')
+    Route::get('/properties/create',  [PropertyController::class,'create'])
         ->name('properties.create');
 
     // AJAX endpoint для DataTables
@@ -30,7 +31,10 @@ Route::middleware('auth')->group(function () {
         ->name('properties.ajax-data');
 
 
-
+    Route::get('documents/{hash}/download', [PropertyDocumentController::class, 'download'])
+        ->name('documents.download');
+    Route::delete('documents/{hash}', [PropertyDocumentController::class, 'destroy'])
+        ->name('documents.destroy');
 
     // Properties CRUD
     Route::resource('properties', PropertyController::class);

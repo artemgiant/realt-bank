@@ -484,7 +484,7 @@
                     {{-- Загрузка документов --}}
                     <div class="loading-documents document">
                         <label for="document">
-                            <input type="file" id="document" name="document" multiple
+                            <input type="file" id="document" name="documents[]" multiple
                                    accept="image/png, image/jpeg, application/pdf">
                             <span>
 							<svg width="16" height="16" viewBox="0 0 16 16" fill="none"

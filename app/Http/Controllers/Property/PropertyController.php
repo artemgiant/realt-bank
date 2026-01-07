@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Property;
 
+use App\Http\Controllers\Controller;
 use App\Models\Contact\Contact;
 use App\Models\Location\Country;
 use App\Models\Property\Property;
@@ -601,6 +602,10 @@ class PropertyController extends Controller
             // Контакты
             'contact_ids' => 'nullable|array',
             'contact_ids.*' => 'exists:contacts,id',
+
+            // Документы
+            'documents' => 'nullable|array|max:10',
+            'documents.*' => 'file|max:5120',
         ], [
             // Сообщения об ошибках на русском
             'deal_type_id.required' => 'Выберите тип сделки',
@@ -615,10 +620,24 @@ class PropertyController extends Controller
             'youtube_url.url' => 'Введите корректную ссылку на YouTube',
             'contact_ids.array' => 'Неверный формат контактов',
             'contact_ids.*.exists' => 'Выбранный контакт не существует',
+            'documents.array' => 'Неверный формат документов',
+            'documents.max' => 'Максимум 10 документов',
+            'documents.*.file' => 'Ошибка загрузки файла',
+            'documents.*.mimes' => 'Разрешены только файлы: PNG, JPEG, PDF',
+            'documents.*.max' => 'Максимальный размер файла 5MB',
         ]);
 
         try {
             DB::beginTransaction();
+
+
+
+
+            // Вычисляем цену за м²
+            $pricePerM2 = null;
+            if (!empty($validated['price']) && !empty($validated['area_total']) && $validated['area_total'] > 0) {
+                $pricePerM2 = $validated['price'] / $validated['area_total'];
+            }
 
             // ========== Создаем основную запись ==========
             $property = Property::create([
@@ -669,6 +688,13 @@ class PropertyController extends Controller
                 $property->contacts()->attach($validated['contact_ids']);
             }
 
+
+            // ========== Сохраняем документы ==========
+            if ($request->hasFile('documents')) {
+                $this->saveDocuments($property, $request->file('documents'));
+            }
+
+
             DB::commit();
 
             return redirect()
@@ -681,6 +707,24 @@ class PropertyController extends Controller
             return back()
                 ->withInput()
                 ->with('error', 'Ошибка при создании объекта: ' . $e->getMessage());
+        }
+    }
+
+
+    /**
+     * Сохранение документов объекта
+     */
+    protected function saveDocuments(Property $property, array $files): void
+    {
+        foreach ($files as $file) {
+            $filename = $file->getClientOriginalName();
+            $path = $file->store("/properties/{$property->id}/documents");
+
+            $property->documents()->create([
+                'name' => pathinfo($filename, PATHINFO_FILENAME),
+                'filename' => $filename,
+                'path' => $path,
+            ]);
         }
     }
 
@@ -733,23 +777,7 @@ class PropertyController extends Controller
         }
     }
 
-    /**
-     * Save property documents.
-     */
-    protected function saveDocuments(Property $property, array $documents): void
-    {
-        foreach ($documents as $document) {
-            $filename = $document->getClientOriginalName();
-            $path = $document->store("properties/{$property->id}/documents", 'public');
 
-            PropertyDocument::create([
-                'property_id' => $property->id,
-                'name' => pathinfo($filename, PATHINFO_FILENAME),
-                'path' => $path,
-                'filename' => $filename,
-            ]);
-        }
-    }
 
 
 

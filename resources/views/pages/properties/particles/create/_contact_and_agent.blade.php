@@ -85,13 +85,13 @@
                 </div>
                 <div class="info-links">
                     <a href="https://wa.me/380XXXXXXXXX">
-                        <picture><source srcset="./img/icon/icon-table/cnapchat.svg" type="image/webp"><img src="./img/icon/icon-table/cnapchat.svg" alt=""></picture>
+                        <picture><source srcset="{{asset('/img/icon/icon-table/cnapchat.svg')}}" type="image/webp"><img src="{{asset('/img/icon/icon-table/cnapchat.svg')}}" alt=""></picture>
                     </a>
                     <a href="viber://chat?number=%2B380XXXXXXXXX">
-                        <picture><source srcset="./img/icon/icon-table/viber.svg" type="image/webp"><img src="./img/icon/icon-table/viber.svg" alt=""></picture>
+                        <picture><source srcset="{{asset('/img/icon/icon-table/viber.svg')}}" type="image/webp"><img src="{{asset('/img/icon/icon-table/viber.svg')}}" alt=""></picture>
                     </a>
                     <a href="https://t.me/+380XXXXXXXXX">
-                        <picture><source srcset="./img/icon/icon-table/tg.svg" type="image/webp"><img src="./img/icon/icon-table/tg.svg" alt=""></picture>
+                        <picture><source srcset="{{asset('/img/icon/icon-table/tg.svg')}}" type="image/webp"><img src="{{asset('/img/icon/icon-table/tg.svg')}}" alt=""></picture>
                     </a>
                 </div>
             </li>
