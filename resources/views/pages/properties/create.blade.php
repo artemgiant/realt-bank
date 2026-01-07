@@ -77,7 +77,7 @@
                         {{-- ================================================================== --}}
 
                         {{-- Тип сделки --}}
-                        <div class="item selects blue-select2 w16">
+                        <div class="item selects blue-select2 ">
                             <label class="item-label" for="deal_type_id">Тип сделки <span class="text-danger">*</span></label>
                             <select id="deal_type_id" name="deal_type_id" class="js-example-responsive2" required>
                                 <option value="">Выберите тип сделки</option>
@@ -93,7 +93,7 @@
                         </div>
 
                         {{-- Вид сделки --}}
-                        <div class="item selects w16">
+                        <div class="item selects ">
                             <label class="item-label" for="deal_kind_id">Вид сделки</label>
                             <select id="deal_kind_id" name="deal_kind_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -106,7 +106,7 @@
                         </div>
 
                         {{-- Тип здания --}}
-                        <div class="item selects w16">
+                        <div class="item selects ">
                             <label class="item-label" for="building_type_id">Тип здания</label>
                             <select id="building_type_id" name="building_type_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -119,7 +119,7 @@
                         </div>
 
                         {{-- Комплекс --}}
-                        <div class="item selects w16">
+                        <div class="item selects ">
                             <label class="item-label" for="complex_id">Комплекс</label>
                             <select id="complex_id" name="complex_id" class="form-control" autocomplete="off">
                                 <option value=""></option>
@@ -127,19 +127,29 @@
                         </div>
 
                         {{-- Секция / Корпус (Блок) --}}
-                        <div class="item selects w16">
+                        <div class="item selects  w33">
                             <label class="item-label" for="block_id">Секция / Корпус</label>
                             <select id="block_id" name="block_id" class="form-control" autocomplete="off" disabled>
                                 <option value=""></option>
                             </select>
                         </div>
 
+
+
+                        {{-- ================================================================== --}}
+                        {{-- ГРУППА 3: Локация --}}
+                        {{-- ================================================================== --}}
+
+                        @include('pages.properties.particles.create._location_block')
+
+
+
                         {{-- ================================================================== --}}
                         {{-- ГРУППА 2: Тип недвижимости и характеристики --}}
                         {{-- ================================================================== --}}
 
                         {{-- Тип недвижимости --}}
-                        <div class="item selects w16">
+                        <div class="item selects ">
                             <label class="item-label" for="property_type_id">Тип недвижимости</label>
                             <select id="property_type_id" name="property_type_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -151,14 +161,10 @@
                             </select>
                         </div>
 
-                        {{-- ================================================================== --}}
-                        {{-- ГРУППА 3: Локация --}}
-                        {{-- ================================================================== --}}
 
-                        @include('pages.properties.particles.create._location_block')
 
                         {{-- Количество комнат --}}
-                        <div class="item selects w16">
+                        <div class="item selects ">
                             <label class="item-label" for="room_count_id">Кол-во комнат</label>
                             <select id="room_count_id" name="room_count_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -172,7 +178,7 @@
 
 
                         {{-- Количество ванных --}}
-                        <div class="item selects w16">
+                        <div class="item selects ">
                             <label class="item-label" for="bathroom_count_id">Кол-во ванных</label>
                             <select id="bathroom_count_id" name="bathroom_count_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -185,7 +191,7 @@
                         </div>
 
                         {{-- Состояние --}}
-                        <div class="item selects w20">
+                        <div class="item selects ">
                             <label class="item-label" for="condition_id">Состояние</label>
                             <select id="condition_id" name="condition_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -204,7 +210,7 @@
                         {{-- ================================================================== --}}
 
                         {{-- Площади --}}
-                        <div class="item w14">
+                        <div class="item ">
                             <span>
                                 <label for="area_total">Площадь общая</label> /
                                 <label for="area_living">жилая</label> /
@@ -221,7 +227,7 @@
                         </div>
 
                         {{-- Площадь участка --}}
-                        <div class="item w7">
+                        <div class="item ">
                             <label for="area_land">Площадь участка</label>
                             <div class="item-inputText-wrapper">
                                 <input class="item-inputText" id="area_land" name="area_land" type="text"
@@ -234,7 +240,7 @@
                         {{-- ================================================================== --}}
 
                         {{-- Этажи --}}
-                        <div class="item w10">
+                        <div class="item ">
                             <span>
                                 <label class="item-label" for="floor">Этаж</label> /
                                 <label for="floors_total">Этажность</label>
@@ -248,7 +254,7 @@
                         </div>
 
                         {{-- Высота потолка --}}
-                        <div class="item selects w12">
+                        <div class="item selects ">
                             <label class="item-label" for="ceiling_height_id">Высота потолка</label>
                             <select id="ceiling_height_id" name="ceiling_height_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -261,7 +267,7 @@
                         </div>
 
                         {{-- Тип стен --}}
-                        <div class="item selects w12">
+                        <div class="item selects ">
                             <label class="item-label" for="wall_type_id">Тип стен</label>
                             <select id="wall_type_id" name="wall_type_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -274,7 +280,7 @@
                         </div>
 
                         {{-- Отопление --}}
-                        <div class="item selects w12">
+                        <div class="item selects ">
                             <label class="item-label" for="heating_type_id">Отопление</label>
                             <select id="heating_type_id" name="heating_type_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -287,7 +293,7 @@
                         </div>
 
                         {{-- Год постройки --}}
-                        <div class="item selects w12">
+                        <div class="item selects ">
                             <label class="item-label" for="year_built">Год постройки</label>
                             <select id="year_built" name="year_built" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
@@ -304,7 +310,7 @@
                         {{-- ================================================================== --}}
 
                         {{-- Валюта --}}
-                        <div class="item selects w5">
+                        <div class="item selects">
                             <label class="item-label" for="currency_id">Валюта <span class="text-danger">*</span></label>
                             <select id="currency_id" name="currency_id" class="js-example-responsive2" required>
                                 @foreach($currencies as $currency)
@@ -317,7 +323,7 @@
                         </div>
 
                         {{-- Цена --}}
-                        <div class="item w5">
+                        <div class="item ">
                             <label class="green" for="price">Цена</label>
                             <div class="item-inputText-wrapper">
                                 <input class="item-inputText" id="price" name="price" type="text"
@@ -329,11 +335,11 @@
                         </div>
 
                         {{-- Комиссия --}}
-                        <div class="item w5">
+                        <div class="item ">
                             <label for="commission">Комиссия</label>
                             <div class="item-inputText-wrapper">
                                 <input class="item-inputText" id="commission" name="commission" type="text"
-                                       value="{{ old('commission') }}" autocomplete="off" placeholder="%">
+                                       value="{{ old('commission') }}" autocomplete="off" placeholder="">
                             </div>
                         </div>
 
@@ -342,7 +348,7 @@
                         {{-- ================================================================== --}}
 
                         {{-- Источник --}}
-                        <div class="item selects w20">
+                        <div class="item selects ">
                             <label class="item-label" for="source_id">Источник</label>
                             <select id="source_id" name="source_id" class="js-example-responsive2 my-select2">
                                 <option value=""></option>
@@ -355,7 +361,7 @@
                         </div>
 
                         {{-- Видео YouTube --}}
-                        <div class="item w40">
+                        <div class="item ">
                             <label for="youtube_url">Видео YouTube</label>
                             <div class="item-inputText-wrapper">
                                 <input class="item-inputText" id="youtube_url" name="youtube_url" type="url"
