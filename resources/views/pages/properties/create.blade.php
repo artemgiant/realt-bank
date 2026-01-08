@@ -602,6 +602,9 @@
 {{--ТЕГИ И ОСОБЕННОСТИ--}}
     <script src="{{ asset('js/pages/properties/create/features-tags.js') }}"></script>
 
+{{--    Маски для цыфровых полей--}}
+    <script src="{{ asset('js/pages/properties/create/number-mask.js') }}"></script>
+
     {{--Плагин по редактированию изображений--}}
     <!-- Спочатку залежності -->
     <script src="{{ asset('js/lib/tui-code-snippet.min.js') }}"></script>
