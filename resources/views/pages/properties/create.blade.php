@@ -571,9 +571,12 @@
     <script src="{{ asset('js/pages/filter1.min.js') }}"></script>
     <script src="{{ asset('js/pages/full-filter.min.js') }}"></script>
     <script src="{{ asset('js/pages/my-dropdown.min.js') }}"></script>
-    <script src="{{ asset('js/pages/page-create.min.js') }}" type="module"></script>
 
+    {{-- Основной скрипт страницы --}}
+    <script src="{{ asset('js/pages/properties/create/page-create.js') }}" type="module"></script>
 
+    {{-- Интеграция PhotoLoader с формой --}}
+    <script src="{{ asset('js/pages/properties/create/form-submit.js') }}"></script>
 
 
     {{-- Модуль контактов (порядок важен!) --}}

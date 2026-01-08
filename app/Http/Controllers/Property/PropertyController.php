@@ -14,6 +14,7 @@ use App\Models\Reference\Currency;
 use App\Models\Reference\Developer;
 use App\Models\Reference\Dictionary;
 use App\Models\Reference\Source;
+use App\Services\PhotoUploadService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -557,158 +558,166 @@ class PropertyController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created property in storage.
-     */
     public function store(Request $request): RedirectResponse
-    {
-        // Валидация полей
-        $validated = $request->validate([
-            // Required
-            'deal_type_id' => 'required|exists:dictionaries,id',
-            'currency_id' => 'required|exists:currencies,id',
+{
+    // Валидация полей
+    $validated = $request->validate([
+        // Required
+        'deal_type_id' => 'required|exists:dictionaries,id',
+        'currency_id' => 'required|exists:currencies,id',
 
-            // Dictionaries (optional)
-            'deal_kind_id' => 'nullable|exists:dictionaries,id',
-            'building_type_id' => 'nullable|exists:dictionaries,id',
-            'property_type_id' => 'nullable|exists:dictionaries,id',
-            'room_count_id' => 'nullable|exists:dictionaries,id',
-            'condition_id' => 'nullable|exists:dictionaries,id',
-            'bathroom_count_id' => 'nullable|exists:dictionaries,id',
-            'ceiling_height_id' => 'nullable|exists:dictionaries,id',
-            'wall_type_id' => 'nullable|exists:dictionaries,id',
-            'heating_type_id' => 'nullable|exists:dictionaries,id',
-            'source_id' => 'nullable|exists:sources,id',
+        // Dictionaries (optional)
+        'deal_kind_id' => 'nullable|exists:dictionaries,id',
+        'building_type_id' => 'nullable|exists:dictionaries,id',
+        'property_type_id' => 'nullable|exists:dictionaries,id',
+        'room_count_id' => 'nullable|exists:dictionaries,id',
+        'condition_id' => 'nullable|exists:dictionaries,id',
+        'bathroom_count_id' => 'nullable|exists:dictionaries,id',
+        'ceiling_height_id' => 'nullable|exists:dictionaries,id',
+        'wall_type_id' => 'nullable|exists:dictionaries,id',
+        'heating_type_id' => 'nullable|exists:dictionaries,id',
+        'source_id' => 'nullable|exists:sources,id',
+
+        // Numbers
+        'area_total' => 'nullable|numeric|min:0',
+        'area_living' => 'nullable|numeric|min:0',
+        'area_kitchen' => 'nullable|numeric|min:0',
+        'area_land' => 'nullable|numeric|min:0',
+        'floor' => 'nullable|integer|min:0',
+        'floors_total' => 'nullable|integer|min:1',
+        'year_built' => 'nullable|exists:dictionaries,id',
+        'price' => 'nullable|numeric|min:0',
+        'commission' => 'nullable|numeric|min:0',
+
+        // Text
+        'youtube_url' => 'nullable|url|max:255',
+        'title_ru' => 'nullable|string|max:255',
+        'agent_notes' => 'nullable|string|max:5000',
+        'description_ua' => 'nullable|string|max:10000',
+        'description_ru' => 'nullable|string|max:10000',
+        'description_en' => 'nullable|string|max:10000',
+
+        // Контакты
+        'contact_ids' => 'nullable|array',
+        'contact_ids.*' => 'exists:contacts,id',
+
+        // Документы
+        'documents' => 'nullable|array|max:10',
+        'documents.*' => 'file|max:5120',
+
+        // Фотографии
+        'photos' => 'nullable|array|max:20',
+        'photos.*' => 'file|mimes:jpeg,jpg,png,webp,heic,heif|max:10240',
+    ], [
+        // Сообщения об ошибках на русском
+        'deal_type_id.required' => 'Выберите тип сделки',
+        'deal_type_id.exists' => 'Выбранный тип сделки не существует',
+        'currency_id.required' => 'Выберите валюту',
+        'currency_id.exists' => 'Выбранная валюта не существует',
+        'price.numeric' => 'Цена должна быть числом',
+        'price.min' => 'Цена не может быть отрицательной',
+        'area_total.numeric' => 'Площадь должна быть числом',
+        'year_built.exists' => 'Выбранный год постройки не существует',
+        'floors_total.integer' => 'Этажность должна быть целым числом',
+        'youtube_url.url' => 'Введите корректную ссылку на YouTube',
+        'contact_ids.array' => 'Неверный формат контактов',
+        'contact_ids.*.exists' => 'Выбранный контакт не существует',
+        'documents.array' => 'Неверный формат документов',
+        'documents.max' => 'Максимум 10 документов',
+        'documents.*.file' => 'Ошибка загрузки файла',
+        'documents.*.mimes' => 'Разрешены только файлы: PNG, JPEG, PDF',
+        'documents.*.max' => 'Максимальный размер файла 5MB',
+        // Фото
+        'photos.array' => 'Неверный формат фотографий',
+        'photos.max' => 'Максимум 20 фотографий',
+        'photos.*.file' => 'Ошибка загрузки фото',
+        'photos.*.mimes' => 'Разрешены только: JPEG, PNG, WebP, HEIC',
+        'photos.*.max' => 'Максимальный размер фото 10MB',
+    ]);
+
+    try {
+        DB::beginTransaction();
+
+        // Вычисляем цену за м²
+        $pricePerM2 = null;
+        if (!empty($validated['price']) && !empty($validated['area_total']) && $validated['area_total'] > 0) {
+            $pricePerM2 = $validated['price'] / $validated['area_total'];
+        }
+
+        // ========== Создаем основную запись ==========
+        $property = Property::create([
+            'user_id' => auth()->id(),
+
+            // Required
+            'deal_type_id' => $validated['deal_type_id'],
+            'currency_id' => $validated['currency_id'],
+
+            // Dictionaries
+            'deal_kind_id' => $validated['deal_kind_id'] ?? null,
+            'building_type_id' => $validated['building_type_id'] ?? null,
+            'property_type_id' => $validated['property_type_id'] ?? null,
+            'room_count_id' => $validated['room_count_id'] ?? null,
+            'condition_id' => $validated['condition_id'] ?? null,
+            'bathroom_count_id' => $validated['bathroom_count_id'] ?? null,
+            'ceiling_height_id' => $validated['ceiling_height_id'] ?? null,
+            'wall_type_id' => $validated['wall_type_id'] ?? null,
+            'heating_type_id' => $validated['heating_type_id'] ?? null,
+            'source_id' => $validated['source_id'] ?? null,
 
             // Numbers
-            'area_total' => 'nullable|numeric|min:0',
-            'area_living' => 'nullable|numeric|min:0',
-            'area_kitchen' => 'nullable|numeric|min:0',
-            'area_land' => 'nullable|numeric|min:0',
-            'floor' => 'nullable|integer|min:0',
-            'floors_total' => 'nullable|integer|min:1',
-            'year_built' => 'nullable|exists:dictionaries,id',
-            'price' => 'nullable|numeric|min:0',
-            'commission' => 'nullable|numeric|min:0',
+            'area_total' => $validated['area_total'] ?? null,
+            'area_living' => $validated['area_living'] ?? null,
+            'area_kitchen' => $validated['area_kitchen'] ?? null,
+            'area_land' => $validated['area_land'] ?? null,
+            'floor' => $validated['floor'] ?? null,
+            'floors_total' => $validated['floors_total'] ?? null,
+            'year_built' => $validated['year_built'] ?? null,
+            'price' => $validated['price'] ?? null,
+            'price_per_m2' => $pricePerM2,
+            'commission' => $validated['commission'] ?? null,
+            'commission_type' => 'percent', // По умолчанию
 
             // Text
-            'youtube_url' => 'nullable|url|max:255',
-            'title_ru' => 'nullable|string|max:255',
-            'agent_notes' => 'nullable|string|max:5000',
-            'description_ua' => 'nullable|string|max:10000',
-            'description_ru' => 'nullable|string|max:10000',
-            'description_en' => 'nullable|string|max:10000',
+            'youtube_url' => $validated['youtube_url'] ?? null,
+            'agent_notes' => $validated['agent_notes'] ?? null,
 
-            // Контакты
-            'contact_ids' => 'nullable|array',
-            'contact_ids.*' => 'exists:contacts,id',
-
-            // Документы
-            'documents' => 'nullable|array|max:10',
-            'documents.*' => 'file|max:5120',
-        ], [
-            // Сообщения об ошибках на русском
-            'deal_type_id.required' => 'Выберите тип сделки',
-            'deal_type_id.exists' => 'Выбранный тип сделки не существует',
-            'currency_id.required' => 'Выберите валюту',
-            'currency_id.exists' => 'Выбранная валюта не существует',
-            'price.numeric' => 'Цена должна быть числом',
-            'price.min' => 'Цена не может быть отрицательной',
-            'area_total.numeric' => 'Площадь должна быть числом',
-            'year_built.exists' => 'Выбранный год постройки не существует',
-            'floors_total.integer' => 'Этажность должна быть целым числом',
-            'youtube_url.url' => 'Введите корректную ссылку на YouTube',
-            'contact_ids.array' => 'Неверный формат контактов',
-            'contact_ids.*.exists' => 'Выбранный контакт не существует',
-            'documents.array' => 'Неверный формат документов',
-            'documents.max' => 'Максимум 10 документов',
-            'documents.*.file' => 'Ошибка загрузки файла',
-            'documents.*.mimes' => 'Разрешены только файлы: PNG, JPEG, PDF',
-            'documents.*.max' => 'Максимальный размер файла 5MB',
+            // Defaults
+            'status' => 'draft',
         ]);
 
-        try {
-            DB::beginTransaction();
+        // ========== Сохраняем переводы ==========
+        $this->saveTranslations($property, $validated);
 
-
-
-
-            // Вычисляем цену за м²
-            $pricePerM2 = null;
-            if (!empty($validated['price']) && !empty($validated['area_total']) && $validated['area_total'] > 0) {
-                $pricePerM2 = $validated['price'] / $validated['area_total'];
-            }
-
-            // ========== Создаем основную запись ==========
-            $property = Property::create([
-                'user_id' => auth()->id(),
-
-                // Required
-                'deal_type_id' => $validated['deal_type_id'],
-                'currency_id' => $validated['currency_id'],
-
-                // Dictionaries
-                'deal_kind_id' => $validated['deal_kind_id'] ?? null,
-                'building_type_id' => $validated['building_type_id'] ?? null,
-                'property_type_id' => $validated['property_type_id'] ?? null,
-                'room_count_id' => $validated['room_count_id'] ?? null,
-                'condition_id' => $validated['condition_id'] ?? null,
-                'bathroom_count_id' => $validated['bathroom_count_id'] ?? null,
-                'ceiling_height_id' => $validated['ceiling_height_id'] ?? null,
-                'wall_type_id' => $validated['wall_type_id'] ?? null,
-                'heating_type_id' => $validated['heating_type_id'] ?? null,
-                'source_id' => $validated['source_id'] ?? null,
-
-                // Numbers
-                'area_total' => $validated['area_total'] ?? null,
-                'area_living' => $validated['area_living'] ?? null,
-                'area_kitchen' => $validated['area_kitchen'] ?? null,
-                'area_land' => $validated['area_land'] ?? null,
-                'floor' => $validated['floor'] ?? null,
-                'floors_total' => $validated['floors_total'] ?? null,
-                'year_built' => $validated['year_built'] ?? null,
-                'price' => $validated['price'] ?? null,
-                'price_per_m2' => $pricePerM2,
-                'commission' => $validated['commission'] ?? null,
-                'commission_type' => 'percent', // По умолчанию
-
-                // Text
-                'youtube_url' => $validated['youtube_url'] ?? null,
-                'agent_notes' => $validated['agent_notes'] ?? null,
-
-                // Defaults
-                'status' => 'draft',
-            ]);
-
-            // ========== Сохраняем переводы ==========
-            $this->saveTranslations($property, $validated);
-
-            // ========== Привязываем контакты ==========
-            if (!empty($validated['contact_ids'])) {
-                $property->contacts()->attach($validated['contact_ids']);
-            }
-
-
-            // ========== Сохраняем документы ==========
-            if ($request->hasFile('documents')) {
-                $this->saveDocuments($property, $request->file('documents'));
-            }
-
-
-            DB::commit();
-
-            return redirect()
-                ->route('properties.index')
-                ->with('success', 'Объект успешно создан!');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return back()
-                ->withInput()
-                ->with('error', 'Ошибка при создании объекта: ' . $e->getMessage());
+        // ========== Привязываем контакты ==========
+        if (!empty($validated['contact_ids'])) {
+            $property->contacts()->attach($validated['contact_ids']);
         }
+
+        // ========== Сохраняем документы ==========
+        if ($request->hasFile('documents')) {
+            $this->saveDocuments($property, $request->file('documents'));
+        }
+
+        // ========== Сохраняем фотографии ==========
+        if ($request->hasFile('photos')) {
+            $photoService = app(PhotoUploadService::class);
+            $photoService->uploadPhotos($property, $request->file('photos'));
+        }
+
+        DB::commit();
+
+        return redirect()
+            ->route('properties.index')
+            ->with('success', 'Объект успешно создан!');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        return back()
+            ->withInput()
+            ->with('error', 'Ошибка при создании объекта: ' . $e->getMessage());
     }
+}
 
 
     /**
@@ -755,26 +764,16 @@ class PropertyController extends Controller
     }
 
     /**
-     * Save property photos.
+     * Сохранить фотографии объекта
+     *
+     * @param Property $property
+     * @param array $files
+     * @return void
      */
-    protected function savePhotos(Property $property, array $photos): void
+    protected function savePhotos(Property $property, array $files): void
     {
-        $sortOrder = 0;
-
-        foreach ($photos as $photo) {
-            $sortOrder++;
-
-            $filename = $photo->getClientOriginalName();
-            $path = $photo->store("properties/{$property->id}/photos", 'public');
-
-            PropertyPhoto::create([
-                'property_id' => $property->id,
-                'path' => $path,
-                'filename' => $filename,
-                'sort_order' => $sortOrder,
-                'is_main' => $sortOrder === 1,
-            ]);
-        }
+        $photoService = app(PhotoUploadService::class);
+        $photoService->uploadPhotos($property, $files);
     }
 
 

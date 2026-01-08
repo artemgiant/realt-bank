@@ -3,7 +3,7 @@
 import {
 	FileUploader,
 	PhotoLoader
-} from "./function_on_pages-create.js";
+} from "./photo/function_on_pages-create.js";
 
 $(".js-example-responsive2-currency").select2({
 	width: 'resolve',
@@ -49,9 +49,9 @@ function initFileUploaders () {
 		checkImageSize: false,
 		// якщо треба щось дописати то треба дописувати class де зовнішні змінни передавання ззовні(звідси)
 	});
-	
-	
-	new PhotoLoader({
+
+	// Для фото - зберігаємо instance в window для доступу з form-submit.js
+	window.photoLoaderInstance = new PhotoLoader({
 		inputId: 'loading-photo',
 		checkImageSize: false,
 		minWidth: 800,
@@ -82,18 +82,18 @@ $(document).ready(function () {
 		const $this = $(this);
 		const currentState = $this.attr('data-open-menu');
 		const newState = currentState === 'false' ? 'true' : 'false';
-		
+
 		// Закриваємо всі інші відкриті меню
 		$('.multiple-menu-btn').not($this).attr('data-open-menu', 'false');
 		// Відкриваємо/закриваємо поточне меню
 		$this.attr('data-open-menu', newState);
 	});
-	
+
 	// Обробник кліку поза меню
 	$(document).on('click', function () {
 		$('.multiple-menu-btn').attr('data-open-menu', 'false');
 	});
-	
+
 	// Обробник кліку всередині меню, щоб не закривалося при кліку на елементи меню
 	$('.multiple-menu-wrapper').on('click', function (event) {
 		event.stopPropagation();
