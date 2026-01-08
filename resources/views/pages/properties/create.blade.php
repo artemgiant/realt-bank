@@ -545,9 +545,7 @@
                                 <button class="btn btn-outline-primary" type="button">
                                     Отменить изменения
                                 </button>
-                                <button class="btn btn-outline-danger" type="button">
-                                    Удалить объект
-                                </button>
+
                             </div>
                             <div class="photo-info-btnGroup-right">
                                 <button class="btn btn-outline-success" type="button">
