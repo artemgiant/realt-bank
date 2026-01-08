@@ -389,6 +389,10 @@
                             </div>
                         </div>
 
+                        {{-- Особенности --}}
+                        @include('pages.properties.particles.create._features_block')
+
+
                     </div>
                 </div>
 
@@ -572,6 +576,9 @@
     <script src="{{ asset('js/pages/full-filter.min.js') }}"></script>
     <script src="{{ asset('js/pages/my-dropdown.min.js') }}"></script>
 
+
+
+
     {{-- Основной скрипт страницы --}}
     <script src="{{ asset('js/pages/properties/create/page-create.js') }}" type="module"></script>
 
@@ -594,7 +601,8 @@
 {{--    LOcation SEARCH--}}
     <script src="{{ asset('js/pages/properties/create/complex-block.js') }}"></script>
     <script src="{{ asset('js/pages/properties/create/location-search.js') }}" type="module"></script>
-
+{{--ТЕГИ И ОСОБЕННОСТИ--}}
+    <script src="{{ asset('js/pages/properties/create/features-tags.js') }}"></script>
 
     {{--Плагин по редактированию изображений--}}
     <!-- Спочатку залежності -->

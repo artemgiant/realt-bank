@@ -29,6 +29,9 @@ php artisan migrate
 
 
 #php artisan db:seed --class=CountrySeeder
+
+php artisan db:seed --class=DictionarySeeder --force
+
 #TRUNCATE TABLE states;
 
 # Оновити Composer залежності

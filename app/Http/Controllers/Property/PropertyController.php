@@ -693,6 +693,11 @@ class PropertyController extends Controller
             $property->contacts()->attach($validated['contact_ids']);
         }
 
+        // После создания property:
+        if ($request->has('features')) {
+            $property->features()->sync($request->input('features', []));
+        }
+
         // ========== Сохраняем документы ==========
         if ($request->hasFile('documents')) {
             $this->saveDocuments($property, $request->file('documents'));
