@@ -101,6 +101,11 @@
      * Форматирование выбранного комплекса
      */
     function formatComplexSelection(complex) {
+        if (!complex.id) return complex.text;
+
+        if (complex.developer_name) {
+            return complex.text + ', ' + complex.developer_name + '';
+        }
         return complex.text || complex.id;
     }
 
