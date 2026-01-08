@@ -13,6 +13,9 @@ class DictionarySeeder extends Seeder
      */
     public function run(): void
     {
+        // Массив для сбора всех slug+type из сидера
+        $seederKeys = [];
+
         $dictionaries = [
             // Тип сделки
             Dictionary::TYPE_DEAL_TYPE => [
@@ -34,8 +37,7 @@ class DictionarySeeder extends Seeder
             Dictionary::TYPE_DEAL_KIND => [
                 'Нотариальная',
                 'Переуступка',
-                'Рассрочка',
-                'Ипотека',
+                'Отдел продаж',
             ],
 
             // Тип здания
@@ -76,15 +78,13 @@ class DictionarySeeder extends Seeder
                 'Бокс',
             ],
 
-// Состояние
+            // Состояние
             Dictionary::TYPE_CONDITION => [
                 'С ремонтом',
                 'Жилая',
                 'От строителей',
                 'Без ремонта',
             ],
-
-
 
             // Тип стен
             Dictionary::TYPE_WALL_TYPE => [
@@ -274,21 +274,38 @@ class DictionarySeeder extends Seeder
                     $value = null;
                 }
 
+                $slug = Str::slug($name);
+
+                // Собираем ключи для синхронизации
+                $seederKeys[] = $type . '|' . $slug;
+
                 Dictionary::updateOrCreate(
                     [
                         'type' => $type,
-                        'slug' => Str::slug($name),
+                        'slug' => $slug,
                     ],
                     [
                         'type' => $type,
                         'name' => $name,
                         'value' => $value,
-                        'slug' => Str::slug($name),
+                        'slug' => $slug,
                         'sort_order' => $sortOrder,
                         'is_active' => true,
                     ]
                 );
             }
         }
+
+        // Синхронизация: удаляем записи которых нет в сидере
+        $allTypes = array_keys($dictionaries);
+
+        Dictionary::whereIn('type', $allTypes)
+            ->get()
+            ->each(function ($record) use ($seederKeys) {
+                $key = $record->type . '|' . $record->slug;
+                if (!in_array($key, $seederKeys)) {
+                    $record->delete();
+                }
+            });
     }
 }

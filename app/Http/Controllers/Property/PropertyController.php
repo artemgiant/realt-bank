@@ -373,7 +373,7 @@ class PropertyController extends Controller
             $query->whereIn('ceiling_height_id', $ceilingHeightIds);
         }
 
-        // ========== Фильтр: Дополнительно / Особенности (множественный выбор) ==========
+        // ========== Фильтр: Особености / Особенности (множественный выбор) ==========
         if ($request->filled('features')) {
             $featureIds = is_array($request->features)
                 ? $request->features

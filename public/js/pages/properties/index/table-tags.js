@@ -24,7 +24,7 @@ window.PropertyTags = {
         { name: 'heating_type_id[]', label: 'Отопление' },
         { name: 'bathroom_count_id[]', label: 'Ванные комнаты' },
         { name: 'ceiling_height_id[]', label: 'Высота потолков' },
-        { name: 'features[]', label: 'Дополнительно' },
+        { name: 'features[]', label: 'Особености' },
         { name: 'developer_id[]', label: 'Девелопер' }
     ],
 

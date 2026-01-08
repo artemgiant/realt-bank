@@ -60,7 +60,7 @@
             </div>
         </div>
 
-        {{-- Теги фильтра "Дополнительно" - генерируются динамически через JS --}}
+        {{-- Теги фильтра "Особености" - генерируются динамически через JS --}}
         <div class="filter-tags"></div>
 
         <div class="full-filter">
@@ -434,9 +434,9 @@
 
 
 
-                    {{-- Дополнительно / Особенности --}}
+                    {{-- Особености / Особенности --}}
                     <div class="item">
-                        <span class="item-label">Дополнительно</span>
+                        <span class="item-label">Особености</span>
                         <div class="multiple-menu">
                             @php
                                 $selectedFeatures = (array)($filters['features'] ?? []);

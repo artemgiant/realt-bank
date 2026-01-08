@@ -13,6 +13,9 @@ class SourceSeeder extends Seeder
      */
     public function run(): void
     {
+        // Массив для сбора всех slug из сидера
+        $seederSlugs = [];
+
         $sources = [
             // Рекомендации
             'Рекомендации клиентов',
@@ -92,14 +95,22 @@ class SourceSeeder extends Seeder
         ];
 
         foreach ($sources as $name) {
+            $slug = Str::slug($name);
+
+            // Собираем slug для синхронизации
+            $seederSlugs[] = $slug;
+
             Source::updateOrCreate(
-                ['slug' => Str::slug($name)],
+                ['slug' => $slug],
                 [
                     'name' => $name,
-                    'slug' => Str::slug($name),
+                    'slug' => $slug,
                     'is_active' => true,
                 ]
             );
         }
+
+        // Синхронизация: удаляем записи которых нет в сидере
+        Source::whereNotIn('slug', $seederSlugs)->delete();
     }
 }
