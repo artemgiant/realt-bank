@@ -9,6 +9,10 @@
     document.addEventListener('DOMContentLoaded', function() {
         const featuresContainer = document.getElementById('features-menu');
         const tagsContainer = document.getElementById('applied-filters');
+        const contactTypeSelect = document.getElementById('contact_type_id');
+
+        // ID особенности "От посредника"
+        const INTERMEDIARY_FEATURE_ID = '136';
 
         if (!featuresContainer || !tagsContainer) return;
 
@@ -67,8 +71,56 @@
             });
         }
 
+        // Обработчик изменения типа контакта (Select2)
+        if (contactTypeSelect && typeof $ !== 'undefined') {
+            // Select2 события
+            $(contactTypeSelect).on('select2:select', function(e) {
+                handleContactTypeChange(e.params.data.text);
+            });
+
+            $(contactTypeSelect).on('select2:clear', function(e) {
+                handleContactTypeChange('');
+            });
+
+            // Проверяем начальное значение при загрузке страницы
+            setTimeout(function() {
+                const selectedOption = contactTypeSelect.options[contactTypeSelect.selectedIndex];
+                if (selectedOption && selectedOption.value) {
+                    handleContactTypeChange(selectedOption.text);
+                }
+            }, 100);
+        }
+
         // Инициализация тегов для уже выбранных чекбоксов (при редактировании)
         initExistingFeatures();
+
+        /**
+         * Обработка изменения типа контакта
+         */
+        function handleContactTypeChange(selectedText) {
+            const text = (selectedText || '').trim().toLowerCase();
+
+            // Проверяем, выбран ли "Агент"
+            const isAgent = text === 'агент';
+
+            const checkbox = featuresContainer.querySelector(`input[name="features[]"][value="${INTERMEDIARY_FEATURE_ID}"]`);
+            if (!checkbox) return;
+
+            if (isAgent) {
+                // Выбираем "От посредника"
+                if (!checkbox.checked) {
+                    checkbox.checked = true;
+                    const featureName = checkbox.closest('.my-custom-input').querySelector('.my-custom-text').textContent;
+                    addFeatureTag(INTERMEDIARY_FEATURE_ID, featureName);
+                }
+            } else {
+                // Убираем "От посредника"
+                if (checkbox.checked) {
+                    checkbox.checked = false;
+                    removeFeatureTagElement(INTERMEDIARY_FEATURE_ID);
+                }
+            }
+        }
 
         /**
          * Обработка изменения чекбокса

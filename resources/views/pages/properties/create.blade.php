@@ -156,8 +156,8 @@
 
                         {{-- Тип недвижимости --}}
                         <div class="item selects ">
-                            <label class="item-label" for="property_type_id">Тип недвижимости</label>
-                            <select id="property_type_id" name="property_type_id" class="js-example-responsive3 my-select2">
+                            <label class="item-label" for="property_type_id">Тип недвижимости <span class="text-danger">*</span></label>
+                            <select id="property_type_id" name="property_type_id" class="js-example-responsive3 my-select2" required>
                                 <option value=""></option>
                                 @foreach($propertyTypes as $propertyType)
                                     <option value="{{ $propertyType->id }}" {{ old('property_type_id') == $propertyType->id ? 'selected' : '' }}>
@@ -330,10 +330,10 @@
 
                         {{-- Цена --}}
                         <div class="item ">
-                            <label class="green" for="price">Цена</label>
+                            <label class="green" for="price">Цена на объект<span class="text-danger">*</span></label>
                             <div class="item-inputText-wrapper">
                                 <input class="item-inputText" id="price" name="price" type="text"
-                                       value="{{ old('price') }}" autocomplete="off" placeholder="">
+                                       value="{{ old('price') }}" autocomplete="off" placeholder="" required>
                             </div>
                             @error('price')
                             <span class="text-danger small">{{ $message }}</span>
@@ -342,7 +342,7 @@
 
                         {{-- Комиссия --}}
                         <div class="item ">
-                            <label for="commission">Комиссия</label>
+                            <label for="commission">Комиссия от владельца</label>
                             <div class="item-inputText-wrapper">
                                 <input class="item-inputText" id="commission" name="commission" type="text"
                                        value="{{ old('commission') }}" autocomplete="off" placeholder="">
@@ -350,18 +350,7 @@
                         </div>
 
 
-                        {{-- Тип контакта --}}
-                        <div class="item selects">
-                            <label class="item-label" for="contact_type_id">Тип контакта</label>
-                            <select id="contact_type_id" name="contact_type_id" class="js-example-responsive3 my-select2">
-                                <option value=""></option>
-                                @foreach($contactTypes as $contactType)
-                                    <option value="{{ $contactType->id }}" {{ old('contact_type_id') == $contactType->id ? 'selected' : '' }}>
-                                        {{ $contactType->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+
 
                         {{-- ================================================================== --}}
                         {{-- ГРУППА 7: Особености --}}
@@ -369,8 +358,8 @@
 
                         {{-- Источник --}}
                         <div class="item selects ">
-                            <label class="item-label" for="source_id">Источник</label>
-                            <select id="source_id" name="source_id" class="js-example-responsive2 my-select2">
+                            <label class="item-label" for="source_id">Источник <span class="text-danger">*</span></label>
+                            <select id="source_id" name="source_id" class="js-example-responsive2 my-select2" required>
                                 <option value=""></option>
                                 @foreach($sources as $source)
                                     <option value="{{ $source->id }}" {{ old('source_id') == $source->id ? 'selected' : '' }}>
@@ -388,6 +377,22 @@
                                        value="{{ old('youtube_url') }}" autocomplete="off" placeholder="https://youtube.com/...">
                             </div>
                         </div>
+
+
+                        {{-- Тип контакта --}}
+                        <div class="item selects">
+                            <label class="item-label" for="contact_type_id">Тип контакта <span class="text-danger">*</span></label>
+                            <select id="contact_type_id" name="contact_type_id" class="js-example-responsive3 my-select2" required>
+                                <option value=""></option>
+                                @foreach($contactTypes as $contactType)
+                                    <option value="{{ $contactType->id }}" {{ old('contact_type_id') == $contactType->id ? 'selected' : '' }}>
+                                        {{ $contactType->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+
 
                         {{-- Особенности --}}
                         @include('pages.properties.particles.create._features_block')

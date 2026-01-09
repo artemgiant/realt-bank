@@ -15,6 +15,25 @@
         form.addEventListener('submit', function(e) {
             e.preventDefault();
 
+            // Очищаем числовые поля от пробелов перед отправкой
+            const fieldsToClean = [
+                '#price',
+                '#commission',
+                '#area_total',
+                '#area_living',
+                '#area_kitchen',
+                '#area_land',
+                '#floor',
+                '#floors_total'
+            ];
+
+            fieldsToClean.forEach(function(selector) {
+                const input = document.querySelector(selector);
+                if (input && input.value) {
+                    input.value = input.value.replace(/\s/g, '');
+                }
+            });
+
             // Получаем экземпляр PhotoLoader (он должен быть в window.photoLoaderInstance)
             const photoLoader = window.photoLoaderInstance;
 

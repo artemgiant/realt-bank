@@ -252,7 +252,8 @@ class DictionarySeeder extends Seeder
 
             // Тип контакта
             Dictionary::TYPE_CONTACT_TYPE => [
-                'Владелец',
+                'Ексклюзив \ Владелец',
+                'Владелец  \  Представитель (Без комиссии )',
                 'Агент',
                 'Девелопер',
             ],

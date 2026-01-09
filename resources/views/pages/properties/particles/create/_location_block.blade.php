@@ -1,12 +1,13 @@
 {{-- ========== ЛОКАЦИЯ (Область + Улица) ========== --}}
 <div class="item selects w16">
-    <label class="item-label">Регион</label>
+    <label class="item-label">Регион <span class="text-danger">*</span></label>
     <div class="state-search-wrapper">
         <input type="text"
                class="state-search-input"
                placeholder="Введите название региона..."
                autocomplete="off"
-               value="{{ old('state_name') }}">
+               value="{{ old('state_name') }}"
+               required>
 
         {{-- Иконка поиска --}}
         <span class="state-search-icon">
@@ -30,7 +31,7 @@
         <div class="state-search-dropdown"></div>
 
         {{-- Hidden inputs для сохранения данных региона --}}
-        <input type="hidden" name="state_id" id="state_id" value="{{ old('state_id') }}">
+        <input type="hidden" name="state_id" id="state_id" value="{{ old('state_id') }}" required>
         <input type="hidden" name="state_name" id="state_name" value="{{ old('state_name') }}">
         <input type="hidden" name="country_id" id="country_id" value="{{ old('country_id') }}">
         <input type="hidden" name="country_name" id="country_name" value="{{ old('country_name') }}">
@@ -38,13 +39,14 @@
 </div>
 
 <div class="item w33">
-    <label class="item-label">Локация (улица)</label>
+    <label class="item-label">Локация (улица) <span class="text-danger">*</span></label>
     <div class="location-search-wrapper">
         <input type="text"
                class="location-search-input"
                placeholder="Введите название улицы..."
                autocomplete="off"
-               value="{{ old('street_name') }}">
+               value="{{ old('street_name') }}"
+               required>
 
         {{-- Иконка поиска --}}
         <span class="location-search-icon">
@@ -68,7 +70,7 @@
         <div class="location-search-dropdown"></div>
 
         {{-- Hidden inputs для сохранения данных улицы --}}
-        <input type="hidden" name="street_id" value="{{ old('street_id') }}">
+        <input type="hidden" name="street_id" value="{{ old('street_id') }}" required>
         <input type="hidden" name="street_name" value="{{ old('street_name') }}">
         <input type="hidden" name="zone_id" value="{{ old('zone_id') }}">
         <input type="hidden" name="zone_name" value="{{ old('zone_name') }}">

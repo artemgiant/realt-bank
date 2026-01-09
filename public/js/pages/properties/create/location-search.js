@@ -138,7 +138,12 @@ class StateSearchManager {
     async loadDefaultState() {
         // Если уже есть выбранное значение из old() - не загружаем дефолтное
         if (this.stateIdInput.value) {
-            this.input.value = this.stateNameInput.value;
+            // Формируем full_name из сохраненных данных
+            const fullName = this.countryNameInput.value
+                ? `${this.stateNameInput.value}, ${this.countryNameInput.value}`
+                : this.stateNameInput.value;
+            this.input.value = fullName;
+
             this.wrapper.classList.add('has-value');
             this.selectedState = {
                 id: this.stateIdInput.value,
@@ -222,7 +227,7 @@ class StateSearchManager {
         this.selectedState = state;
 
         // Заполняем input
-        this.input.value = state.name;
+        this.input.value = state.full_name || state.name;
 
         // Заполняем hidden inputs
         this.stateIdInput.value = state.id;
