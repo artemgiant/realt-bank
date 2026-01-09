@@ -610,6 +610,10 @@
 {{--    Маски для цыфровых полей--}}
     <script src="{{ asset('js/pages/properties/create/number-mask.js') }}"></script>
 
+{{--АВТОЗАПОЛНЕНИЕ ТИПА ЗДАНИЯ--}}
+    <script src="{{ asset('js/pages/properties/create/building-type-autofill.js') }}"></script>
+
+
     {{--Плагин по редактированию изображений--}}
     <!-- Спочатку залежності -->
     <script src="{{ asset('js/lib/tui-code-snippet.min.js') }}"></script>
