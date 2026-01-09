@@ -28,7 +28,7 @@ php artisan migrate
 #php artisan tinker --execute="App\Models\Property\Property::factory()->count(100)->withContacts(1)->create();"
 
 
-#php artisan db:seed --class=CountrySeeder
+php artisan db:seed --class=CountrySeeder
 
 php artisan db:seed --class=DictionarySeeder --force
 

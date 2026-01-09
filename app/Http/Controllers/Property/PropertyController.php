@@ -588,6 +588,9 @@ class PropertyController extends Controller
         'year_built' => 'nullable|exists:dictionaries,id',
         'price' => 'nullable|numeric|min:0',
         'commission' => 'nullable|numeric|min:0',
+        // Настройки
+        'is_advertised' => 'nullable|boolean',
+        'is_visible_to_agents' => 'nullable|boolean',
 
         // Text
         'youtube_url' => 'nullable|url|max:255',
@@ -680,6 +683,9 @@ class PropertyController extends Controller
             // Text
             'youtube_url' => $validated['youtube_url'] ?? null,
             'agent_notes' => $validated['agent_notes'] ?? null,
+
+            'is_advertised' => !empty($validated['is_advertised']),
+            'is_visible_to_agents' => !empty($validated['is_visible_to_agents']),
 
             // Defaults
             'status' => 'draft',

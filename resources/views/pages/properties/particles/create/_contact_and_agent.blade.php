@@ -51,6 +51,13 @@
             </div>
             <div class="item">
                 <label class="my-custom-input">
+                    <input type="checkbox" name="is_advertised" value="1" checked>
+                    <span class="my-custom-box"></span>
+                    <span class="my-custom-text">Рекламировать объект</span>
+                </label>
+            </div>
+            <div class="item">
+                <label class="my-custom-input">
                     <input type="checkbox" name="is_visible_to_agents" value="1">
                     <span class="my-custom-box"></span>
                     <span class="my-custom-text">Открыть контакты и адрес объекта для агентов моей компании</span>

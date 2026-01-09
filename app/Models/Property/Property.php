@@ -31,6 +31,7 @@ class Property extends Model
         'user_id',
         'source_id',
         'currency_id',
+        'is_advertised',
 
         // Комплекс
         'complex_id',
@@ -98,6 +99,7 @@ class Property extends Model
         'price' => 'decimal:2',
         'commission' => 'decimal:2',
         'is_visible_to_agents' => 'boolean',
+        'is_advertised' => 'boolean',
     ];
 
     // ========== Relationships: User & Contact ==========
