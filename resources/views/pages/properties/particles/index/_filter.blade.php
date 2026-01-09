@@ -561,6 +561,7 @@
         $(document).ready(function() {
             // Синхронизация daterangepicker с hidden полями
             $('#datapiker1').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('DD-MM-YYYY') + ' - ' + picker.endDate.format('DD-MM-YYYY'));
                 $('#created_from').val(picker.startDate.format('YYYY-MM-DD'));
                 $('#created_to').val(picker.endDate.format('YYYY-MM-DD'));
             });

@@ -33,7 +33,8 @@ $('#datapiker1').daterangepicker({
 		],
 		"firstDay": 1
 	},
-	"drops": "auto"
+	"drops": "auto",
+	"autoUpdateInput": false
 });
 $(document).ready(function () {
 	$('#full-filter-btn').on('click', function () {
@@ -51,17 +52,17 @@ $(document).ready(function () {
 		const newState = currentState === 'false' ? 'true' : 'false';
 		$(this).attr('data-open-menu', newState);
 	});
-	
+
 	// Обробник кліку поза меню
 	$(document).on('click', function () {
 		$('.multiple-menu-btn').attr('data-open-menu', 'false');
 	});
-	
+
 	// Обробник кліку всередині меню, щоб не закривалося при кліку на елементи меню
 	$('.multiple-menu-wrapper').on('click', function (event) {
 		event.stopPropagation();
 	});
-	
+
 	// Обробник для всіх чекбоксів
 	$(document).on('change', '.multiple-menu-list input[type="checkbox"]', function () {
 		const $currentList = $(this).closest('.multiple-menu-list'); // Поточний список

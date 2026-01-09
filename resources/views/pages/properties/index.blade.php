@@ -55,7 +55,7 @@
 
     {{-- Остальные скрипты --}}
     <script src="{{ asset('js/pages/filter1.min.js') }}"></script>
-    <script src="{{ asset('js/pages/full-filter.min.js') }}"></script>
+    <script src="{{ asset('js/pages/full-filter.js') }}"></script>
     <script src="{{ asset('js/pages/my-dropdown.min.js') }}"></script>
     <script src="{{ asset('js/pages/page-home.min.js') }}" type="module"></script>
 @endpush

@@ -12,16 +12,16 @@ window.PropertyFilters = {
     sortDir: 'desc',
 
     // Получение значений отмеченных чекбоксов
-    getCheckedValues: function(selector) {
+    getCheckedValues: function (selector) {
         var values = [];
-        $(selector + ':checked').each(function() {
+        $(selector + ':checked').each(function () {
             values.push($(this).val());
         });
         return values.length > 0 ? values : null;
     },
 
     // Сбор всех параметров фильтров для AJAX запроса
-    collectFilterData: function(d) {
+    collectFilterData: function (d) {
         var $form = $(this.formSelector);
 
         // Сортировка
@@ -76,13 +76,13 @@ window.PropertyFilters = {
     },
 
     // Установка сортировки
-    setSort: function(field, dir) {
+    setSort: function (field, dir) {
         this.sortField = field;
         this.sortDir = dir;
     },
 
     // Сброс всех фильтров
-    reset: function() {
+    reset: function () {
         var $form = $(this.formSelector);
 
         // Сбрасываем все поля формы
@@ -107,23 +107,27 @@ window.PropertyFilters = {
     },
 
     // Обновление счетчика активных фильтров
-    updateCounter: function() {
+    updateCounter: function () {
         var count = 0;
         var $form = $(this.formSelector);
 
         // Считаем заполненные текстовые поля
-        $form.find('input[type="text"]').each(function() {
-            if ($(this).val() && $(this).attr('name') !== 'search-additionally' && $(this).attr('name') !== 'search-developer') {
+        $form.find('input[type="text"]').each(function () {
+            var name = $(this).attr('name');
+            var id = $(this).attr('id');
+            // Исключаем поля поиска в дропдаунах и видимый инпут даты
+            if ($(this).val() && name !== 'search-additionally' && name !== 'search-developer' && id !== 'datapiker1') {
                 count++;
             }
         });
 
-        // Считаем скрытые поля дат
-        if ($('#created_from').val()) count++;
-        if ($('#created_to').val()) count++;
+        // Считаем фильтр по дате (как один фильтр)
+        if ($('#created_from').val() || $('#created_to').val()) {
+            count++;
+        }
 
         // Считаем выбранные select (кроме валюты по умолчанию)
-        $form.find('select').each(function() {
+        $form.find('select').each(function () {
             var val = $(this).val();
             var name = $(this).attr('name') || $(this).attr('id');
             // Пропускаем валюту если она первая по умолчанию
@@ -133,7 +137,7 @@ window.PropertyFilters = {
         });
 
         // Считаем отмеченные чекбоксы фильтров (не select-all)
-        $form.find('input[type="checkbox"]:checked').each(function() {
+        $form.find('input[type="checkbox"]:checked').each(function () {
             var name = $(this).attr('name');
             if (name && name !== 'select-all-checkbox' && !$(this).hasClass('row-checkbox')) {
                 count++;
