@@ -6,9 +6,11 @@ use App\Models\Contact\Contact;
 use App\Models\Location\City;
 use App\Models\Location\Country;
 use App\Models\Location\District;
-use App\Models\Location\Region;
+use App\Models\Location\State;
 use App\Models\Location\Street;
+use App\Models\Location\Zone;
 use App\Models\Property\Property;
+use App\Models\Reference\Block;
 use App\Models\Reference\Complex;
 use App\Models\Reference\Currency;
 use App\Models\Reference\Dictionary;
@@ -39,11 +41,18 @@ class PropertyFactory extends Factory
         // Получаем существующие данные из БД
         $user = User::inRandomOrder()->first();
         $currency = Currency::where('is_active', true)->inRandomOrder()->first();
-        $country = Country::where('is_active', true)->inRandomOrder()->first();
-        $region = $country ? Region::where('country_id', $country->id)->inRandomOrder()->first() : null;
-        $city = $region ? City::where('region_id', $region->id)->inRandomOrder()->first() : null;
-        $district = $city ? District::where('city_id', $city->id)->inRandomOrder()->first() : null;
-        $street = $city ? Street::where('city_id', $city->id)->inRandomOrder()->first() : null;
+
+        // Начинаем с улицы и идём вверх по иерархии (так гарантируем валидные связи)
+        $street = Street::inRandomOrder()->first();
+        $zone = $street ? Zone::find($street->zone_id) : null;
+        $district = $street ? District::find($street->district_id) : null;
+        $city = $street ? City::find($street->city_id) : null;
+        $state = $city ? State::find($city->state_id) : null;
+        $country = $state ? Country::find($state->country_id) : null;
+
+        // Комплекс и секция/корпус
+        $complex = $this->faker->boolean(20) ? Complex::where('is_active', true)->inRandomOrder()->first() : null;
+        $block = $complex ? Block::where('complex_id', $complex->id)->inRandomOrder()->first() : null;
 
         // 80% - Продажа квартир, 20% - случайный тип
         $isApartmentSale = $this->faker->boolean(80);
@@ -79,6 +88,11 @@ class PropertyFactory extends Factory
         $floor = $this->faker->numberBetween(1, 25);
         $floorsTotal = $this->faker->numberBetween($floor, 30);
 
+        // Площади и цена
+        $areaTotal = $this->faker->randomFloat(2, 25, 300);
+        $price = $this->faker->randomFloat(2, 15000, 500000);
+        $pricePerM2 = $areaTotal > 0 ? round($price / $areaTotal, 2) : null;
+
         return [
             // Связи
             'user_id' => $user?->id ?? 1,
@@ -86,18 +100,18 @@ class PropertyFactory extends Factory
             'currency_id' => $currency?->id,
 
             // Комплекс
-            'complex_id' => $this->faker->boolean(20) ? Complex::where('is_active', true)->inRandomOrder()->first()?->id : null,
-            'section_id' => null,
+            'complex_id' => $complex?->id,
+            'block_id' => $block?->id,
 
             // Локация
             'country_id' => $country?->id,
-            'region_id' => $region?->id,
+            'state_id' => $state?->id,
             'city_id' => $city?->id,
             'district_id' => $district?->id,
-            'zone_id' => null,
+            'zone_id' => $zone?->id,
             'street_id' => $street?->id,
-            'building_number' => $this->faker->boolean(80) ? $this->faker->buildingNumber() : null,
-            'apartment_number' => $this->faker->boolean(50) ? $this->faker->numberBetween(1, 200) : null,
+            'building_number' => $this->faker->boolean(90) ? $this->generateBuildingNumber() : null,
+            'apartment_number' => $this->faker->boolean(50) ? (string) $this->faker->numberBetween(1, 200) : null,
             'location_name' => null,
             'latitude' => $city ? $this->faker->latitude(48.0, 52.0) : null,
             'longitude' => $city ? $this->faker->longitude(22.0, 40.0) : null,
@@ -115,7 +129,7 @@ class PropertyFactory extends Factory
             'ceiling_height_id' => $ceilingHeight?->id,
 
             // Характеристики
-            'area_total' => $this->faker->randomFloat(2, 25, 300),
+            'area_total' => $areaTotal,
             'area_living' => $this->faker->randomFloat(2, 15, 200),
             'area_kitchen' => $this->faker->randomFloat(2, 6, 40),
             'area_land' => $this->faker->boolean(30) ? $this->faker->randomFloat(2, 1, 50) : null,
@@ -124,7 +138,8 @@ class PropertyFactory extends Factory
             'year_built' => $yearBuilt?->id,
 
             // Цена
-            'price' => $this->faker->randomFloat(2, 15000, 500000),
+            'price' => $price,
+            'price_per_m2' => $pricePerM2,
             'commission' => $this->faker->randomFloat(2, 1, 5),
             'commission_type' => 'percent',
 
@@ -133,6 +148,7 @@ class PropertyFactory extends Factory
             'external_url' => null,
 
             // Настройки
+            'is_advertised' => $this->faker->boolean(70),
             'is_visible_to_agents' => $this->faker->boolean(80),
             'notes' => $this->faker->boolean(30) ? $this->faker->sentence(10) : null,
             'agent_notes' => $this->faker->boolean(20) ? $this->faker->sentence(5) : null,
@@ -141,11 +157,28 @@ class PropertyFactory extends Factory
     }
 
     /**
+     * Генерация номера дома (1-99 с опциональной буквой)
+     * Примеры: "12", "7а", "45б", "3", "88в"
+     */
+    private function generateBuildingNumber(): string
+    {
+        $number = $this->faker->numberBetween(1, 99);
+
+        // 30% шанс добавить букву
+        if ($this->faker->boolean(30)) {
+            $letters = ['а', 'б', 'в', 'г', 'д'];
+            $number .= $this->faker->randomElement($letters);
+        }
+
+        return (string) $number;
+    }
+
+    /**
      * Объект со статусом "активный"
      */
     public function active(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => 'active',
         ]);
     }
@@ -155,7 +188,7 @@ class PropertyFactory extends Factory
      */
     public function draft(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => 'draft',
         ]);
     }
@@ -165,7 +198,7 @@ class PropertyFactory extends Factory
      */
     public function archived(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => 'archived',
         ]);
     }
@@ -184,7 +217,7 @@ class PropertyFactory extends Factory
             ->inRandomOrder()
             ->first();
 
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'deal_type_id' => $dealType?->id ?? $attributes['deal_type_id'],
             'property_type_id' => $propertyType?->id ?? $attributes['property_type_id'],
         ]);
@@ -199,7 +232,7 @@ class PropertyFactory extends Factory
             ->where('name', 'like', '%продаж%')
             ->first();
 
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'deal_type_id' => $dealType?->id ?? $attributes['deal_type_id'],
         ]);
     }
@@ -213,7 +246,7 @@ class PropertyFactory extends Factory
             ->where('name', 'like', '%аренд%')
             ->first();
 
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'deal_type_id' => $dealType?->id ?? $attributes['deal_type_id'],
         ]);
     }
@@ -223,7 +256,7 @@ class PropertyFactory extends Factory
      */
     public function premium(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'price' => $this->faker->randomFloat(2, 200000, 2000000),
             'area_total' => $this->faker->randomFloat(2, 100, 500),
         ]);
