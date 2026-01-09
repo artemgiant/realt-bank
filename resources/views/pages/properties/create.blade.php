@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-image-editor/3.15.0/tui-image-editor.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-color-picker/2.2.6/tui-color-picker.min.css">
 
+{{---- Плагин по автосохранению форм ----}}
+    <link rel="stylesheet" href="{{ asset('css/pages/properties/create/form-autosave.css') }}">
+
 @endpush
 
 @section('header')
@@ -614,6 +617,8 @@
     <script src="{{ asset('js/pages/properties/create/building-type-autofill.js') }}"></script>
 
 
+    {{---- Плагин по автосохранению форм ----}}
+    <script src="{{ asset('js/pages/properties/create/form-autosave.js') }}"></script>
     {{--Плагин по редактированию изображений--}}
     <!-- Спочатку залежності -->
     <script src="{{ asset('js/lib/tui-code-snippet.min.js') }}"></script>
