@@ -5,14 +5,14 @@
  * Этот файл нужно подключить ПОСЛЕ function_on_pages-create.js
  */
 
-(function() {
+(function () {
     // Ждем загрузки DOM
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const form = document.querySelector('#property-form');
         if (!form) return;
 
         // Перехватываем submit формы
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
 
             // Очищаем числовые поля от пробелов перед отправкой
@@ -27,7 +27,7 @@
                 '#floors_total'
             ];
 
-            fieldsToClean.forEach(function(selector) {
+            fieldsToClean.forEach(function (selector) {
                 const input = document.querySelector(selector);
                 if (input && input.value) {
                     input.value = input.value.replace(/\s/g, '');
@@ -68,7 +68,7 @@
                 body: formData,
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json, text/html'
+                    'Accept': 'application/json'
                 }
             })
                 .then(response => {
@@ -82,7 +82,12 @@
                     const contentType = response.headers.get('content-type');
 
                     if (contentType && contentType.includes('application/json')) {
-                        return response.json();
+                        // Возвращаем JSON вместе со статусом
+                        return response.json().then(data => ({
+                            data: data,
+                            ok: response.ok,
+                            status: response.status
+                        }));
                     } else {
                         // HTML ответ (редирект или страница с ошибками)
                         return response.text().then(html => {
@@ -116,25 +121,43 @@
                     }
 
                     // JSON ответ
-                    if (result.success) {
-                        // Успех
-                        if (result.redirect) {
-                            window.location.href = result.redirect;
-                        } else {
-                            window.location.href = '/properties';
+                    if (result.data) {
+                        // Проверяем статус ответа
+                        if (result.status === 422 && result.data.errors) {
+                            // Ошибки валидации Laravel
+                            showValidationErrors(result.data.errors);
+
+                            // Показываем общее сообщение если есть
+                            if (result.data.message) {
+                                showGeneralError(result.data.message);
+                            }
+                            return;
                         }
-                    } else {
-                        // Ошибка
-                        if (result.errors) {
-                            showValidationErrors(result.errors);
-                        } else if (result.message) {
-                            alert(result.message);
+
+                        if (result.ok || result.data.success) {
+                            // Успех
+                            if (result.data.redirect) {
+                                window.location.href = result.data.redirect;
+                            } else {
+                                window.location.href = '/properties';
+                            }
+                        } else {
+                            // Другая ошибка
+                            if (result.data.errors) {
+                                showValidationErrors(result.data.errors);
+                            } else if (result.data.message) {
+                                showGeneralError(result.data.message);
+                            } else if (result.data.error) {
+                                showGeneralError(result.data.error);
+                            } else {
+                                showGeneralError('Произошла ошибка при сохранении');
+                            }
                         }
                     }
                 })
                 .catch(error => {
                     console.error('Ошибка отправки формы:', error);
-                    alert('Произошла ошибка при сохранении. Попробуйте еще раз.');
+                    showGeneralError('Произошла ошибка при сохранении. Попробуйте еще раз.');
                 })
                 .finally(() => {
                     // Восстанавливаем кнопку
@@ -153,6 +176,7 @@
         // Удаляем старые ошибки
         document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
         document.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+        document.querySelectorAll('.alert-validation-error').forEach(el => el.remove());
 
         // Показываем новые ошибки
         for (const [field, messages] of Object.entries(errors)) {
@@ -172,6 +196,30 @@
         const firstError = document.querySelector('.is-invalid');
         if (firstError) {
             firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    /**
+     * Показать общую ошибку
+     */
+    function showGeneralError(message) {
+        // Удаляем старые алерты
+        document.querySelectorAll('.alert-validation-error').forEach(el => el.remove());
+
+        // Создаем новый алерт
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-danger alert-dismissible fade show alert-validation-error';
+        alert.setAttribute('role', 'alert');
+        alert.innerHTML = `
+            <strong>Ошибка:</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+
+        // Вставляем в начало формы или create контейнера
+        const container = document.querySelector('.create') || document.querySelector('#property-form');
+        if (container) {
+            container.insertBefore(alert, container.firstChild);
+            alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
 })();

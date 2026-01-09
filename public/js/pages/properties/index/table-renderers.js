@@ -5,7 +5,7 @@
 window.PropertyRenderers = {
 
     // Чекбокс выбора строки
-    checkbox: function(data, type, row) {
+    checkbox: function (data, type, row) {
         return '<div class="tbody-wrapper checkBox">' +
             '<label class="my-custom-input">' +
             '<input type="checkbox" class="row-checkbox" value="' + data + '">' +
@@ -14,14 +14,36 @@ window.PropertyRenderers = {
     },
 
     // Локация (адрес)
-    location: function(data, type, row) {
-        return '<div class="tbody-wrapper location">' +
-            (data !== '-' ? '<p>' + data + '</p>' : '<span class="text-muted">-</span>') +
-            '</div>';
+    // Формат: 1) Улица (жирный), 2) Зона, 3) Район, Город, Область, Страна
+    location: function (data, type, row) {
+        // Проверяем есть ли данные локации
+        if (!data || !data.has_location) {
+            return '<div class="tbody-wrapper location"><span class="text-muted">-</span></div>';
+        }
+
+        var html = '<div class="tbody-wrapper location">';
+
+        // 1. Улица (жирный)
+        if (data.street) {
+            html += '<b>' + data.street + '</b>';
+        }
+
+        // 2. Зона
+        if (data.zone) {
+            html += '<p>' + data.zone + '</p>';
+        }
+
+        // 3. Район, Город, Область, Страна
+        if (data.address) {
+            html += '<span>' + data.address + '</span>';
+        }
+
+        html += '</div>';
+        return html;
     },
 
     // Тип недвижимости + количество комнат
-    propertyType: function(data, type, row) {
+    propertyType: function (data, type, row) {
         var roomCount = row.room_count ? '<span>' + row.room_count + '</span>' : '';
         return '<div class="tbody-wrapper type">' +
             (data !== '-' ? '<p>' + data + '</p>' + roomCount : '<span class="text-muted">-</span>') +
@@ -29,9 +51,9 @@ window.PropertyRenderers = {
     },
 
     // Площадь (общая/жилая/кухни)
-    area: function(data, type, row) {
+    area: function (data, type, row) {
         var parts = [];
-        var areaLand = row.area_land ?  '<span>' + row.area_land + ' сот.' + '</span>'   : '';
+        var areaLand = row.area_land ? '<span>' + row.area_land + ' сот.' + '</span>' : '';
         if (data.total) parts.push(data.total);
         if (data.living) parts.push(data.living);
         if (data.kitchen) parts.push(data.kitchen);
@@ -44,7 +66,7 @@ window.PropertyRenderers = {
     },
 
     // Состояние + тип стен
-    condition: function(data, type, row) {
+    condition: function (data, type, row) {
         var wallType = row.wall_type ? '<span>' + row.wall_type + '</span>' : '';
         return '<div class="tbody-wrapper condition">' +
             (data !== '-' ? '<p>' + data + '</p>' + wallType : '<span class="text-muted">-</span>') +
@@ -52,21 +74,21 @@ window.PropertyRenderers = {
     },
 
     // Этаж
-    floor: function(data, type, row) {
+    floor: function (data, type, row) {
         return '<div class="tbody-wrapper floor">' +
             (data !== '-' ? '<p>' + data + '</p>' : '<span class="text-muted">-</span>') +
             '</div>';
     },
 
     // Фото
-    photo: function(data, type, row) {
+    photo: function (data, type, row) {
         return '<div class="tbody-wrapper photo">' +
             (data !== '-' ? data : '<span class="text-muted">-</span>') +
             '</div>';
     },
 
     // Цена
-    price: function(data, type, row) {
+    price: function (data, type, row) {
         var pricePerM2 = row.price_per_m2 ? '<span>' + row.price_per_m2 + ' /м²</span>' : '';
         return '<div class="tbody-wrapper price">' +
             (data !== '-' ? '<p>' + data + '</p>' + pricePerM2 : '<span class="text-muted">-</span>') +
@@ -74,7 +96,7 @@ window.PropertyRenderers = {
     },
 
     // Контакт
-    contact: function(data, type, row) {
+    contact: function (data, type, row) {
         // Проверяем есть ли контакт
         if (!data || !data.has_contact) {
             return '<div class="tbody-wrapper contact"><span class="text-muted">-</span></div>';
@@ -95,7 +117,7 @@ window.PropertyRenderers = {
     },
 
     // Действия (пустая ячейка)
-    actions: function(data, type, row) {
+    actions: function (data, type, row) {
         return '<div class="tbody-wrapper block-actions">\n' +
             '                        <a href="#" class="btn mail-link" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="top" data-bs-title="Написать">\n' +
             '                              <img src="./img/icon/mail.svg" alt="">\n' +
