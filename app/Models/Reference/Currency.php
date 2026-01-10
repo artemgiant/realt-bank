@@ -10,6 +10,7 @@ class Currency extends Model
         'code',
         'symbol',
         'name',
+        'rate',
         'is_default',
         'is_active',
     ];

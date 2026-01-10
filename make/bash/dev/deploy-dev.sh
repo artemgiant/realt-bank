@@ -22,15 +22,18 @@ php artisan view:clear
 php artisan migrate
 
 
+#php artisan db:seed --class=CountrySeeder
+#
+#php artisan db:seed --class=DictionarySeeder --force
+
+
+
 #ОЧИСТИТИ ДАНЫЕ
 #php artisan tinker --execute="DB::table('property_contact')->truncate(); App\Models\Property\Property::query()->forceDelete(); App\Models\Contact\Contact::query()->delete();"
 #СГЕНЕРИРОВАТЬ ДАННЫЕ
-#php artisan tinker --execute="App\Models\Property\Property::factory()->count(100)->withContacts(1)->create();"
+php artisan tinker --execute="App\Models\Property\Property::factory()->count(100)->withContacts(1)->create();"
 
 
-php artisan db:seed --class=CountrySeeder
-
-php artisan db:seed --class=DictionarySeeder --force
 
 #TRUNCATE TABLE states;
 

@@ -158,7 +158,13 @@ class PropertyController extends Controller
         ]);
 
         // ========== Применяем фильтры ==========
-        $this->applyFilters($query, $request);
+        // Получаем целевую валюту, если выбрана
+        $targetCurrency = null;
+        if ($request->filled('currency_id')) {
+            $targetCurrency = Currency::find($request->currency_id);
+        }
+
+        $this->applyFilters($query, $request, $targetCurrency);
 
         // ========== Глобальный поиск DataTables ==========
         if (!empty($searchValue)) {
@@ -207,11 +213,11 @@ class PropertyController extends Controller
                     'kitchen' => $property->area_kitchen ? ceil($property->area_kitchen) : null,
                 ],
                 'area_land' => $property->area_land ? ceil($property->area_land) : null,
-                'price_per_m2' => $property->price_per_m2 ? number_format($property->price_per_m2, 0, '.', ' ') : null,
+                'price_per_m2' => $this->formatPricePerM2($property, $targetCurrency ?? null),
                 'condition' => $property->condition?->name ?? '-',
                 'floor' => $this->formatFloor($property),
                 'photo' => $this->formatPhoto($property),
-                'price' => $this->formatPrice($property),
+                'price' => $this->formatPrice($property, $targetCurrency ?? null),
                 'contact' => $this->formatContact($property),
             ];
         }
@@ -227,25 +233,51 @@ class PropertyController extends Controller
     /**
      * Применение фильтров к запросу
      */
-    private function applyFilters($query, Request $request): void
+    private function applyFilters($query, Request $request, ?Currency $targetCurrency = null): void
     {
         // ========== Фильтр: Тип сделки ==========
         if ($request->filled('deal_type_id')) {
             $query->where('deal_type_id', $request->deal_type_id);
         }
 
-        // ========== Фильтр: Цена от/до ==========
-        if ($request->filled('price_from')) {
-            $query->where('price', '>=', $request->price_from);
-        }
-        if ($request->filled('price_to')) {
-            $query->where('price', '<=', $request->price_to);
+        // ========== Фильтр: Валюта и Цена от/до ==========
+        // Если выбрана валюта, фильтруем с учетом конвертации
+        // Для этого джойним таблицу валют, чтобы получить курс валюты объекта
+        $query->leftJoin('currencies as property_currency', 'properties.currency_id', '=', 'property_currency.id')
+            ->select('properties.*'); // Важно выбрать поля properties, чтобы не перетереть id
+
+        if ($targetCurrency) {
+            $targetRate = $targetCurrency->rate;
+
+            if ($request->filled('price_from')) {
+                // Конвертируем фильтр в UAH: X target * k target = Y UAH
+                $priceFromUah = $request->price_from * $targetRate;
+                // Сравниваем: (price prop * k prop) >= Y UAH
+                $query->whereRaw('(properties.price * property_currency.rate) >= ?', [$priceFromUah]);
+            }
+            if ($request->filled('price_to')) {
+                $priceToUah = $request->price_to * $targetRate;
+                $query->whereRaw('(properties.price * property_currency.rate) <= ?', [$priceToUah]);
+            }
+        } else {
+            // Если валюта не выбрана, фильтруем "как есть" (по сырым числам),
+            // хотя это может быть некорректно для разных валют, но сохраним старую логику
+            // или лучше всегда приводить к UAH?
+            // Оставим старую логику для price_from/to без валюты - просто числовое сравнение,
+            // но так как мы сделали join, надо уточнять таблицу
+            if ($request->filled('price_from')) {
+                $query->where('properties.price', '>=', $request->price_from);
+            }
+            if ($request->filled('price_to')) {
+                $query->where('properties.price', '<=', $request->price_to);
+            }
         }
 
-        // ========== Фильтр: Валюта ==========
-        if ($request->filled('currency_id')) {
-            $query->where('currency_id', $request->currency_id);
-        }
+        // Старый прямой фильтр по ID валюты убираем, так как теперь мы показываем всё в пересчете
+        // Но если нужно показывать ТОЛЬКО объекты в этой валюте, то раскомментировать:
+        // if ($request->filled('currency_id')) { $query->where('properties.currency_id', $request->currency_id); }
+        // Задача стояла: "показываеи обьекты в той вилюте которую выбрати и нужную суму которая конвертировалиась"
+        // То есть фильтрация по ЦЕНЕ в эквиваленте, а не скрытие других валют.
 
         // ========== Фильтр: Площадь общая от/до ==========
         if ($request->filled('area_from')) {
@@ -541,10 +573,21 @@ class PropertyController extends Controller
     /**
      * Форматирование цены для таблицы
      */
-    private function formatPrice(Property $property): string
+    private function formatPrice(Property $property, ?Currency $targetCurrency = null): string
     {
         if (!$property->price) {
             return '-';
+        }
+
+        if ($targetCurrency && $property->currency) {
+            // Конвертация:
+            // 1. В UAH: Price * PropRate
+            // 2. В Target: BasePrice / TargetRate
+            $priceInUah = $property->price * $property->currency->rate;
+            $convertedPrice = $priceInUah / $targetCurrency->rate;
+
+            $symbol = $targetCurrency->symbol;
+            return number_format($convertedPrice, 0, '.', ' ') . ' ' . $symbol;
         }
 
         $symbol = $property->currency?->symbol ?? '$';
@@ -571,6 +614,28 @@ class PropertyController extends Controller
             'contact_type_name' => $contact->contact_type_name,
             'phone' => $contact->primary_phone,
         ];
+    }
+
+    /**
+     * Форматирование цены за м² для таблицы
+     */
+    private function formatPricePerM2(Property $property, ?Currency $targetCurrency = null): ?string
+    {
+        if (!$property->price_per_m2) {
+            return null;
+        }
+
+        if ($targetCurrency && $property->currency) {
+            // Конвертация:
+            // 1. В UAH: PriceM2 * PropRate
+            // 2. В Target: BasePriceM2 / TargetRate
+            $priceM2InUah = $property->price_per_m2 * $property->currency->rate;
+            $convertedPriceM2 = $priceM2InUah / $targetCurrency->rate;
+
+            return number_format($convertedPriceM2, 0, '.', ' ');
+        }
+
+        return number_format($property->price_per_m2, 0, '.', ' ');
     }
 
     /**
