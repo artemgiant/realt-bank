@@ -103,8 +103,8 @@
 
                         {{-- Вид сделки --}}
                         <div class="item selects ">
-                            <label class="item-label" for="deal_kind_id">Вид сделки</label>
-                            <select id="deal_kind_id" name="deal_kind_id" class="js-example-responsive3 my-select2">
+                            <label class="item-label" for="deal_kind_id">Вид сделки<span class="text-danger">*</span></label>
+                            <select id="deal_kind_id" name="deal_kind_id" class="js-example-responsive3 my-select2" required>
                                 <option value=""></option>
                                 @foreach($dealKinds as $dealKind)
                                     <option value="{{ $dealKind->id }}" {{ old('deal_kind_id') == $dealKind->id ? 'selected' : '' }}>
@@ -188,7 +188,7 @@
 
                         {{-- Количество ванных --}}
                         <div class="item selects ">
-                            <label class="item-label" for="bathroom_count_id">Кол-во ванных</label>
+                            <label class="item-label" for="bathroom_count_id">Кол-во ванных комнат</label>
                             <select id="bathroom_count_id" name="bathroom_count_id" class="js-example-responsive3 my-select2">
                                 <option value=""></option>
                                 @foreach($bathroomCounts as $bathroomCount)
