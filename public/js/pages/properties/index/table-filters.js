@@ -72,6 +72,11 @@ window.PropertyFilters = {
         d.created_from = $form.find('[name="created_from"]').val();
         d.created_to = $form.find('[name="created_to"]').val();
 
+        // Фильтр локации (новый)
+        d.location_type = $('#lfType').val();
+        d.location_id = $('#lfId').val();
+        d.detail_ids = $('#lfDetails').val(); // JSON массив деталей
+
         return d;
     },
 

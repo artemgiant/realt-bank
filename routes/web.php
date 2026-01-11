@@ -49,6 +49,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/states/search', [App\Http\Controllers\LocationController::class, 'searchStates'])->name('location.states.search');
         Route::get('/states/default', [App\Http\Controllers\LocationController::class, 'getDefaultState'])->name('location.states.default');
         Route::get('/states/{id}', [App\Http\Controllers\LocationController::class, 'showState'])->name('location.states.show');
+
+        // Данные для фильтра локаций
+        Route::get('/filter-data', [App\Http\Controllers\LocationController::class, 'getFilterData'])->name('location.filter-data');
     });
 
 

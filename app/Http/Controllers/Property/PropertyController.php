@@ -487,6 +487,90 @@ class PropertyController extends Controller
         if ($request->filled('created_to')) {
             $query->whereDate('created_at', '<=', $request->created_to);
         }
+
+        // ========== Фильтр: Локация (новый) ==========
+        if ($request->filled('location_type') && $request->filled('location_id')) {
+            $locationType = $request->location_type;
+            $locationId = $request->location_id;
+
+            switch ($locationType) {
+                case 'country':
+                    // Ищем объекты с country_id или через связанные регионы/города
+                    $query->where(function ($q) use ($locationId) {
+                        $q->where('country_id', $locationId)
+                            ->orWhereHas('state', function ($sq) use ($locationId) {
+                                $sq->where('country_id', $locationId);
+                            })
+                            ->orWhereHas('city', function ($cq) use ($locationId) {
+                                $cq->where('country_id', $locationId);
+                            });
+                    });
+                    break;
+                case 'region':
+                    // Ищем объекты с state_id или через связанные города
+                    $query->where(function ($q) use ($locationId) {
+                        $q->where('state_id', $locationId)
+                            ->orWhereHas('city', function ($cq) use ($locationId) {
+                                $cq->where('state_id', $locationId);
+                            });
+                    });
+                    break;
+                case 'city':
+                    // Ищем объекты с city_id или через связанные улицы/районы/зоны
+                    $query->where(function ($q) use ($locationId) {
+                        $q->where('city_id', $locationId)
+                            ->orWhereHas('street', function ($sq) use ($locationId) {
+                                $sq->where('city_id', $locationId);
+                            })
+                            ->orWhereHas('district', function ($dq) use ($locationId) {
+                                $dq->where('city_id', $locationId);
+                            })
+                            ->orWhereHas('zone', function ($zq) use ($locationId) {
+                                $zq->where('city_id', $locationId);
+                            });
+                    });
+                    break;
+            }
+        }
+
+        // ========== Фильтр: Детали локации (районы, улицы, зоны и т.д.) ==========
+        if ($request->filled('detail_ids')) {
+            $detailIds = json_decode($request->detail_ids, true);
+
+            if (is_array($detailIds) && !empty($detailIds)) {
+                $query->where(function ($q) use ($detailIds) {
+                    foreach ($detailIds as $detail) {
+                        $type = $detail['type'] ?? null;
+                        $id = $detail['id'] ?? null;
+
+                        if (!$type || !$id) continue;
+
+                        switch ($type) {
+                            case 'district':
+                                $q->orWhere('district_id', $id);
+                                break;
+                            case 'street':
+                                $q->orWhere('street_id', $id);
+                                break;
+                            case 'landmark':
+                                $q->orWhere('zone_id', $id);
+                                break;
+                            case 'complex':
+                                $q->orWhere('complex_id', $id);
+                                break;
+                            case 'block':
+                                $q->orWhere('block_id', $id);
+                                break;
+                            case 'developer':
+                                $q->orWhereHas('complex.developer', function ($dq) use ($id) {
+                                    $dq->where('developers.id', $id);
+                                });
+                                break;
+                        }
+                    }
+                });
+            }
+        }
     }
 
 

@@ -53,7 +53,6 @@
 
 .lf-input.lf-active {
     border-color: var(--lf-primary);
-    box-shadow: 0 0 0 3px rgba(4, 37, 78, 0.1);
     border-radius: var(--lf-radius) var(--lf-radius) 0 0;
 }
 

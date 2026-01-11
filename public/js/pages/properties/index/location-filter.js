@@ -1,101 +1,21 @@
 (function () {
     'use strict';
 
+    // Кэш для данных
     const DATA = {
-        countries: [
-            {id: 1, name: 'Украина', count: 5678},
-            {id: 2, name: 'Турция', count: 892},
-            {id: 3, name: 'Кипр', count: 234}
-        ],
-        regions: [
-            {id: 1, name: 'Киевская область', countryId: 1, count: 2345},
-            {id: 2, name: 'Одесская область', countryId: 1, count: 1567},
-            {id: 3, name: 'Львовская область', countryId: 1, count: 987},
-            {id: 4, name: 'Харьковская область', countryId: 1, count: 654},
-            {id: 5, name: 'Днепропетровская область', countryId: 1, count: 543},
-            {id: 6, name: 'Анталья', countryId: 2, count: 456},
-            {id: 7, name: 'Стамбул', countryId: 2, count: 234},
-            {id: 8, name: 'Измир', countryId: 2, count: 123},
-            {id: 10, name: 'Ларнака', countryId: 3, count: 89},
-            {id: 11, name: 'Лимассол', countryId: 3, count: 78},
-            {id: 12, name: 'Пафос', countryId: 3, count: 67}
-        ],
-        cities: [
-            {id: 1, name: 'Киев', regionId: 1, region: 'Киевская область', count: 1234},
-            {id: 7, name: 'Ирпень', regionId: 1, region: 'Киевская область', count: 234},
-            {id: 8, name: 'Буча', regionId: 1, region: 'Киевская область', count: 189},
-            {id: 20, name: 'Бровары', regionId: 1, region: 'Киевская область', count: 156},
-            {id: 2, name: 'Одесса', regionId: 2, region: 'Одесская область', count: 876},
-            {id: 21, name: 'Южный', regionId: 2, region: 'Одесская область', count: 145},
-            {id: 22, name: 'Черноморск', regionId: 2, region: 'Одесская область', count: 123},
-            {id: 3, name: 'Львов', regionId: 3, region: 'Львовская область', count: 654},
-            {id: 4, name: 'Харьков', regionId: 4, region: 'Харьковская область', count: 432},
-            {id: 5, name: 'Днепр', regionId: 5, region: 'Днепропетровская область', count: 321},
-            {id: 9, name: 'Аланья', regionId: 6, region: 'Анталья', count: 234},
-            {id: 13, name: 'Анталья', regionId: 6, region: 'Анталья', count: 178},
-            {id: 14, name: 'Стамбул', regionId: 7, region: 'Стамбул', count: 234},
-            {id: 15, name: 'Измир', regionId: 8, region: 'Измир', count: 123},
-            {id: 16, name: 'Ларнака', regionId: 10, region: 'Ларнака', count: 89},
-            {id: 19, name: 'Лимассол', regionId: 11, region: 'Лимассол', count: 78},
-            {id: 23, name: 'Пафос', regionId: 12, region: 'Пафос', count: 67}
-        ],
-        districts: [
-            {id: 1, name: 'Печерский район', cityId: 1, city: 'Киев', count: 89},
-            {id: 2, name: 'Шевченковский район', cityId: 1, city: 'Киев', count: 76},
-            {id: 3, name: 'Голосеевский район', cityId: 1, city: 'Киев', count: 112},
-            {id: 4, name: 'Оболонский район', cityId: 1, city: 'Киев', count: 98},
-            {id: 5, name: 'Подольский район', cityId: 1, city: 'Киев', count: 67},
-            {id: 6, name: 'Приморский район', cityId: 2, city: 'Одесса', count: 156},
-            {id: 7, name: 'Аркадия', cityId: 2, city: 'Одесса', count: 89},
-            {id: 11, name: 'Киевский район', cityId: 2, city: 'Одесса', count: 134},
-            {id: 12, name: 'Пересыпский район', cityId: 2, city: 'Одесса', count: 78},
-            {id: 8, name: 'Махмутлар', cityId: 9, city: 'Аланья', count: 145},
-            {id: 9, name: 'Оба', cityId: 9, city: 'Аланья', count: 89},
-            {id: 10, name: 'Кестель', cityId: 9, city: 'Аланья', count: 67}
-        ],
-        streets: [
-            {id: 1, name: 'ул. Крещатик', cityId: 1, city: 'Киев', count: 23},
-            {id: 2, name: 'ул. Банковая', cityId: 1, city: 'Киев', count: 8},
-            {id: 3, name: 'ул. Грушевского', cityId: 1, city: 'Киев', count: 15},
-            {id: 4, name: 'ул. Дерибасовская', cityId: 2, city: 'Одесса', count: 34},
-            {id: 5, name: 'Французский бульвар', cityId: 2, city: 'Одесса', count: 45},
-            {id: 6, name: 'Петра Ивахненка', cityId: 2, city: 'Одесса', count: 28},
-            {id: 7, name: 'Ататюрк Джаддеси', cityId: 9, city: 'Аланья', count: 56}
-        ],
-        landmarks: [
-            {id: 1, name: 'м. Крещатик', cityId: 1, city: 'Киев', count: 45},
-            {id: 2, name: 'м. Золотые ворота', cityId: 1, city: 'Киев', count: 32},
-            {id: 3, name: 'ТРЦ Ocean Plaza', cityId: 1, city: 'Киев', count: 12},
-            {id: 4, name: 'м. Площадь Льва Толстого', cityId: 1, city: 'Киев', count: 28},
-            {id: 5, name: 'Привоз', cityId: 2, city: 'Одесса', count: 23},
-            {id: 6, name: 'Фонтанка', cityId: 2, city: 'Одесса', count: 67},
-            {id: 7, name: 'Клеопатра Бич', cityId: 9, city: 'Аланья', count: 89}
-        ],
-        complexes: [
-            {id: 1, name: 'ЖК Новопечерские Липки', cityId: 1, city: 'Киев', count: 45},
-            {id: 2, name: 'ЖК Французский квартал', cityId: 1, city: 'Киев', count: 67},
-            {id: 3, name: 'ЖК Комфорт Таун', cityId: 1, city: 'Киев', count: 89},
-            {id: 4, name: 'ЖК Русановская гавань', cityId: 1, city: 'Киев', count: 34},
-            {id: 5, name: 'ЖК Аркадия Хиллс', cityId: 2, city: 'Одесса', count: 56},
-            {id: 6, name: 'ЖК Гагарин Плаза', cityId: 2, city: 'Одесса', count: 78},
-            {id: 7, name: 'Konak Seaside Resort', cityId: 9, city: 'Аланья', count: 123},
-            {id: 8, name: 'Emerald Park', cityId: 9, city: 'Аланья', count: 89}
-        ],
-        blocks: [
-            {id: 1, name: 'Блок А', complexId: 1, complex: 'ЖК Новопечерские Липки', cityId: 1, count: 12},
-            {id: 2, name: 'Блок Б', complexId: 1, complex: 'ЖК Новопечерские Липки', cityId: 1, count: 18},
-            {id: 3, name: 'Блок 1', complexId: 3, complex: 'ЖК Комфорт Таун', cityId: 1, count: 25},
-            {id: 4, name: 'Блок 2', complexId: 3, complex: 'ЖК Комфорт Таун', cityId: 1, count: 31},
-            {id: 5, name: 'Секция А', complexId: 7, complex: 'Konak Seaside Resort', cityId: 9, count: 45}
-        ],
-        developers: [
-            {id: 1, name: 'Киевгорстрой', cityId: 1, city: 'Киев', count: 234},
-            {id: 2, name: 'Укрбуд', cityId: 1, city: 'Киев', count: 156},
-            {id: 3, name: 'Интергал-Буд', cityId: 1, city: 'Киев', count: 89},
-            {id: 4, name: 'Будова', cityId: 2, city: 'Одесса', count: 67},
-            {id: 5, name: 'Karat Group', cityId: 2, city: 'Одесса', count: 54}
-        ]
+        countries: [],
+        regions: [],
+        cities: [],
+        districts: [],
+        streets: [],
+        landmarks: [],
+        complexes: [],
+        blocks: [],
+        developers: []
     };
+
+    // API URL
+    const API_URL = '/location/filter-data';
 
     const TYPES = {
         countries: 'country',
@@ -207,6 +127,41 @@
     };
     const highlight = (text, q) => q ? text.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'), '<span class="lf-highlight">$1</span>') : text;
 
+    // ========== API Functions ==========
+    /**
+     * Загрузка данных из API
+     */
+    const loadData = async (params = {}) => {
+        try {
+            const queryParams = new URLSearchParams();
+
+            if (params.location_type) queryParams.append('location_type', params.location_type);
+            if (params.location_id) queryParams.append('location_id', params.location_id);
+            if (params.city_id) queryParams.append('city_id', params.city_id);
+            if (params.detail_type) queryParams.append('detail_type', params.detail_type);
+            if (params.search) queryParams.append('search', params.search);
+
+            const response = await fetch(`${API_URL}?${queryParams.toString()}`);
+            const result = await response.json();
+
+            if (result.success && result.data) {
+                // Обновляем кэш данных
+                Object.keys(result.data).forEach(key => {
+                    if (DATA.hasOwnProperty(key)) {
+                        DATA[key] = result.data[key];
+                    }
+                });
+                return result.data;
+            }
+
+            return null;
+        } catch (error) {
+            console.error('Error loading location data:', error);
+            showEmpty('Ошибка загрузки данных');
+            return null;
+        }
+    };
+
     const renderSection = (key, items, multi = false, query = '') => {
         const sec = $(`lf-${key}`), type = TYPES[key];
         sec.querySelector('ul').innerHTML = items.map(item => {
@@ -217,68 +172,121 @@
         sec.classList.remove('lf-hidden');
     };
 
-    const update = () => {
+    const update = async () => {
         const query = el.search.value.trim();
         updateBreadcrumbs();
         hideAll();
         el.empty.classList.remove('lf-visible');
-        if (query) search(query); else if (state.mode === 'location') showLocation(); else showDetail();
+        if (query) await search(query); else if (state.mode === 'location') await showLocation(); else await showDetail();
     };
 
-    const showLocation = () => {
+    const showLocation = async () => {
         const {location} = state;
-        if (!location) renderSection('countries', DATA.countries);
-        else if (location.type === 'country') {
-            const items = DATA.regions.filter(r => r.countryId === location.id);
-            items.length ? renderSection('regions', items) : showEmpty('Нет областей');
+
+        if (!location) {
+            // Загружаем страны
+            const data = await loadData({location_type: null});
+            if (data && data.countries) {
+                renderSection('countries', data.countries);
+            }
+        } else if (location.type === 'country') {
+            // Загружаем области для страны
+            const data = await loadData({location_type: 'country', location_id: location.id});
+            if (data && data.regions) {
+                data.regions.length ? renderSection('regions', data.regions) : showEmpty('Нет областей');
+            }
         } else if (location.type === 'region') {
-            const items = DATA.cities.filter(c => c.regionId === location.id);
-            items.length ? renderSection('cities', items) : showEmpty('Нет городов');
-        } else showEmpty('Город выбран. Перейдите в "Локация"');
+            // Загружаем города для области
+            const data = await loadData({location_type: 'region', location_id: location.id});
+            if (data && data.cities) {
+                data.cities.length ? renderSection('cities', data.cities) : showEmpty('Нет городов');
+            }
+        } else {
+            showEmpty('Город выбран. Перейдите в "Локация"');
+        }
     };
 
-    const showDetail = () => {
+    const showDetail = async () => {
         if (!state.path.city) {
             showEmpty('Сначала выберите город');
             return;
         }
-        const cityId = state.path.city.id, keys = state.category === 'all' ? DETAIL_KEYS : [state.category];
+
+        const cityId = state.path.city.id;
+        // Конвертируем категорию (множественное число) в тип (единственное число)
+        const detailType = state.category === 'all' ? null : TYPES[state.category];
+
+        // Загружаем детали для города
+        const data = await loadData({city_id: cityId, detail_type: detailType});
+
+        if (!data) return;
+
+        const keys = state.category === 'all' ? DETAIL_KEYS : [state.category];
         let has = false;
+
         keys.forEach(key => {
-            const items = DATA[key].filter(i => i.cityId === cityId);
-            if (items.length) {
-                renderSection(key, items, true);
+            if (data[key] && data[key].length) {
+                renderSection(key, data[key], true);
                 has = true;
             }
         });
+
         if (!has) showEmpty('Нет данных');
     };
 
-    const search = query => {
-        const q = query.toLowerCase();
-        let has = false;
+    const search = async (query) => {
         if (state.mode === 'location') {
+            // Поиск в режиме Location
+            let params = {search: query};
+
+            if (state.location) {
+                if (state.location.type === 'country') {
+                    params.location_type = 'country';
+                    params.location_id = state.location.id;
+                } else if (state.location.type === 'region') {
+                    params.location_type = 'region';
+                    params.location_id = state.location.id;
+                }
+            }
+
+            const data = await loadData(params);
+            if (!data) return;
+
+            let has = false;
             ['countries', 'regions', 'cities'].forEach(key => {
-                let items = DATA[key].filter(i => i.name.toLowerCase().includes(q));
-                if (state.location) {
-                    if (key === 'regions' && state.location.type === 'country') items = items.filter(r => r.countryId === state.location.id); else if (key === 'cities' && state.location.type === 'region') items = items.filter(c => c.regionId === state.location.id);
-                }
-                if (items.length) {
-                    renderSection(key, items, false, query);
+                if (data[key] && data[key].length) {
+                    renderSection(key, data[key], false, query);
                     has = true;
                 }
             });
+
+            if (!has) showEmpty('Ничего не найдено');
+
         } else if (state.path.city) {
-            const cityId = state.path.city.id, keys = state.category === 'all' ? DETAIL_KEYS : [state.category];
+            // Поиск в режиме Detail
+            const cityId = state.path.city.id;
+            const detailType = state.category === 'all' ? null : TYPES[state.category];
+
+            const data = await loadData({
+                city_id: cityId,
+                detail_type: detailType,
+                search: query
+            });
+
+            if (!data) return;
+
+            const keys = state.category === 'all' ? DETAIL_KEYS : [state.category];
+            let has = false;
+
             keys.forEach(key => {
-                const items = DATA[key].filter(i => i.cityId === cityId && i.name.toLowerCase().includes(q));
-                if (items.length) {
-                    renderSection(key, items, true, query);
+                if (data[key] && data[key].length) {
+                    renderSection(key, data[key], true, query);
                     has = true;
                 }
             });
+
+            if (!has) showEmpty('Ничего не найдено');
         }
-        if (!has) showEmpty('Ничего не найдено');
     };
 
     const selectLocation = (type, id, name) => {
@@ -319,6 +327,7 @@
     const removeDetail = (type, id) => {
         state.details = state.details.filter(d => !(d.type === type && d.id === id));
         renderTags();
+        updateHidden(); // Обновляем скрытые поля и таблицу
         if (state.isOpen) update();
     };
     const clearAll = () => {
@@ -326,6 +335,7 @@
         state.path = {country: null, region: null, city: null};
         state.details = [];
         renderTags();
+        updateHidden(); // Обновляем скрытые поля и таблицу
         el.clear.classList.remove('lf-visible');
         if (state.isOpen) setMode('location');
     };
@@ -363,10 +373,15 @@
         updateHidden();
     };
 
-    const updateHidden = () => {
+    const updateHidden = (triggerReload = true) => {
         $('lfType').value = state.location?.type || '';
         $('lfId').value = state.location?.id || '';
         $('lfDetails').value = JSON.stringify(state.details.map(d => ({type: d.type, id: d.id})));
+
+        // Обновляем таблицу недвижимости (если не отключено)
+        if (triggerReload && typeof window.reloadPropertiesTable === 'function') {
+            window.reloadPropertiesTable();
+        }
     };
 
     el.input.addEventListener('click', e => {
@@ -425,6 +440,48 @@
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape' && state.isOpen) close();
     });
+
+    // Инициализация с Одесской областью по умолчанию
+    const initDefaultLocation = async () => {
+        try {
+            // Загружаем страны
+            const data = await loadData({location_type: null});
+            if (data && data.countries) {
+                // Ищем Украину
+                const ukraine = data.countries.find(c => c.name.toLowerCase().includes('украина') || c.name.toLowerCase().includes('ukraine'));
+                if (ukraine) {
+                    // Загружаем области Украины
+                    const regionsData = await loadData({location_type: 'country', location_id: ukraine.id});
+                    if (regionsData && regionsData.regions) {
+                        // Ищем Одесскую область
+                        const odessaRegion = regionsData.regions.find(r =>
+                            r.name.toLowerCase().includes('одес') ||
+                            r.name.toLowerCase().includes('odesa') ||
+                            r.name.toLowerCase().includes('odessa')
+                        );
+
+                        if (odessaRegion) {
+                            // Устанавливаем Одесскую область по умолчанию
+                            state.path = {
+                                country: {id: ukraine.id, name: ukraine.name},
+                                region: {id: odessaRegion.id, name: odessaRegion.name},
+                                city: null
+                            };
+                            state.location = {type: 'region', id: odessaRegion.id, name: odessaRegion.name};
+                            renderTags();
+                            // Не триггерим обновление таблицы при инициализации
+                            updateHidden(false);
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error initializing default location:', error);
+        }
+    };
+
+    // Запускаем инициализацию
+    initDefaultLocation();
 
     updatePlaceholder();
 })();

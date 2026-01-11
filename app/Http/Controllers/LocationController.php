@@ -2,8 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Location\City;
+use App\Models\Location\Country;
+use App\Models\Location\District;
 use App\Models\Location\State;
 use App\Models\Location\Street;
+use App\Models\Location\Zone;
+use App\Models\Property\Property;
+use App\Models\Reference\Block;
+use App\Models\Reference\Complex;
+use App\Models\Reference\Developer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -191,6 +199,234 @@ class LocationController extends Controller
                 'country_name' => $state->country?->name,
                 'full_name' => $state->name . ', ' . ($state->country?->name ?? ''),
             ],
+        ]);
+    }
+
+    /**
+     * Получение данных для фильтра локаций
+     * GET /location/filter-data
+     */
+    public function getFilterData(Request $request): JsonResponse
+    {
+        $locationType = $request->input('location_type'); // country, region, city
+        $locationId = $request->input('location_id');
+        $detailType = $request->input('detail_type'); // district, street, landmark, complex, block, developer
+        $cityId = $request->input('city_id');
+        $search = $request->input('search', '');
+
+        $data = [];
+
+        // Режим Location (Страна, Область, Город)
+        if ($locationType === null || $locationType === 'country') {
+            // Получаем страны
+            $countries = Country::active()
+                ->when($search, function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->withCount(['states as count' => function ($q) {
+                    $q->whereHas('cities', function ($cq) {
+                        $cq->active();
+                    });
+                }])
+                ->get()
+                ->map(function ($country) {
+                    return [
+                        'id' => $country->id,
+                        'name' => $country->name,
+                        'count' => $country->count ?? 0,
+                    ];
+                });
+
+            $data['countries'] = $countries;
+        }
+
+        if ($locationType === 'country' && $locationId) {
+            // Получаем области для страны
+            $regions = State::where('country_id', $locationId)
+                ->active()
+                ->when($search, function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->withCount(['cities as count' => function ($q) {
+                    $q->active();
+                }])
+                ->get()
+                ->map(function ($region) use ($locationId) {
+                    return [
+                        'id' => $region->id,
+                        'name' => $region->name,
+                        'countryId' => $locationId,
+                        'count' => $region->count ?? 0,
+                    ];
+                });
+
+            $data['regions'] = $regions;
+        }
+
+        if ($locationType === 'region' && $locationId) {
+            // Получаем города для области
+            $cities = City::where('state_id', $locationId)
+                ->active()
+                ->when($search, function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->with('state')
+                ->get()
+                ->map(function ($city) use ($locationId) {
+                    return [
+                        'id' => $city->id,
+                        'name' => $city->name,
+                        'regionId' => $locationId,
+                        'region' => $city->state->name ?? '',
+                        'count' => Property::where('city_id', $city->id)->count(),
+                    ];
+                });
+
+            $data['cities'] = $cities;
+        }
+
+        // Режим Detail (Район, Улица, Зона, Комплекс, Блок, Девелопер)
+        if ($cityId && ($detailType === 'district' || $detailType === null)) {
+            $districts = District::where('city_id', $cityId)
+                ->when($search, function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->with('city')
+                ->limit(100)
+                ->get()
+                ->map(function ($district) use ($cityId) {
+                    return [
+                        'id' => $district->id,
+                        'name' => $district->name,
+                        'cityId' => $cityId,
+                        'city' => $district->city->name ?? '',
+                        'count' => Property::where('district_id', $district->id)->count(),
+                    ];
+                });
+
+            $data['districts'] = $districts;
+        }
+
+        if ($cityId && ($detailType === 'street' || $detailType === null)) {
+            $streets = Street::where('city_id', $cityId)
+                ->active()
+                ->when($search, function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->with('city')
+                ->limit(100)
+                ->get()
+                ->map(function ($street) use ($cityId) {
+                    return [
+                        'id' => $street->id,
+                        'name' => $street->name,
+                        'cityId' => $cityId,
+                        'city' => $street->city->name ?? '',
+                        'count' => Property::where('street_id', $street->id)->count(),
+                    ];
+                });
+
+            $data['streets'] = $streets;
+        }
+
+        if ($cityId && ($detailType === 'landmark' || $detailType === null)) {
+            $landmarks = Zone::where('city_id', $cityId)
+                ->when($search, function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->with('city')
+                ->limit(100)
+                ->get()
+                ->map(function ($zone) use ($cityId) {
+                    return [
+                        'id' => $zone->id,
+                        'name' => $zone->name,
+                        'cityId' => $cityId,
+                        'city' => $zone->city->name ?? '',
+                        'count' => Property::where('zone_id', $zone->id)->count(),
+                    ];
+                });
+
+            $data['landmarks'] = $landmarks;
+        }
+
+        if ($cityId && ($detailType === 'complex' || $detailType === null)) {
+            $complexes = Complex::whereHas('city', function ($q) use ($cityId) {
+                $q->where('id', $cityId);
+            })
+                ->active()
+                ->when($search, function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->with('city')
+                ->limit(100)
+                ->get()
+                ->map(function ($complex) use ($cityId) {
+                    return [
+                        'id' => $complex->id,
+                        'name' => $complex->name,
+                        'cityId' => $cityId,
+                        'city' => $complex->city->name ?? '',
+                        'count' => Property::where('complex_id', $complex->id)->count(),
+                    ];
+                });
+
+            $data['complexes'] = $complexes;
+        }
+
+        if ($cityId && ($detailType === 'block' || $detailType === null)) {
+            $blocks = Block::whereHas('complex.city', function ($q) use ($cityId) {
+                $q->where('id', $cityId);
+            })
+                ->active()
+                ->when($search, function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->with(['complex', 'complex.city'])
+                ->limit(100)
+                ->get()
+                ->map(function ($block) use ($cityId) {
+                    return [
+                        'id' => $block->id,
+                        'name' => $block->name,
+                        'complexId' => $block->complex_id,
+                        'complex' => $block->complex->name ?? '',
+                        'cityId' => $cityId,
+                        'count' => Property::where('block_id', $block->id)->count(),
+                    ];
+                });
+
+            $data['blocks'] = $blocks;
+        }
+
+        if ($cityId && ($detailType === 'developer' || $detailType === null)) {
+            $developers = Developer::whereHas('complexes.city', function ($q) use ($cityId) {
+                $q->where('id', $cityId);
+            })
+                ->active()
+                ->when($search, function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->limit(100)
+                ->get()
+                ->map(function ($developer) use ($cityId) {
+                    return [
+                        'id' => $developer->id,
+                        'name' => $developer->name,
+                        'cityId' => $cityId,
+                        'city' => '', // Девелопер может работать в разных городах
+                        'count' => Property::whereHas('complex.developer', function ($q) use ($developer) {
+                            $q->where('id', $developer->id);
+                        })->count(),
+                    ];
+                });
+
+            $data['developers'] = $developers;
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
         ]);
     }
 }
