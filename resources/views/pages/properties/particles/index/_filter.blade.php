@@ -2,6 +2,9 @@
     <div class="filter">
         <div class="filter-header">
 
+            @include('pages.properties.particles.index._location_filter')
+
+
             {{-- Тип сделки --}}
             <label for="deal_type_id" class="blue-select2">
                 <select id="deal_type_id" name="deal_type_id" class="js-example-responsive2" autocomplete="off">
