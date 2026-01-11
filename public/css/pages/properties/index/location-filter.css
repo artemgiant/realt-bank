@@ -18,6 +18,8 @@
     color: var(--lf-text);
     line-height: 1.4;
     box-sizing: border-box;
+    width: 100%;
+    max-width: 600px;
 }
 
 .lf-root *, .lf-root *::before, .lf-root *::after {
@@ -28,6 +30,7 @@
 
 .lf-container {
     width: 100%;
+    max-width: 600px;
     position: relative;
 }
 
@@ -37,8 +40,8 @@
     background: var(--lf-white);
     border: 1.5px solid var(--lf-border);
     border-radius: var(--lf-radius);
-    padding: 8px 14px;
-    min-height: 48px;
+    padding: 0 14px;
+    min-height: 33px;
     cursor: pointer;
     transition: all 0.2s;
     position: relative;
@@ -82,23 +85,23 @@
 .lf-tag {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 10px 6px 14px;
+    gap: 6px;
+    padding: 3px 8px 3px 10px;
     background: linear-gradient(135deg, var(--lf-primary), var(--lf-primary-light));
     color: var(--lf-white);
     border-radius: var(--lf-radius-sm);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     white-space: nowrap;
     box-shadow: 0 2px 4px rgba(4, 37, 78, 0.25);
 }
 
 .lf-tag-type {
-    font-size: 10px;
+    font-size: 9px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
     opacity: 0.7;
-    margin-right: 4px;
+    margin-right: 2px;
 }
 
 .lf-tag button, .lf-tag .lf-badge {
@@ -114,9 +117,9 @@
 }
 
 .lf-tag button {
-    width: 18px;
-    height: 18px;
-    font-size: 14px;
+    width: 16px;
+    height: 16px;
+    font-size: 12px;
     line-height: 1;
     padding: 0;
 }
@@ -127,9 +130,9 @@
 }
 
 .lf-tag .lf-badge {
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 10px;
     font-weight: 600;
 }
 

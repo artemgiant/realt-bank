@@ -5,7 +5,7 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/pages/page-home.min.css') }}">
 
-    <link rel="stylesheet" href="{{ asset('css/pages/properties/location-filter.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pages/properties/index/location-filter.css') }}">
 @endpush
 
 @section('header')
