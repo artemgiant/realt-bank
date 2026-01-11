@@ -97,7 +97,7 @@ class Property extends Model
         'area_land' => 'decimal:2',
         'price_per_m2' => 'decimal:2',
         'price' => 'decimal:2',
-        'commission' => 'decimal:2',
+        'commission' => 'string',
         'is_visible_to_agents' => 'boolean',
         'is_advertised' => 'boolean',
     ];

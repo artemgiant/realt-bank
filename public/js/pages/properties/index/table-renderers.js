@@ -14,7 +14,7 @@ window.PropertyRenderers = {
     },
 
     // Локация (адрес)
-    // Формат: 1) Улица (жирный), 2) Зона, 3) Район, Город, Область, Страна
+    // Формат: 1) ЖК (жирный), 2) Дом, Улица, Зона, 3) Район, Город, Область, Страна
     location: function (data, type, row) {
         // Проверяем есть ли данные локации
         if (!data || !data.has_location) {
@@ -23,14 +23,14 @@ window.PropertyRenderers = {
 
         var html = '<div class="tbody-wrapper location">';
 
-        // 1. Улица (жирный)
-        if (data.street) {
-            html += '<b>' + data.street + '</b>';
+        // 1. ЖК (жирный)
+        if (data.complex) {
+            html += '<b>' + data.complex + '</b>';
         }
 
-        // 2. Зона
-        if (data.zone) {
-            html += '<p>' + data.zone + '</p>';
+        // 2. Дом, Улица, Зона
+        if (data.street) {
+            html += '<p>' + data.street + '</p>';
         }
 
         // 3. Район, Город, Область, Страна
@@ -65,11 +65,11 @@ window.PropertyRenderers = {
             '</div>';
     },
 
-    // Состояние + тип стен
+    // Состояние + тип здания
     condition: function (data, type, row) {
-        var wallType = row.wall_type ? '<span>' + row.wall_type + '</span>' : '';
+        var buildingType = row.building_type ? '<span>' + row.building_type + '</span>' : '';
         return '<div class="tbody-wrapper condition">' +
-            (data !== '-' ? '<p>' + data + '</p>' + wallType : '<span class="text-muted">-</span>') +
+            (data !== '-' ? '<p>' + data + '</p>' + buildingType : '<span class="text-muted">-</span>') +
             '</div>';
     },
 
@@ -87,11 +87,12 @@ window.PropertyRenderers = {
             '</div>';
     },
 
-    // Цена
+    // Цена + цена за м² + комиссия от владельца
     price: function (data, type, row) {
         var pricePerM2 = row.price_per_m2 ? '<span>' + row.price_per_m2 + ' /м²</span>' : '';
+        var commission = row.commission ? '<br><span>Ком: ' + row.commission + '</span>' : '';
         return '<div class="tbody-wrapper price">' +
-            (data !== '-' ? '<p>' + data + '</p>' + pricePerM2 : '<span class="text-muted">-</span>') +
+            (data !== '-' ? '<p>' + data + '</p>' + pricePerM2 + commission : '<span class="text-muted">-</span>') +
             '</div>';
     },
 

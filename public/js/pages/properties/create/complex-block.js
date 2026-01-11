@@ -12,9 +12,12 @@
             searchComplexes: '/complexes/search',
             searchBlocks: '/blocks/search',
         },
+        // ID типа здания "Новострой"
+        newBuildingTypeId: '17',
         selectors: {
             complex: '#complex_id',
             block: '#block_id',
+            buildingType: '#building_type_id',
             locationInput: '.location-search-input',
             houseNumber: '#number-house',
             // Hidden inputs для локации
@@ -67,12 +70,14 @@
             templateSelection: formatComplexSelection,
         });
 
-        // При изменении комплекса - сбросить блок
+        // При изменении комплекса - сбросить блок и установить тип здания
         $complex.on('change', function() {
             resetBlockSelect();
             const complexId = $(this).val();
             if (complexId) {
                 enableBlockSelect();
+                // Устанавливаем тип здания "Новострой"
+                setBuildingTypeNewBuilding();
             } else {
                 disableBlockSelect();
             }
@@ -247,6 +252,16 @@
         $(CONFIG.selectors.districtName).val('');
         $(CONFIG.selectors.cityId).val('');
         $(CONFIG.selectors.cityName).val('');
+    }
+
+    /**
+     * Установка типа здания "Новострой"
+     */
+    function setBuildingTypeNewBuilding() {
+        const $buildingType = $(CONFIG.selectors.buildingType);
+        if ($buildingType.length) {
+            $buildingType.val(CONFIG.newBuildingTypeId).trigger('change');
+        }
     }
 
     /**

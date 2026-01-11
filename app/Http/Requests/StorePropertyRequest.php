@@ -65,7 +65,7 @@ class StorePropertyRequest extends FormRequest
 
             // ========== Ціна ==========
             'price' => ['nullable', 'numeric', 'min:0', 'max:9999999999999.99'],
-            'commission' => ['nullable', 'numeric', 'min:0'],
+            'commission' => ['nullable', 'string', 'max:100'],
             'commission_type' => ['nullable', 'in:percent,fixed'],
 
             // ========== Медіа ==========
@@ -203,7 +203,7 @@ class StorePropertyRequest extends FormRequest
         ]);
 
         // Очищаємо пусті значення площ
-        $numericFields = ['area_total', 'area_living', 'area_kitchen', 'area_land', 'price', 'commission'];
+        $numericFields = ['area_total', 'area_living', 'area_kitchen', 'area_land', 'price'];
         foreach ($numericFields as $field) {
             if ($this->has($field) && $this->input($field) === '') {
                 $this->merge([$field => null]);

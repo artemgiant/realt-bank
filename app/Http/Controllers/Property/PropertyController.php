@@ -207,6 +207,7 @@ class PropertyController extends Controller
                 'property_type' => $property->propertyType?->name ?? '-',
                 'room_count' => $property->roomCount?->name ?? null,
                 'wall_type' => $property->wallType?->name ?? null,
+                'building_type' => $property->buildingType?->name ?? null,
                 'area' => [
                     'total' => $property->area_total ? ceil($property->area_total) : null,
                     'living' => $property->area_living ? ceil($property->area_living) : null,
@@ -218,6 +219,7 @@ class PropertyController extends Controller
                 'floor' => $this->formatFloor($property),
                 'photo' => $this->formatPhoto($property),
                 'price' => $this->formatPrice($property, $targetCurrency ?? null),
+                'commission' => $property->commission,
                 'contact' => $this->formatContact($property),
             ];
         }
@@ -578,22 +580,25 @@ class PropertyController extends Controller
     /**
      * Форматирование локации для таблицы
      * Возвращает массив данных для рендеринга на клиенте
-     * Формат: 1) Улица + номер, 2) Зона, 3) Район, Город, Область, Страна
+     * Формат: 1) ЖК (жирный), 2) Дом, Улица, Зона, 3) Район, Город, Область, Страна
      */
     private function formatLocation(Property $property): array
     {
-        // Улица + номер дома (первая строка, жирный)
+        // ЖК (первая строка, жирный)
+        $complexName = $property->complex?->name ?? null;
+
+        // Дом, Улица, Зона (вторая строка)
         $streetParts = [];
-        if ($property->street) {
-            $streetParts[] = $property->street->name;
-        }
         if ($property->building_number) {
             $streetParts[] = $property->building_number;
         }
+        if ($property->street) {
+            $streetParts[] = $property->street->name;
+        }
+        if ($property->zone) {
+            $streetParts[] = $property->zone->name;
+        }
         $streetLine = !empty($streetParts) ? implode(', ', $streetParts) : null;
-
-        // Зона (вторая строка)
-        $zoneName = $property->zone?->name ?? null;
 
         // Иерархия: Район, Город, Область, Страна (третья строка)
         $addressParts = [];
@@ -612,12 +617,12 @@ class PropertyController extends Controller
         $addressLine = !empty($addressParts) ? implode(', ', $addressParts) : null;
 
         // Проверяем есть ли хоть что-то
-        $hasLocation = $streetLine || $zoneName || $addressLine;
+        $hasLocation = $complexName || $streetLine || $addressLine;
 
         return [
             'has_location' => $hasLocation,
-            'street' => $streetLine,      // 1 - Улица (жирный)
-            'zone' => $zoneName,          // 2 - Зона
+            'complex' => $complexName,    // 1 - ЖК (жирный)
+            'street' => $streetLine,      // 2 - Дом, Улица, Зона
             'address' => $addressLine,    // 3 - Район, Город, Область, Страна
         ];
     }
@@ -806,7 +811,7 @@ class PropertyController extends Controller
             'floors_total' => 'nullable|integer|min:1',
             'year_built' => 'nullable|exists:dictionaries,id',
             'price' => 'nullable|numeric|min:0',
-            'commission' => 'nullable|numeric|min:0',
+            'commission' => 'nullable|string|max:100',
             // Настройки
             'is_advertised' => 'nullable|boolean',
             'is_visible_to_agents' => 'nullable|boolean',

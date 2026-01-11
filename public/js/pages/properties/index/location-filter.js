@@ -30,7 +30,7 @@
     };
     const TYPE_NAMES = {
         country: 'Страна',
-        region: 'Область',
+        region: 'Регион',
         city: 'Город',
         district: 'Район',
         street: 'Улица',
@@ -102,8 +102,8 @@
     const updatePlaceholder = () => {
         const {mode, location} = state;
         if (mode === 'detail') el.search.placeholder = 'Район, улица, ЖК, ориентир...';
-        else if (!location) el.search.placeholder = 'Страна, область, город...';
-        else if (location.type === 'country') el.search.placeholder = 'Выберите область...';
+        else if (!location) el.search.placeholder = 'Страна, регион, город...';
+        else if (location.type === 'country') el.search.placeholder = 'Выберите регион...';
         else if (location.type === 'region') el.search.placeholder = 'Выберите город...';
         else el.search.placeholder = 'Поиск...';
     };
@@ -441,7 +441,7 @@
         if (e.key === 'Escape' && state.isOpen) close();
     });
 
-    // Инициализация с Одесской областью по умолчанию
+    // Инициализация с Одесской регионю по умолчанию
     const initDefaultLocation = async () => {
         try {
             // Загружаем страны
@@ -453,7 +453,7 @@
                     // Загружаем области Украины
                     const regionsData = await loadData({location_type: 'country', location_id: ukraine.id});
                     if (regionsData && regionsData.regions) {
-                        // Ищем Одесскую область
+                        // Ищем Одесскую регион
                         const odessaRegion = regionsData.regions.find(r =>
                             r.name.toLowerCase().includes('одес') ||
                             r.name.toLowerCase().includes('odesa') ||
@@ -461,7 +461,7 @@
                         );
 
                         if (odessaRegion) {
-                            // Устанавливаем Одесскую область по умолчанию
+                            // Устанавливаем Одесскую регион по умолчанию
                             state.path = {
                                 country: {id: ukraine.id, name: ukraine.name},
                                 region: {id: odessaRegion.id, name: odessaRegion.name},

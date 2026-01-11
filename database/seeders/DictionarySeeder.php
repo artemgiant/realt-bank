@@ -219,6 +219,7 @@ class DictionarySeeder extends Seeder
             // Особенности
             Dictionary::TYPE_FEATURE => [
                 'От посредника',
+                'Комиссия от владельца',
                 'Госпрограммы',
                 'Мебель',
                 'Бытовая техника',

@@ -22,10 +22,9 @@
             '#area_land'
         ];
 
-        // Поля с большими числами (цена, комиссия)
+        // Поля с большими числами (цена)
         const moneyFields = [
-            '#price',
-            '#commission'
+            '#price'
         ];
 
         // Инициализация масок
@@ -173,7 +172,6 @@
         if (e.target.id === 'property-form') {
             const fieldsToClean = [
                 '#price',
-                '#commission',
                 '#area_total',
                 '#area_living',
                 '#area_kitchen',

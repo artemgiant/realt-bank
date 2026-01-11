@@ -10,9 +10,12 @@
         const featuresContainer = document.getElementById('features-menu');
         const tagsContainer = document.getElementById('applied-filters');
         const contactTypeSelect = document.getElementById('contact_type_id');
+        const commissionInput = document.getElementById('commission');
 
         // ID особенности "От посредника"
         const INTERMEDIARY_FEATURE_ID = '136';
+        // ID особенности "Комиссия от владельца"
+        const OWNER_COMMISSION_FEATURE_ID = '197';
 
         if (!featuresContainer || !tagsContainer) return;
 
@@ -91,8 +94,49 @@
             }, 100);
         }
 
+        // Обработчик изменения поля комиссии
+        if (commissionInput) {
+            commissionInput.addEventListener('input', function() {
+                handleCommissionChange(this.value);
+            });
+
+            // Проверяем начальное значение при загрузке страницы
+            setTimeout(function() {
+                if (commissionInput.value) {
+                    handleCommissionChange(commissionInput.value);
+                }
+            }, 100);
+        }
+
         // Инициализация тегов для уже выбранных чекбоксов (при редактировании)
         initExistingFeatures();
+
+        /**
+         * Обработка изменения поля комиссии
+         */
+        function handleCommissionChange(value) {
+            // Очищаем значение от пробелов и проверяем
+            const cleanValue = (value || '').replace(/\s/g, '').trim();
+            const hasCommission = cleanValue.length > 0 && cleanValue !== '0';
+
+            const checkbox = featuresContainer.querySelector(`input[name="features[]"][value="${OWNER_COMMISSION_FEATURE_ID}"]`);
+            if (!checkbox) return;
+
+            if (hasCommission) {
+                // Выбираем "Комиссия от владельца"
+                if (!checkbox.checked) {
+                    checkbox.checked = true;
+                    const featureName = checkbox.closest('.my-custom-input').querySelector('.my-custom-text').textContent;
+                    addFeatureTag(OWNER_COMMISSION_FEATURE_ID, featureName);
+                }
+            } else {
+                // Убираем "Комиссия от владельца"
+                if (checkbox.checked) {
+                    checkbox.checked = false;
+                    removeFeatureTagElement(OWNER_COMMISSION_FEATURE_ID);
+                }
+            }
+        }
 
         /**
          * Обработка изменения типа контакта
