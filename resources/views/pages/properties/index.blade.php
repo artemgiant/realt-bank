@@ -3,7 +3,7 @@
 @section('title', 'Недвижимость - Realt Bank')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/pages/page-home.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pages/properties/index/page-home.css') }}">
 
     <link rel="stylesheet" href="{{ asset('css/pages/properties/index/location-filter.css') }}">
 @endpush
