@@ -258,13 +258,13 @@ $(document).ready(function () {
             hasMore = true;
         }
 
-        var descriptionHtml = '<p class="description-text">' +
-            shortDesc +
+        var descriptionHtml = '<div class="description-text">' +
+            '<span class="short-text">' + shortDesc + '</span>' +
             (hasMore ?
-                '<span class="more-text" style="display: none;">' + fullDesc + '</span>' +
+                '<span class="full-text" style="display: none;">' + fullDesc + '</span>' +
                 '<button class="btn btn-show-text" type="button">Ещё</button>'
                 : '') +
-            '</p>';
+            '</div>';
 
         // Заметки
         var agentNotesHtml = data.agent_notes ?
@@ -361,9 +361,11 @@ $(document).ready(function () {
     // Обработчик кнопки "Ещё" для длинного описания
     $('#example tbody').on('click', '.btn-show-text', function () {
         var container = $(this).closest('.description-text');
-        var hiddenText = container.find('.more-text');
+        var shortText = container.find('.short-text');
+        var fullText = container.find('.full-text');
 
-        hiddenText.show();
+        shortText.hide();
+        fullText.show();
         $(this).hide();
     });
 
