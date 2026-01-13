@@ -92,7 +92,7 @@ window.PropertyRenderers = {
         var pricePerM2 = row.price_per_m2 ? '<span>' + row.price_per_m2 + ' /м²</span>' : '';
         var commission = row.commission ? '<br><span>Ком: ' + row.commission + '</span>' : '';
         return '<div class="tbody-wrapper price">' +
-            (data !== '-' ? '<p>' + data + '</p>' + pricePerM2 + commission : '<span class="text-muted">-</span>') +
+            (data !== '-' ? '<p class="fw-bold">' + data + '</p>' + pricePerM2 + commission : '<span class="text-muted">-</span>') +
             '</div>';
     },
 
