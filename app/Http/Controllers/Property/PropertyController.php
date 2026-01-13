@@ -155,6 +155,7 @@ class PropertyController extends Controller
             'city',
             'state',
             'country',
+            'features',
         ]);
 
         // ========== Применяем фильтры ==========
@@ -221,6 +222,13 @@ class PropertyController extends Controller
                 'price' => $this->formatPrice($property, $targetCurrency ?? null),
                 'commission' => $property->commission,
                 'contact' => $this->formatContact($property),
+                // Data for child row
+                'title' => $property->getTranslation(app()->getLocale())?->title ?? $property->translations->first()?->title ?? '-',
+                'description' => $property->getTranslation(app()->getLocale())?->description ?? $property->translations->first()?->description ?? '-',
+                'agent_notes' => $property->agent_notes,
+                'features' => $property->features->pluck('name')->toArray(),
+                'created_at_formatted' => $property->created_at->format('d.m.Y'),
+                'updated_at_formatted' => $property->updated_at->format('d.m.Y'),
             ];
         }
 
@@ -545,7 +553,8 @@ class PropertyController extends Controller
                         $type = $detail['type'] ?? null;
                         $id = $detail['id'] ?? null;
 
-                        if (!$type || !$id) continue;
+                        if (!$type || !$id)
+                            continue;
 
                         switch ($type) {
                             case 'district':

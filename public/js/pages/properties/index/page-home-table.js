@@ -234,24 +234,58 @@ $(document).ready(function () {
     // ========== Детальная информация (child row) ==========
 
     function formatChildRow(data) {
+        // Формируем теги особенностей
+        var featuresHtml = '';
+        if (data.features && data.features.length > 0) {
+            data.features.forEach(function (feature) {
+                featuresHtml += '<div class="badge rounded-pill">' + feature + '</div>';
+            });
+        }
+
+        // Заголовок и описание
+        var title = data.title || 'Без заголовка';
+        var description = data.description || '';
+
+        // Обрезаем описание если длинное (примерно, так как стили могут быть разные)
+        // Но в верстке есть кнопка "Ещё" и скрытый текст, поэтому реализуем логику скрытия
+        var shortDesc = description;
+        var fullDesc = '';
+        var hasMore = false;
+
+        if (description.length > 200) {
+            shortDesc = description.substring(0, 200) + '...';
+            fullDesc = description;
+            hasMore = true;
+        }
+
+        var descriptionHtml = '<p class="description-text">' +
+            shortDesc +
+            (hasMore ?
+                '<span class="more-text" style="display: none;">' + fullDesc + '</span>' +
+                '<button class="btn btn-show-text" type="button">Ещё</button>'
+                : '') +
+            '</p>';
+
+        // Заметки
+        var agentNotesHtml = data.agent_notes ?
+            '<p class="description-note">' +
+            '<strong>Примечание для агентов:</strong>' +
+            '<span>' + data.agent_notes + '</span>' +
+            '</p>' : '';
+
+        // Форматируем даты
+        var createdAt = data.created_at_formatted || '-';
+        var updatedAt = data.updated_at_formatted || '-';
+        var id = data.id;
+
         return '<div class="tbody-dop-info">' +
             '<div class="info-main">' +
             '<div class="info-main-left">' +
             '<div class="info-main-left-wrapper">' +
             '<div class="description">' +
-            '<h2 class="description-title">Заголовок текст 1 к кв пл Толбухина срочно</h2>' +
-            '<p class="description-text">' +
-            'Отличная квартира сдается длительно порядочным людям. Евроремонт свежий. Есть ' +
-            'вся мебель и техника и еще описание ' +
-            '<span class="more-text" style="display: none;">' +
-            'Полное описание квартиры с деталями, которые скрыты по умолчанию.' +
-            '</span>' +
-            '<button class="btn btn-show-text" type="button">Ещё</button>' +
-            '</p>' +
-            '<p class="description-note">' +
-            '<strong>Примечание для агентов:</strong>' +
-            '<span>Текст примечание для агентов Отличная квартира сдается длительно порядочным людям. Евроремонт свежий. Есть вся мебель и техника и еще описание</span>' +
-            '</p>' +
+            '<h2 class="description-title">' + title + '</h2>' +
+            descriptionHtml +
+            agentNotesHtml +
             '<p class="description-note">' +
             '<strong>Заметка:</strong>' +
             '<span>Покупает тому-то, продает свою там-то, звонить тогда-то текст личной заметки</span>' +
@@ -270,16 +304,14 @@ $(document).ready(function () {
 
             '</div>' +
             '<div class="filter-tags">' +
-            '<div class="badge rounded-pill qwe1">Особености</div>' +
-            '<div class="badge rounded-pill qwe2">Особености</div>' +
-            '<div class="badge rounded-pill qwe2">Особености</div>' +
+            featuresHtml +
             '</div>' +
             '</div>' +
             '</div>' +
             '<div class="info-footer">' +
-            '<p class="info-footer-data">ID: <span>1234567</span></p>' +
-            '<p class="info-footer-data">Добавлено: <span>01.02.2025</span></p>' +
-            '<p class="info-footer-data">Обновлено: <span>10.02.2025</span>' +
+            '<p class="info-footer-data">ID: <span>' + id + '</span></p>' +
+            '<p class="info-footer-data">Добавлено: <span>' + createdAt + '</span></p>' +
+            '<p class="info-footer-data">Обновлено: <span>' + updatedAt + '</span>' +
             '<button class="btn" type="button">' +
             '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#5FB343" class="bi bi-arrow-repeat" viewBox="0 0 16 16">' +
             '<path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"></path>' +
