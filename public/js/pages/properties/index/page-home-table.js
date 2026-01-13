@@ -2,7 +2,7 @@
  * Главный файл инициализации DataTables для таблицы объектов
  * Использует модули: PropertyRenderers, PropertyTableConfig, PropertyFilters, PropertyTags
  */
-$(document).ready(function() {
+$(document).ready(function () {
 
     // Ссылки на модули
     var Config = window.PropertyTableConfig;
@@ -13,10 +13,10 @@ $(document).ready(function() {
     // Задержка перед выполнением запроса после окончания ввода
     function debounce(func, wait) {
         var timeout;
-        return function() {
+        return function () {
             var context = this;
             var args = arguments;
-            var later = function() {
+            var later = function () {
                 clearTimeout(timeout);
                 func.apply(context, args);
             };
@@ -35,16 +35,16 @@ $(document).ready(function() {
     settings.ajax = {
         url: Config.ajaxUrl,
         type: 'GET',
-        data: function(d) {
+        data: function (d) {
             return Filters.collectFilterData(d);
         },
-        error: function(xhr, error, thrown) {
+        error: function (xhr, error, thrown) {
             console.error('DataTables AJAX error:', error, thrown);
         }
     };
 
     // Callback после отрисовки
-    settings.drawCallback = function(settings) {
+    settings.drawCallback = function (settings) {
         // Обновляем информацию о количестве
         var info = table.page.info();
         $('#example_info').html('Всего: <b>' + info.recordsDisplay + '</b>');
@@ -61,12 +61,12 @@ $(document).ready(function() {
     // ========== Функции перезагрузки ==========
 
     // Функция перезагрузки таблицы с debounce для текстовых полей
-    var debouncedReload = debounce(function() {
+    var debouncedReload = debounce(function () {
         table.ajax.reload();
     }, DEBOUNCE_DELAY);
 
     // Debounce для обновления тегов
-    var debouncedUpdateTags = debounce(function() {
+    var debouncedUpdateTags = debounce(function () {
         Tags.update();
     }, DEBOUNCE_DELAY);
 
@@ -78,7 +78,7 @@ $(document).ready(function() {
     // ========== Обработчики событий ==========
 
     // Обработчик клика на кнопку удаления тега
-    $(document).on('click', '.filter-tags .badge button', function() {
+    $(document).on('click', '.filter-tags .badge button', function () {
         var $tag = $(this).closest('.badge');
         var filterType = $tag.data('filter-type');
         var filterValue = $tag.data('filter-value');
@@ -94,19 +94,19 @@ $(document).ready(function() {
     });
 
     // Выбрать все / снять все
-    $('#select-all-checkbox').on('change', function() {
+    $('#select-all-checkbox').on('change', function () {
         var isChecked = $(this).prop('checked');
         $('.row-checkbox').prop('checked', isChecked);
     });
 
     // Обновление состояния "выбрать все" при клике на отдельный чекбокс
-    $('#example tbody').on('change', '.row-checkbox', function() {
+    $('#example tbody').on('change', '.row-checkbox', function () {
         var allChecked = $('.row-checkbox:checked').length === $('.row-checkbox').length;
         $('#select-all-checkbox').prop('checked', allChecked);
     });
 
     // Применение фильтров при отправке формы
-    $('#filter-form').on('submit', function(e) {
+    $('#filter-form').on('submit', function (e) {
         e.preventDefault();
         table.ajax.reload();
     });
@@ -114,7 +114,7 @@ $(document).ready(function() {
     // ========== Сортировка ==========
 
     // Обработчик клика на пункты сортировки
-    $(document).on('click', '.sort-option', function(e) {
+    $(document).on('click', '.sort-option', function (e) {
         e.preventDefault();
 
         var $this = $(this);
@@ -137,32 +137,32 @@ $(document).ready(function() {
     // ========== Автоматическая фильтрация ==========
 
     // Обработчик ввода для текстовых полей (с задержкой)
-    $('#filter-form').on('input', Filters.textInputSelectors, function() {
+    $('#filter-form').on('input', Filters.textInputSelectors, function () {
         debouncedReload();
         debouncedUpdateTags();
     });
 
     // Select поля - мгновенная реакция
-    $('#filter-form').on('change', '#deal_type_id, #currency_id, #status, #full-filter-currency', function() {
+    $('#filter-form').on('change', '#deal_type_id, #currency_id, #status, #full-filter-currency', function () {
         reloadTable();
         Tags.update();
     });
 
     // Чекбоксы фильтров - мгновенная реакция
-    $('#filter-form').on('change', Filters.checkboxSelectors, function() {
+    $('#filter-form').on('change', Filters.checkboxSelectors, function () {
         reloadTable();
         Tags.update();
     });
 
     // Daterangepicker - фильтрация после выбора дат
-    $('#datapiker1').on('apply.daterangepicker', function(ev, picker) {
+    $('#datapiker1').on('apply.daterangepicker', function (ev, picker) {
         $('#created_from').val(picker.startDate.format('YYYY-MM-DD'));
         $('#created_to').val(picker.endDate.format('YYYY-MM-DD'));
         reloadTable();
         Tags.update();
     });
 
-    $('#datapiker1').on('cancel.daterangepicker', function(ev, picker) {
+    $('#datapiker1').on('cancel.daterangepicker', function (ev, picker) {
         $(this).val('');
         $('#created_from').val('');
         $('#created_to').val('');
@@ -173,19 +173,19 @@ $(document).ready(function() {
     // ========== Кнопки поиска (для совместимости) ==========
 
     // Кнопка поиска по ID
-    $('#search-id-btn').on('click', function() {
+    $('#search-id-btn').on('click', function () {
         reloadTable();
         Tags.update();
     });
 
     // Кнопка поиска по контакту
-    $('#search-contact-btn').on('click', function() {
+    $('#search-contact-btn').on('click', function () {
         reloadTable();
         Tags.update();
     });
 
     // Enter в поле поиска по ID
-    $('#search_id').on('keypress', function(e) {
+    $('#search_id').on('keypress', function (e) {
         if (e.which === 13) {
             e.preventDefault();
             reloadTable();
@@ -194,7 +194,7 @@ $(document).ready(function() {
     });
 
     // Enter в поле поиска по контакту
-    $('#contact_search').on('keypress', function(e) {
+    $('#contact_search').on('keypress', function (e) {
         if (e.which === 13) {
             e.preventDefault();
             reloadTable();
@@ -205,7 +205,7 @@ $(document).ready(function() {
     // ========== Сброс фильтров ==========
 
     // Кнопка сброса в счетчике фильтров
-    $('#delete-params-on-filter').on('click', function(e) {
+    $('#delete-params-on-filter').on('click', function (e) {
         e.preventDefault();
         Filters.reset();
         Tags.update();
@@ -215,7 +215,7 @@ $(document).ready(function() {
     });
 
     // Кнопка "Сбросить" в расширенном фильтре
-    $('#reset-filters-btn').on('click', function(e) {
+    $('#reset-filters-btn').on('click', function (e) {
         e.preventDefault();
         Filters.reset();
         Tags.update();
@@ -227,9 +227,104 @@ $(document).ready(function() {
     // ========== Обработчик изменений фильтра локации ==========
 
     // Создаем глобальную функцию для обновления таблицы из фильтра локации
-    window.reloadPropertiesTable = function() {
+    window.reloadPropertiesTable = function () {
         reloadTable();
     };
+
+    // ========== Детальная информация (child row) ==========
+
+    function formatChildRow(data) {
+        return '<div class="tbody-dop-info">' +
+            '<div class="info-main">' +
+            '<div class="info-main-left">' +
+            '<div class="info-main-left-wrapper">' +
+            '<div class="description">' +
+            '<h2 class="description-title">Заголовок текст 1 к кв пл Толбухина срочно</h2>' +
+            '<p class="description-text">' +
+            'Отличная квартира сдается длительно порядочным людям. Евроремонт свежий. Есть ' +
+            'вся мебель и техника и еще описание ' +
+            '<span class="more-text" style="display: none;">' +
+            'Полное описание квартиры с деталями, которые скрыты по умолчанию.' +
+            '</span>' +
+            '<button class="btn btn-show-text" type="button">Ещё</button>' +
+            '</p>' +
+            '<p class="description-note">' +
+            '<strong>Примечание для агентов:</strong>' +
+            '<span>Текст примечание для агентов Отличная квартира сдается длительно порядочным людям. Евроремонт свежий. Есть вся мебель и техника и еще описание</span>' +
+            '</p>' +
+            '<p class="description-note">' +
+            '<strong>Заметка:</strong>' +
+            '<span>Покупает тому-то, продает свою там-то, звонить тогда-то текст личной заметки</span>' +
+            '</p>' +
+            '</div>' +
+
+            '<ul class="block-info">' +
+            '<li class="block-info-item">' +
+            '<div class="info-btn-wrapper">' +
+            '<a class="btn btn-outline-primary" href="#">' +
+            'Связаться с агентом' +
+            '</a>' +
+            '</div>' +
+            '</li>' +
+            '</ul>' +
+
+            '</div>' +
+            '<div class="filter-tags">' +
+            '<div class="badge rounded-pill qwe1">Особености</div>' +
+            '<div class="badge rounded-pill qwe2">Особености</div>' +
+            '<div class="badge rounded-pill qwe2">Особености</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="info-footer">' +
+            '<p class="info-footer-data">ID: <span>1234567</span></p>' +
+            '<p class="info-footer-data">Добавлено: <span>01.02.2025</span></p>' +
+            '<p class="info-footer-data">Обновлено: <span>10.02.2025</span>' +
+            '<button class="btn" type="button">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#5FB343" class="bi bi-arrow-repeat" viewBox="0 0 16 16">' +
+            '<path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"></path>' +
+            '<path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"></path>' +
+            '</svg>' +
+            '</button>' +
+            '</p>' +
+            '<p class="info-footer-data">Сделки: <button class="info-footer-btn" type="button">30</button></p>' +
+            '<p class="info-footer-data">Дубликаты: <button class="info-footer-btn btn-others" type="button">3</button></p>' +
+            '<button class="info-footer-btn ms-auto close-btn-other" type="button">Свернуть</button>' +
+            '</div>' +
+            '</div>';
+    }
+
+    // Обработчик клика на кнопку разворачивания
+    $('#example tbody').on('click', '.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+        var icon = $(this).find('img');
+
+        if (row.child.isShown()) {
+            // Закрываем строку
+            row.child.hide();
+            tr.removeClass('shown');
+            icon.attr('src', './img/icon/plus.svg');
+        } else {
+            // Открываем строку
+            row.child(formatChildRow(row.data())).show();
+            tr.addClass('shown');
+            icon.attr('src', './img/icon/minus.svg');
+
+            // Добавляем класс к созданной строке (tr) и стили для td
+            var childTr = $(row.child());
+            childTr.addClass('dop-info-row');
+            childTr.find('td').css('border-bottom', 'none');
+        }
+    });
+
+    // Обработчик кнопки "Свернуть"
+    $('#example tbody').on('click', '.close-btn-other', function () {
+        // Находим родительскую кнопку Details и кликаем
+        var childTr = $(this).closest('tr');
+        var parentTr = childTr.prev();
+        parentTr.find('.details-control').click();
+    });
 
     // ========== Инициализация ==========
 
@@ -238,7 +333,7 @@ $(document).ready(function() {
 
     // Инициализация тултипов
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function(tooltipTriggerEl) {
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 });

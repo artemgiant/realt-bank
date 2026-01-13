@@ -34,6 +34,7 @@
 
 body {
   overflow-x: hidden;
+  overflow-y: scroll;
   background: #f7f7f7;
   font-family: 'PTSans', sans-serif;
 }
