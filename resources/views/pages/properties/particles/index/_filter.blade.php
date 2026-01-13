@@ -71,7 +71,9 @@
                 <span>Расширенный фильтр</span>
             </h3>
             <div class="full-filter-wrapper">
+
                 <div class="full-filter-row">
+
                     {{-- Объекты / Статус --}}
                     <div class="item">
                         <label class="item-label" for="status">Объекты</label>
@@ -86,8 +88,8 @@
                             <option value="archive" {{ ($filters['status'] ?? '') == 'archive' ? 'selected' : '' }}>Архив</option>
                         </select>
                     </div>
-                </div>
-                <div class="full-filter-row">
+
+
                     {{-- Тип недвижимости --}}
                     <div class="item">
                         <span class="item-label">Тип недвижимости</span>
@@ -471,38 +473,6 @@
                     </div>
                 </div>
                 <div class="full-filter-row">
-                    {{-- Девелопер --}}
-                    <div class="item">
-                        <span class="item-label">Девелопер</span>
-                        <div class="multiple-menu">
-                            @php
-                                $selectedDevelopers = (array)($filters['developer_id'] ?? []);
-                                $developerText = count($selectedDevelopers) > 0
-                                    ? $developers->whereIn('id', $selectedDevelopers)->pluck('name')->implode(', ')
-                                    : '';
-                            @endphp
-                            <button class="multiple-menu-btn" data-open-menu="false" type="button">
-                                {{ Str::limit($developerText, 20) }}
-                            </button>
-                            <div class="multiple-menu-wrapper">
-                                <label>
-                                    <input class="multiple-menu-search" autocomplete="off" name="search-developer" type="text" placeholder="Поиск">
-                                </label>
-                                <ul class="multiple-menu-list">
-                                    @foreach($developers as $developer)
-                                        <li class="multiple-menu-item">
-                                            <label class="my-custom-input">
-                                                <input type="checkbox" name="developer_id[]" value="{{ $developer->id }}"
-                                                        {{ in_array($developer->id, $selectedDevelopers) ? 'checked' : '' }}>
-                                                <span class="my-custom-box"></span>
-                                                <span class="my-custom-text">{{ $developer->name }}</span>
-                                            </label>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
 
                     {{-- Поиск по ID --}}
                     <div class="item search-on-id">
@@ -523,7 +493,7 @@
                         <label for="contact_search">Поиск по контакту</label>
                         <div class="item-inputSearch-wrapper">
                             <input class="item-inputSearch" type="text" autocomplete="off" id="contact_search" name="contact_search"
-                                   value="{{ $filters['contact_search'] ?? '' }}" placeholder="ФИО, email, телефон, ИНН...">
+                                   value="{{ $filters['contact_search'] ?? '' }}" placeholder="Поиск">
                             <button class="item-inputSearchBtn" type="button" id="search-contact-btn">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M15.1171 16C15.0002 16.0003 14.8845 15.9774 14.7767 15.9327C14.6687 15.888 14.5707 15.8223 14.4884 15.7396L11.465 12.7218C10.224 13.6956 8.6916 14.224 7.11391 14.2222C5.70692 14.2222 4.33151 13.8052 3.16164 13.0238C1.99176 12.2424 1.07995 11.1318 0.541519 9.83244C0.00308508 8.53306 -0.137797 7.1032 0.136693 5.7238C0.411184 4.34438 1.08872 3.07731 2.08362 2.0828C3.07852 1.08829 4.34609 0.411022 5.72606 0.136639C7.106 -0.137743 8.53643 0.00308386 9.83632 0.541306C11.1362 1.07953 12.2472 1.99098 13.029 3.16039C13.8106 4.3298 14.2278 5.70467 14.2278 7.11111C14.231 8.69031 13.7023 10.2245 12.7268 11.4667L15.7458 14.4889C15.8679 14.6135 15.9508 14.7714 15.9839 14.9427C16.017 15.114 15.9988 15.2914 15.9318 15.4524C15.8647 15.6136 15.7517 15.7515 15.6069 15.8488C15.462 15.9462 15.2916 15.9988 15.1171 16ZM7.11391 1.77778C6.05867 1.77778 5.02712 2.09058 4.14971 2.67661C3.2723 3.26264 2.58844 4.0956 2.18462 5.07013C1.78079 6.04467 1.67513 7.11706 1.881 8.15155C2.08687 9.18613 2.59502 10.1364 3.34119 10.8823C4.08737 11.6283 5.03806 12.1362 6.07302 12.342C7.10796 12.5477 8.18073 12.4421 9.1557 12.0385C10.1307 11.6348 10.9639 10.9512 11.5502 10.0741C12.1364 9.19706 12.4493 8.16595 12.4493 7.11111C12.4477 5.69713 11.885 4.34154 10.8848 3.3417C9.88461 2.34186 8.52843 1.77943 7.11391 1.77778Z" fill="black" />
