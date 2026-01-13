@@ -50,7 +50,11 @@ class ContactFactory extends Factory
             'last_name' => $this->faker->randomElement($this->lastNames[$gender]),
             'middle_name' => $this->faker->boolean(70) ? $this->faker->randomElement($this->middleNames[$gender]) : null,
             'email' => $this->faker->boolean(60) ? $this->faker->unique()->safeEmail() : null,
-            'contact_type' => $this->faker->randomElement(['owner', 'agent', 'developer']),
+            'contact_type' => $this->faker->randomElement([
+                Contact::TYPE_OWNER,
+                Contact::TYPE_AGENT,
+                Contact::TYPE_DEVELOPER
+            ]),
             'tags' => $this->faker->boolean(30) ? $this->faker->randomElement(['VIP', 'Срочно', 'Постоянный клиент', 'Новый']) : null,
             'telegram' => $this->faker->boolean(40) ? 'https://t.me/' . $this->faker->userName() : null,
             'viber' => $this->faker->boolean(30) ? 'viber://chat?number=' . $this->generatePhone() : null,
@@ -77,8 +81,8 @@ class ContactFactory extends Factory
      */
     public function owner(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'contact_type' => 'owner',
+        return $this->state(fn(array $attributes) => [
+            'contact_type' => Contact::TYPE_OWNER,
         ]);
     }
 
@@ -87,8 +91,8 @@ class ContactFactory extends Factory
      */
     public function agent(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'contact_type' => 'agent',
+        return $this->state(fn(array $attributes) => [
+            'contact_type' => Contact::TYPE_AGENT,
         ]);
     }
 
@@ -97,8 +101,8 @@ class ContactFactory extends Factory
      */
     public function developer(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'contact_type' => 'developer',
+        return $this->state(fn(array $attributes) => [
+            'contact_type' => Contact::TYPE_DEVELOPER,
         ]);
     }
 
@@ -110,7 +114,7 @@ class ContactFactory extends Factory
         return $this->afterCreating(function (Contact $contact) use ($count) {
             ContactPhoneFactory::new()
                 ->count($count)
-                ->sequence(fn ($sequence) => [
+                ->sequence(fn($sequence) => [
                     'is_primary' => $sequence->index === 0,
                 ])
                 ->create(['contact_id' => $contact->id]);
