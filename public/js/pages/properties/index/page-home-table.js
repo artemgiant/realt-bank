@@ -358,6 +358,15 @@ $(document).ready(function () {
         parentTr.find('.details-control').click();
     });
 
+    // Обработчик кнопки "Ещё" для длинного описания
+    $('#example tbody').on('click', '.btn-show-text', function () {
+        var container = $(this).closest('.description-text');
+        var hiddenText = container.find('.more-text');
+
+        hiddenText.show();
+        $(this).hide();
+    });
+
     // ========== Инициализация ==========
 
     // Инициализация тегов при загрузке страницы (если есть выбранные фильтры)

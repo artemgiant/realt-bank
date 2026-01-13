@@ -263,20 +263,32 @@ class PropertyFactory extends Factory
     }
 
     /**
-     * Создание объекта с переводами
+     * Конфигурация фабрики.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Property $property) {
+            // Если переводы еще не были созданы явно (например через seed), создаем дефолтные
+            if ($property->translations()->count() === 0) {
+                PropertyTranslationFactory::new()
+                    ->count(3)
+                    ->sequence(
+                        ['locale' => 'ru'],
+                        ['locale' => 'ua'],
+                        ['locale' => 'en']
+                    )
+                    ->create(['property_id' => $property->id]);
+            }
+        });
+    }
+
+    /**
+     * Создание объекта с переводами (теперь это поведение по умолчанию)
+     * Оставлено для обратной совместимости
      */
     public function withTranslations(): static
     {
-        return $this->afterCreating(function (Property $property) {
-            PropertyTranslationFactory::new()
-                ->count(3)
-                ->sequence(
-                    ['locale' => 'ru'],
-                    ['locale' => 'ua'],
-                    ['locale' => 'en']
-                )
-                ->create(['property_id' => $property->id]);
-        });
+        return $this;
     }
 
     /**

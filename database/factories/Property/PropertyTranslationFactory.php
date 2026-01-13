@@ -68,33 +68,20 @@ class PropertyTranslationFactory extends Factory
     /**
      * Генерация описания на нужном языке
      */
+    /**
+     * Генерация описания на нужном языке
+     */
     private function generateDescription(string $locale): string
     {
-        $descriptions = [
-            'ru' => [
-                'Отличная квартира в тихом районе. Развитая инфраструктура, рядом школы, детские сады, магазины. Хорошее транспортное сообщение.',
-                'Светлая просторная квартира с качественным ремонтом. Встроенная кухня, кондиционер, бронированная дверь. Чистый подъезд.',
-                'Квартира после капитального ремонта. Новая сантехника, электропроводка. Тихий двор, парковка. Документы готовы.',
-                'Уютная квартира в кирпичном доме. Высокие потолки, большие окна. Закрытая территория, консьерж.',
-                'Продается квартира в отличном состоянии. Два балкона, раздельный санузел. Автономное отопление.',
-            ],
-            'ua' => [
-                'Чудова квартира в тихому районі. Розвинена інфраструктура, поряд школи, дитячі садки, магазини. Гарне транспортне сполучення.',
-                'Світла простора квартира з якісним ремонтом. Вбудована кухня, кондиціонер, броньовані двері. Чистий під\'їзд.',
-                'Квартира після капітального ремонту. Нова сантехніка, електропроводка. Тихий двір, паркування. Документи готові.',
-                'Затишна квартира в цегляному будинку. Високі стелі, великі вікна. Закрита територія, консьєрж.',
-                'Продається квартира у відмінному стані. Два балкони, роздільний санвузол. Автономне опалення.',
-            ],
-            'en' => [
-                'Excellent apartment in a quiet area. Developed infrastructure, nearby schools, kindergartens, shops. Good transport links.',
-                'Bright spacious apartment with quality renovation. Built-in kitchen, air conditioning, armored door. Clean entrance.',
-                'Apartment after major renovation. New plumbing, electrical wiring. Quiet courtyard, parking. Documents ready.',
-                'Cozy apartment in a brick building. High ceilings, large windows. Gated community, concierge.',
-                'Apartment for sale in excellent condition. Two balconies, separate bathroom. Autonomous heating.',
-            ],
-        ];
+        $fakerLocale = match ($locale) {
+            'ru' => 'ru_RU',
+            'ua' => 'uk_UA',
+            default => 'en_US',
+        };
 
-        return $this->faker->randomElement($descriptions[$locale] ?? $descriptions['ru']);
+        $faker = \Faker\Factory::create($fakerLocale);
+
+        return $faker->realText($this->faker->numberBetween(300, 1000));
     }
 
     /**
@@ -102,7 +89,7 @@ class PropertyTranslationFactory extends Factory
      */
     public function russian(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'locale' => 'ru',
             'title' => $this->generateTitle('ru'),
             'description' => $this->generateDescription('ru'),
@@ -114,7 +101,7 @@ class PropertyTranslationFactory extends Factory
      */
     public function ukrainian(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'locale' => 'ua',
             'title' => $this->generateTitle('ua'),
             'description' => $this->generateDescription('ua'),
@@ -126,7 +113,7 @@ class PropertyTranslationFactory extends Factory
      */
     public function english(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'locale' => 'en',
             'title' => $this->generateTitle('en'),
             'description' => $this->generateDescription('en'),
