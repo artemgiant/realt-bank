@@ -5,8 +5,8 @@
  * Высота потолка, Год постройки, Отопление
  */
 
-(function() {
-    document.addEventListener('DOMContentLoaded', function() {
+(function () {
+    document.addEventListener('DOMContentLoaded', function () {
         const buildingTypeSelect = document.getElementById('building_type_id');
         const ceilingHeightSelect = document.getElementById('ceiling_height_id');
         const yearBuiltSelect = document.getElementById('year_built');
@@ -84,11 +84,11 @@
 
         // Обробник зміни типу будинку (Select2)
         if (typeof $ !== 'undefined') {
-            $(buildingTypeSelect).on('select2:select', function(e) {
+            $(buildingTypeSelect).on('select2:select', function (e) {
                 handleBuildingTypeChange(e.params.data.text);
             });
 
-            $(buildingTypeSelect).on('select2:clear', function(e) {
+            $(buildingTypeSelect).on('select2:clear', function (e) {
                 // При очищенні - нічого не робимо (не очищаємо інші поля)
             });
         }
@@ -98,6 +98,20 @@
          */
         function handleBuildingTypeChange(selectedText) {
             const text = (selectedText || '').trim().toLowerCase();
+
+            // Сброс комплекса и блока при изменении типа здания
+            // Если это не программное изменение (например, при выборе комплекса сам тип меняется на новострой)
+            // Но здесь мы просто сбрасываем, если пользователь сам меняет
+            const complexSelect = document.getElementById('complex_id');
+            const blockSelect = document.getElementById('block_id');
+
+            if (complexSelect && $(complexSelect).val()) {
+                $(complexSelect).val(null).trigger('change');
+            }
+            if (blockSelect && $(blockSelect).val()) {
+                $(blockSelect).val(null).trigger('change');
+            }
+
 
             // Шукаємо маппінг для вибраного типу
             const mapping = buildingTypeMapping[text];
