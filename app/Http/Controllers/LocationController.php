@@ -9,7 +9,6 @@ use App\Models\Location\State;
 use App\Models\Location\Street;
 use App\Models\Location\Zone;
 use App\Models\Property\Property;
-use App\Models\Reference\Block;
 use App\Models\Reference\Complex;
 use App\Models\Reference\Developer;
 use Illuminate\Http\JsonResponse;
@@ -223,11 +222,13 @@ class LocationController extends Controller
                 ->when($search, function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%");
                 })
-                ->withCount(['states as count' => function ($q) {
-                    $q->whereHas('cities', function ($cq) {
-                        $cq->active();
-                    });
-                }])
+                ->withCount([
+                    'states as count' => function ($q) {
+                        $q->whereHas('cities', function ($cq) {
+                            $cq->active();
+                        });
+                    }
+                ])
                 ->get()
                 ->map(function ($country) {
                     return [
@@ -247,9 +248,11 @@ class LocationController extends Controller
                 ->when($search, function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%");
                 })
-                ->withCount(['cities as count' => function ($q) {
-                    $q->active();
-                }])
+                ->withCount([
+                    'cities as count' => function ($q) {
+                        $q->active();
+                    }
+                ])
                 ->get()
                 ->map(function ($region) use ($locationId) {
                     return [
@@ -374,30 +377,7 @@ class LocationController extends Controller
             $data['complexes'] = $complexes;
         }
 
-        if ($cityId && ($detailType === 'block' || $detailType === null)) {
-            $blocks = Block::whereHas('complex.city', function ($q) use ($cityId) {
-                $q->where('id', $cityId);
-            })
-                ->active()
-                ->when($search, function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%");
-                })
-                ->with(['complex', 'complex.city'])
-                ->limit(100)
-                ->get()
-                ->map(function ($block) use ($cityId) {
-                    return [
-                        'id' => $block->id,
-                        'name' => $block->name,
-                        'complexId' => $block->complex_id,
-                        'complex' => $block->complex->name ?? '',
-                        'cityId' => $cityId,
-                        'count' => Property::where('block_id', $block->id)->count(),
-                    ];
-                });
 
-            $data['blocks'] = $blocks;
-        }
 
         if ($cityId && ($detailType === 'developer' || $detailType === null)) {
             $developers = Developer::whereHas('complexes.city', function ($q) use ($cityId) {

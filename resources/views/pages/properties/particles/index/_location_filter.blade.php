@@ -29,9 +29,8 @@
                 <button class="lf-active" data-cat="all">Все</button>
                 <button data-cat="districts">Районы</button>
                 <button data-cat="streets">Улицы</button>
-                <button data-cat="landmarks">Зоны/Микрорайоны</button>
+                <button data-cat="landmarks">Микрорайоны</button>
                 <button data-cat="complexes">Комплексы</button>
-                <button data-cat="blocks">Блоки</button>
                 <button data-cat="developers">Девелоперы</button>
             </div>
 
@@ -45,7 +44,6 @@
                 <div class="lf-section lf-hidden" id="lf-streets"><div class="lf-section-title">Улицы</div><ul></ul></div>
                 <div class="lf-section lf-hidden" id="lf-landmarks"><div class="lf-section-title">Зоны/Микрорайоны</div><ul></ul></div>
                 <div class="lf-section lf-hidden" id="lf-complexes"><div class="lf-section-title">Комплексы</div><ul></ul></div>
-                <div class="lf-section lf-hidden" id="lf-blocks"><div class="lf-section-title">Блоки</div><ul></ul></div>
                 <div class="lf-section lf-hidden" id="lf-developers"><div class="lf-section-title">Девелоперы</div><ul></ul></div>
                 <div class="lf-empty" id="lfEmpty">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">

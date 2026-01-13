@@ -10,7 +10,6 @@
         streets: [],
         landmarks: [],
         complexes: [],
-        blocks: [],
         developers: []
     };
 
@@ -25,7 +24,6 @@
         streets: 'street',
         landmarks: 'landmark',
         complexes: 'complex',
-        blocks: 'block',
         developers: 'developer'
     };
     const TYPE_NAMES = {
@@ -36,19 +34,18 @@
         street: 'Улица',
         landmark: 'Зона',
         complex: 'ЖК',
-        block: 'Блок',
         developer: 'Дев.'
     };
     const LOCATION_TYPES = ['country', 'region', 'city'];
-    const DETAIL_TYPES = ['district', 'street', 'landmark', 'complex', 'block', 'developer'];
-    const DETAIL_KEYS = ['districts', 'streets', 'landmarks', 'complexes', 'blocks', 'developers'];
+    const DETAIL_TYPES = ['district', 'street', 'landmark', 'complex', 'developer'];
+    const DETAIL_KEYS = ['districts', 'streets', 'landmarks', 'complexes', 'developers'];
 
     const state = {
         isOpen: false,
         mode: 'location',
         category: 'all',
         location: null,
-        path: {country: null, region: null, city: null},
+        path: { country: null, region: null, city: null },
         details: []
     };
 
@@ -100,7 +97,7 @@
     };
 
     const updatePlaceholder = () => {
-        const {mode, location} = state;
+        const { mode, location } = state;
         if (mode === 'detail') el.search.placeholder = 'Район, улица, ЖК, ориентир...';
         else if (!location) el.search.placeholder = 'Страна, регион, город...';
         else if (location.type === 'country') el.search.placeholder = 'Выберите регион...';
@@ -109,7 +106,7 @@
     };
 
     const updateBreadcrumbs = () => {
-        const {path, mode} = state;
+        const { path, mode } = state;
         let html = '';
         if (path.country) {
             html += `<span class="lf-crumb ${path.region ? 'lf-clickable' : ''}" data-type="country">${path.country.name}</span>`;
@@ -181,23 +178,23 @@
     };
 
     const showLocation = async () => {
-        const {location} = state;
+        const { location } = state;
 
         if (!location) {
             // Загружаем страны
-            const data = await loadData({location_type: null});
+            const data = await loadData({ location_type: null });
             if (data && data.countries) {
                 renderSection('countries', data.countries);
             }
         } else if (location.type === 'country') {
             // Загружаем области для страны
-            const data = await loadData({location_type: 'country', location_id: location.id});
+            const data = await loadData({ location_type: 'country', location_id: location.id });
             if (data && data.regions) {
                 data.regions.length ? renderSection('regions', data.regions) : showEmpty('Нет областей');
             }
         } else if (location.type === 'region') {
             // Загружаем города для области
-            const data = await loadData({location_type: 'region', location_id: location.id});
+            const data = await loadData({ location_type: 'region', location_id: location.id });
             if (data && data.cities) {
                 data.cities.length ? renderSection('cities', data.cities) : showEmpty('Нет городов');
             }
@@ -217,7 +214,7 @@
         const detailType = state.category === 'all' ? null : TYPES[state.category];
 
         // Загружаем детали для города
-        const data = await loadData({city_id: cityId, detail_type: detailType});
+        const data = await loadData({ city_id: cityId, detail_type: detailType });
 
         if (!data) return;
 
@@ -237,7 +234,7 @@
     const search = async (query) => {
         if (state.mode === 'location') {
             // Поиск в режиме Location
-            let params = {search: query};
+            let params = { search: query };
 
             if (state.location) {
                 if (state.location.type === 'country') {
@@ -291,14 +288,14 @@
 
     const selectLocation = (type, id, name) => {
         if (type === 'country') {
-            state.path = {country: {id, name}, region: null, city: null};
+            state.path = { country: { id, name }, region: null, city: null };
             state.details = [];
         } else if (type === 'region') {
             const region = DATA.regions.find(r => r.id === id),
                 country = DATA.countries.find(c => c.id === region?.countryId);
             state.path = {
-                country: country ? {id: country.id, name: country.name} : state.path.country,
-                region: {id, name},
+                country: country ? { id: country.id, name: country.name } : state.path.country,
+                region: { id, name },
                 city: null
             };
             state.details = [];
@@ -306,13 +303,13 @@
             const city = DATA.cities.find(c => c.id === id), region = DATA.regions.find(r => r.id === city?.regionId),
                 country = DATA.countries.find(c => c.id === region?.countryId);
             state.path = {
-                country: country ? {id: country.id, name: country.name} : state.path.country,
-                region: region ? {id: region.id, name: region.name} : state.path.region,
-                city: {id, name}
+                country: country ? { id: country.id, name: country.name } : state.path.country,
+                region: region ? { id: region.id, name: region.name } : state.path.region,
+                city: { id, name }
             };
             state.details = [];
         }
-        state.location = {type, id, name};
+        state.location = { type, id, name };
         el.search.value = '';
         renderTags();
         type === 'city' ? setMode('detail') : update();
@@ -320,7 +317,7 @@
 
     const toggleDetail = (type, id, name) => {
         const idx = state.details.findIndex(d => d.type === type && d.id === id);
-        idx >= 0 ? state.details.splice(idx, 1) : state.details.push({type, id, name});
+        idx >= 0 ? state.details.splice(idx, 1) : state.details.push({ type, id, name });
         renderTags();
         update();
     };
@@ -332,7 +329,7 @@
     };
     const clearAll = () => {
         state.location = null;
-        state.path = {country: null, region: null, city: null};
+        state.path = { country: null, region: null, city: null };
         state.details = [];
         renderTags();
         updateHidden(); // Обновляем скрытые поля и таблицу
@@ -341,12 +338,12 @@
     };
     const navigateTo = type => {
         if (type === 'country' && state.path.country) {
-            state.location = {type: 'country', ...state.path.country};
+            state.location = { type: 'country', ...state.path.country };
             state.path.region = null;
             state.path.city = null;
             state.details = [];
         } else if (type === 'region' && state.path.region) {
-            state.location = {type: 'region', ...state.path.region};
+            state.location = { type: 'region', ...state.path.region };
             state.path.city = null;
             state.details = [];
         }
@@ -376,7 +373,7 @@
     const updateHidden = (triggerReload = true) => {
         $('lfType').value = state.location?.type || '';
         $('lfId').value = state.location?.id || '';
-        $('lfDetails').value = JSON.stringify(state.details.map(d => ({type: d.type, id: d.id})));
+        $('lfDetails').value = JSON.stringify(state.details.map(d => ({ type: d.type, id: d.id })));
 
         // Обновляем таблицу недвижимости (если не отключено)
         if (triggerReload && typeof window.reloadPropertiesTable === 'function') {
@@ -418,7 +415,7 @@
     el.content.addEventListener('click', e => {
         const li = e.target.closest('li');
         if (li) {
-            const {type, id, name} = li.dataset;
+            const { type, id, name } = li.dataset;
             if (state.mode === 'location' && LOCATION_TYPES.includes(type)) selectLocation(type, +id, name); else if (state.mode === 'detail' && DETAIL_TYPES.includes(type)) toggleDetail(type, +id, name);
         }
     });
@@ -445,13 +442,13 @@
     const initDefaultLocation = async () => {
         try {
             // Загружаем страны
-            const data = await loadData({location_type: null});
+            const data = await loadData({ location_type: null });
             if (data && data.countries) {
                 // Ищем Украину
                 const ukraine = data.countries.find(c => c.name.toLowerCase().includes('украина') || c.name.toLowerCase().includes('ukraine'));
                 if (ukraine) {
                     // Загружаем области Украины
-                    const regionsData = await loadData({location_type: 'country', location_id: ukraine.id});
+                    const regionsData = await loadData({ location_type: 'country', location_id: ukraine.id });
                     if (regionsData && regionsData.regions) {
                         // Ищем Одесскую регион
                         const odessaRegion = regionsData.regions.find(r =>
@@ -463,11 +460,11 @@
                         if (odessaRegion) {
                             // Устанавливаем Одесскую регион по умолчанию
                             state.path = {
-                                country: {id: ukraine.id, name: ukraine.name},
-                                region: {id: odessaRegion.id, name: odessaRegion.name},
+                                country: { id: ukraine.id, name: ukraine.name },
+                                region: { id: odessaRegion.id, name: odessaRegion.name },
                                 city: null
                             };
-                            state.location = {type: 'region', id: odessaRegion.id, name: odessaRegion.name};
+                            state.location = { type: 'region', id: odessaRegion.id, name: odessaRegion.name };
                             renderTags();
                             // Не триггерим обновление таблицы при инициализации
                             updateHidden(false);
