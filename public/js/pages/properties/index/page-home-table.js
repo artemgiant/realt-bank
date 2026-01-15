@@ -319,8 +319,8 @@ $(document).ready(function () {
             '</svg>' +
             '</button>' +
             '</p>' +
-            '<p class="info-footer-data">Сделки: <button class="info-footer-btn" type="button">30</button></p>' +
-            '<p class="info-footer-data">Дубликаты: <button class="info-footer-btn btn-others" type="button">3</button></p>' +
+            '<p class="info-footer-data">Сделки: <button class="info-footer-btn" type="button">0</button></p>' +
+            '<p class="info-footer-data">Дубликаты: <button class="info-footer-btn btn-others" type="button">0</button></p>' +
             '<button class="info-footer-btn ms-auto close-btn-other" type="button">Свернуть</button>' +
             '</div>' +
             '</div>';
