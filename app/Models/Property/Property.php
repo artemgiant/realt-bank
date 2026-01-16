@@ -79,6 +79,7 @@ class Property extends Model
 
         // Медиа
         'youtube_url',
+        'tiktok_url',
         'external_url',
 
         // Настройки

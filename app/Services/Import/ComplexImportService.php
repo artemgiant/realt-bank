@@ -426,6 +426,7 @@ class ComplexImportService
                     'name' => $name,
                     'slug' => $slug,
                     'is_active' => true,
+                    'source' => 'import',
                 ]);
                 $this->result['created']['developers']++;
             } else {

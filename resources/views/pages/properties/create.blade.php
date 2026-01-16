@@ -381,9 +381,17 @@
                             </div>
                         </div>
 
+                        {{-- Видео TikTok --}}
+                        <div class="item ">
+                            <label for="tiktok_url">Видео TikTok</label>
+                            <div class="item-inputText-wrapper">
+                                <input class="item-inputText" id="tiktok_url" name="tiktok_url" type="url"
+                                       value="{{ old('tiktok_url') }}" autocomplete="off" placeholder="https://tiktok.com/...">
+                            </div>
+                        </div>
 
                         {{-- Тип контакта --}}
-                        <div class="item selects">
+                        <div class="item selects w33">
                             <label class="item-label" for="contact_type_id">Тип контакта <span class="text-danger">*</span></label>
                             <select id="contact_type_id" name="contact_type_id" class="js-example-responsive3 my-select2" required>
                                 <option value=""></option>

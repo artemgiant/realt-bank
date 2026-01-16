@@ -21,6 +21,7 @@ class Developer extends Model
         'description',
         'slug',
         'is_active',
+        'source',
         'logo_path',
         'year_founded',
         'agent_notes',
