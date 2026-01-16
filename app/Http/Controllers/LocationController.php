@@ -409,4 +409,90 @@ class LocationController extends Controller
             'data' => $data,
         ]);
     }
+
+    /**
+     * Универсальный поиск локации (страна/область/город)
+     * GET /location/search-all?q=поисковый_запрос
+     */
+    public function searchAll(Request $request): JsonResponse
+    {
+        $query = $request->input('q', '');
+        $limit = $request->input('limit', 20);
+
+        if (strlen($query) < 2) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Минимум 2 символа для поиска',
+                'results' => [],
+            ]);
+        }
+
+        $results = collect();
+
+        // Поиск по странам
+        $countries = Country::active()
+            ->where('name', 'like', "%{$query}%")
+            ->limit(5)
+            ->get()
+            ->map(function ($country) {
+                return [
+                    'id' => $country->id,
+                    'type' => 'country',
+                    'name' => $country->name,
+                    'full_name' => $country->name,
+                    'parent' => null,
+                ];
+            });
+        $results = $results->merge($countries);
+
+        // Поиск по областям
+        $states = State::with('country')
+            ->active()
+            ->where('name', 'like', "%{$query}%")
+            ->limit(10)
+            ->get()
+            ->map(function ($state) {
+                return [
+                    'id' => $state->id,
+                    'type' => 'state',
+                    'name' => $state->name,
+                    'full_name' => $state->name . ', ' . ($state->country?->name ?? ''),
+                    'parent' => $state->country?->name,
+                    'country_id' => $state->country_id,
+                ];
+            });
+        $results = $results->merge($states);
+
+        // Поиск по городам
+        $cities = City::with(['state', 'state.country'])
+            ->active()
+            ->where('name', 'like', "%{$query}%")
+            ->limit(15)
+            ->get()
+            ->map(function ($city) {
+                $parent = $city->state?->name;
+                if ($city->state?->country) {
+                    $parent .= ', ' . $city->state->country->name;
+                }
+                return [
+                    'id' => $city->id,
+                    'type' => 'city',
+                    'name' => $city->name,
+                    'full_name' => $city->name . ', ' . $parent,
+                    'parent' => $parent,
+                    'state_id' => $city->state_id,
+                    'country_id' => $city->state?->country_id,
+                ];
+            });
+        $results = $results->merge($cities);
+
+        // Сортируем и ограничиваем
+        $results = $results->take($limit)->values();
+
+        return response()->json([
+            'success' => true,
+            'results' => $results,
+            'total' => $results->count(),
+        ]);
+    }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ComplexController;
+use App\Http\Controllers\Developer\DeveloperController;
 use App\Http\Controllers\Import\ComplexImportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Property\PropertyController;
@@ -52,6 +53,9 @@ Route::middleware('auth')->group(function () {
 
         // Данные для фильтра локаций
         Route::get('/filter-data', [App\Http\Controllers\LocationController::class, 'getFilterData'])->name('location.filter-data');
+
+        // Универсальный поиск локации (страна/область/город)
+        Route::get('/search-all', [App\Http\Controllers\LocationController::class, 'searchAll'])->name('location.search-all');
     });
 
 
@@ -96,6 +100,11 @@ Route::middleware('auth')->group(function () {
 // Комплексы и блоки (AJAX для Select2)
     Route::get('/complexes/search', [ComplexController::class, 'search'])->name('complexes.search');
     Route::get('/blocks/search', [ComplexController::class, 'searchBlocks'])->name('blocks.search');
+
+    // ========== Developers ==========
+    Route::get('/developers/ajax-search', [DeveloperController::class, 'ajaxSearch'])
+        ->name('developers.ajax-search');
+    Route::resource('developers', DeveloperController::class);
 
     // Импорт комплексов
     Route::prefix('import')->name('import.')->group(function () {

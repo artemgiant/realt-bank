@@ -3,7 +3,7 @@
 @font-face {
   font-family: "PTSans";
   font-display: swap;
-  src: url("../../fonts/PTSans-Bold.woff") format("woff"), url("../../fonts/PTSans-Bold.woff2") format("woff2");
+  src: url("../../../fonts/PTSans-Bold.woff") format("woff"), url("../../../fonts/PTSans-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
 }
@@ -11,7 +11,7 @@
 @font-face {
   font-family: "PTSans";
   font-display: swap;
-  src: url("../../fonts/PTSans-BoldItalic.woff") format("woff"), url("../../fonts/PTSans-BoldItalic.woff2") format("woff2");
+  src: url("../../../fonts/PTSans-BoldItalic.woff") format("woff"), url("../../../fonts/PTSans-BoldItalic.woff2") format("woff2");
   font-weight: 700;
   font-style: italic;
 }
@@ -19,7 +19,7 @@
 @font-face {
   font-family: "PTSans";
   font-display: swap;
-  src: url("../../fonts/PTSans-Italick.woff") format("woff"), url("../../fonts/PTSans-Italick.woff2") format("woff2");
+  src: url("../../../fonts/PTSans-Italick.woff") format("woff"), url("../../../fonts/PTSans-Italick.woff2") format("woff2");
   font-weight: 400;
   font-style: italic;
 }
@@ -27,7 +27,7 @@
 @font-face {
   font-family: "PTSans";
   font-display: swap;
-  src: url("../../fonts/PTSans-Regular.woff") format("woff"), url("../../fonts/PTSans-Regular.woff2") format("woff2");
+  src: url("../../../fonts/PTSans-Regular.woff") format("woff"), url("../../../fonts/PTSans-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
 }
@@ -2971,3 +2971,132 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 }
 
 .webp .iti__flag{ background-image: url(https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/img/flags.webp); }
+
+
+/* ========== Locations Block ========== */
+.locations-block {
+    margin-top: 20px;
+}
+
+.locations-block > label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #334553;
+}
+
+.locations-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.location-item {
+    position: relative;
+}
+
+.location-search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.location-search-wrapper .select2-container {
+    flex: 1;
+}
+
+.location-search-wrapper .select2-container .select2-selection--single {
+    height: 40px;
+    border: 1px solid #E5E5E5;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.location-search-wrapper .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 38px;
+    padding-left: 12px;
+    font-weight: 400;
+    color: #334553;
+}
+
+.location-search-wrapper .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 38px;
+    right: 8px;
+}
+
+.btn-remove-location {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #fff;
+    border: 1px solid #E5E5E5;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.btn-remove-location:hover {
+    background: #FEF2F2;
+    border-color: #EF4444;
+}
+
+.btn-add-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px dashed #3585F5;
+    border-radius: 8px;
+    color: #3585F5;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 10px;
+}
+
+.btn-add-location:hover {
+    background: #F0F7FF;
+    border-style: solid;
+}
+
+/* Select2 Location Result Styling */
+.select2-location-result {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.select2-location-result .location-text {
+    flex: 1;
+    font-size: 14px;
+    color: #334553;
+}
+
+.select2-location-result .location-type-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #F3F4F6;
+    color: #6B7280;
+    font-weight: 500;
+}
+
+/* Select2 Dropdown Styling for Locations */
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable .location-type-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+/* Hide Select2 arrow for location search */
+.location-search-wrapper .select2-container--default .select2-selection--single .select2-selection__arrow {
+    display: none;
+}

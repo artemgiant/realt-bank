@@ -21,10 +21,17 @@ class Developer extends Model
         'description',
         'slug',
         'is_active',
+        'logo_path',
+        'year_founded',
+        'agent_notes',
+        'name_translations',
+        'description_translations',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'name_translations' => 'array',
+        'description_translations' => 'array',
     ];
 
     // ========== Relationships ==========
@@ -39,6 +46,11 @@ class Developer extends Model
         return $this->hasMany(Complex::class);
     }
 
+    public function locations(): HasMany
+    {
+        return $this->hasMany(DeveloperLocation::class);
+    }
+
     // ========== Scopes ==========
 
     public function scopeActive($query)
@@ -49,5 +61,43 @@ class Developer extends Model
     public function scopeSearch($query, string $search)
     {
         return $query->where('name', 'like', "%{$search}%");
+    }
+
+    // ========== Accessors ==========
+
+    /**
+     * Get logo URL
+     */
+    public function getLogoUrlAttribute(): ?string
+    {
+        if ($this->logo_path) {
+            return \Illuminate\Support\Facades\Storage::disk('public')->url($this->logo_path);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get name in specific locale
+     */
+    public function getNameInLocale(string $locale = 'ru'): string
+    {
+        if ($this->name_translations && isset($this->name_translations[$locale])) {
+            return $this->name_translations[$locale];
+        }
+
+        return $this->name;
+    }
+
+    /**
+     * Get description in specific locale
+     */
+    public function getDescriptionInLocale(string $locale = 'ru'): ?string
+    {
+        if ($this->description_translations && isset($this->description_translations[$locale])) {
+            return $this->description_translations[$locale];
+        }
+
+        return $this->description;
     }
 }
