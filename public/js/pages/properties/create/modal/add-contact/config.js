@@ -26,7 +26,8 @@ window.ContactModal.Config = {
     contactTypes: {
         owner: 'Владелец',
         agent: 'Агент',
-        developer: 'Девелопер'
+        developer: 'Девелопер',
+        developer_representative: 'Представитель девелопера'
     },
 
     // Селекторы элементов
