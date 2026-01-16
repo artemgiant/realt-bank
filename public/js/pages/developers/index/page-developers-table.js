@@ -215,7 +215,7 @@ $(document).ready(function () {
             '<div class="info-main-left">' +
             '<div class="info-main-left-wrapper">' +
             '<div class="description">' +
-            '<h2 class="description-title">' + (data.developer ? data.developer.name : '-') + '</h2>' +
+
             descriptionHtml +
             websiteHtml +
             agentNotesHtml +
