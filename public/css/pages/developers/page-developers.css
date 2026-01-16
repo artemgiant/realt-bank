@@ -888,43 +888,43 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   margin-left: 0;
 }
 
-#example {
+#developers-table {
   border-bottom: none;
 }
 
-#example colgroup:first-of-type {
+#developers-table colgroup:first-of-type {
   display: none;
 }
 
-#example thead tr {
+#developers-table thead tr {
   background-color: transparent;
 }
 
-#example thead tr th {
+#developers-table thead tr th {
   padding: 0;
   border-bottom: none;
   text-align: left;
 }
 
-#example thead tr th:hover {
+#developers-table thead tr th:hover {
   outline: none;
 }
 
-#example thead tr th .thead-wrapper {
+#developers-table thead tr th .thead-wrapper {
   padding: 10px;
 }
 
-#example thead tr th .thead-wrapper.checkBox {
+#developers-table thead tr th .thead-wrapper.checkBox {
   max-width: 50px;
 }
 
-#example thead tr th .thead-wrapper.checkBox label {
+#developers-table thead tr th .thead-wrapper.checkBox label {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
 
-#example thead tr th .thead-wrapper.block-actions {
+#developers-table thead tr th .thead-wrapper.block-actions {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -938,7 +938,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   grid-gap: 20px;
 }
 
-#example thead tr th .thead-wrapper.block-actions .btn {
+#developers-table thead tr th .thead-wrapper.block-actions .btn {
   padding: 0;
   border: none;
   width: 26px;
@@ -956,11 +956,11 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   border-radius: 6px;
 }
 
-#example thead tr th .thead-wrapper.block-actions .btn:hover {
+#developers-table thead tr th .thead-wrapper.block-actions .btn:hover {
   background-color: #F6F8FB;
 }
 
-#example thead tr th .thead-wrapper p {
+#developers-table thead tr th .thead-wrapper p {
   font-weight: 700;
   font-size: 14px;
   line-height: 108%;
@@ -968,38 +968,38 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   margin: 0;
 }
 
-#example thead tr th .thead-wrapper p:first-letter {
+#developers-table thead tr th .thead-wrapper p:first-letter {
   text-transform: uppercase;
 }
 
-#example tbody {
+#developers-table tbody {
   border-radius: 8px;
 }
 
-#example tbody tr.active td {
+#developers-table tbody tr.active td {
   background-color: #F6F8FB;
 }
 
-#example tbody tr.active + .dop-info-row td {
+#developers-table tbody tr.active + .dop-info-row td {
   background-color: #F6F8FB;
 }
 
-#example tbody tr td:first-child {
+#developers-table tbody tr td:first-child {
   border-radius: 8px 0 0 8px;
 }
 
-#example tbody tr td:last-child {
+#developers-table tbody tr td:last-child {
   border-radius: 0 8px 8px 0;
 }
 
-#example tbody tr td {
+#developers-table tbody tr td {
   border: none;
   border-bottom: 1px solid #EFEFEF;
   background-color: #Fff;
   padding: 0;
 }
 
-#example tbody tr td .tbody-wrapper {
+#developers-table tbody tr td .tbody-wrapper {
   padding: 7px 10px;
   font-weight: 400;
   font-size: 14px;
@@ -1007,41 +1007,41 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   color: #111;
 }
 
-#example tbody tr td .tbody-wrapper p {
+#developers-table tbody tr td .tbody-wrapper p {
   margin: 0;
   text-wrap: nowrap;
 }
 
-#example tbody tr td .tbody-wrapper > span {
+#developers-table tbody tr td .tbody-wrapper > span {
   font-size: 12px;
 }
 
-#example tbody tr td .tbody-wrapper div > a {
+#developers-table tbody tr td .tbody-wrapper div > a {
   font-size: 12px;
   color: #111;
   text-decoration: underline;
 }
 
-#example tbody tr td .tbody-wrapper .link-name {
+#developers-table tbody tr td .tbody-wrapper .link-name {
   color: #3585F5;
   text-decoration: none;
 }
 
-#example tbody tr td .tbody-wrapper .link-name:hover {
+#developers-table tbody tr td .tbody-wrapper .link-name:hover {
   text-decoration: underline;
 }
 
-#example tbody tr td .tbody-wrapper.checkBox {
+#developers-table tbody tr td .tbody-wrapper.checkBox {
   max-width: 50px;
 }
 
-#example tbody tr td .tbody-wrapper.checkBox label {
+#developers-table tbody tr td .tbody-wrapper.checkBox label {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
 
-#example tbody tr td .tbody-wrapper.developer .developer-wrapper {
+#developers-table tbody tr td .tbody-wrapper.developer .developer-wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1051,15 +1051,15 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   grid-gap: 20px;
 }
 
-#example tbody tr td .tbody-wrapper.year {
+#developers-table tbody tr td .tbody-wrapper.year {
   text-align: left;
 }
 
-#example tbody tr td .tbody-wrapper.complex {
+#developers-table tbody tr td .tbody-wrapper.complex {
   text-align: left;
 }
 
-#example tbody tr td .tbody-wrapper.contact {
+#developers-table tbody tr td .tbody-wrapper.contact {
   max-width: 131px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1070,20 +1070,20 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   grid-gap: 10px;
 }
 
-#example tbody tr td .tbody-wrapper.contact a:not(.link-name) {
+#developers-table tbody tr td .tbody-wrapper.contact a:not(.link-name) {
   font-size: 12px;
   font-weight: 700;
   text-decoration: none;
 }
 
-#example tbody tr td .tbody-wrapper.contact p {
+#developers-table tbody tr td .tbody-wrapper.contact p {
   font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
 
-#example tbody tr td .tbody-wrapper.block-actions {
+#developers-table tbody tr td .tbody-wrapper.block-actions {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1095,7 +1095,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
           justify-content: flex-end;
 }
 
-#example tbody tr td .tbody-wrapper.block-actions .mail-link {
+#developers-table tbody tr td .tbody-wrapper.block-actions .mail-link {
   margin-right: 20px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1114,11 +1114,11 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   border-radius: 6px;
 }
 
-#example tbody tr td .tbody-wrapper.block-actions .mail-link:hover {
+#developers-table tbody tr td .tbody-wrapper.block-actions .mail-link:hover {
   background-color: #F6F8FB;
 }
 
-#example tbody tr td .tbody-wrapper.block-actions .block-actions-wrapper > div {
+#developers-table tbody tr td .tbody-wrapper.block-actions .block-actions-wrapper > div {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1127,26 +1127,26 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
           align-items: center;
 }
 
-#example tbody tr td .tbody-wrapper.block-actions .details-control-dop {
+#developers-table tbody tr td .tbody-wrapper.block-actions .details-control-dop {
   margin-left: 22px;
 }
 
-#example tbody tr td .tbody-wrapper.block-actions .details-control {
+#developers-table tbody tr td .tbody-wrapper.block-actions .details-control {
   margin-left: 22px;
 }
 
-#example tbody tr td .tbody-dop-info {
+#developers-table tbody tr td .tbody-dop-info {
   padding: 8px 6px;
   background-color: #F6F8FB;
 }
 
-#example tbody tr td .tbody-dop-info .info-main {
+#developers-table tbody tr td .tbody-dop-info .info-main {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
 
-#example tbody tr td .tbody-dop-info .info-main-left {
+#developers-table tbody tr td .tbody-dop-info .info-main-left {
   -webkit-box-flex: 0;
       -ms-flex: 0 1 100%;
           flex: 0 1 100%;
@@ -1162,13 +1162,13 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
           justify-content: space-between;
 }
 
-#example tbody tr td .tbody-dop-info .info-main-left-wrapper {
+#developers-table tbody tr td .tbody-dop-info .info-main-left-wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
 
-#example tbody tr td .tbody-dop-info .info-main-left .description {
+#developers-table tbody tr td .tbody-dop-info .info-main-left .description {
   -webkit-box-flex: 1;
       -ms-flex: 1 2 100%;
           flex: 1 2 100%;
@@ -1178,7 +1178,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   grid-gap: 20px;
 }
 
-#example tbody tr td .tbody-dop-info .info-main-left .description-text {
+#developers-table tbody tr td .tbody-dop-info .info-main-left .description-text {
   -webkit-box-flex: 1;
       -ms-flex: 1 2 50%;
           flex: 1 2 50%;
@@ -1191,18 +1191,18 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   position: relative;
 }
 
-#example tbody tr td .tbody-dop-info .info-main-left .description-text strong {
+#developers-table tbody tr td .tbody-dop-info .info-main-left .description-text strong {
   font-weight: 700;
   color: #aaa;
 }
 
-#example tbody tr td .tbody-dop-info .info-main-left .description-wrapper {
+#developers-table tbody tr td .tbody-dop-info .info-main-left .description-wrapper {
   -webkit-box-flex: 1;
       -ms-flex: 1 2 50%;
           flex: 1 2 50%;
 }
 
-#example tbody tr td .tbody-dop-info .info-main-left .description .btn {
+#developers-table tbody tr td .tbody-dop-info .info-main-left .description .btn {
   margin-left: 2px;
   font-size: 14px;
   font-weight: 700;
@@ -1214,7 +1214,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   border-bottom: 1px dashed #3585F5;
 }
 
-#example tbody tr td .tbody-dop-info .info-main-left .description-note {
+#developers-table tbody tr td .tbody-dop-info .info-main-left .description-note {
   -webkit-box-flex: 1;
       -ms-flex: 1 2 50%;
           flex: 1 2 50%;
@@ -1225,12 +1225,12 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   margin-bottom: 0;
 }
 
-#example tbody tr td .tbody-dop-info .info-main-left .description-note span {
+#developers-table tbody tr td .tbody-dop-info .info-main-left .description-note span {
   font-weight: 400;
   color: #111;
 }
 
-#example tbody tr td .tbody-dop-info .info-footer {
+#developers-table tbody tr td .tbody-dop-info .info-footer {
   padding-top: 0;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1240,7 +1240,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
           align-items: center;
 }
 
-#example tbody tr td .tbody-dop-info .info-footer-data {
+#developers-table tbody tr td .tbody-dop-info .info-footer-data {
   margin-bottom: 0;
   font-weight: 700;
   font-size: 14px;
@@ -1256,12 +1256,12 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   grid-gap: 6px;
 }
 
-#example tbody tr td .tbody-dop-info .info-footer-data span {
+#developers-table tbody tr td .tbody-dop-info .info-footer-data span {
   font-weight: 400;
   font-size: 12px;
 }
 
-#example tbody tr td .tbody-dop-info .info-footer-data .btn {
+#developers-table tbody tr td .tbody-dop-info .info-footer-data .btn {
   padding: 0;
   outline: none;
   border: none;
@@ -1277,11 +1277,11 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
           justify-content: center;
 }
 
-#example tbody tr td .tbody-dop-info .info-footer-data .btn:active {
+#developers-table tbody tr td .tbody-dop-info .info-footer-data .btn:active {
   outline: none;
 }
 
-#example tbody tr td .tbody-dop-info .info-footer-btn {
+#developers-table tbody tr td .tbody-dop-info .info-footer-btn {
   margin-left: 2px;
   font-weight: 700;
   border: none;
@@ -1291,15 +1291,15 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   border-bottom: 1px dashed #3585F5;
 }
 
-#example tbody tr td .tbody-dop-info .info-footer-btn.close-btn-other {
+#developers-table tbody tr td .tbody-dop-info .info-footer-btn.close-btn-other {
   display: none;
 }
 
-#example tbody tr td .tbody-dop-info .info-footer-btn.close-btn-other.active {
+#developers-table tbody tr td .tbody-dop-info .info-footer-btn.close-btn-other.active {
   display: block;
 }
 
-#example tbody tr td .table-for-others {
+#developers-table tbody tr td .table-for-others {
   -webkit-box-shadow: inset 0 0 0 1px #D5DBE3;
           box-shadow: inset 0 0 0 1px #D5DBE3;
   padding: 1px;
@@ -1307,28 +1307,28 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   border-radius: 8px;
 }
 
-#example tbody tr td .table-for-others tbody tr {
+#developers-table tbody tr td .table-for-others tbody tr {
   border: none;
 }
 
-#example tbody tr td .table-for-others tbody tr:first-child td:first-child .tbody-wrapper {
+#developers-table tbody tr td .table-for-others tbody tr:first-child td:first-child .tbody-wrapper {
   border-radius: 8px 0 0 8px;
 }
 
-#example tbody tr td .table-for-others tbody tr:last-child td:last-child .tbody-wrapper {
+#developers-table tbody tr td .table-for-others tbody tr:last-child td:last-child .tbody-wrapper {
   border-radius: 0 8px 8px 0;
 }
 
-#example tbody tr td .table-for-others tbody tr:last-child td {
+#developers-table tbody tr td .table-for-others tbody tr:last-child td {
   border-bottom: none;
 }
 
-#example tbody tr td .table-for-others tbody tr td {
+#developers-table tbody tr td .table-for-others tbody tr td {
   background-color: transparent;
   border-bottom-color: #D5DBE3;
 }
 
-#example_wrapper {
+#developers-table_wrapper {
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
   -webkit-box-orient: horizontal;
@@ -1340,7 +1340,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
           justify-content: space-between;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(1) {
+#developers-table_wrapper div.dt-layout-row:nth-child(1) {
   grid-gap: 12px;
   padding: 8px;
   background-color: transparent;
@@ -1355,7 +1355,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   border-radius: 8px 0 0 8px;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(1) label {
+#developers-table_wrapper div.dt-layout-row:nth-child(1) label {
   font-weight: 400;
   font-size: 14px;
   line-height: normal;
@@ -1363,7 +1363,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   color: #111;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(1) select {
+#developers-table_wrapper div.dt-layout-row:nth-child(1) select {
   border: 1px dashed transparent;
   border-bottom-color: #3585f5;
   border-radius: 0;
@@ -1375,12 +1375,12 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   color: #3585f5;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(2) {
+#developers-table_wrapper div.dt-layout-row:nth-child(2) {
   width: 100%;
   margin: 0;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(3) {
+#developers-table_wrapper div.dt-layout-row:nth-child(3) {
   background-color: transparent;
   padding: 8px;
   -webkit-box-pack: justify;
@@ -1395,14 +1395,14 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   border-radius: 0 8px 8px 0;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(3) .dt-info {
+#developers-table_wrapper div.dt-layout-row:nth-child(3) .dt-info {
   font-weight: 400;
   font-size: 14px;
   line-height: normal;
   color: #111;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(3) nav {
+#developers-table_wrapper div.dt-layout-row:nth-child(3) nav {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1412,7 +1412,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   grid-gap: 6px;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button {
+#developers-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button {
   width: 24px;
   height: 24px;
   font-weight: 700;
@@ -1426,16 +1426,16 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   background-image: none !important;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button:hover {
+#developers-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button:hover {
   background: #fff !important;
   color: #3585f5 !important;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.disabled {
+#developers-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.disabled {
   border: none !important;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.previous {
+#developers-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.previous {
   font-weight: 400;
   color: #111 !important;
   width: auto;
@@ -1443,12 +1443,12 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   border-radius: 6px;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.previous:hover {
+#developers-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.previous:hover {
   background: #3585f5 !important;
   color: #fff !important;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.next {
+#developers-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.next {
   font-weight: 400;
   color: #111 !important;
   width: auto;
@@ -1456,18 +1456,18 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   border-radius: 6px;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.next:hover {
+#developers-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.next:hover {
   background: #3585f5 !important;
   color: #fff !important;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.current {
+#developers-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.current {
   cursor: auto;
   -webkit-box-shadow: inset 0 0 0 2px #fff;
           box-shadow: inset 0 0 0 2px #fff;
 }
 
-#example_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.current:hover {
+#developers-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.current:hover {
   background: #3585f5 !important;
   color: #fff !important;
 }
@@ -2330,11 +2330,11 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
     padding-left: 10px;
   }
 
-  #example thead tr th .thead-wrapper {
+  #developers-table thead tr th .thead-wrapper {
     padding: 7px 6px;
   }
 
-  #example tbody tr td .tbody-wrapper {
+  #developers-table tbody tr td .tbody-wrapper {
     padding: 7px 6px;
   }
 }

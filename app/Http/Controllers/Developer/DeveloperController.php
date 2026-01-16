@@ -282,6 +282,97 @@ class DeveloperController extends Controller
     }
 
     /**
+     * AJAX данные для DataTables
+     */
+    public function ajaxData(Request $request): JsonResponse
+    {
+        $query = Developer::with(['contact.phones', 'complexes', 'locations']);
+
+        // Фильтр по ID
+        if ($request->filled('search_id')) {
+            $query->where('id', $request->input('search_id'));
+        }
+
+        // Фильтр по контакту (имя, телефон)
+        if ($request->filled('contact_search')) {
+            $search = $request->input('contact_search');
+            $query->whereHas('contact', function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('middle_name', 'like', "%{$search}%")
+                    ->orWhereHas('phones', function ($pq) use ($search) {
+                        $pq->where('phone', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Сортировка
+        $sortField = $request->input('sort_field', 'created_at');
+        $sortDir = $request->input('sort_dir', 'desc');
+
+        $allowedSortFields = ['created_at', 'name', 'year_founded'];
+        if (in_array($sortField, $allowedSortFields)) {
+            $query->orderBy($sortField, $sortDir);
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        // Подсчет общего количества
+        $totalRecords = Developer::count();
+        $filteredRecords = $query->count();
+
+        // Пагинация DataTables
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 10);
+
+        $developers = $query->skip($start)->take($length)->get();
+
+        // Форматирование данных для DataTables
+        $data = $developers->map(function ($developer) {
+            // Локация из первой записи locations
+            $location = $developer->locations->first();
+            $locationText = $location ? $location->full_location_name : '-';
+
+            // Контакт
+            $contact = $developer->contact;
+            $contactData = [
+                'has_contact' => (bool) $contact,
+                'full_name' => $contact ? $contact->full_name : null,
+                'contact_type_name' => $contact ? $contact->contact_type_name : null,
+                'phone' => $contact ? $contact->primary_phone : null,
+            ];
+
+            return [
+                'id' => $developer->id,
+                'checkbox' => $developer->id,
+                'developer' => [
+                    'id' => $developer->id,
+                    'name' => $developer->name,
+                    'logo_url' => $developer->logo_url,
+                    'location' => $locationText,
+                ],
+                'year_founded' => $developer->year_founded ?? '-',
+                'complexes_count' => $developer->complexes->count(),
+                'contact' => $contactData,
+                'actions' => $developer->id,
+                // Дополнительные данные для child row
+                'description' => $developer->description,
+                'website' => $developer->website,
+                'agent_notes' => $developer->agent_notes,
+                'created_at_formatted' => $developer->created_at?->format('d.m.Y H:i'),
+                'updated_at_formatted' => $developer->updated_at?->format('d.m.Y H:i'),
+            ];
+        });
+
+        return response()->json([
+            'draw' => (int) $request->input('draw', 1),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data,
+        ]);
+    }
+
+    /**
      * AJAX поиск девелоперов (для Select2)
      */
     public function ajaxSearch(Request $request): JsonResponse

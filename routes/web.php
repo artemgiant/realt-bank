@@ -104,6 +104,8 @@ Route::middleware('auth')->group(function () {
     // ========== Developers ==========
     Route::get('/developers/ajax-search', [DeveloperController::class, 'ajaxSearch'])
         ->name('developers.ajax-search');
+    Route::get('/developers/ajax-data', [DeveloperController::class, 'ajaxData'])
+        ->name('developers.ajax-data');
     Route::resource('developers', DeveloperController::class);
 
     // Импорт комплексов
