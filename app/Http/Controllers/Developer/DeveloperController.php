@@ -306,26 +306,72 @@ class DeveloperController extends Controller
             });
         }
 
-        // Фильтр по локации (страна/регион)
-        if ($request->filled('location_type') && $request->filled('location_id')) {
-            $locationType = $request->input('location_type');
-            $locationId = $request->input('location_id');
-
-            $query->whereHas('locations', function ($q) use ($locationType, $locationId) {
-                $q->where('location_type', $locationType)
-                    ->where('location_id', $locationId);
-            });
+        // Проверяем, выбраны ли конкретные города
+        $selectedCityIds = [];
+        if ($request->filled('city_ids')) {
+            $decoded = json_decode($request->input('city_ids'), true);
+            if (is_array($decoded) && count($decoded) > 0) {
+                $selectedCityIds = $decoded;
+            }
         }
 
-        // Фильтр по городам (мульти-выбор)
-        if ($request->filled('city_ids')) {
-            $cityIds = json_decode($request->input('city_ids'), true);
-            if (is_array($cityIds) && count($cityIds) > 0) {
-                $query->whereHas('locations', function ($q) use ($cityIds) {
-                    $q->where('location_type', 'city')
-                        ->whereIn('location_id', $cityIds);
-                });
+        // Если выбраны конкретные города - фильтруем только по ним
+        if (!empty($selectedCityIds)) {
+            $query->whereHas('locations', function ($q) use ($selectedCityIds) {
+                $q->where('location_type', 'city')
+                    ->whereIn('location_id', $selectedCityIds);
+            });
+        }
+        // Иначе фильтруем по локации (страна/регион)
+        elseif ($request->filled('location_type') && $request->filled('location_id')) {
+            $locationType = $request->input('location_type');
+            // Маппинг 'region' -> 'state' (JS отправляет 'region', в БД хранится 'state')
+            if ($locationType === 'region') {
+                $locationType = 'state';
             }
+            $locationId = (int) $request->input('location_id');
+
+            $query->whereHas('locations', function ($q) use ($locationType, $locationId) {
+                if ($locationType === 'country') {
+                    // Для страны: ищем девелоперов с этой страной, или с областями/городами в этой стране
+                    $stateIds = \App\Models\Location\State::where('country_id', $locationId)->pluck('id')->toArray();
+                    $cityIds = \App\Models\Location\City::whereIn('state_id', $stateIds)->pluck('id')->toArray();
+
+                    $q->where(function ($subQ) use ($locationId, $stateIds, $cityIds) {
+                        $subQ->where(function ($w) use ($locationId) {
+                            $w->where('location_type', 'country')->where('location_id', $locationId);
+                        });
+                        if (!empty($stateIds)) {
+                            $subQ->orWhere(function ($w) use ($stateIds) {
+                                $w->where('location_type', 'state')->whereIn('location_id', $stateIds);
+                            });
+                        }
+                        if (!empty($cityIds)) {
+                            $subQ->orWhere(function ($w) use ($cityIds) {
+                                $w->where('location_type', 'city')->whereIn('location_id', $cityIds);
+                            });
+                        }
+                    });
+                } elseif ($locationType === 'state') {
+                    // Для области: ищем девелоперов с этой областью или с городами в этой области
+                    $cityIds = \App\Models\Location\City::where('state_id', $locationId)->pluck('id')->toArray();
+
+                    $q->where(function ($subQ) use ($locationId, $cityIds) {
+                        $subQ->where(function ($w) use ($locationId) {
+                            $w->where('location_type', 'state')->where('location_id', $locationId);
+                        });
+                        if (!empty($cityIds)) {
+                            $subQ->orWhere(function ($w) use ($cityIds) {
+                                $w->where('location_type', 'city')->whereIn('location_id', $cityIds);
+                            });
+                        }
+                    });
+                } else {
+                    // Для города: точное совпадение
+                    $q->where('location_type', $locationType)
+                        ->where('location_id', $locationId);
+                }
+            });
         }
 
         // Сортировка

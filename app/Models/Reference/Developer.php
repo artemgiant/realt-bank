@@ -3,6 +3,8 @@
 namespace App\Models\Reference;
 
 use App\Models\Contact\Contact;
+use Database\Factories\Reference\DeveloperFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,9 +12,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Developer extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'developers';
+
+    protected static function newFactory(): DeveloperFactory
+    {
+        return DeveloperFactory::new();
+    }
 
     protected $fillable = [
         'name',
