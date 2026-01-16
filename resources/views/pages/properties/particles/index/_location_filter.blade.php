@@ -39,7 +39,7 @@
             <div class="lf-content" id="lfContent">
                 <div class="lf-section lf-hidden" id="lf-countries"><div class="lf-section-title">Страны</div><ul></ul></div>
                 <div class="lf-section lf-hidden" id="lf-regions"><div class="lf-section-title">Области</div><ul></ul></div>
-                <div class="lf-section lf-hidden" id="lf-cities"><div class="lf-section-title">Города</div><ul></ul></div>
+                <div class="lf-section lf-hidden" id="lf-cities"><div class="lf-section-title">Герионы</div><ul></ul></div>
                 <div class="lf-section lf-hidden" id="lf-districts"><div class="lf-section-title">Районы</div><ul></ul></div>
                 <div class="lf-section lf-hidden" id="lf-streets"><div class="lf-section-title">Улицы</div><ul></ul></div>
                 <div class="lf-section lf-hidden" id="lf-landmarks"><div class="lf-section-title">Зоны/Микрорайоны</div><ul></ul></div>

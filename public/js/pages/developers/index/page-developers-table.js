@@ -74,6 +74,11 @@ $(document).ready(function () {
         table.ajax.reload();
     }
 
+    // Глобальная функция для обновления таблицы из фильтра локации
+    window.reloadDevelopersTable = function () {
+        reloadTable();
+    };
+
     // ========== Обработчики событий ==========
 
     // Выбрать все / снять все

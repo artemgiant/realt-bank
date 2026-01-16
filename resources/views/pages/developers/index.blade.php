@@ -4,7 +4,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/pages/developers/page-developers.css') }}">
-
+    <link rel="stylesheet" href="{{ asset('css/pages/properties/index/location-filter.css') }}">
 @endpush
 
 
@@ -56,4 +56,5 @@
     <script src="{{ asset('js/pages/developers/index/table-config.js') }}"></script>
     <script src="{{ asset('js/pages/developers/index/table-filters.js') }}"></script>
     <script src="{{ asset('js/pages/developers/index/page-developers-table.js') }}"></script>
+    <script src="{{ asset('js/pages/developers/index/location-filter.js') }}"></script>
 @endpush

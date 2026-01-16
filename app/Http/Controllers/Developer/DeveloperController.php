@@ -306,6 +306,28 @@ class DeveloperController extends Controller
             });
         }
 
+        // Фильтр по локации (страна/регион)
+        if ($request->filled('location_type') && $request->filled('location_id')) {
+            $locationType = $request->input('location_type');
+            $locationId = $request->input('location_id');
+
+            $query->whereHas('locations', function ($q) use ($locationType, $locationId) {
+                $q->where('location_type', $locationType)
+                    ->where('location_id', $locationId);
+            });
+        }
+
+        // Фильтр по городам (мульти-выбор)
+        if ($request->filled('city_ids')) {
+            $cityIds = json_decode($request->input('city_ids'), true);
+            if (is_array($cityIds) && count($cityIds) > 0) {
+                $query->whereHas('locations', function ($q) use ($cityIds) {
+                    $q->where('location_type', 'city')
+                        ->whereIn('location_id', $cityIds);
+                });
+            }
+        }
+
         // Сортировка
         $sortField = $request->input('sort_field', 'created_at');
         $sortDir = $request->input('sort_dir', 'desc');
