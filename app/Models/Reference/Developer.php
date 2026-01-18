@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Developer extends Model
@@ -44,9 +45,32 @@ class Developer extends Model
 
     // ========== Relationships ==========
 
+    /**
+     * Контакты девелопера (полиморфная many-to-many)
+     */
+    public function contacts(): MorphToMany
+    {
+        return $this->morphToMany(Contact::class, 'contactable')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * Основной контакт (для обратной совместимости)
+     * @deprecated Use contacts() relationship instead
+     */
     public function contact(): BelongsTo
     {
         return $this->belongsTo(Contact::class);
+    }
+
+    /**
+     * Получить основной контакт через полиморфную связь
+     */
+    public function getPrimaryContactAttribute(): ?Contact
+    {
+        return $this->contacts()->wherePivot('role', 'primary')->first()
+            ?? $this->contacts()->first();
     }
 
     public function complexes(): HasMany

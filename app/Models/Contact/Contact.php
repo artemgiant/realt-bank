@@ -3,10 +3,11 @@
 namespace App\Models\Contact;
 
 use App\Models\Property\Property;
+use App\Models\Reference\Developer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Contact extends Model
 {
@@ -55,11 +56,33 @@ class Contact extends Model
     }
 
     /**
-     * Объекты недвижимости (многие-ко-многим)
+     * Объекты недвижимости (полиморфная many-to-many)
      */
-    public function properties(): BelongsToMany
+    public function properties(): MorphToMany
     {
-        return $this->belongsToMany(Property::class, 'property_contact')
+        return $this->morphedByMany(Property::class, 'contactable')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * Девелоперы (полиморфная many-to-many)
+     */
+    public function developers(): MorphToMany
+    {
+        return $this->morphedByMany(Developer::class, 'contactable')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * Все связанные сущности (универсальный метод)
+     * Использовать для получения всех contactables определённой модели
+     */
+    public function contactables(string $modelClass): MorphToMany
+    {
+        return $this->morphedByMany($modelClass, 'contactable')
+            ->withPivot('role')
             ->withTimestamps();
     }
 

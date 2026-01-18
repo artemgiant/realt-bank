@@ -21,7 +21,7 @@ class DeveloperController extends Controller
      */
     public function index(Request $request): View
     {
-        $developers = Developer::with(['contact.phones'])
+        $developers = Developer::with(['contacts.phones'])
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
@@ -106,7 +106,6 @@ class DeveloperController extends Controller
             $developer = Developer::create([
                 'name' => $mainName,
                 'slug' => Str::slug($mainName),
-                'contact_id' => $validated['contact_id'] ?? null,
                 'website' => $validated['materials_url'] ?? null,
                 'description' => $validated['description_ru'] ?? $validated['description_ua'] ?? $validated['description_en'] ?? null,
                 'year_founded' => $validated['year_founded'] ?? null,
@@ -115,6 +114,11 @@ class DeveloperController extends Controller
                 'description_translations' => !empty($descriptionTranslations) ? $descriptionTranslations : null,
                 'is_active' => true,
             ]);
+
+            // Привязываем контакт через полиморфную связь
+            if (!empty($validated['contact_id'])) {
+                $developer->contacts()->attach($validated['contact_id'], ['role' => 'primary']);
+            }
 
             // Сохраняем логотип
             if ($request->hasFile('logo')) {
@@ -145,7 +149,7 @@ class DeveloperController extends Controller
      */
     public function show(Developer $developer): View
     {
-        $developer->load(['contact.phones', 'complexes']);
+        $developer->load(['contacts.phones', 'complexes']);
 
         return view('pages.developers.show', [
             'developer' => $developer,
@@ -157,7 +161,7 @@ class DeveloperController extends Controller
      */
     public function edit(Developer $developer): View
     {
-        $developer->load(['contact.phones']);
+        $developer->load(['contacts.phones']);
 
         return view('pages.developers.edit', [
             'developer' => $developer,
@@ -220,7 +224,6 @@ class DeveloperController extends Controller
             $developer->update([
                 'name' => $mainName,
                 'slug' => Str::slug($mainName),
-                'contact_id' => $validated['contact_id'] ?? null,
                 'website' => $validated['materials_url'] ?? null,
                 'description' => $validated['description_ru'] ?? $validated['description_ua'] ?? $validated['description_en'] ?? null,
                 'year_founded' => $validated['year_founded'] ?? null,
@@ -228,6 +231,16 @@ class DeveloperController extends Controller
                 'name_translations' => !empty($nameTranslations) ? $nameTranslations : null,
                 'description_translations' => !empty($descriptionTranslations) ? $descriptionTranslations : null,
             ]);
+
+            // Обновляем контакты через полиморфную связь
+            if (isset($validated['contact_id'])) {
+                // Синхронизируем контакты (удаляем старые, добавляем новый)
+                if (!empty($validated['contact_id'])) {
+                    $developer->contacts()->sync([$validated['contact_id'] => ['role' => 'primary']]);
+                } else {
+                    $developer->contacts()->detach();
+                }
+            }
 
             // Обновляем логотип
             if ($request->hasFile('logo')) {
@@ -286,7 +299,7 @@ class DeveloperController extends Controller
      */
     public function ajaxData(Request $request): JsonResponse
     {
-        $query = Developer::with(['contact.phones', 'complexes', 'locations']);
+        $query = Developer::with(['contacts.phones', 'complexes', 'locations']);
 
         // Фильтр по ID
         if ($request->filled('search_id')) {
@@ -296,7 +309,7 @@ class DeveloperController extends Controller
         // Фильтр по контакту (имя, телефон)
         if ($request->filled('contact_search')) {
             $search = $request->input('contact_search');
-            $query->whereHas('contact', function ($q) use ($search) {
+            $query->whereHas('contacts', function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
                     ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('middle_name', 'like', "%{$search}%")
@@ -401,13 +414,14 @@ class DeveloperController extends Controller
             $location = $developer->locations->first();
             $locationText = $location ? $location->full_location_name : '-';
 
-            // Контакт
-            $contact = $developer->contact;
+            // Контакт (берём основной через accessor или первый из списка)
+            $contact = $developer->primary_contact;
             $contactData = [
                 'has_contact' => (bool) $contact,
-                'full_name' => $contact ? $contact->full_name : null,
-                'contact_type_name' => $contact ? $contact->contact_type_name : null,
-                'phone' => $contact ? $contact->primary_phone : null,
+                'full_name' => $contact?->full_name,
+                'contact_type_name' => $contact?->contact_type_name,
+                'phone' => $contact?->primary_phone,
+                'contacts_count' => $developer->contacts->count(),
             ];
 
             return [
