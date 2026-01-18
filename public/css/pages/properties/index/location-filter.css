@@ -1,7 +1,7 @@
 /* Location Filter - Isolated Styles with lf- prefix */
 .lf-root {
     --lf-primary: #04254e;
-    --lf-primary-light: #04254e;
+    --lf-primary-light: #3585f5;
     --lf-text: #1E293B;
     --lf-text-muted: #64748B;
     --lf-text-light: #94A3B8;
@@ -86,7 +86,9 @@
     align-items: center;
     gap: 6px;
     padding: 3px 8px 3px 10px;
-    background: var(--lf-primary);
+    /*background: var(--lf-primary);*/
+    background: linear-gradient(135deg, var(--lf-primary), var(--lf-primary-light));
+    /*background: linear-gradient(135deg, var(--lf-primary), #3585f5);*/
     color: var(--lf-white);
     border-radius: var(--lf-radius-sm);
     font-size: 14px;
@@ -248,7 +250,8 @@
 }
 
 .lf-modes button.lf-active {
-    background: linear-gradient(135deg, var(--lf-primary), var(--lf-primary-light));
+    background: linear-gradient(135deg, var(--lf-primary), #3585f5);
+    /*background: linear-gradient(135deg, var(--lf-primary), var(--lf-primary-light));*/
     border-color: var(--lf-primary);
     color: var(--lf-white);
     box-shadow: 0 2px 8px rgba(4, 37, 78, 0.3);

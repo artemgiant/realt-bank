@@ -17,7 +17,6 @@
                 </picture>
             </a>
             <h2 class="create-header-title">
-                Девелопер
                 <span id="developer-id">Новый девелопер</span>
             </h2>
         </div>

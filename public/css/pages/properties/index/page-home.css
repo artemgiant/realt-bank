@@ -45,6 +45,8 @@ body {
   --bs-body-font-size: 1rem;
   --bs-body-font-family: 'PTSans', sans-serif;
   --bs-font-sans-serif: 'PTSans', sans-serif;
+  --lf-primary: #04254e;
+  --lf-primary-light: #3585f5;
 }
 
 input::-webkit-autofill,
@@ -541,7 +543,8 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   max-width: 70px;
   width: 100%;
   min-height: 100vh;
-  background-color: #04254E;
+  /*background-color: #04254E;*/
+  background: linear-gradient(135deg, var(--lf-primary), var(--lf-primary-light));
 }
 
 .sidebar-logo {
