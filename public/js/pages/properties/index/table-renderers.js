@@ -65,11 +65,14 @@ window.PropertyRenderers = {
             '</div>';
     },
 
-    // Состояние + тип здания
+    // Состояние + тип здания + тип стен
     condition: function (data, type, row) {
         var buildingType = row.building_type ? '<span>' + row.building_type + '</span>' : '';
+        var wallType = row.wall_type ? '<span>' + row.wall_type + '</span>' : '';
+        var content = buildingType + (buildingType && wallType ? '<br>' : '') + wallType;
+
         return '<div class="tbody-wrapper condition">' +
-            (data !== '-' ? '<p>' + data + '</p>' + buildingType : '<span class="text-muted">-</span>') +
+            (data !== '-' ? '<p>' + data + '</p>' + content : '<span class="text-muted">-</span>') +
             '</div>';
     },
 
