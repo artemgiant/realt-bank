@@ -28,7 +28,7 @@
 
             <div class="lf-content" id="lfContent">
                 <div class="lf-section lf-hidden" id="lf-countries"><div class="lf-section-title">Страны</div><ul></ul></div>
-                <div class="lf-section lf-hidden" id="lf-regions"><div class="lf-section-title">Герионы</div><ul></ul></div>
+                <div class="lf-section lf-hidden" id="lf-regions"><div class="lf-section-title">Регионы</div><ul></ul></div>
                 <div class="lf-section lf-hidden" id="lf-cities"><div class="lf-section-title">Города</div><ul></ul></div>
                 <div class="lf-empty" id="lfEmpty">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
