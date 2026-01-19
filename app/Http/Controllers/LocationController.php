@@ -353,22 +353,30 @@ class LocationController extends Controller
             $data['landmarks'] = $landmarks;
         }
 
-        if ($cityId && ($detailType === 'complex' || $detailType === null)) {
-            $complexes = Complex::whereHas('city', function ($q) use ($cityId) {
-                $q->where('id', $cityId);
-            })
-                ->active()
+        if (($cityId || ($locationType === 'region' && $locationId)) && ($detailType === 'complex' || $detailType === null)) {
+            $complexesQuery = Complex::active()
                 ->when($search, function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%");
                 })
-                ->with('city')
-                ->limit(100)
+                ->with('city');
+
+            if ($cityId) {
+                $complexesQuery->whereHas('city', function ($q) use ($cityId) {
+                    $q->where('id', $cityId);
+                });
+            } else {
+                $complexesQuery->whereHas('city', function ($q) use ($locationId) {
+                    $q->where('state_id', $locationId);
+                });
+            }
+
+            $complexes = $complexesQuery->limit(100)
                 ->get()
                 ->map(function ($complex) use ($cityId) {
                     return [
                         'id' => $complex->id,
                         'name' => $complex->name,
-                        'cityId' => $cityId,
+                        'cityId' => $cityId ?? $complex->city_id,
                         'city' => $complex->city->name ?? '',
                         'count' => Property::where('complex_id', $complex->id)->count(),
                     ];
@@ -379,15 +387,23 @@ class LocationController extends Controller
 
 
 
-        if ($cityId && ($detailType === 'developer' || $detailType === null)) {
-            $developers = Developer::whereHas('complexes.city', function ($q) use ($cityId) {
-                $q->where('id', $cityId);
-            })
-                ->active()
+        if (($cityId || ($locationType === 'region' && $locationId)) && ($detailType === 'developer' || $detailType === null)) {
+            $developersQuery = Developer::active()
                 ->when($search, function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%");
-                })
-                ->limit(100)
+                });
+
+            if ($cityId) {
+                $developersQuery->whereHas('complexes.city', function ($q) use ($cityId) {
+                    $q->where('id', $cityId);
+                });
+            } else {
+                $developersQuery->whereHas('complexes.city', function ($q) use ($locationId) {
+                    $q->where('state_id', $locationId);
+                });
+            }
+
+            $developers = $developersQuery->limit(100)
                 ->get()
                 ->map(function ($developer) use ($cityId) {
                     return [

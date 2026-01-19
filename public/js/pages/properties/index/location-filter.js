@@ -204,17 +204,24 @@
     };
 
     const showDetail = async () => {
-        if (!state.path.city) {
+        if (!state.path.city && !state.path.region) {
             showEmpty('Сначала выберите город');
             return;
         }
 
-        const cityId = state.path.city.id;
         // Конвертируем категорию (множественное число) в тип (единственное число)
         const detailType = state.category === 'all' ? null : TYPES[state.category];
+        const params = { detail_type: detailType };
 
-        // Загружаем детали для города
-        const data = await loadData({ city_id: cityId, detail_type: detailType });
+        if (state.path.city) {
+            params.city_id = state.path.city.id;
+        } else {
+            params.location_type = 'region';
+            params.location_id = state.path.region.id;
+        }
+
+        // Загружаем детали
+        const data = await loadData(params);
 
         if (!data) return;
 
@@ -259,16 +266,22 @@
 
             if (!has) showEmpty('Ничего не найдено');
 
-        } else if (state.path.city) {
+        } else if (state.path.city || state.path.region) {
             // Поиск в режиме Detail
-            const cityId = state.path.city.id;
             const detailType = state.category === 'all' ? null : TYPES[state.category];
-
-            const data = await loadData({
-                city_id: cityId,
+            const params = {
                 detail_type: detailType,
                 search: query
-            });
+            };
+
+            if (state.path.city) {
+                params.city_id = state.path.city.id;
+            } else {
+                params.location_type = 'region';
+                params.location_id = state.path.region.id;
+            }
+
+            const data = await loadData(params);
 
             if (!data) return;
 
