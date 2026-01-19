@@ -21,7 +21,7 @@
 
         <div class="lf-dropdown" id="lfDropdown">
             <div class="lf-modes" id="lfModes">
-                <button class="lf-active" data-mode="location">Страна, область, город</button>
+                <button class="lf-active" data-mode="location">Страна, регион, город</button>
             </div>
 
             <div class="lf-breadcrumbs" id="lfBreadcrumbs"></div>
