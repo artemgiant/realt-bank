@@ -69,6 +69,11 @@ class Developer extends Model
      */
     public function getPrimaryContactAttribute(): ?Contact
     {
+        if ($this->relationLoaded('contacts')) {
+            return $this->contacts->firstWhere('pivot.role', 'primary')
+                ?? $this->contacts->first();
+        }
+
         return $this->contacts()->wherePivot('role', 'primary')->first()
             ?? $this->contacts()->first();
     }

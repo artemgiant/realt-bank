@@ -65,8 +65,9 @@ class DeveloperController extends Controller
             'materials_url' => 'nullable|url|max:255',
             'agent_notes' => 'nullable|string|max:5000',
 
-            // Контакт
-            'contact_id' => 'nullable|exists:contacts,id',
+            // Контакты
+            'contact_ids' => 'nullable|array',
+            'contact_ids.*' => 'exists:contacts,id',
 
             // Логотип
             'logo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
@@ -115,9 +116,15 @@ class DeveloperController extends Controller
                 'is_active' => true,
             ]);
 
-            // Привязываем контакт через полиморфную связь
-            if (!empty($validated['contact_id'])) {
-                $developer->contacts()->attach($validated['contact_id'], ['role' => 'primary']);
+            // Привязываем контакты через полиморфную связь
+            if (!empty($validated['contact_ids'])) {
+                // Добавляем все контакты, помечая первый как основной (или все без роли, если не важно)
+                // Но логика Developer предполагает primary_contact, поэтому пометим первый
+                $contactData = [];
+                foreach ($validated['contact_ids'] as $index => $id) {
+                    $contactData[$id] = ['role' => ($index === 0 ? 'primary' : 'secondary')];
+                }
+                $developer->contacts()->attach($contactData);
             }
 
             // Сохраняем логотип
@@ -188,7 +195,8 @@ class DeveloperController extends Controller
             'year_founded' => 'nullable|integer|min:1900|max:' . date('Y'),
             'materials_url' => 'nullable|url|max:255',
             'agent_notes' => 'nullable|string|max:5000',
-            'contact_id' => 'nullable|exists:contacts,id',
+            'contact_ids' => 'nullable|array',
+            'contact_ids.*' => 'exists:contacts,id',
             'logo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
         ], [
             'name_ua.max' => 'Название (UA) слишком длинное',
@@ -233,10 +241,14 @@ class DeveloperController extends Controller
             ]);
 
             // Обновляем контакты через полиморфную связь
-            if (isset($validated['contact_id'])) {
-                // Синхронизируем контакты (удаляем старые, добавляем новый)
-                if (!empty($validated['contact_id'])) {
-                    $developer->contacts()->sync([$validated['contact_id'] => ['role' => 'primary']]);
+            if (isset($validated['contact_ids'])) {
+                // Синхронизируем контакты
+                if (!empty($validated['contact_ids'])) {
+                    $contactData = [];
+                    foreach ($validated['contact_ids'] as $index => $id) {
+                        $contactData[$id] = ['role' => ($index === 0 ? 'primary' : 'secondary')];
+                    }
+                    $developer->contacts()->sync($contactData);
                 } else {
                     $developer->contacts()->detach();
                 }

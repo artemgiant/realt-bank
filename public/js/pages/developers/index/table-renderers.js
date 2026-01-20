@@ -66,9 +66,11 @@ window.DeveloperRenderers = {
         }
 
         return '<div class="tbody-wrapper contact">' +
-            '<p class="link-name">' + (data.full_name || '-') + '</p>' +
+            '<div>' +
+            '<p class="link-name" data-hover-contact="">' + (data.full_name || '-') + '</p>' +
             '<p data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="' + (data.contact_type_name || '') + '">' + (data.contact_type_name || '-') + '</p>' +
             phoneHtml +
+            '</div>' +
             '</div>';
     },
 
