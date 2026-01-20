@@ -53,7 +53,8 @@ class ContactFactory extends Factory
             'contact_type' => $this->faker->randomElement([
                 Contact::TYPE_OWNER,
                 Contact::TYPE_AGENT,
-                Contact::TYPE_DEVELOPER
+                Contact::TYPE_DEVELOPER,
+                Contact::TYPE_DEVELOPER_REPRESENTATIVE
             ]),
             'tags' => $this->faker->boolean(30) ? $this->faker->randomElement(['VIP', 'Срочно', 'Постоянный клиент', 'Новый']) : null,
             'telegram' => $this->faker->boolean(40) ? 'https://t.me/' . $this->faker->userName() : null,
@@ -103,6 +104,16 @@ class ContactFactory extends Factory
     {
         return $this->state(fn(array $attributes) => [
             'contact_type' => Contact::TYPE_DEVELOPER,
+        ]);
+    }
+
+    /**
+     * Контакт типа "Представитель девелопера"
+     */
+    public function developerRepresentative(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'contact_type' => Contact::TYPE_DEVELOPER_REPRESENTATIVE,
         ]);
     }
 

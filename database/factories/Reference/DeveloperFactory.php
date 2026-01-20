@@ -22,11 +22,11 @@ class DeveloperFactory extends Factory
     protected const ODESSA_STATE_ID = 14;
 
     /**
-     * Удалить всех девелоперов где source != 'import' перед созданием новых
+     * Удалить всех девелоперов где source = 'manual' перед созданием новых
      */
-    public static function cleanNonImported(): int
+    public static function cleanManual(): int
     {
-        return Developer::where('source', '!=', 'import')->forceDelete();
+        return Developer::where('source', 'manual')->forceDelete();
     }
 
     /**
@@ -57,6 +57,15 @@ class DeveloperFactory extends Factory
     {
         return $this->afterCreating(function (Developer $developer) {
             $this->attachRandomOdessaCity($developer);
+
+            // Создаем контакт представителя девелопера
+            $contact = \Database\Factories\Contact\ContactFactory::new()
+                ->developerRepresentative()
+                ->withPrimaryPhone()
+                ->create();
+
+            // Привязываем контакт к девелоперу
+            $developer->contacts()->attach($contact->id, ['role' => 'primary']);
         });
     }
 
@@ -84,11 +93,11 @@ class DeveloperFactory extends Factory
     }
 
     /**
-     * Удалить не-импортированных девелоперов и создать новых
+     * Удалить девелоперов созданных вручную и создать новых
      */
     public function cleanAndCreate(int $count = 1): \Illuminate\Database\Eloquent\Collection
     {
-        self::cleanNonImported();
+        self::cleanManual();
         return $this->count($count)->create();
     }
 
@@ -97,7 +106,7 @@ class DeveloperFactory extends Factory
      */
     public function imported(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'source' => 'import',
         ]);
     }
@@ -107,7 +116,7 @@ class DeveloperFactory extends Factory
      */
     public function inactive(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'is_active' => false,
         ]);
     }

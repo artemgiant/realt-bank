@@ -38,11 +38,13 @@ class Contact extends Model
     const TYPE_OWNER = 'owner';
     const TYPE_AGENT = 'agent';
     const TYPE_DEVELOPER = 'developer';
+    const TYPE_DEVELOPER_REPRESENTATIVE = 'developer_representative';
 
     const TYPES = [
         self::TYPE_OWNER => 'Владелец',
         self::TYPE_AGENT => 'Агент',
         self::TYPE_DEVELOPER => 'Девелопер',
+        self::TYPE_DEVELOPER_REPRESENTATIVE => 'Представитель девелопера',
     ];
 
     // ========== Relationships ==========
@@ -249,6 +251,11 @@ class Contact extends Model
     public function scopeDevelopers($query)
     {
         return $query->where('contact_type', self::TYPE_DEVELOPER);
+    }
+
+    public function scopeDeveloperRepresentatives($query)
+    {
+        return $query->where('contact_type', self::TYPE_DEVELOPER_REPRESENTATIVE);
     }
 
     public function scopeSearch($query, string $search)
