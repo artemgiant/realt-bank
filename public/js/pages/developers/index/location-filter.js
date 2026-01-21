@@ -404,7 +404,7 @@
                 // Ищем Украину
                 const ukraine = data.countries.find(c => c.name.toLowerCase().includes('украина') || c.name.toLowerCase().includes('ukraine'));
                 if (ukraine) {
-                    // Загружаем области Украины
+                    // Загружаем Регионы Украины
                     const regionsData = await loadData({ location_type: 'country', location_id: ukraine.id });
                     if (regionsData && regionsData.regions) {
                         // Ищем Одесскую область

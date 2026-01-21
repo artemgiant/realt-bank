@@ -17,7 +17,7 @@ class DeveloperFactory extends Factory
     protected $model = Developer::class;
 
     /**
-     * ID Одесской области
+     * ID Одесской Регионы
      */
     protected const ODESSA_STATE_ID = 14;
 
@@ -70,7 +70,7 @@ class DeveloperFactory extends Factory
     }
 
     /**
-     * Привязать случайный город из Одесской области к девелоперу
+     * Привязать случайный город из Одесской Регионы к девелоперу
      */
     protected function attachRandomOdessaCity(Developer $developer): void
     {

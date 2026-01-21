@@ -46,7 +46,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/search', [App\Http\Controllers\LocationController::class, 'search'])->name('location.search');
         Route::get('/street/{id}', [App\Http\Controllers\LocationController::class, 'show'])->name('location.show');
 
-        // Области (новые routes)
+        // Регионы (новые routes)
         Route::get('/states/search', [App\Http\Controllers\LocationController::class, 'searchStates'])->name('location.states.search');
         Route::get('/states/default', [App\Http\Controllers\LocationController::class, 'getDefaultState'])->name('location.states.default');
         Route::get('/states/{id}', [App\Http\Controllers\LocationController::class, 'showState'])->name('location.states.show');

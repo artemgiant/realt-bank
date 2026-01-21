@@ -187,13 +187,13 @@
                 renderSection('countries', data.countries);
             }
         } else if (location.type === 'country') {
-            // Загружаем области для страны
+            // Загружаем Регионы для страны
             const data = await loadData({ location_type: 'country', location_id: location.id });
             if (data && data.regions) {
                 data.regions.length ? renderSection('regions', data.regions) : showEmpty('Нет областей');
             }
         } else if (location.type === 'region') {
-            // Загружаем города для области
+            // Загружаем города для Регионы
             const data = await loadData({ location_type: 'region', location_id: location.id });
             if (data && data.cities) {
                 data.cities.length ? renderSection('cities', data.cities) : showEmpty('Нет городов');
@@ -460,7 +460,7 @@
                 // Ищем Украину
                 const ukraine = data.countries.find(c => c.name.toLowerCase().includes('украина') || c.name.toLowerCase().includes('ukraine'));
                 if (ukraine) {
-                    // Загружаем области Украины
+                    // Загружаем Регионы Украины
                     const regionsData = await loadData({ location_type: 'country', location_id: ukraine.id });
                     if (regionsData && regionsData.regions) {
                         // Ищем Одесскую регион

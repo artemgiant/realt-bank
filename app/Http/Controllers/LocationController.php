@@ -242,7 +242,7 @@ class LocationController extends Controller
         }
 
         if ($locationType === 'country' && $locationId) {
-            // Получаем области для страны
+            // Получаем Регионы для страны
             $regions = State::where('country_id', $locationId)
                 ->active()
                 ->when($search, function ($q) use ($search) {
@@ -267,7 +267,7 @@ class LocationController extends Controller
         }
 
         if ($locationType === 'region' && $locationId) {
-            // Получаем города для области
+            // Получаем города для Регионы
             $cities = City::where('state_id', $locationId)
                 ->active()
                 ->when($search, function ($q) use ($search) {

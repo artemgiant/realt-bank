@@ -378,7 +378,7 @@ class DeveloperController extends Controller
                         }
                     });
                 } elseif ($locationType === 'state') {
-                    // Для области: ищем девелоперов с этой областью или с городами в этой области
+                    // Для Регионы: ищем девелоперов с этой областью или с городами в этой Регионы
                     $cityIds = \App\Models\Location\City::where('state_id', $locationId)->pluck('id')->toArray();
 
                     $q->where(function ($subQ) use ($locationId, $cityIds) {

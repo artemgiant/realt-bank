@@ -233,7 +233,7 @@ class ComplexImportService
     }
 
     /**
-     * Поиск области
+     * Поиск Регионы
      */
     protected function findState(string $name, ?int $countryId): ?State
     {
