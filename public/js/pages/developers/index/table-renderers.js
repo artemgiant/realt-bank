@@ -97,8 +97,8 @@ window.DeveloperRenderers = {
             '<img src="/img/icon/copylinked.svg" alt="">' +
             '</button>' +
             '<ul class="dropdown-menu">' +
-            '<li><a class="dropdown-item" href="#"><span>Сайт компании</span></a></li>' +
-            '<li><a class="dropdown-item" href="#"><span>Материалы девелопера</span></a></li>' +
+            '<li><a class="dropdown-item" href="' + row.company_website + '" target="_blank"><span>Сайт компании</span></a></li>'  +
+            (row.website ? '<li><a class="dropdown-item" href="' + row.website + '" target="_blank"><span>Материалы девелопера</span></a></li>' : '') +
             '</ul>' +
             '</div>' +
             '</div>' +

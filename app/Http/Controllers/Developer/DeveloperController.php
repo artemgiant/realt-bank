@@ -457,6 +457,7 @@ class DeveloperController extends Controller
                 // Дополнительные данные для child row
                 'description' => $developer->description,
                 'website' => $developer->website,
+                'company_website' => $developer->company_website,
                 'agent_notes' => $developer->agent_notes,
                 'created_at_formatted' => $developer->created_at?->format('d.m.Y H:i'),
                 'updated_at_formatted' => $developer->updated_at?->format('d.m.Y H:i'),
