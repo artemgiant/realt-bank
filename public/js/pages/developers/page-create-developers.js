@@ -2,30 +2,7 @@
  * Developers Create Page JavaScript
  */
 
-(function() {
-    function init() {
-        // Initialize Select2
-        initSelect2();
-
-        // Initialize date picker
-        initDatePicker();
-
-        // Initialize logo preview
-        initLogoPreview();
-
-        // Initialize location search
-        initLocationSearch();
-
-        // ContactModal module initializes automatically from main.js
-    }
-
-    // Если DOM уже загружен - инициализируем сразу, иначе ждём
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
-})();
+let locationIndex = 0;
 
 /**
  * Initialize Select2 dropdowns
@@ -52,7 +29,7 @@ function initSelect2() {
 function initDatePicker() {
     const dateInputs = document.querySelectorAll('.date-piker');
 
-    dateInputs.forEach(function(input) {
+    dateInputs.forEach(function (input) {
         if (typeof $.fn.daterangepicker !== 'undefined') {
             $(input).daterangepicker({
                 singleDatePicker: true,
@@ -81,7 +58,7 @@ function initLogoPreview() {
     const logoPreview = document.getElementById('logo-preview');
 
     if (logoInput && logoPreview) {
-        logoInput.addEventListener('change', function(e) {
+        logoInput.addEventListener('change', function (e) {
             const file = e.target.files[0];
 
             if (file) {
@@ -102,7 +79,7 @@ function initLogoPreview() {
 
                 // Create preview
                 const reader = new FileReader();
-                reader.onload = function(event) {
+                reader.onload = function (event) {
                     logoPreview.innerHTML = `
                         <div class="logo-preview-item">
                             <img src="${event.target.result}" alt="Logo preview" style="max-width: 100px; max-height: 100px; border-radius: 8px;">
@@ -165,17 +142,29 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Make removeLogo available globally
+// Make functions available globally
 window.removeLogo = removeLogo;
 
 /**
  * Initialize location search with Select2
  */
-let locationIndex = 0;
-
 function initLocationSearch() {
-    // Initialize first location Select2
-    initLocationSelect2('#location-search-0');
+    // Initialize all existing location Select2 fields
+    $('.location-search').each(function () {
+        initLocationSelect2(this);
+
+        // Track the highest index to avoid conflicts when adding new locations
+        const id = $(this).attr('id');
+        if (id) {
+            const match = id.match(/location-search-(\d+)/);
+            if (match) {
+                const index = parseInt(match[1]);
+                if (index > locationIndex) {
+                    locationIndex = index;
+                }
+            }
+        }
+    });
 }
 
 /**
@@ -190,10 +179,10 @@ function initLocationSelect2(selector) {
         width: '100%',
         minimumInputLength: 0,
         language: {
-            noResults: function() {
+            noResults: function () {
                 return 'Ничего не найдено';
             },
-            searching: function() {
+            searching: function () {
                 return 'Поиск...';
             }
         },
@@ -201,14 +190,14 @@ function initLocationSelect2(selector) {
             url: '/location/search-all',
             dataType: 'json',
             delay: 300,
-            data: function(params) {
+            data: function (params) {
                 return {
                     q: params.term || ''
                 };
             },
-            processResults: function(data) {
+            processResults: function (data) {
                 return {
-                    results: data.results.map(function(item) {
+                    results: data.results.map(function (item) {
                         return {
                             id: item.type + ':' + item.id,
                             text: item.full_name || item.name,
@@ -243,8 +232,8 @@ function formatLocationResult(item) {
 
     const $container = $(
         '<div class="select2-location-result">' +
-            '<span class="location-text">' + item.text + '</span>' +
-            '<span class="location-type-badge">' + (typeLabels[item.type] || '') + '</span>' +
+        '<span class="location-text">' + item.text + '</span>' +
+        '<span class="location-type-badge">' + (typeLabels[item.type] || '') + '</span>' +
         '</div>'
     );
 
@@ -324,7 +313,7 @@ function updateRemoveButtons() {
     const container = document.getElementById('locations-container');
     const items = container.querySelectorAll('.location-item');
 
-    items.forEach(function(item, index) {
+    items.forEach(function (item, index) {
         const removeBtn = item.querySelector('.btn-remove-location');
         if (removeBtn) {
             // Show remove button only if there's more than one location
@@ -336,3 +325,32 @@ function updateRemoveButtons() {
 // Make functions available globally
 window.addLocation = addLocation;
 window.removeLocation = removeLocation;
+
+// Main initialization script
+(function () {
+    function init() {
+        // Initialize Select2
+        initSelect2();
+
+        // Initialize date picker
+        initDatePicker();
+
+        // Initialize logo preview
+        initLogoPreview();
+
+        // Initialize location search
+        initLocationSearch();
+
+        // Update remove buttons visibility
+        updateRemoveButtons();
+
+        // ContactModal module initializes automatically from main.js
+    }
+
+    // Если DOM уже загружен - инициализируем сразу, иначе ждём
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
