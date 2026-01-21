@@ -62,6 +62,7 @@ class DeveloperController extends Controller
 
             // Основные поля
             'year_founded' => 'nullable|integer|min:1900|max:' . date('Y'),
+            'company_website' => 'nullable|url|max:255',
             'materials_url' => 'nullable|url|max:255',
             'agent_notes' => 'nullable|string|max:5000',
 
@@ -78,6 +79,7 @@ class DeveloperController extends Controller
             'year_founded.integer' => 'Год основания должен быть числом',
             'year_founded.min' => 'Год основания не может быть меньше 1900',
             'year_founded.max' => 'Год основания не может быть больше текущего года',
+            'company_website.url' => 'Введите корректную ссылку',
             'materials_url.url' => 'Введите корректную ссылку',
             'logo.image' => 'Файл должен быть изображением',
             'logo.mimes' => 'Разрешены только: JPEG, PNG, WebP',
@@ -108,6 +110,7 @@ class DeveloperController extends Controller
                 'name' => $mainName,
                 'slug' => Str::slug($mainName),
                 'website' => $validated['materials_url'] ?? null,
+                'company_website' => $validated['company_website'] ?? null,
                 'description' => $validated['description_ru'] ?? $validated['description_ua'] ?? $validated['description_en'] ?? null,
                 'year_founded' => $validated['year_founded'] ?? null,
                 'agent_notes' => $validated['agent_notes'] ?? null,
@@ -193,6 +196,7 @@ class DeveloperController extends Controller
             'description_ru' => 'nullable|string|max:10000',
             'description_en' => 'nullable|string|max:10000',
             'year_founded' => 'nullable|integer|min:1900|max:' . date('Y'),
+            'company_website' => 'nullable|url|max:255',
             'materials_url' => 'nullable|url|max:255',
             'agent_notes' => 'nullable|string|max:5000',
             'contact_ids' => 'nullable|array',
@@ -233,6 +237,7 @@ class DeveloperController extends Controller
                 'name' => $mainName,
                 'slug' => Str::slug($mainName),
                 'website' => $validated['materials_url'] ?? null,
+                'company_website' => $validated['company_website'] ?? null,
                 'description' => $validated['description_ru'] ?? $validated['description_ua'] ?? $validated['description_en'] ?? null,
                 'year_founded' => $validated['year_founded'] ?? null,
                 'agent_notes' => $validated['agent_notes'] ?? null,

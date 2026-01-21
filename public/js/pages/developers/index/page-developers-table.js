@@ -174,50 +174,53 @@ $(document).ready(function () {
         var website = data.website || '';
         var agentNotes = data.agent_notes || '';
 
-        // Обрезаем описание если длинное
-        var shortDesc = description;
-        var fullDesc = '';
-        var hasMore = false;
+        // Описание
+        var descriptionHtml = '<p class="description-text"><strong>О девелопере:</strong> ';
 
-        if (description.length > 200) {
-            shortDesc = description.substring(0, 200) + '...';
-            fullDesc = description;
-            hasMore = true;
+        if (description) {
+            if (description.length > 200) {
+                var visibleText = description.substring(0, 200);
+                var hiddenText = description.substring(200);
+
+                descriptionHtml += '<span class="visible-text">' + visibleText + '</span>' +
+                    '<span class="dots">...</span>' +
+                    '<span class="more-text" style="display: none;">' + hiddenText + '</span>' +
+                    '<button class="btn btn-show-text" type="button">Развернуть</button>';
+            } else {
+                descriptionHtml += description;
+            }
+        } else {
+            descriptionHtml += '-';
         }
+        descriptionHtml += '</p>';
 
-        var descriptionHtml = description ?
-            '<div class="description-text">' +
-            '<span class="short-text">' + shortDesc + '</span>' +
-            (hasMore ?
-                '<span class="full-text" style="display: none;">' + fullDesc + '</span>' +
-                '<button class="btn btn-show-text" type="button">Ещё</button>'
-                : '') +
-            '</div>' : '';
 
-        var websiteHtml = website ?
-            '<p class="description-note">' +
-            '<strong>Сайт:</strong> ' +
-            '<a href="' + website + '" target="_blank">' + website + '</a>' +
-            '</p>' : '';
 
-        var agentNotesHtml = agentNotes ?
-            '<p class="description-note">' +
-            '<strong>Примечание для агентов:</strong>' +
-            '<span>' + agentNotes + '</span>' +
-            '</p>' : '';
+        // Примечание для агентов
+        var agentNotesHtml = '';
+        if (agentNotes) {
+            agentNotesHtml = '<p class="description-note"><strong>Примечание для агентов:</strong> <span>' + agentNotes + '</span></p>';
+        }
 
         var createdAt = data.created_at_formatted || '-';
         var updatedAt = data.updated_at_formatted || '-';
         var id = data.id;
+        var complexesCount = data.complexes_count || 0;
+
+        // Кнопка обновления (SVG)
+        var refreshBtn = '<button class="btn" type="button">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#5FB343" class="bi bi-arrow-repeat" viewBox="0 0 16 16">' +
+            '<path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"></path>' +
+            '<path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"></path>' +
+            '</svg>' +
+            '</button>';
 
         return '<div class="tbody-dop-info">' +
             '<div class="info-main">' +
             '<div class="info-main-left">' +
             '<div class="info-main-left-wrapper">' +
             '<div class="description">' +
-
             descriptionHtml +
-            websiteHtml +
             agentNotesHtml +
             '</div>' +
             '</div>' +
@@ -226,7 +229,10 @@ $(document).ready(function () {
             '<div class="info-footer">' +
             '<p class="info-footer-data">ID: <span>' + id + '</span></p>' +
             '<p class="info-footer-data">Добавлено: <span>' + createdAt + '</span></p>' +
-            '<p class="info-footer-data">Обновлено: <span>' + updatedAt + '</span></p>' +
+            '<p class="info-footer-data">Обновлено: <span>' + updatedAt + '</span>' +
+            refreshBtn +
+            '</p>' +
+            '<p class="info-footer-data">Комплексы: <button class="info-footer-btn btn-others" type="button">' + complexesCount + '</button></p>' +
             '<button class="info-footer-btn ms-auto close-btn-other" type="button">Свернуть</button>' +
             '</div>' +
             '</div>';
@@ -260,15 +266,22 @@ $(document).ready(function () {
         parentTr.find('.details-control').click();
     });
 
-    // Обработчик кнопки "Ещё" для длинного описания
+    // Обработчик кнопки "Развернуть/Скрыть" для длинного описания
     $('#developers-table tbody').on('click', '.btn-show-text', function () {
         var container = $(this).closest('.description-text');
-        var shortText = container.find('.short-text');
-        var fullText = container.find('.full-text');
+        var dots = container.find('.dots');
+        var moreText = container.find('.more-text');
+        var btn = $(this);
 
-        shortText.hide();
-        fullText.show();
-        $(this).hide();
+        if (moreText.is(':visible')) {
+            moreText.hide();
+            dots.show();
+            btn.text('Развернуть');
+        } else {
+            moreText.show();
+            dots.hide();
+            btn.text('Скрыть');
+        }
     });
 
     // ========== Удаление девелопера ==========

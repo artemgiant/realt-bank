@@ -97,7 +97,8 @@ window.DeveloperRenderers = {
             '<img src="/img/icon/copylinked.svg" alt="">' +
             '</button>' +
             '<ul class="dropdown-menu">' +
-            '<li><a class="dropdown-item" href="#"><span>На сайте</span></a></li>' +
+            '<li><a class="dropdown-item" href="#"><span>Сайт компании</span></a></li>' +
+            '<li><a class="dropdown-item" href="#"><span>Материалы девелопера</span></a></li>' +
             '</ul>' +
             '</div>' +
             '</div>' +

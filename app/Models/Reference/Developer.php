@@ -26,6 +26,7 @@ class Developer extends Model
         'name',
         'contact_id',
         'website',
+        'company_website',
         'description',
         'slug',
         'is_active',

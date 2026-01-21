@@ -216,6 +216,14 @@
                                 </div>
                             </div>
                             <div class="item">
+                                <label for="company_website">Сайт компании</label>
+                                <div class="item-inputText-wrapper">
+                                    <input class="item-inputText" id="company_website" name="company_website" type="url"
+                                        value="{{ old('company_website', $developer->company_website) }}" autocomplete="off"
+                                        placeholder="https://company-site.com">
+                                </div>
+                            </div>
+                            <div class="item">
                                 <label for="materials_url">Материалы девелопера</label>
                                 <div class="item-inputText-wrapper">
                                     <input class="item-inputText" id="materials_url" name="materials_url" type="url"
