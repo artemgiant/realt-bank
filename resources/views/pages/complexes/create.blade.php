@@ -532,13 +532,13 @@
                     </div>
 
                     {{-- Особенности --}}
-{{--                    @include('pages.properties.particles.create._features_block')--}}
+                   @include('pages.properties.particles.create._features_block')
 
                 </div>
                 <div class="create-filter-tags">
                     <div class="filter-tags">
                         <div class="badge rounded-pill qwe1">
-                            Параметр из фильтра
+                           Особеность
                             <button type="button" aria-label="Close">
                                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
                                      xmlns="http://www.w3.org/2000/svg">
@@ -552,7 +552,7 @@
                             </button>
                         </div>
                         <div class="badge rounded-pill qwe2">
-                            Параметр из фильтра
+                            Особеность
                             <button type="button" aria-label="Close">
                                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
                                      xmlns="http://www.w3.org/2000/svg">
@@ -566,7 +566,7 @@
                             </button>
                         </div>
                         <div class="badge rounded-pill qwe2">
-                            Параметр из фильтра
+                            Особеность
                             <button type="button" aria-label="Close">
                                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
                                      xmlns="http://www.w3.org/2000/svg">
@@ -744,4 +744,10 @@
 
     {{--    LOcation SEARCH--}}
     <script src="{{ asset('js/pages/properties/create/location-search.js') }}" type="module"></script>
+
+
+
+    {{--ТЕГИ И ОСОБЕННОСТИ--}}
+    <script src="{{ asset('js/pages/properties/create/features-tags.js') }}"></script>
+
 @endpush
