@@ -108,6 +108,12 @@ Route::middleware('auth')->group(function () {
         ->name('developers.ajax-data');
     Route::resource('developers', DeveloperController::class);
 
+
+    Route::get('/complexes', function (){
+        return  view('pages.complexes.index');
+    });
+
+
     // Импорт комплексов
     Route::prefix('import')->name('import.')->group(function () {
         Route::get('complexes', [ComplexImportController::class, 'index'])->name('complexes.index');
