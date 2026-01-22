@@ -83,22 +83,22 @@ $(document).ready(function () {
 			}
 		]
 	});
-	
+
 	table.on('draw', function() {
 		// Отримуємо кількість записів, які відображаються
 		const recordsDisplay = table.page.info().recordsDisplay;
-		
+
 		// Змінюємо текст елемента, обгортаючи кількість записів у тег <b>
 		$('#example_info').html('Всего: <b>' + recordsDisplay + '</b>');
 	});
-	
+
 	// Обробник кліку на кнопку "деталі" всередині таблиці
 	$('#example tbody').on('click', '.details-control', function () {
 		const button = $(this);
 		const img = button.find('img');
 		const row = button.closest('tr');
 		const isExpanded = row.next().hasClass('dop-info-row');
-		
+
 		if (isExpanded) {
 			// Якщо вже розгорнуто - згортаємо
 			row.next().remove();
@@ -150,6 +150,8 @@ $(document).ready(function () {
                                         <div class="badge rounded-pill qwe2">Параметр из фильтра</div>
                                         <div class="badge rounded-pill qwe2">Параметр из фильтра</div>
                                     </div>
+                                    
+<!--                                    #TODO developer related in complex -->
                                     <div class="table-for-others">
 						                <table id="example2" style="width:98%; margin: auto;">
 						                <col width="3.478%" valign="middle">
@@ -231,78 +233,6 @@ $(document).ready(function () {
 		                   			 </div>
                                 </div>
                             </div>
-                            <div class="type-areas">
-	                            <ul class="type-areas-list">
-	                            	<li class="type-areas-item-info">
-	                            		<strong class="type-areas-title">В базе:</strong>
-	                            		<p class="type-areas-text">
-		                                    <strong>Площадь, м2:</strong>
-		                                    <strong>Цена за м2, USD:</strong>
-		                                    <strong>Цена за Объект, USD:</strong>
-										</p>
-									</li>
-	                            	<li class="type-areas-item">
-	                            		<strong class="type-areas-title">Студии</strong>
-	                            		<p class="type-areas-text">
-		                                    <span>от 23</span>
-		                                    <span>от 10 000</span>
-		                                    <span>от 100 000</span>
-										</p>
-									</li>
-									<li class="type-areas-item">
-	                                    <strong class="type-areas-title">1 комн</strong>
-	                                    <p class="type-areas-text">
-		                                    <span>от 30</span>
-		                                    <span>от 15 000</span>
-		                                    <span>от 150 000</span>
-										</p>
-									</li>
-									<li class="type-areas-item">
-	                            		<strong class="type-areas-title">2 комн</strong>
-	                            		<p class="type-areas-text">
-		                                    <span>от 56</span>
-		                                    <span>от 25 000</span>
-		                                    <span>от 250 000</span>
-										</p>
-									</li>
-									<li class="type-areas-item">
-	                            		<strong class="type-areas-title">3 комн</strong>
-	                            		<p class="type-areas-text">
-		                                    <span>от 87</span>
-		                                    <span>от 35 000</span>
-		                                    <span>от 350 000</span>
-										</p>
-									</li>
-									<li class="type-areas-item">
-	                            		<strong class="type-areas-title">4 комн</strong>
-	                            		<p class="type-areas-text">
-		                                   <span>нет в базе</span>
-										</p>
-									</li>
-									<li class="type-areas-item">
-	                            		<strong class="type-areas-title">5+ комн</strong>
-	                            		<p class="type-areas-text">
-		                                    <span>нет в базе</span>
-										</p>
-									</li>
-									<li class="type-areas-item">
-	                            		<strong class="type-areas-title">Коммерческая</strong>
-	                            		<p class="type-areas-text">
-		                                    <span>от 23</span>
-		                                    <span>от 18 000</span>
-		                                    <span>от 100 000</span>
-										</p>
-									</li>
-	                            	<li class="type-areas-item">
-	                            		<strong class="type-areas-title">Дома</strong>
-	                            		<p class="type-areas-text">
-		                                    <span>от 23</span>
-		                                    <span>от 18 000</span>
-		                                    <span>от 100 000</span>
-										</p>
-									</li>
-								</ul>
-							</div>
 							<div class="info-complex-wrapper">
 								 <button class="info-complex-btn ms-auto close-btn-other" type="button">Свернуть</button>
 							</div>
@@ -315,7 +245,7 @@ $(document).ready(function () {
 			initPhotoHoverPreview();
 		}
 	});
-	
+
 	// Обробник кліку на кнопку "Свернуть"
 	$('#example tbody').on('click', '.info-complex-btn', function () {
 		const button = $(this);
@@ -329,11 +259,11 @@ $(document).ready(function () {
 		mainRow[0].classList.remove('active');
 		// Змінюємо зображення назад на "+"
 		toggleImage(img);
-		
+
 		// Видаляємо рядок з деталями
 		dopInfoRow.remove();
 	});
-	
+
 	// Обробник кліку на кнопку "btn-show-text"
 	$('#example tbody').on('click', '.btn-show-text', function () {
 		const button = $(this);
@@ -342,7 +272,7 @@ $(document).ready(function () {
 		const mainText = container.contents().filter(function () {
 			return this.nodeType === 3;
 		});
-		
+
 		if (moreText.is(':visible')) {
 			moreText.hide();
 			mainText.show();
@@ -353,12 +283,12 @@ $(document).ready(function () {
 			button.text('Скрыть');
 		}
 	});
-	
+
 	function toggleImage(img) {
 		const isPlus = img.attr('src').includes('plus.svg');
 		img.attr('src', img.attr('src').replace(isPlus ? 'plus.svg' : 'minus.svg', isPlus ? 'minus.svg' : 'plus.svg'));
 	}
-	
+
 	$('thead .my-custom-input input').on('change', function() {
 		let isChecked = $(this).prop('checked');
 		$('tbody .my-custom-input input').prop('checked', isChecked);
@@ -367,29 +297,29 @@ $(document).ready(function () {
 			$('tbody .my-custom-input input').length;
 		$('thead .my-custom-input input').prop('checked', allChecked);
 	});
-	
+
 	const initTooltips = function () {
 		const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 		const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 	};
-	
+
 	// Викликаємо ініціалізацію Tooltip після створення таблиці
 	initTooltips();
-	
+
 	// Викликаємо ініціалізацію Tooltip після оновлення таблиці
 	table.on('draw', function () {
 		initTooltips();
 		// 08.05.2025
 		initPhotoHoverPreview();
 	});
-	
+
 	// Викликаємо ініціалізацію Tooltip після динамічного додавання рядків
 	$('#example tbody').on('click', '.details-control, .details-control-dop, #btn-others', function () {
 		setTimeout(() => {
 			initTooltips();
 		}, 0);
 	});
-	
+
 	// 08.05.2025
 	function initPhotoHoverPreview() {
 		// Створюємо попап для прев'ю фото (якщо ще не існує)
@@ -400,21 +330,21 @@ $(document).ready(function () {
             </div>
         `);
 		}
-		
+
 		const $popup = $('#photo-preview-popup');
 		const $popupImg = $popup.find('img');
 		const $closeBtn = $('#close-photo-preview');
 		let hoverTimeout;
-		
+
 		// Обробник наведення на фото
 		$('.tbody-wrapper.photo img').hover(
 			function() {
 				const $img = $(this);
 				const imgSrc = $img.attr('src');
-				
+
 				// Пропускаємо якщо це дефолтна іконка
 				// if (imgSrc.includes('default-foto.svg')) return;
-				
+
 				hoverTimeout = setTimeout(function() {
 					$popupImg.attr('src', imgSrc);
 					$popup.show();
@@ -425,7 +355,7 @@ $(document).ready(function () {
 				$popup.hide();
 			}
 		);
-		
+
 		// Обробник наведення на сам попап
 		$popup.hover(
 			function() {
@@ -435,13 +365,13 @@ $(document).ready(function () {
 				$popup.hide();
 			}
 		);
-		
+
 		// Обробник кліку на кнопку закриття
 		$closeBtn.on('click', function() {
 			$popup.hide();
 		});
 	}
-	
+
 	// Ініціалізуємо функціонал при завантаженні сторінки
 	initPhotoHoverPreview();
 });
