@@ -732,7 +732,7 @@ class ComplexController extends Controller
     {
         $query = Complex::with([
             'developer',
-            'city.region.country',
+            'city.state.country',
             'district',
             'zone',
             'blocks.heatingType',
@@ -862,13 +862,13 @@ class ComplexController extends Controller
             if ($locationId) {
                 switch ($locationType) {
                     case 'country':
-                        $query->whereHas('city.region', function ($q) use ($locationId) {
+                        $query->whereHas('city.state', function ($q) use ($locationId) {
                             $q->where('country_id', $locationId);
                         });
                         break;
                     case 'region':
                         $query->whereHas('city', function ($q) use ($locationId) {
-                            $q->where('region_id', $locationId);
+                            $q->where('state_id', $locationId);
                         });
                         break;
                     case 'city':
@@ -971,19 +971,19 @@ class ComplexController extends Controller
                     'has_location' => true,
                     'name' => $complex->name,
                     'years' => $yearsStr ? "({$yearsStr})" : null,
-                    'street' => $complex->blocks->first()?->street?->name
-                        ? ($complex->blocks->first()->street->name . ' ' . ($complex->blocks->first()->building_number ?? ''))
+                    'street' => ($block = $complex->blocks->first()) && $block->street
+                        ? ($block->street->name . ' ' . ($block->building_number ?? ''))
                         : null,
                     'address' => implode(', ', array_filter([
-                        $complex->district?->name,
-                        $complex->city?->name,
-                        $complex->city?->region?->name,
+                        $complex->district ? $complex->district->name : null,
+                        $complex->city ? $complex->city->name : null,
+                        ($complex->city && $complex->city->state) ? $complex->city->state->name : null,
                     ])),
                 ],
 
                 // Тип объекта
                 'property_type' => [
-                    'category' => $complex->housingClass?->name ?? 'Жилье',
+                    'category' => $complex->housingClass ? $complex->housingClass->name : 'Жилье',
                     'types' => $complex->objects_count ? "{$complex->objects_count} объектов" : null,
                 ],
 
@@ -1020,10 +1020,10 @@ class ComplexController extends Controller
                 // Контакт
                 'contact' => [
                     'has_contact' => $contact !== null || $complex->developer !== null,
-                    'name' => $contact ? trim($contact->first_name . ' ' . $contact->last_name) : ($complex->developer?->name ?? null),
-                    'company' => $complex->developer?->name ?? null,
+                    'name' => $contact ? trim($contact->first_name . ' ' . $contact->last_name) : ($complex->developer ? $complex->developer->name : null),
+                    'company' => $complex->developer ? $complex->developer->name : null,
                     'phone' => $contactPhone,
-                    'logo' => $complex->developer?->logo_path ? Storage::url($complex->developer->logo_path) : null,
+                    'logo' => ($complex->developer && $complex->developer->logo_path) ? Storage::url($complex->developer->logo_path) : null,
                 ],
 
                 // Действия
@@ -1041,15 +1041,15 @@ class ComplexController extends Controller
                         'address' => $block->street
                             ? ($block->street->name . ' ' . ($block->building_number ?? ''))
                             : null,
-                        'wall_type' => $block->wallType?->name,
-                        'heating_type' => $block->heatingType?->name,
+                        'wall_type' => $block->wallType ? $block->wallType->name : null,
+                        'heating_type' => $block->heatingType ? $block->heatingType->name : null,
                         'floors' => $block->floors_total,
                         'year_built' => $block->year_built,
                         'photo' => $block->plan_path ? Storage::url($block->plan_path) : null,
                     ];
                 })->toArray(),
-                'created_at' => $complex->created_at?->format('d.m.Y'),
-                'updated_at' => $complex->updated_at?->format('d.m.Y'),
+                'created_at' => $complex->created_at ? $complex->created_at->format('d.m.Y') : null,
+                'updated_at' => $complex->updated_at ? $complex->updated_at->format('d.m.Y') : null,
             ];
         });
 
