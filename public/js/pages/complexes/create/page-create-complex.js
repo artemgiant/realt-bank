@@ -284,24 +284,28 @@ if (typeof Fancybox !== 'undefined') {
 }
 
 $(document).ready(function () {
-	// Обробник відкриття меню
-	$('.multiple-menu-btn').on('click', function (event) {
+	// Обробник відкриття меню для conditions-menu
+	// (features-menu обробляється в features-tags.js)
+	$('#conditions-menu .multiple-menu-btn').on('click', function (event) {
 		event.stopPropagation();
 		const $this = $(this);
 		const currentState = $this.attr('data-open-menu');
 		const newState = currentState === 'false' ? 'true' : 'false';
-		
+
 		// Закриваємо всі інші відкриті меню
 		$('.multiple-menu-btn').not($this).attr('data-open-menu', 'false');
 		// Відкриваємо/закриваємо поточне меню
 		$this.attr('data-open-menu', newState);
 	});
-	
+
 	// Обробник кліку поза меню
-	$(document).on('click', function () {
-		$('.multiple-menu-btn').attr('data-open-menu', 'false');
+	$(document).on('click', function (e) {
+		// Не закриваємо, якщо клік був всередині меню
+		if (!$(e.target).closest('.multiple-menu').length) {
+			$('.multiple-menu-btn').attr('data-open-menu', 'false');
+		}
 	});
-	
+
 	// Обробник кліку всередині меню, щоб не закривалося при кліку на елементи меню
 	$('.multiple-menu-wrapper').on('click', function (event) {
 		event.stopPropagation();

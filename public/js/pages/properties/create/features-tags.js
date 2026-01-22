@@ -6,7 +6,7 @@
  */
 
 (function() {
-    document.addEventListener('DOMContentLoaded', function() {
+    function init() {
         const featuresContainer = document.getElementById('features-menu');
         const tagsContainer = document.getElementById('applied-filters');
         const contactTypeSelect = document.getElementById('contact_type_id');
@@ -257,5 +257,12 @@
                 addFeatureTag(featureId, featureName);
             });
         }
-    });
+    }
+
+    // Инициализация: если DOM уже готов, запускаем сразу, иначе ждём события
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 })();

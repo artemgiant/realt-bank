@@ -808,10 +808,9 @@
 
 
 
-
-    <script src="./js/pages/complexes/create/function_on_pages-create.js" type="module"></script>
+    <script src="{{ asset('js/pages/complexes/create/function_on_pages-create.js') }}" type="module"></script>
+    <script src="{{ asset('js/pages/complexes/create/page-create-complex.js') }}" type="module"></script>
     <!--<script src="./js/pages/full-filter.min.js"></script>-->
-    <script src="./js/pages/complexes/create/page-create-complex.js" type="module"></script>
 
 
     {{--    LOcation SEARCH--}}
@@ -820,6 +819,6 @@
 
 
     {{--ТЕГИ И ОСОБЕННОСТИ--}}
-    <script src="{{ asset('js/pages/properties/create/features-tags.js') }}"></script>
+    <script src="{{ asset('js/pages/properties/create/features-tags.js') }}" defer></script>
 
 @endpush
