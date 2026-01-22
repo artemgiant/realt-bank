@@ -113,6 +113,9 @@ Route::middleware('auth')->group(function () {
         return  view('pages.complexes.index');
     });
 
+    Route::get('/complexes-create', function (){
+        return  view('pages.complexes.create');
+    });
 
     // Импорт комплексов
     Route::prefix('import')->name('import.')->group(function () {

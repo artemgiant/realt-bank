@@ -906,6 +906,7 @@
                     </td>
                     <td>
                         <div class="tbody-wrapper type">
+
                             <p>студии,</p>
                             <span>1 к, 2 к, 3 к, 4 к, 5</span>
                         </div>

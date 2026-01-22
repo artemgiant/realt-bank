@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
 
-    <link rel="stylesheet" href="./css/pages/page-create-complex.min.css">
+    <link rel="stylesheet" href="./css/pages/complexes/create/page-create-complex.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
 <main class="wrapper">
@@ -241,11 +241,7 @@
                                                 aria-controls="en-tab-pane-about-developer" aria-selected="false">EN
                                         </button>
                                     </li>
-                                    <li class="nav-item">
-                                        <button id="generation-ai-about-developer" class="nav-link ai" type="button">
-                                            <span>AI Text</span>
-                                        </button>
-                                    </li>
+
                                 </ul>
 
                                 <div class="tab-content">
@@ -416,25 +412,8 @@
                     </div>
                 </div>
                 <div class="create-filter-documents">
-                    <div class="loading-documents document">
-                        <label for="document">
-                            <input type="file" id="document" name="document" multiple
-                                   accept="image/png, image/jpeg, application/pdf">
-                            <span>
-							<svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-							    <path
-                                        d="M8.50627 13.2938C7.81303 13.9437 6.89417 14.2986 5.94403 14.2833C4.99388 14.2679 4.08694 13.8837 3.41499 13.2117C2.74305 12.5398 2.35879 11.6329 2.34348 10.6827C2.32817 9.73256 2.683 8.81371 3.33294 8.12046L9.17294 2.28713C9.52011 1.94269 9.96138 1.70858 10.4412 1.61425C10.9211 1.51991 11.4181 1.56956 11.8699 1.75695C12.3216 1.94433 12.7078 2.2611 12.98 2.6674C13.2522 3.0737 13.3982 3.55141 13.3996 4.04046C13.3992 4.36567 13.3342 4.68757 13.2083 4.98743C13.0824 5.28729 12.8982 5.55912 12.6663 5.78713L7.11294 11.3338C6.93932 11.4722 6.72095 11.5421 6.49924 11.5302C6.27753 11.5183 6.06789 11.4254 5.91008 11.2692C5.75226 11.1131 5.65723 10.9044 5.64302 10.6828C5.6288 10.4613 5.69638 10.2422 5.83294 10.0671L11.3929 4.50713L10.4463 3.56713L4.88627 9.12713C4.48502 9.55082 4.26495 10.1144 4.27289 10.6978C4.28082 11.2813 4.51614 11.8387 4.92876 12.2513C5.34138 12.6639 5.89874 12.8992 6.48222 12.9072C7.0657 12.9151 7.62925 12.695 8.05294 12.2938L13.6196 6.73379C14.3357 6.01859 14.7383 5.04822 14.739 4.03615C14.7396 3.02408 14.3381 2.05321 13.6229 1.33713C12.9077 0.621043 11.9374 0.218399 10.9253 0.217774C9.91323 0.217149 8.94236 0.618593 8.22627 1.33379L2.38627 7.18046C1.48313 8.1234 0.985245 9.38258 0.999314 10.6882C1.01338 11.9938 1.53828 13.2419 2.46154 14.1652C3.38479 15.0885 4.63295 15.6133 5.93855 15.6274C7.24416 15.6415 8.50334 15.1436 9.44627 14.2405L14.7263 8.95379L13.7863 8.00046L8.50627 13.2938Z"
-                                        fill="#3585F5"/>
-							</svg>
-							<span class="text">
-								Загрузить документы
-							</span>
-						</span>
-                        </label>
-                        <div class="filter-tags" data-render-document></div>
-                        <div class="error-container" data-error></div>
-                    </div>
+
+
                     <div class="loading-plan">
                         <label for="loading-plan">
                             <input type="file" id="loading-plan" name="loading-plan" multiple
@@ -482,309 +461,10 @@
                         </div>
                     </div>
                     <div class="create-filter-row">
-                        <div class="item w35">
-                            <label>Локация</label>
-                            <div class="my-dropdown">
-                                <div class="my-dropdown-input-wrapper">
-                                    <!-- 05.06.2025		-->
-                                    <button class="my-dropdown-geo-btn" data-bs-toggle="modal" data-bs-target="#geoModal">
-                                        <picture><source srcset="./img/icon/geo.svg" type="image/webp"><img src="./img/icon/geo.svg" alt=""></picture>
-                                    </button>
-                                    <!-- 05.06.2025		-->
 
-                                    <label class="my-dropdown-label">
-                                        <input class="my-dropdown-input" type="text" autocomplete="off" placeholder="Введите название">
-                                    </label>
-                                    <!--		28.03.2025 оновив-->
-                                    <button class="my-dropdown-btn arrow-down" id="btn-open-menu" type="button">
-                                        <picture><source srcset="./img/icon/arrow-right-white.svg" type="image/webp"><img src="./img/icon/arrow-right-white.svg" alt=""></picture>
-                                    </button>
-                                    <!--		28.03.2025 оновив-->
-                                </div>
-                                <div class="my-dropdown-list-wrapper" style="display: none">
-                                    <div class="my-dropdown-list">
-                                        <div class="scroller">
-                                            <div class="my-dropdown-item">
-                                                <label class="my-dropdown-item-label-radio">
-                                                    <input class="my-dropdown-item-radio" type="radio" name="country">
-                                                    <span class="my-dropdown-item-radio-text">
-							Україна (<span>24</span>)
-						</span>
-                                                </label>
-                                                <div class="my-dropdown-next-list" style="display: none">
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-radio">
-                                                            <input class="my-dropdown-item-radio" type="radio" name="district">
-                                                            <span class="my-dropdown-item-radio-text">
-									Дніпропетровська обл. (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-radio">
-                                                            <input class="my-dropdown-item-radio" type="radio" name="district">
-                                                            <span class="my-dropdown-item-radio-text">
-									Одеська обл. (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="my-dropdown-item">
-                                                <label class="my-dropdown-item-label-radio">
-                                                    <input class="my-dropdown-item-radio" type="radio" name="country">
-                                                    <span class="my-dropdown-item-radio-text">
-						Великобритания (<span>24</span>)
-					</span>
-                                                </label>
-                                                <div class="my-dropdown-next-list" style="display: none">
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-radio">
-                                                            <input class="my-dropdown-item-radio" type="radio" name="district">
-                                                            <span class="my-dropdown-item-radio-text">
-									Дніпропетровська обл. (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-radio">
-                                                            <input class="my-dropdown-item-radio" type="radio" name="district">
-                                                            <span class="my-dropdown-item-radio-text">
-									Одеська обл. (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="my-dropdown-list second" style="display: none">
-                                        <div class="scroller">
-                                            <div class="my-dropdown-item">
-                                                <label class="my-dropdown-item-label-checkbox">
-                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                    <span class="my-dropdown-item-checkbox-text">
-							Дніпро (<span>24</span>)
-						</span>
-                                                </label>
-                                                <div class="my-dropdown-next-list" style="display: none">
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									АНД район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Індустріальний район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                        <div class="my-dropdown-next-next-list" style="display: none">
-                                                            <div class="my-dropdown-item">
-                                                                <label class="my-dropdown-item-label-checkbox">
-                                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                                    <span class="my-dropdown-item-checkbox-text">
-											Лівобережний 3 (<span>24</span>)
-										</span>
-                                                                </label>
-                                                            </div>
-                                                            <div class="my-dropdown-item">
-                                                                <label class="my-dropdown-item-label-checkbox">
-                                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                                    <span class="my-dropdown-item-checkbox-text">
-											Лівобережний 2 (<span>24</span>)
-										</span>
-                                                                </label>
-                                                            </div>
-                                                            <div class="my-dropdown-item">
-                                                                <label class="my-dropdown-item-label-checkbox">
-                                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                                    <span class="my-dropdown-item-checkbox-text">
-											Лівобережний 1 (<span>24</span>)
-										</span>
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Центральний район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Новокадацький район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Шевченківський район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="my-dropdown-item">
-                                                <label class="my-dropdown-item-label-checkbox">
-                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                    <span class="my-dropdown-item-checkbox-text">
-						Одесса (<span>24</span>)
-					</span>
-                                                </label>
-                                                <div class="my-dropdown-next-list" style="display: none">
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									АНД район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Індустріальний район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Центральний район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Новокадацький район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Шевченківський район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="my-dropdown-item">
-                                                <label class="my-dropdown-item-label-checkbox">
-                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                    <span class="my-dropdown-item-checkbox-text">
-						Київ (<span>24</span>)
-					</span>
-                                                </label>
-                                            </div>
-                                            <div class="my-dropdown-item">
-                                                <label class="my-dropdown-item-label-checkbox">
-                                                    <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                    <span class="my-dropdown-item-checkbox-text">
-						Харків (<span>24</span>)
-					</span>
-                                                </label>
-                                                <div class="my-dropdown-next-list" style="display: none">
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									АНД район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Індустріальний район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Центральний район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Новокадацький район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="my-dropdown-item">
-                                                        <label class="my-dropdown-item-label-checkbox">
-                                                            <input class="my-dropdown-item-checkbox" type="checkbox">
-                                                            <span class="my-dropdown-item-checkbox-text">
-									Шевченківський район (<span>24</span>)
-								</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="my-dropdown-search-wrapper" style="display: none">
-                                    <div class="my-dropdown-search-list">
-                                        <div class="scroller">
-                                            <div class="my-dropdown-search-item">
-                                                <div class="eqweqw">
-                                                    Одесская обл (24)
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="item w15">
-                            <label class="item-label" for="street">Улица</label>
-                            <select id="street" class="js-example-responsive3 my-select2" autocomplete="off">
-                                <option></option>
-                                <option>
-                                    street 1
-                                </option>
-                            </select>
-                        </div>
-                        <div class="item w10">
-                            <label for="number-house">№ Дом</label>
-                            <div class="item-inputText-wrapper">
-                                <input class="item-inputText" type="text" id="number-house" name="number-house"
-                                       autocomplete="off" placeholder="Номер">
-                            </div>
-                        </div>
-                        <div class="item w20">
-                            <label class="item-label" for="metro">Ориентир / Станция</label>
-                            <select id="metro" class="js-example-responsive3 my-select2" autocomplete="off">
-                                <option></option>
-                                <option>
-                                    Ориентир/Станция 1
-                                </option>
-                            </select>
-                        </div>
+
+{{--                        #TODO добавить локацию ТАКУЮ КАК В  resources/views/pages/properties/particles/create/_location_block.blade.php--}}
+
                         <div class="item w20">
                             <label class="item-label" for="level-house">Класс жилья</label>
                             <select id="level-house" class="js-example-responsive3 my-select2" autocomplete="off">
@@ -978,7 +658,11 @@
                             </div>
                         </div>
                     </div>
+
+
                     <div class="create-filter-locations">
+                        {{--                    #todo ТУТ СОЗДАЮТЬСЯ БЛОКИ ДО КОМПЛЕСОВ, МОЖНА СОЗДАТЬ НЕСКОЛЬКО БЛОКОВ ДО ОДНОГО КОМПЛЕКСА --}}
+
                         <ul class="create-filter-locations-list">
                             <li class="create-filter-locations-item">
                                 <div class="item w15">
@@ -1001,6 +685,7 @@
                                     </div>
                                 </div>
                                 <div class="item w15">
+{{--                                    #TODO  улицы показываються только из населенного пункта который выбраный в комплексе--}}
                                     <label class="item-label" for="street-1">Улица</label>
                                     <select id="street-1" class="js-example-responsive3 my-select2" autocomplete="off">
                                         <option></option>
@@ -1099,271 +784,10 @@
     </div>
     <!-- кінець main	-->
 </main>
-<!-- початок цей блок ще в розробці _modal	-->
-<div class="modal fade" id="geoModal" tabindex="-1" aria-labelledby="geoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="modal-body-l d-flex align-items-center justify-content-between">
-                    <h2 class="modal-title" id="exampleGeoModalLabel">
-                        <span>Локация</span>
-                    </h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body-l">
-                    <label for="address">Адрес</label>
-                    <input type="text" id="address" class="form-control">
-                </div>
-                <div class="modal-body-l">
-                    <div class="row">
-                        <div class="col-12">
-                            <span class="label">Координаты</span>
-                        </div>
-                        <div class="col-6">
-                            <label class="d-block">
-                                <input type="text" id="latitude" class="form-control" placeholder="Широта" readonly>
-                            </label>
-                        </div>
-                        <div class="col-6">
-                            <label class="d-block">
-                                <input type="text" id="longitude" class="form-control" placeholder="Долгота" readonly>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div id="map-container" style="height: 400px; width: 100%; margin-top: 15px;"></div>
-                <div class="modal-body-l mt-3">
-                    <button class="btn btn-primary">Сохранить</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="add-contact-modal" tabindex="-1" aria-labelledby="geoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="modal-body-l d-flex align-items-center mb-0 justify-content-between">
-                    <h2 class="modal-title" id="exampleContactModalLabel">
-                        <span>Контакт ID1234567</span>
-                    </h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body-l">
-                    <h3 class="modal-body-title">
-                        <span>Основное</span>
-                    </h3>
-                    <div class="modal-row">
-                        <div class="item">
-                            <label for="name-contact-modal" class="green">Имя</label>
-                            <div class="item-inputText-wrapper">
-                                <input class="item-inputText" id="name-contact-modal" type="text" autocomplete="off"
-                                       placeholder="Имя">
-                            </div>
-                        </div>
-                        <div class="item">
-                            <label for="surname-contact-modal">Фамилия</label>
-                            <div class="item-inputText-wrapper">
-                                <input class="item-inputText" id="surname-contact-modal" type="text" autocomplete="off"
-                                       placeholder="Фамилия">
-                            </div>
-                        </div>
-                        <div class="item">
-                            <label for="father-name-contact-modal">Отчество</label>
-                            <div class="item-inputText-wrapper">
-                                <input class="item-inputText" id="father-name-contact-modal" type="text" autocomplete="off"
-                                       placeholder="Отчество">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-row">
-                        <div class="item phone">
-                            <div class="item" data-phone-item>
-                                <div class="add_new-tel">
-                                    <button type="button" class="btn btn-new-tel">
-                                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M0.471859 5.47374C0.358138 5.36002 0.28775 5.20285 0.287749 5.0293C0.28775 4.68208 0.569081 4.40075 0.916301 4.40075L9.13847 4.40075C9.48563 4.4008 9.76697 4.68213 9.76702 5.0293C9.76702 5.3764 9.48563 5.65779 9.13853 5.65779H0.916357C0.742747 5.65785 0.585581 5.58746 0.471859 5.47374Z" fill="#3585F5" />
-                                            <path d="M4.583 9.58476C4.46922 9.47098 4.39889 9.31387 4.39889 9.14032L4.39889 0.918164C4.39883 0.571001 4.68022 0.289614 5.02739 0.28967C5.37449 0.28967 5.65588 0.571056 5.65588 0.918164L5.65588 9.14032C5.65583 9.48748 5.37449 9.76881 5.02733 9.76887C4.85389 9.76887 4.69678 9.69853 4.583 9.58476Z" fill="#3585F5" />
-                                        </svg>
-                                    </button>
-                                </div>
-                                <label for="tel-contact1-modal" class="green">Телефон / Логин</label>
-                                <div class="item-inputText-wrapper">
-                                    <input class="item-inputText tel-contact" id="tel-contact1-modal" type="tel" autocomplete="off">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <label for="email-contact-modal">Email</label>
-                            <div class="item-inputText-wrapper">
-                                <input class="item-inputText " id="email-contact-modal" type="email" autocomplete="off" placeholder="email@gmail.com">
-                            </div>
-                        </div>
-                        <div class="item selects">
-                            <label class="item-label green" for="type-contact-modal">Тип контакта</label>
-                            <select id="type-contact-modal" class="js-example-responsive2 my-select2" autocomplete="off">
-                                <option></option>
-                                <option value="company1">
-                                    тип1
-                                </option>
-                                <option value="company2">
-                                    тип2
-                                </option>
-                                <option value="company3">
-                                    тип3
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-row">
-                        <div class="item w25 selects">
-                            <label class="item-label green" for="tags-client-modal">Теги</label>
-                            <select id="tags-client-modal" class="js-example-responsive2 my-select2" autocomplete="off">
-                                <option></option>
-                                <option value="company1">
-                                    Посредник1
-                                </option>
-                                <option value="company2">
-                                    Посредник2
-                                </option>
-                                <option value="company3">
-                                    Посредник3
-                                </option>
-                            </select>
-                        </div>
-                        <div class="item w75">
-                            <label for="comment-contact-modal" >Комментарий</label>
-                            <div class="item-inputText-wrapper">
-                                <input class="item-inputText" id="comment-contact-modal" type="text" autocomplete="off" >
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-row files">
-                        <div class="item photo-loader">
-							<span class="label">
-								Фото
-							</span>
-                            <div class="photo-info-list-wrapper">
-                                <ul class="photo-info-list">
-                                    <li class="photo-info-btn-wrapper">
-                                        <label class="photo-info-btn" for="loading-photo-contact-modal">
-                                            <input type="file" id="loading-photo-contact-modal" name="loading-photo" accept="image/png, image/jpg, image/jpeg, image/heic">
-                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M8.50725 13.2938C7.814 13.9437 6.89515 14.2986 5.945 14.2833C4.99486 14.2679 4.08791 13.8837 3.41597 13.2117C2.74403 12.5398 2.35977 11.6329 2.34446 10.6827C2.32914 9.73256 2.68398 8.81371 3.33392 8.12046L9.17392 2.28713C9.52109 1.94269 9.96235 1.70858 10.4422 1.61425C10.9221 1.51991 11.4191 1.56956 11.8708 1.75695C12.3226 1.94433 12.7088 2.2611 12.981 2.6674C13.2532 3.0737 13.3992 3.55141 13.4006 4.04046C13.4002 4.36567 13.3352 4.68757 13.2093 4.98743C13.0834 5.28729 12.8992 5.55912 12.6672 5.78713L7.11392 11.3338C6.94029 11.4722 6.72193 11.5421 6.50022 11.5302C6.27851 11.5183 6.06887 11.4254 5.91105 11.2692C5.75324 11.1131 5.65821 10.9044 5.64399 10.6828C5.62977 10.4613 5.69735 10.2422 5.83392 10.0671L11.3939 4.50713L10.4472 3.56713L4.88725 9.12713C4.486 9.55082 4.26593 10.1144 4.27387 10.6978C4.2818 11.2813 4.51712 11.8387 4.92974 12.2513C5.34236 12.6639 5.89971 12.8992 6.4832 12.9072C7.06668 12.9151 7.63022 12.695 8.05392 12.2938L13.6206 6.73379C14.3367 6.01859 14.7393 5.04822 14.7399 4.03615C14.7406 3.02408 14.3391 2.05321 13.6239 1.33713C12.9087 0.621043 11.9383 0.218399 10.9263 0.217774C9.9142 0.217149 8.94333 0.618593 8.22725 1.33379L2.38725 7.18046C1.4841 8.1234 0.986222 9.38258 1.00029 10.6882C1.01436 11.9938 1.53926 13.2419 2.46251 14.1652C3.38577 15.0885 4.63393 15.6133 5.93953 15.6274C7.24513 15.6415 8.50431 15.1436 9.44725 14.2405L14.7272 8.95379L13.7872 8.00046L8.50725 13.2938Z" fill="#3585F5" />
-                                            </svg>
-                                            <span>
-												Загрузить фото
-											</span>
-                                        </label>
-                                    </li>
-                                </ul>
-                                <div class="error-container"></div>
-                            </div>
-                        </div>
-                        <div class="item-row">
-                            <div class="item w33">
-								<span>
-									<label class="item-label" for="telegram">Telegram</label>
-								</span>
-                                <input class="item-inputText" id="telegram" type="text" autocomplete="off" placeholder="@profilename">
-                            </div>
-                            <div class="item w33">
-								<span>
-									<label class="item-label" for="viber">Viber</label>
-								</span>
-                                <input class="item-inputText" id="viber" type="text" autocomplete="off" placeholder="@profilename">
-                            </div>
-                            <div class="item w33">
-								<span>
-									<label class="item-label" for="whatsapp">Whatsapp</label>
-								</span>
-                                <input class="item-inputText" id="whatsapp" type="text" autocomplete="off" placeholder="@profilename">
-                            </div>
-                            <div class="item w33">
-								<span>
-									<label class="item-label" for="tiktok">TikTok</label>
-								</span>
-                                <input class="item-inputText" id="tiktok" type="text" autocomplete="off" placeholder="@profilename">
-                            </div>
-                            <div class="item w33">
-								<span>
-									<label class="item-label" for="instagram">Instagram</label>
-								</span>
-                                <input class="item-inputText" id="instagram" type="text" autocomplete="off" placeholder="@profilename">
-                            </div>
-                            <div class="item w33">
-								<span>
-									<label class="item-label" for="facebook">Facebook</label>
-								</span>
-                                <input class="item-inputText" id="facebook" type="text" autocomplete="off" placeholder="http://www.facebook.com/profilename">
-                            </div>
-                            <div class="item w50">
-                                <label for="passport-contact-modal" >Паспорт</label>
-                                <div class="item-inputText-wrapper">
-                                    <input class="item-inputText" id="passport-contact-modal" type="text" autocomplete="off" placeholder="АА123456">
-                                </div>
-                            </div>
-                            <div class="item w25">
-                                <label for="inn-contact-modal" >ИНН</label>
-                                <div class="item-inputText-wrapper">
-                                    <input class="item-inputText" id="inn-contact-modal" type="text" autocomplete="off" placeholder="1234567890">
-                                </div>
-                            </div>
-                            <div class="item w25 data">
-								<span>
-									<label for="datapiker-contact-modal">День рождения</label>
-								</span>
-                                <span>
-									<input class="item-inputText date-piker" type="text" id="datapiker-contact-modal" autocomplete="off">
-									<picture><source srcset="./img/icon/calendar.svg" type="image/webp"><img src="./img/icon/calendar.svg" alt=""></picture>
-								</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-row">
-                        <button class="modal-body-title btn" type="button"  data-bs-toggle="collapse" data-bs-target="#collapseContactExample" aria-expanded="false" aria-controls="collapseContactExample">
-                            <span>История изменений</span>
-                        </button>
-                        <div class="collapse" id="collapseContactExample">
-                            <ul class="history-info">
-                                <li class="history-info-item">
-                                    <span>15:40 20.12.2024 — агент ID1234567</span>
-                                    <p>Изменен номер телефона с +380 (12) 345-67-89 на +380 (12) 345-67-89</p>
-                                </li>
-                                <li class="history-info-item">
-                                    <span>15:40 20.12.2024 — агент ID1234567</span>
-                                    <p>Какие-то изменения данных</p>
-                                </li>
-                                <li class="history-info-item">
-                                    <span>15:40 20.12.2024 — агент ID1234567</span>
-                                    <p>Вариант изменения данных</p>
-                                </li>
-                                <li class="history-info-item">
-                                    <span>15:40 20.12.2024 — агент ID1234567</span>
-                                    <p>Вариант изменения данных</p>
-                                </li>
-                                <li class="history-info-item">
-                                    <span>15:40 20.12.2024 — агент ID1234567</span>
-                                    <p>Изменен номер телефона с +380 (12) 345-67-89 на +380 (12) 345-67-89</p>
-                                </li>
-                                <li class="history-info-item">
-                                    <span>15:40 20.12.2024 — агент ID1234567</span>
-                                    <p>Изменен номер телефона с +380 (12) 345-67-89 на +380 (12) 345-67-89</p>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-body-l mb-0">
-                    <button class="btn btn-outline-primary" type="button">
-                        Отменить
-                    </button>
-                    <button class="btn btn-primary" type="button">Сохранить</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
+
+{{--#TODO ДОБАВИТЬ МОДАЛЬНОЕ ОКНО ТАКОЕ КАК В developers resources/views/pages/developers/modals/contact-modal.blade.php--}}
+
 <!-- кінець цей блок ще в розробці _modal	-->
 <script src="./js/lib/popper.v2.11.8.min.js"></script>
 <script src="./js/lib/bootstrap.v5.3.3.min.js"></script>
@@ -1386,12 +810,13 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-text-icon@1.0.0/dist/leaflet.text-icon.js"></script>
 <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
-<script src="./js/pages/modal-geo.min.js"></script>
 
-<script src="./js/pages/function_on_pages-create.min.js" type="module"></script>
-<script src="./js/pages/my-dropdown.min.js"></script>
+
+
+
+<script src="./js/pages/complexes/create/function_on_pages-create.js" type="module"></script>
+
 <!--<script src="./js/pages/full-filter.min.js"></script>-->
-<script src="./js/pages/page-create-complex.js" type="module"></script>
-<script src="./js/pages/add-contact-modal.min.js" type="module"></script>
+<script src="./js/pages/complexes/create/page-create-complex.js" type="module"></script>
 </body>
 </html>
