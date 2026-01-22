@@ -1019,11 +1019,10 @@ class ComplexController extends Controller
 
                 // Контакт
                 'contact' => [
-                    'has_contact' => $contact !== null || $complex->developer !== null,
-                    'name' => $contact ? trim($contact->first_name . ' ' . $contact->last_name) : ($complex->developer ? $complex->developer->name : null),
-                    'company' => $complex->developer ? $complex->developer->name : null,
+                    'has_contact' => $contact !== null,
+                    'full_name' => $contact ? $contact->full_name : null,
+                    'contact_type_name' => $contact ? $contact->contact_type_name : null,
                     'phone' => $contactPhone,
-                    'logo' => ($complex->developer && $complex->developer->logo_path) ? Storage::url($complex->developer->logo_path) : null,
                 ],
 
                 // Действия

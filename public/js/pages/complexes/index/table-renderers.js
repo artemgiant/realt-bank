@@ -144,35 +144,25 @@ window.ComplexRenderers = {
         return html;
     },
 
-    // Контакт (девелопер/менеджер)
+    // Контакт
     contact: function (data, type, row) {
         if (!data || !data.has_contact) {
             return '<div class="tbody-wrapper contact"><span class="text-muted">-</span></div>';
         }
 
-        var html = '<div class="tbody-wrapper contact"><div>';
-
-        if (data.name) {
-            html += '<p class="link-name" data-hover-contact>' + data.name + '</p>';
-        }
-
-        if (data.company) {
-            html += '<p data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="' + data.company + '">' + data.company + '</p>';
-        }
-
+        var phoneHtml = '';
         if (data.phone) {
             var phoneClean = data.phone.replace(/[^0-9+]/g, '');
-            html += '<a href="tel:' + phoneClean + '">' + data.phone + '</a>';
+            phoneHtml = '<a href="tel:' + phoneClean + '">' + data.phone + '</a>';
         }
 
-        html += '</div>';
-
-        if (data.logo) {
-            html += '<div><picture><source srcset="' + data.logo + '" type="image/webp"><img src="' + data.logo + '" alt=""></picture></div>';
-        }
-
-        html += '</div>';
-        return html;
+        return '<div class="tbody-wrapper contact">' +
+            '<div>' +
+            '<p class="link-name" data-hover-contact="">' + (data.full_name || '-') + '</p>' +
+            '<p data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="' + (data.contact_type_name || '') + '">' + (data.contact_type_name || '-') + '</p>' +
+            phoneHtml +
+            '</div>' +
+            '</div>';
     },
 
     // Действия
@@ -210,7 +200,7 @@ window.ComplexRenderers = {
             '</div>' +
             '</div>' +
             '<button type="button" class="details-control">' +
-            '<picture><source srcset="./img/icon/plus.svg" type="image/webp"><img src="./img/icon/plus.svg" alt=""></picture>' +
+            '<img src="./img/icon/plus.svg" alt="">' +
             '</button>' +
             '</div>';
     },
@@ -309,7 +299,6 @@ window.ComplexRenderers = {
             '</svg></button></p>' +
             '</div></div></div>' +
             '<div class="info-complex-wrapper">' +
-            '<button class="info-complex-btn ms-auto close-btn-other" type="button">Свернуть</button>' +
             '</div></div></td></tr>';
 
         return html;

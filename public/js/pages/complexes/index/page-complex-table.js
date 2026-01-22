@@ -181,11 +181,11 @@ $(document).ready(function () {
         var row = table.row(tr);
         var icon = $(this).find('img');
 
-        if (row.child.isShown()) {
+        if (tr.hasClass('shown')) {
             // Закрываем строку
-            row.child.hide();
             tr.removeClass('shown active');
             icon.attr('src', './img/icon/plus.svg');
+            tr.next('.dop-info-row').remove();
         } else {
             // Открываем строку
             var childHtml = Renderers.childRow(row.data());
