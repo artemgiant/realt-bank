@@ -39,6 +39,7 @@ class Dictionary extends Model
     public const TYPE_CONTACT_TAG = 'contact_tag';       // Теги контактов
     public const TYPE_YEAR_BUILT = 'year_built';         // Год постройки
     public const TYPE_CONTACT_TYPE = 'contact_type';     // Тип контакта
+    public const TYPE_HOUSING_CLASS = 'housing_class';   // Класс жилья
 
     // ========== Scopes ==========
 
@@ -135,6 +136,11 @@ class Dictionary extends Model
     public static function getYearsBuilt(): Collection
     {
         return static::getByType(self::TYPE_YEAR_BUILT);
+    }
+
+    public static function getHousingClasses(): Collection
+    {
+        return static::getByType(self::TYPE_HOUSING_CLASS);
     }
 
     // ========== Helper for Select Options ==========

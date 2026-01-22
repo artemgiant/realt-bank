@@ -39,10 +39,10 @@ php artisan migrate
 #php artisan  tinker --execute=" use App\Models\Reference\Developer; Developer::query()->update(['source' => 'import']); "
 
 #Очистить и создать  девелопера
-php artisan tinker --execute="\App\Models\Reference\Developer::factory()->cleanAndCreate(100);"
+#php artisan tinker --execute="\App\Models\Reference\Developer::factory()->cleanAndCreate(100);"
 
 
-
+#php artisan storage:link
 
 
 #TRUNCATE TABLE states;

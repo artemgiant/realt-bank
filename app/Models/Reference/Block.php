@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Block extends Model
 {
@@ -24,6 +25,9 @@ class Block extends Model
         'building_number',
         'floors_total',
         'year_built',
+        'heating_type_id',
+        'wall_type_id',
+        'plan_path',
         'is_active',
     ];
 
@@ -48,6 +52,22 @@ class Block extends Model
     public function properties(): HasMany
     {
         return $this->hasMany(Property::class);
+    }
+
+    /**
+     * Тип отопления (из справочника)
+     */
+    public function heatingType(): BelongsTo
+    {
+        return $this->belongsTo(Dictionary::class, 'heating_type_id');
+    }
+
+    /**
+     * Тип стен (из справочника)
+     */
+    public function wallType(): BelongsTo
+    {
+        return $this->belongsTo(Dictionary::class, 'wall_type_id');
     }
 
     // ========== Scopes ==========
@@ -97,5 +117,17 @@ class Block extends Model
         }
 
         return $this->name;
+    }
+
+    /**
+     * URL плана блока
+     */
+    public function getPlanUrlAttribute(): ?string
+    {
+        if ($this->plan_path) {
+            return Storage::disk('public')->url($this->plan_path);
+        }
+
+        return null;
     }
 }

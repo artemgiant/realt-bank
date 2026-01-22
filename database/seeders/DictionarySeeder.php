@@ -271,6 +271,16 @@ class DictionarySeeder extends Seeder
                 'Девелопер',
             ],
 
+            // Класс жилья
+            Dictionary::TYPE_HOUSING_CLASS => [
+                'Эконом',
+                'Комфорт',
+                'Комфорт+',
+                'Бизнес',
+                'Премиум',
+                'Элит',
+            ],
+
         ];
 
         foreach ($dictionaries as $type => $items) {

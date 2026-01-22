@@ -97,25 +97,19 @@ Route::middleware('auth')->group(function () {
         ->name('properties.contacts.detach');
 
 
-// Комплексы и блоки (AJAX для Select2)
-    Route::get('/complexes/search', [ComplexController::class, 'search'])->name('complexes.search');
-    Route::get('/blocks/search', [ComplexController::class, 'searchBlocks'])->name('blocks.search');
-
-    // ========== Developers ==========
+// ========== Developers ==========
     Route::get('/developers/ajax-search', [DeveloperController::class, 'ajaxSearch'])
         ->name('developers.ajax-search');
     Route::get('/developers/ajax-data', [DeveloperController::class, 'ajaxData'])
         ->name('developers.ajax-data');
     Route::resource('developers', DeveloperController::class);
 
-
-    Route::get('/complexes', function (){
-        return  view('pages.complexes.index');
-    });
-
-    Route::get('/complexes-create', function (){
-        return  view('pages.complexes.create');
-    });
+    // ========== Complexes ==========
+    // AJAX для Select2 (должны быть ДО resource)
+    Route::get('/complexes/search', [ComplexController::class, 'search'])->name('complexes.search');
+    Route::get('/complexes/ajax-data', [ComplexController::class, 'ajaxData'])->name('complexes.ajax-data');
+    Route::get('/blocks/search', [ComplexController::class, 'searchBlocks'])->name('blocks.search');
+    Route::resource('complexes', ComplexController::class);
 
     // Импорт комплексов
     Route::prefix('import')->name('import.')->group(function () {
