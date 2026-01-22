@@ -1,148 +1,76 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Page-create-complex</title>
-    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="./css/lib/select2.min.css">
-    <link rel="stylesheet" href="./css/lib/bootstrap.v5.3.3.min.css">
-    <link rel="stylesheet" href="./css/lib/data-range-picker.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/css/intlTelInput.css">
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/tui-image-editor/3.15.0/tui-image-editor.min.css">
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/tui-color-picker/2.2.6/tui-color-picker.min.css">
-    <link rel="stylesheet" href="./css/lib/fancybox.min.css">
+@extends('layouts.crm')
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+@section('title', 'Создание объекта - Realt Bank')
 
+@push('styles')
     <link rel="stylesheet" href="./css/pages/complexes/create/page-create-complex.css">
-</head>
-<body class="d-flex flex-column min-vh-100">
-<main class="wrapper">
-    <!-- початок side-bar	-->
-    <aside class="sidebar">
-        <nav class="nav">
-            <ul class="nav-list">
-                <li class="nav-list-item">
-                    <a href="" class="nav-list-link sidebar-logo">
-                        <picture><source srcset="./img/icon/side-bar/logo-F.svg" type="image/webp"><img src="./img/icon/side-bar/logo-F.svg" alt=""></picture>
-                    </a>
-                </li>
-                <li class="nav-list-item">
-                    <a class="nav-list-link active" href="./page-home.html">
-					<span class="nav-list-icon">
-						<picture><source srcset="./img/icon/side-bar/Finanse.svg" type="image/webp"><img src="./img/icon/side-bar/Finanse.svg" alt=""></picture>
-					</span>
-                        <span class="nav-list-text">
-						Недвижимость
-					</span>
-                    </a>
-                </li>
-                <li class="nav-list-item">
-                    <a class="nav-list-link" href="#">
-					<span class="nav-list-icon">
-						<picture><source srcset="./img/icon/side-bar/Deals.svg" type="image/webp"><img src="./img/icon/side-bar/Deals.svg" alt=""></picture>
-						<span class="my-badge">
-							15
-						</span>
-					</span>
-                        <span class="nav-list-text">
-						Сделки
-					</span>
-                    </a>
-                </li>
-                <li class="nav-list-item">
-                    <a class="nav-list-link" href="#">
-					<span class="nav-list-icon">
-						<picture><source srcset="./img/icon/side-bar/Tasks.svg" type="image/webp"><img src="./img/icon/side-bar/Tasks.svg" alt=""></picture>
-						<span class="my-badge">
-							233
-						</span>
-					</span>
-                        <span class="nav-list-text">
-						Задачи
-					</span>
-                    </a>
-                </li>
-                <li class="nav-list-item">
-                    <a class="nav-list-link" href="./page-company-agents.html">
-					<span class="nav-list-icon">
-						<picture><source srcset="./img/icon/side-bar/Company1.svg" type="image/webp"><img src="./img/icon/side-bar/Company1.svg" alt=""></picture>
-					</span>
-                        <span class="nav-list-text">
-						Агентство
-					</span>
-                    </a>
-                </li>
-            </ul>
-            <ul class="nav-info">
-                <li class="nav-info-item">
-                    <div class="dropdown">
-                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            RU
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">UA</a></li>
-                            <li><a class="dropdown-item" href="#">RU</a></li>
-                            <li><a class="dropdown-item" href="#">EN</a></li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-info-item">
-                    <a class="nav-info-link position-relative" href="#">
-                        <picture><source srcset="./img/icon/side-bar/mail-white.svg" type="image/webp"><img src="./img/icon/side-bar/mail-white.svg" alt=""></picture>
-                        <span class="my-badge"></span>
-                    </a>
-                </li>
-                <li class="nav-info-item">
-                    <a class="nav-info-link" href="./page-company-settings.html">
-                        <picture><source srcset="./img/icon/side-bar/settings-white.svg" type="image/webp"><img src="./img/icon/side-bar/settings-white.svg" alt=""></picture>
-                    </a>
-                </li>
-                <li class="nav-info-item">
-                    <a class="nav-info-link" href="./page-my-profile.html">
-                        <picture><source srcset="./img/icon/side-bar/default-avatar.svg" type="image/webp"><img src="./img/icon/side-bar/default-avatar.svg" alt=""></picture>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
-    <!-- кінець side-bar	-->
-    <!-- початок main	-->
-    <div class="container-fluid">
-        <div class="create">
-            <header class="create-header">
-                <div class="create-header-left">
-                    <a class="create-header-back" href="#">
-                        <picture><source srcset="./img/icon/arrow-back-link.svg" type="image/webp"><img src="./img/icon/arrow-back-link.svg" alt=""></picture>
-                    </a>
-                    <h2 class="create-header-title">
-                        Комплекс
-                        <span>
+
+
+    {{--Плагин по редактированию изображений--}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-image-editor/3.15.0/tui-image-editor.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-color-picker/2.2.6/tui-color-picker.min.css">
+
+    {{---- Плагин по автосохранению форм ----}}
+
+@endpush
+
+@section('header')
+    <div class="create-header">
+        <div class="create-header-left">
+            <a class="create-header-back" href="#">
+                <picture><source srcset="./img/icon/arrow-back-link.svg" type="image/webp"><img src="./img/icon/arrow-back-link.svg" alt=""></picture>
+            </a>
+            <h2 class="create-header-title">
+                Комплекс
+                <span>
 						ID1234567
 					</span>
-                    </h2>
-                </div>
-                <div class="create-header-right">
-                    <div class="create-header-add">
-                        Добавлено:
-                        <span>
+            </h2>
+        </div>
+        <div class="create-header-right">
+            <div class="create-header-add">
+                Добавлено:
+                <span>
 						01.02.2025
 					</span>
-                    </div>
-                    <div class="create-header-update">
-                        Обновлено:
-                        <span>
+            </div>
+            <div class="create-header-update">
+                Обновлено:
+                <span>
 						10.02.2025
 					</span>
-                    </div>
+            </div>
+        </div>
+    </div>
+    @endsection
+
+
+@section('content')
+
+        <div class="create">
+
+            {{-- Сообщения об ошибках --}}
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            </header>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Ошибки валидации:</strong>
+                    <ul class="mb-0 mt-2">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+
+
             <div class="create-filter">
                 <h3 class="create-filter-title">
                     <span>Общая информация</span>
@@ -781,42 +709,40 @@
                 </div>
             </div>
         </div>
-    </div>
+@endsection
     <!-- кінець main	-->
-</main>
 
 
 {{--#TODO ДОБАВИТЬ МОДАЛЬНОЕ ОКНО ТАКОЕ КАК В developers resources/views/pages/developers/modals/contact-modal.blade.php--}}
 
-<!-- кінець цей блок ще в розробці _modal	-->
-<script src="./js/lib/popper.v2.11.8.min.js"></script>
-<script src="./js/lib/bootstrap.v5.3.3.min.js"></script>
-<script src="./js/lib/jquery.v3.7.1.min.js"></script>
-<script src="./js/lib/select2.min.js"></script>
-<script src="./js/lib/moment.min.js"></script>
-<script src="./js/lib/data-range-picker.min.js"></script>
-<script src="./js/lib/fancybox.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/intlTelInput.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-<!-- Спочатку залежності -->
-<script src="./js/lib/tui-code-snippet.min.js"></script>
-<script src="./js/lib/fabric.min.js"></script>
-<script src="./js/lib/tui-color-picker.min.js"></script>
-<!-- Потім основний редактор -->
-<script src="./js/lib/tui-image-editor.min.js"></script>
-<script src="./js/lib/heic2any.min.js"></script>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-text-icon@1.0.0/dist/leaflet.text-icon.js"></script>
-<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+@push('scripts')
+<!-- Спочатку залежності -->
+<script src="{{ asset('js/lib/tui-code-snippet.min.js') }}"></script>
+<script src="{{ asset('js/lib/fabric.min.js') }}"></script>
+<script src="{{ asset('js/lib/tui-color-picker.min.js') }}"></script>
+<!-- Потім основний редактор -->
+<script src="{{ asset('js/lib/tui-image-editor.min.js') }}"></script>
+<script src="{{ asset('js/lib/heic2any.min.js') }}"></script>
+
+
+
+
+{{-- Модуль контактов (порядок важен!) --}}
+<script src="{{ asset('js/pages/properties/create/modal/add-contact/config.js') }}"></script>
+<script src="{{ asset('js/pages/properties/create/modal/add-contact/utils.js') }}"></script>
+<script src="{{ asset('js/pages/properties/create/modal/add-contact/components.js') }}"></script>
+<script src="{{ asset('js/pages/properties/create/modal/add-contact/api.js') }}"></script>
+<script src="{{ asset('js/pages/properties/create/modal/add-contact/form.js') }}"></script>
+<script src="{{ asset('js/pages/properties/create/modal/add-contact/contact-list.js') }}"></script>
+<script src="{{ asset('js/pages/properties/create/modal/add-contact/handlers.js') }}"></script>
+<script src="{{ asset('js/pages/properties/create/modal/add-contact/main.js') }}"></script>
 
 
 
 
 <script src="./js/pages/complexes/create/function_on_pages-create.js" type="module"></script>
-
 <!--<script src="./js/pages/full-filter.min.js"></script>-->
 <script src="./js/pages/complexes/create/page-create-complex.js" type="module"></script>
-</body>
-</html>
+
+@endpush

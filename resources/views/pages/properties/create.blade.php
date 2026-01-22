@@ -582,7 +582,9 @@
     @include('pages.properties.modals.contact-modal')
     @include('pages.properties.modals.employee-modal')
     @include('pages.properties.modals.transfer-agent-modal')
+
 @endsection
+
 
 @push('scripts')
     <script src="{{ asset('js/pages/page-home-table.min.js') }}"></script>
@@ -635,8 +637,6 @@
     <!-- Потім основний редактор -->
     <script src="{{ asset('js/lib/tui-image-editor.min.js') }}"></script>
     <script src="{{ asset('js/lib/heic2any.min.js') }}"></script>
-
-
 
 
 @endpush
