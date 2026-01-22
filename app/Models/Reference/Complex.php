@@ -40,6 +40,17 @@ class Complex extends Model
         'description_translations',
         'slug',
         'is_active',
+        // Новые поля
+        'area_from',
+        'area_to',
+        'price_per_m2',
+        'price_total',
+        'currency',
+        'category_id',
+        'object_type_id',
+        'objects_count',
+        'conditions',
+        'features',
     ];
 
     protected $casts = [
@@ -48,6 +59,12 @@ class Complex extends Model
         'description_translations' => 'array',
         'photos' => 'array',
         'plans' => 'array',
+        'conditions' => 'array',
+        'features' => 'array',
+        'area_from' => 'decimal:2',
+        'area_to' => 'decimal:2',
+        'price_per_m2' => 'decimal:2',
+        'price_total' => 'decimal:2',
     ];
 
     // ========== Relationships ==========
@@ -88,6 +105,22 @@ class Complex extends Model
     public function housingClass(): BelongsTo
     {
         return $this->belongsTo(Dictionary::class, 'housing_class_id');
+    }
+
+    /**
+     * Категория (из справочника)
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Dictionary::class, 'category_id');
+    }
+
+    /**
+     * Тип объекта (из справочника)
+     */
+    public function objectType(): BelongsTo
+    {
+        return $this->belongsTo(Dictionary::class, 'object_type_id');
     }
 
     /**

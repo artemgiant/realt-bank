@@ -45,6 +45,20 @@ class ComplexController extends Controller
             'heatingTypes' => Dictionary::getHeatingTypes(),
             'wallTypes' => Dictionary::getWallTypes(),
             'yearsBuilt' => Dictionary::getYearsBuilt(),
+            'features' => Dictionary::getFeatures(),
+            'conditions' => Dictionary::getConditions(),
+            // Тестовые данные для категорий и типов объектов
+            'categories' => collect([
+                (object)['id' => 1, 'name' => 'Жилая недвижимость'],
+                (object)['id' => 2, 'name' => 'Коммерческая недвижимость'],
+                (object)['id' => 3, 'name' => 'Загородная недвижимость'],
+            ]),
+            'objectTypes' => collect([
+                (object)['id' => 1, 'name' => 'Квартира'],
+                (object)['id' => 2, 'name' => 'Дом'],
+                (object)['id' => 3, 'name' => 'Таунхаус'],
+                (object)['id' => 4, 'name' => 'Пентхаус'],
+            ]),
         ]);
     }
 
@@ -77,17 +91,36 @@ class ComplexController extends Controller
             'city_id' => 'nullable|integer',
             'district_id' => 'nullable|integer',
             'zone_id' => 'nullable|integer',
+            'state_id' => 'nullable|integer',
 
-            // Контакты
-            'contact_ids' => 'nullable|array',
+            // Контакты (максимум 5)
+            'contact_ids' => 'nullable|array|max:5',
             'contact_ids.*' => 'exists:contacts,id',
 
             // Файлы
             'logo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
-            'photos' => 'nullable|array',
+            'photos' => 'nullable|array|max:10',
             'photos.*' => 'image|mimes:jpeg,jpg,png,webp|max:5120',
-            'plans' => 'nullable|array',
+            'plans' => 'nullable|array|max:10',
             'plans.*' => 'image|mimes:jpeg,jpg,png,webp|max:5120',
+
+            // Площадь и цена
+            'area_from' => 'nullable|numeric|min:0',
+            'area_to' => 'nullable|numeric|min:0',
+            'price_per_m2' => 'nullable|numeric|min:0',
+            'price_total' => 'nullable|numeric|min:0',
+            'currency' => 'nullable|string|in:USD,UAH,EUR',
+
+            // Категория и тип объекта
+            'category_id' => 'nullable|integer',
+            'object_type_id' => 'nullable|integer',
+            'objects_count' => 'nullable|integer|min:0',
+
+            // Состояния и особенности
+            'conditions' => 'nullable|array',
+            'conditions.*' => 'exists:dictionaries,id',
+            'features' => 'nullable|array',
+            'features.*' => 'exists:dictionaries,id',
 
             // Блоки
             'blocks' => 'nullable|array',
@@ -112,6 +145,9 @@ class ComplexController extends Controller
             'photos.*.max' => 'Максимальный размер фото 5MB',
             'plans.*.image' => 'План должен быть изображением',
             'plans.*.max' => 'Максимальный размер плана 5MB',
+            'contact_ids.max' => 'Максимум 5 контактов',
+            'photos.max' => 'Максимум 10 фото',
+            'plans.max' => 'Максимум 10 планов',
         ]);
 
         try {
@@ -151,6 +187,17 @@ class ComplexController extends Controller
                 'name_translations' => !empty($nameTranslations) ? $nameTranslations : null,
                 'description_translations' => !empty($descriptionTranslations) ? $descriptionTranslations : null,
                 'is_active' => true,
+                // Новые поля
+                'area_from' => $validated['area_from'] ?? null,
+                'area_to' => $validated['area_to'] ?? null,
+                'price_per_m2' => $validated['price_per_m2'] ?? null,
+                'price_total' => $validated['price_total'] ?? null,
+                'currency' => $validated['currency'] ?? 'USD',
+                'category_id' => $validated['category_id'] ?? null,
+                'object_type_id' => $validated['object_type_id'] ?? null,
+                'objects_count' => $validated['objects_count'] ?? null,
+                'conditions' => $validated['conditions'] ?? null,
+                'features' => $validated['features'] ?? null,
             ]);
 
             // Привязываем контакты через полиморфную связь

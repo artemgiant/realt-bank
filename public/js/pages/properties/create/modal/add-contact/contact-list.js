@@ -6,6 +6,9 @@ window.ContactModal = window.ContactModal || {};
 
 window.ContactModal.ContactList = {
 
+    // Максимальное количество контактов
+    maxContacts: 5,
+
     /**
      * Добавление контакта в список на странице
      * @param {Object} contact - Данные контакта
@@ -21,6 +24,13 @@ window.ContactModal.ContactList = {
 
         if (!container || !template) {
             console.error('Контейнер или шаблон не найдены');
+            return false;
+        }
+
+        // Проверяем лимит контактов
+        var currentCount = container.querySelectorAll('.contact-card').length;
+        if (currentCount >= this.maxContacts) {
+            alert('Максимум ' + this.maxContacts + ' контактов');
             return false;
         }
 
@@ -42,7 +52,16 @@ window.ContactModal.ContactList = {
 
         // Скрываем блок "добавить" и показываем кнопку "добавить еще"
         if (addBlock) addBlock.classList.add('d-none');
-        if (addMoreBtn) addMoreBtn.classList.remove('d-none');
+
+        // Проверяем лимит для кнопки "добавить ещё"
+        var newCount = container.querySelectorAll('.contact-card').length;
+        if (addMoreBtn) {
+            if (newCount >= this.maxContacts) {
+                addMoreBtn.classList.add('d-none');
+            } else {
+                addMoreBtn.classList.remove('d-none');
+            }
+        }
 
         return true;
     },

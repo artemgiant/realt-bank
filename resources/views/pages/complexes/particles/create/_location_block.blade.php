@@ -76,7 +76,7 @@
         <input type="hidden" name="zone_name" value="{{ old('zone_name') }}">
         <input type="hidden" name="district_id" value="{{ old('district_id') }}">
         <input type="hidden" name="district_name" value="{{ old('district_name') }}">
-        <input type="hidden" name="city_id" value="{{ old('city_id') }}">
+        <input type="hidden" name="city_id" id="city_id" value="{{ old('city_id') }}">
         <input type="hidden" name="city_name" value="{{ old('city_name') }}">
     </div>
 </div>
