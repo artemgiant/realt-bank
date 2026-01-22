@@ -22,6 +22,15 @@
         <div class="lf-dropdown" id="lfDropdown">
             <div class="lf-modes" id="lfModes">
                 <button class="lf-active" data-mode="location">Страна, регион, город</button>
+                <button data-mode="detail">Локация</button>
+            </div>
+
+            <div class="lf-categories" id="lfCategories">
+                <button class="lf-active" data-cat="all">Все</button>
+                <button data-cat="districts">Районы</button>
+                <button data-cat="streets">Улицы</button>
+                <button data-cat="landmarks">Микрорайоны</button>
+                <button data-cat="developers">Девелоперы</button>
             </div>
 
             <div class="lf-breadcrumbs" id="lfBreadcrumbs"></div>
@@ -30,6 +39,10 @@
                 <div class="lf-section lf-hidden" id="lf-countries"><div class="lf-section-title">Страны</div><ul></ul></div>
                 <div class="lf-section lf-hidden" id="lf-regions"><div class="lf-section-title">Регионы</div><ul></ul></div>
                 <div class="lf-section lf-hidden" id="lf-cities"><div class="lf-section-title">Города</div><ul></ul></div>
+                <div class="lf-section lf-hidden" id="lf-districts"><div class="lf-section-title">Районы</div><ul></ul></div>
+                <div class="lf-section lf-hidden" id="lf-streets"><div class="lf-section-title">Улицы</div><ul></ul></div>
+                <div class="lf-section lf-hidden" id="lf-landmarks"><div class="lf-section-title">Зоны/Микрорайоны</div><ul></ul></div>
+                <div class="lf-section lf-hidden" id="lf-developers"><div class="lf-section-title">Девелоперы</div><ul></ul></div>
                 <div class="lf-empty" id="lfEmpty">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
@@ -41,6 +54,6 @@
 
         <input type="hidden" id="lfType" name="location_type">
         <input type="hidden" id="lfId" name="location_id">
-        <input type="hidden" id="lfCities" name="city_ids">
+        <input type="hidden" id="lfDetails" name="detail_ids">
     </div>
 </div>

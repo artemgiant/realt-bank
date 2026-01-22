@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact\Contact;
+use App\Models\Reference\Developer;
 use App\Models\Reference\Block;
 use App\Models\Reference\Complex;
 use App\Models\Reference\Dictionary;
@@ -21,12 +22,26 @@ class ComplexController extends Controller
      */
     public function index(Request $request): View
     {
-        $complexes = Complex::with(['developer', 'city', 'blocks'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
-
         return view('pages.complexes.index', [
-            'complexes' => $complexes,
+            // Справочники для фильтров
+            'categories' => collect([
+                (object)['id' => 1, 'name' => 'Жилая недвижимость'],
+                (object)['id' => 2, 'name' => 'Коммерческая недвижимость'],
+                (object)['id' => 3, 'name' => 'Загородная недвижимость'],
+            ]),
+            'objectTypes' => collect([
+                (object)['id' => 1, 'name' => 'Квартира'],
+                (object)['id' => 2, 'name' => 'Дом'],
+                (object)['id' => 3, 'name' => 'Таунхаус'],
+                (object)['id' => 4, 'name' => 'Пентхаус'],
+            ]),
+            'developers' => Developer::orderBy('name')->get(),
+            'housingClasses' => Dictionary::getHousingClasses(),
+            'heatingTypes' => Dictionary::getHeatingTypes(),
+            'wallTypes' => Dictionary::getWallTypes(),
+            'yearsBuilt' => Dictionary::getYearsBuilt(),
+            'conditions' => Dictionary::getConditions(),
+            'features' => Dictionary::getFeatures(),
         ]);
     }
 
@@ -715,11 +730,28 @@ class ComplexController extends Controller
      */
     public function ajaxData(Request $request): JsonResponse
     {
-        $query = Complex::with(['developer', 'city', 'blocks']);
+        $query = Complex::with([
+            'developer',
+            'city.region.country',
+            'district',
+            'zone',
+            'blocks.heatingType',
+            'blocks.wallType',
+            'blocks.street',
+            'contacts.phones',
+            'housingClass',
+        ]);
 
-        // Поиск
-        if ($search = $request->get('search')) {
-            $query->where('name', 'like', "%{$search}%");
+        // ========== Фильтры ==========
+
+        // Поиск по ID
+        if ($searchId = $request->get('search_id')) {
+            $query->where('id', $searchId);
+        }
+
+        // Фильтр по категории
+        if ($categoryId = $request->get('category_id')) {
+            $query->where('category_id', $categoryId);
         }
 
         // Фильтр по девелоперу
@@ -727,29 +759,306 @@ class ComplexController extends Controller
             $query->where('developer_id', $developerId);
         }
 
-        // Фильтр по городу
-        if ($cityId = $request->get('city_id')) {
-            $query->where('city_id', $cityId);
+        // Фильтр по классу жилья
+        if ($housingClassId = $request->get('housing_class_id')) {
+            $query->where('housing_class_id', $housingClassId);
         }
 
-        $total = $query->count();
+        // Фильтр по типу объекта (множественный)
+        if ($objectTypeIds = $request->get('object_type_id')) {
+            if (is_array($objectTypeIds)) {
+                $query->whereIn('object_type_id', $objectTypeIds);
+            }
+        }
 
-        // Сортировка
-        $sortColumn = $request->get('sort', 'created_at');
-        $sortDirection = $request->get('direction', 'desc');
-        $query->orderBy($sortColumn, $sortDirection);
+        // Фильтр по году сдачи (через блоки)
+        if ($yearsBuilt = $request->get('year_built')) {
+            if (is_array($yearsBuilt)) {
+                $query->whereHas('blocks', function ($q) use ($yearsBuilt) {
+                    $q->whereIn('year_built', $yearsBuilt);
+                });
+            }
+        }
 
-        // Пагинация
-        $perPage = $request->get('per_page', 20);
-        $page = $request->get('page', 1);
-        $complexes = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+        // Фильтр по состоянию
+        if ($conditionIds = $request->get('condition_id')) {
+            if (is_array($conditionIds)) {
+                $query->where(function ($q) use ($conditionIds) {
+                    foreach ($conditionIds as $conditionId) {
+                        $q->orWhereJsonContains('conditions', (int) $conditionId);
+                    }
+                });
+            }
+        }
 
+        // Фильтр по типу стен (через блоки)
+        if ($wallTypeIds = $request->get('wall_type_id')) {
+            if (is_array($wallTypeIds)) {
+                $query->whereHas('blocks', function ($q) use ($wallTypeIds) {
+                    $q->whereIn('wall_type_id', $wallTypeIds);
+                });
+            }
+        }
+
+        // Фильтр по отоплению (через блоки)
+        if ($heatingTypeIds = $request->get('heating_type_id')) {
+            if (is_array($heatingTypeIds)) {
+                $query->whereHas('blocks', function ($q) use ($heatingTypeIds) {
+                    $q->whereIn('heating_type_id', $heatingTypeIds);
+                });
+            }
+        }
+
+        // Фильтр по особенностям
+        if ($featureIds = $request->get('features')) {
+            if (is_array($featureIds)) {
+                $query->where(function ($q) use ($featureIds) {
+                    foreach ($featureIds as $featureId) {
+                        $q->whereJsonContains('features', (int) $featureId);
+                    }
+                });
+            }
+        }
+
+        // Фильтр по площади
+        if ($areaFrom = $request->get('area_from')) {
+            $query->where('area_from', '>=', $areaFrom);
+        }
+        if ($areaTo = $request->get('area_to')) {
+            $query->where('area_to', '<=', $areaTo);
+        }
+
+        // Фильтр по этажности (через блоки)
+        if ($floorsFrom = $request->get('floors_from')) {
+            $query->whereHas('blocks', function ($q) use ($floorsFrom) {
+                $q->where('floors_total', '>=', $floorsFrom);
+            });
+        }
+        if ($floorsTo = $request->get('floors_to')) {
+            $query->whereHas('blocks', function ($q) use ($floorsTo) {
+                $q->where('floors_total', '<=', $floorsTo);
+            });
+        }
+
+        // Фильтр по цене
+        if ($priceFrom = $request->get('price_from')) {
+            $query->where('price_total', '>=', $priceFrom);
+        }
+        if ($priceTo = $request->get('price_to')) {
+            $query->where('price_total', '<=', $priceTo);
+        }
+
+        // Фильтр по цене за м²
+        if ($pricePerM2From = $request->get('price_per_m2_from')) {
+            $query->where('price_per_m2', '>=', $pricePerM2From);
+        }
+        if ($pricePerM2To = $request->get('price_per_m2_to')) {
+            $query->where('price_per_m2', '<=', $pricePerM2To);
+        }
+
+        // Фильтр по локации
+        if ($locationType = $request->get('location_type')) {
+            $locationId = $request->get('location_id');
+            if ($locationId) {
+                switch ($locationType) {
+                    case 'country':
+                        $query->whereHas('city.region', function ($q) use ($locationId) {
+                            $q->where('country_id', $locationId);
+                        });
+                        break;
+                    case 'region':
+                        $query->whereHas('city', function ($q) use ($locationId) {
+                            $q->where('region_id', $locationId);
+                        });
+                        break;
+                    case 'city':
+                        $query->where('city_id', $locationId);
+                        break;
+                }
+            }
+        }
+
+        // Детальные фильтры локации (районы, улицы, и т.д.)
+        if ($detailIds = $request->get('detail_ids')) {
+            $details = json_decode($detailIds, true);
+            if (is_array($details) && count($details) > 0) {
+                $query->where(function ($q) use ($details) {
+                    foreach ($details as $detail) {
+                        switch ($detail['type']) {
+                            case 'district':
+                                $q->orWhere('district_id', $detail['id']);
+                                break;
+                            case 'developer':
+                                $q->orWhere('developer_id', $detail['id']);
+                                break;
+                        }
+                    }
+                });
+            }
+        }
+
+        // Общее количество до пагинации
+        $recordsTotal = Complex::count();
+        $recordsFiltered = $query->count();
+
+        // ========== Сортировка ==========
+        $sortField = $request->get('sort_field', 'created_at');
+        $sortDir = $request->get('sort_dir', 'desc');
+
+        $allowedSortFields = ['created_at', 'name', 'price_per_m2', 'area_from', 'price_total'];
+        if (in_array($sortField, $allowedSortFields)) {
+            $query->orderBy($sortField, $sortDir === 'asc' ? 'asc' : 'desc');
+        }
+
+        // ========== Пагинация (DataTables format) ==========
+        $start = $request->get('start', 0);
+        $length = $request->get('length', 10);
+        $complexes = $query->skip($start)->take($length)->get();
+
+        // ========== Форматирование данных для рендеров ==========
+        $data = $complexes->map(function ($complex) {
+            // Получаем первый контакт
+            $contact = $complex->contacts->first();
+            $contactPhone = $contact && $contact->phones->isNotEmpty()
+                ? $contact->phones->first()->phone
+                : null;
+
+            // Получаем годы сдачи из блоков
+            $years = $complex->blocks->pluck('year_built')->filter()->unique()->sort();
+            $yearsStr = $years->isNotEmpty()
+                ? ($years->count() > 1 ? $years->min() . '-' . $years->max() : $years->first())
+                : null;
+
+            // Получаем диапазон этажности
+            $floors = $complex->blocks->pluck('floors_total')->filter();
+            $floorsStr = null;
+            if ($floors->isNotEmpty()) {
+                if ($floors->min() === $floors->max()) {
+                    $floorsStr = $floors->min();
+                } else {
+                    $floorsStr = $floors->min() . '-' . $floors->max();
+                }
+            }
+
+            // Условия/состояния
+            $conditionNames = [];
+            if ($complex->conditions) {
+                $conditionIds = is_array($complex->conditions) ? $complex->conditions : json_decode($complex->conditions, true);
+                if ($conditionIds) {
+                    $conditionNames = Dictionary::whereIn('id', $conditionIds)->pluck('name')->toArray();
+                }
+            }
+
+            // Тип стен из блоков
+            $wallTypes = $complex->blocks->pluck('wallType.name')->filter()->unique()->toArray();
+
+            // Особенности
+            $featureNames = [];
+            if ($complex->features) {
+                $featureIds = is_array($complex->features) ? $complex->features : json_decode($complex->features, true);
+                if ($featureIds) {
+                    $featureNames = Dictionary::whereIn('id', $featureIds)->pluck('name')->toArray();
+                }
+            }
+
+            // Формат для рендеров
+            return [
+                'id' => $complex->id,
+                'checkbox' => $complex->id,
+
+                // Локация
+                'location' => [
+                    'has_location' => true,
+                    'name' => $complex->name,
+                    'years' => $yearsStr ? "({$yearsStr})" : null,
+                    'street' => $complex->blocks->first()?->street?->name
+                        ? ($complex->blocks->first()->street->name . ' ' . ($complex->blocks->first()->building_number ?? ''))
+                        : null,
+                    'address' => implode(', ', array_filter([
+                        $complex->district?->name,
+                        $complex->city?->name,
+                        $complex->city?->region?->name,
+                    ])),
+                ],
+
+                // Тип объекта
+                'property_type' => [
+                    'category' => $complex->housingClass?->name ?? 'Жилье',
+                    'types' => $complex->objects_count ? "{$complex->objects_count} объектов" : null,
+                ],
+
+                // Площадь
+                'area' => [
+                    'from' => $complex->area_from,
+                    'to' => $complex->area_to,
+                ],
+
+                // Состояние
+                'condition' => [
+                    'conditions' => $conditionNames,
+                    'wall_type' => implode(', ', $wallTypes) ?: null,
+                ],
+
+                // Этажность
+                'floor' => $floorsStr,
+
+                // Фото
+                'photo' => $complex->photos && count($complex->photos) > 0
+                    ? Storage::url($complex->photos[0])
+                    : null,
+
+                // Цена
+                'price' => [
+                    'total' => $complex->price_total
+                        ? number_format($complex->price_total, 0, '', ' ') . ' ' . ($complex->currency ?? 'USD')
+                        : null,
+                    'per_m2' => $complex->price_per_m2
+                        ? number_format($complex->price_per_m2, 0, '', ' ') . ' ' . ($complex->currency ?? 'USD')
+                        : null,
+                ],
+
+                // Контакт
+                'contact' => [
+                    'has_contact' => $contact !== null || $complex->developer !== null,
+                    'name' => $contact ? trim($contact->first_name . ' ' . $contact->last_name) : ($complex->developer?->name ?? null),
+                    'company' => $complex->developer?->name ?? null,
+                    'phone' => $contactPhone,
+                    'logo' => $complex->developer?->logo_path ? Storage::url($complex->developer->logo_path) : null,
+                ],
+
+                // Действия
+                'actions' => null,
+
+                // Данные для child row
+                'description' => $complex->description,
+                'agent_notes' => $complex->agent_notes,
+                'special_conditions' => $complex->special_conditions,
+                'features' => $featureNames,
+                'blocks' => $complex->blocks->map(function ($block) {
+                    return [
+                        'id' => $block->id,
+                        'name' => $block->name,
+                        'address' => $block->street
+                            ? ($block->street->name . ' ' . ($block->building_number ?? ''))
+                            : null,
+                        'wall_type' => $block->wallType?->name,
+                        'heating_type' => $block->heatingType?->name,
+                        'floors' => $block->floors_total,
+                        'year_built' => $block->year_built,
+                        'photo' => $block->plan_path ? Storage::url($block->plan_path) : null,
+                    ];
+                })->toArray(),
+                'created_at' => $complex->created_at?->format('d.m.Y'),
+                'updated_at' => $complex->updated_at?->format('d.m.Y'),
+            ];
+        });
+
+        // ========== Ответ в формате DataTables ==========
         return response()->json([
-            'data' => $complexes,
-            'total' => $total,
-            'per_page' => $perPage,
-            'current_page' => $page,
-            'last_page' => ceil($total / $perPage),
+            'draw' => (int) $request->get('draw', 1),
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $data,
         ]);
     }
 }

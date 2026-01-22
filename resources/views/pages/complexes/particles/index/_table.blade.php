@@ -1,5 +1,14 @@
-<table id="developers-table" class="table table-hover">
-
+<table id="example" class="table table-hover">
+    <col width="3.478%" valign="middle">
+    <col width="22.174%" valign="middle">
+    <col width="6.695%" valign="middle">
+    <col width="7.478%" valign="middle">
+    <col width="9.13%" valign="middle">
+    <col width="5.217%" valign="middle">
+    <col width="6.956%" valign="middle">
+    <col width="6.782%" valign="middle">
+    <col width="14.525%" valign="middle">
+    <col width="17.565%" valign="middle">
     <thead>
     <tr>
         <th>
@@ -11,18 +20,38 @@
             </div>
         </th>
         <th>
-            <div class="thead-wrapper developer">
-                <p>Девелопер</p>
+            <div class="thead-wrapper location">
+                <p>Локация</p>
             </div>
         </th>
         <th>
-            <div class="thead-wrapper year">
-                <p>Год</p>
+            <div class="thead-wrapper type">
+                <p>Тип</p>
             </div>
         </th>
         <th>
-            <div class="thead-wrapper complex">
-                <p>Комплексы</p>
+            <div class="thead-wrapper area">
+                <p>Площадь</p>
+            </div>
+        </th>
+        <th>
+            <div class="thead-wrapper condition">
+                <p>Состояние</p>
+            </div>
+        </th>
+        <th>
+            <div class="thead-wrapper floor">
+                <p>Этажность</p>
+            </div>
+        </th>
+        <th>
+            <div class="thead-wrapper photo">
+                <p>Фото</p>
+            </div>
+        </th>
+        <th>
+            <div class="thead-wrapper price">
+                <p>Цена от</p>
             </div>
         </th>
         <th>
@@ -41,6 +70,8 @@
                             <li><a class="dropdown-item" href="#">Обновить</a></li>
                             <li><a class="dropdown-item" href="#">Редактировать</a></li>
                             <li><a class="dropdown-item" href="#">Удалить</a></li>
+                            <li><a class="dropdown-item" href="#">Отложить</a></li>
+                            <li><a class="dropdown-item" href="#">Передать</a></li>
                         </ul>
                     </div>
                 </div>
@@ -52,10 +83,12 @@
                         </button>
                         <ul class="dropdown-menu dropdown-menu-sort">
                             <li><a class="dropdown-item sort-option" href="#" data-sort-field="created_at" data-sort-dir="desc">Самые новые</a></li>
+                            <li><a class="dropdown-item sort-option" href="#" data-sort-field="price_per_m2" data-sort-dir="asc">Самые дешевые/м²</a></li>
+                            <li><a class="dropdown-item sort-option" href="#" data-sort-field="price_per_m2" data-sort-dir="desc">Самые дорогие/м²</a></li>
+                            <li><a class="dropdown-item sort-option" href="#" data-sort-field="area_from" data-sort-dir="asc">Наименьшая площадь</a></li>
+                            <li><a class="dropdown-item sort-option" href="#" data-sort-field="area_from" data-sort-dir="desc">Наибольшая площадь</a></li>
                             <li><a class="dropdown-item sort-option" href="#" data-sort-field="name" data-sort-dir="asc">По названию (А-Я)</a></li>
                             <li><a class="dropdown-item sort-option" href="#" data-sort-field="name" data-sort-dir="desc">По названию (Я-А)</a></li>
-                            <li><a class="dropdown-item sort-option" href="#" data-sort-field="year_founded" data-sort-dir="desc">По году (новые)</a></li>
-                            <li><a class="dropdown-item sort-option" href="#" data-sort-field="year_founded" data-sort-dir="asc">По году (старые)</a></li>
                             <li><a class="dropdown-item sort-option" href="#" data-sort-field="created_at" data-sort-dir="asc">Самые старые</a></li>
                         </ul>
                     </div>
