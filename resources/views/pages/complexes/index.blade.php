@@ -1,141 +1,37 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Page-Complex</title>
-    <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="./css/lib/select2.min.css">
-    <link rel="stylesheet" href="./css/lib/bootstrap.v5.3.3.min.css">
-    <link rel="stylesheet" href="./css/lib/data-range-picker.min.css">
-    <link href="https://cdn.datatables.net/v/dt/dt-2.2.2/datatables.min.css" rel="stylesheet" integrity="sha384-2vMryTPZxTZDZ3GnMBDVQV8OtmoutdrfJxnDTg0bVam9mZhi7Zr3J1+lkVFRr71f" crossorigin="anonymous">
-    <!-- для роботи Гео Модалки 27.08.2025 -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
-    <!-- для роботи Гео Модалки 27.08.2025 -->
-    <link rel="stylesheet" href="./css/pages/page-complex.css">
-</head>
-<body class="d-flex flex-column min-vh-100">
-<main class="wrapper">
-    <!-- початок side-bar	-->
-    <aside class="sidebar">
-        <nav class="nav">
-            <ul class="nav-list">
-                <li class="nav-list-item">
-                    <a href="" class="nav-list-link sidebar-logo">
-                        <picture><source srcset="./img/icon/side-bar/logo-F.svg" type="image/webp"><img src="./img/icon/side-bar/logo-F.svg" alt=""></picture>
-                    </a>
-                </li>
-                <li class="nav-list-item">
-                    <a class="nav-list-link active" href="./page-home.html">
-					<span class="nav-list-icon">
-						<picture><source srcset="./img/icon/side-bar/Finanse.svg" type="image/webp"><img src="./img/icon/side-bar/Finanse.svg" alt=""></picture>
-					</span>
-                        <span class="nav-list-text">
-						Недвижимость
-					</span>
-                    </a>
-                </li>
-                <li class="nav-list-item">
-                    <a class="nav-list-link" href="#">
-					<span class="nav-list-icon">
-						<picture><source srcset="./img/icon/side-bar/Deals.svg" type="image/webp"><img src="./img/icon/side-bar/Deals.svg" alt=""></picture>
-						<span class="my-badge">
-							15
-						</span>
-					</span>
-                        <span class="nav-list-text">
-						Сделки
-					</span>
-                    </a>
-                </li>
-                <li class="nav-list-item">
-                    <a class="nav-list-link" href="#">
-					<span class="nav-list-icon">
-						<picture><source srcset="./img/icon/side-bar/Tasks.svg" type="image/webp"><img src="./img/icon/side-bar/Tasks.svg" alt=""></picture>
-						<span class="my-badge">
-							233
-						</span>
-					</span>
-                        <span class="nav-list-text">
-						Задачи
-					</span>
-                    </a>
-                </li>
-                <li class="nav-list-item">
-                    <a class="nav-list-link" href="./page-company-agents.html">
-					<span class="nav-list-icon">
-						<picture><source srcset="./img/icon/side-bar/Company1.svg" type="image/webp"><img src="./img/icon/side-bar/Company1.svg" alt=""></picture>
-					</span>
-                        <span class="nav-list-text">
-						Агентство
-					</span>
-                    </a>
-                </li>
-            </ul>
-            <ul class="nav-info">
-                <li class="nav-info-item">
-                    <div class="dropdown">
-                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            RU
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">UA</a></li>
-                            <li><a class="dropdown-item" href="#">RU</a></li>
-                            <li><a class="dropdown-item" href="#">EN</a></li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-info-item">
-                    <a class="nav-info-link position-relative" href="#">
-                        <picture><source srcset="./img/icon/side-bar/mail-white.svg" type="image/webp"><img src="./img/icon/side-bar/mail-white.svg" alt=""></picture>
-                        <span class="my-badge"></span>
-                    </a>
-                </li>
-                <li class="nav-info-item">
-                    <a class="nav-info-link" href="./page-company-settings.html">
-                        <picture><source srcset="./img/icon/side-bar/settings-white.svg" type="image/webp"><img src="./img/icon/side-bar/settings-white.svg" alt=""></picture>
-                    </a>
-                </li>
-                <li class="nav-info-item">
-                    <a class="nav-info-link" href="./page-my-profile.html">
-                        <picture><source srcset="./img/icon/side-bar/default-avatar.svg" type="image/webp"><img src="./img/icon/side-bar/default-avatar.svg" alt=""></picture>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
-    <!-- кінець side-bar	-->
-    <!-- початок main	-->
-    <div class="container-fluid">
-        <!-- початок header	-->
-        <header class="header-wrapper">
-            <h1 class="header-title">
-                Недвижимость
-            </h1>
-            <div class="header-tabs">
-                <div class="btn-group">
-                    <a href="./page-home.html" class="btn btn-outline-primary active" aria-current="page">Объекты</a>
-                    <a href="./page-complex.html" class="btn btn-outline-primary">Комплексы</a>
-                    <a href="./page-developers.html" class="btn btn-outline-primary">Девелоперы</a>
-                </div>
-            </div>
-            <div class="header-actions">
-                <a class="btn btn-primary" href="#">
-			<span>
-				Добавить
-			</span>
-                    <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M0.471859 5.47374C0.358138 5.36002 0.28775 5.20285 0.287749 5.0293C0.28775 4.68208 0.569081 4.40075 0.916301 4.40075L9.13847 4.40075C9.48563 4.4008 9.76697 4.68213 9.76702 5.0293C9.76702 5.3764 9.48563 5.65779 9.13853 5.65779H0.916357C0.742747 5.65785 0.585581 5.58746 0.471859 5.47374Z" fill="white" />
-                        <path d="M4.583 9.58476C4.46922 9.47098 4.39889 9.31387 4.39889 9.14032L4.39889 0.918164C4.39883 0.571001 4.68022 0.289614 5.02739 0.28967C5.37449 0.28967 5.65588 0.571056 5.65588 0.918164L5.65588 9.14032C5.65583 9.48748 5.37449 9.76881 5.02733 9.76887C4.85389 9.76887 4.69678 9.69853 4.583 9.58476Z" fill="white" />
-                    </svg>
-                </a>
-            </div>
-        </header>
+@extends('layouts.crm')
 
-        <!-- кінець header	-->
+@section('title', 'Developers - Realt Bank')
+
+@push('styles')
+    <link rel="stylesheet" href="./css/pages/page-complex.css">
+@endpush
+
+
+@section('header')
+    {{-- Табы та title підтягуються автоматично з конфігу --}}
+    <x-crm.header
+            :addButton="true"
+            addButtonText="Добавить"
+            addButtonUrl="{{ route('developers.create') }}"
+    />
+@endsection
+@section('content')
+
+    {{-- Сообщения --}}
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
         <!-- початок filter	-->
         <div class="filter">
 
@@ -1111,35 +1007,19 @@
             </table>
             <!-- кінець table	-->
         </div>
-    </div>
-    <!-- кінець main	-->
-</main>
+
+@endsection
 
 
-<!-- кінець цей блок ще в розробці _modal	-->
-<script src="./js/lib/popper.v2.11.8.min.js"></script>
-<script src="./js/lib/bootstrap.v5.3.3.min.js"></script>
-<script src="./js/lib/jquery.v3.7.1.min.js"></script>
-<script src="./js/lib/data-tables.min.js"></script>
-<script src="./js/lib/moment.min.js"></script>
-<script src="./js/lib/data-range-picker.min.js"></script>
-<script src="./js/lib/select2.min.js"></script>
-<!-- для роботи Гео Модалки 27.08.2025 -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-text-icon@1.0.0/dist/leaflet.text-icon.js"></script>
-<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
-<script src="./js/pages/modal-geo.min.js"></script>
 
-<!-- для роботи Гео Модалки 27.08.2025 -->
-<script src="./js/pages/complexes/index/page-complex-table.js"></script>
-
-<script src="./js/pages/filter1.min.js"></script>
-<script src="./js/pages/full-filter.min.js"></script>
-<script src="./js/pages/my-dropdown.min.js"></script>
-<script src="./js/pages/info-agent-or-contact-modal.min.js" type="module"></script>
 
 {{--<script src="./js/pages/page-complex.js" type="module"></script>--}}
+@push('scripts')
+
+
+<script src="./js/pages/complexes/index/page-complex-table.js"></script>
 
 <script src="./js/pages/complexes/index/page-complex.js" type="module"></script>
-</body>
-</html>
+
+
+@endpush
