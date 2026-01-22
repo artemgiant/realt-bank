@@ -5,6 +5,9 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/pages/complexes/create/page-create-complex.css') }}">
 
+
+    <link rel="stylesheet" href="{{ asset('css/pages/properties/create/location-search.css') }}">
+
     {{--Плагин по редактированию изображений--}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-image-editor/3.15.0/tui-image-editor.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-color-picker/2.2.6/tui-color-picker.min.css">
@@ -390,7 +393,11 @@
                 <div class="create-filter-row">
 
 
-                    {{--                        #TODO добавить локацию ТАКУЮ КАК В  resources/views/pages/properties/particles/create/_location_block.blade.php--}}
+                    {{-- ================================================================== --}}
+                    {{-- ГРУППА 3: Локация --}}
+                    {{-- ================================================================== --}}
+                    @include('pages.complexes.particles.create._location_block')
+
 
                     <div class="item w20">
                         <label class="item-label" for="level-house">Класс жилья</label>
@@ -509,35 +516,10 @@
                             </option>
                         </select>
                     </div>
-                    <div class="item w15">
-                        <span class="item-label">Особенности</span>
-                        <div class="multiple-menu">
-                            <button class="multiple-menu-btn" data-open-menu="false">
-                                Выберите параметры
-                            </button>
-                            <div class="multiple-menu-wrapper">
-                                <label>
-                                    <input class="multiple-menu-search" autocomplete="off" name="search-additionally" type="text" placeholder="Поиск">
-                                </label>
-                                <ul class="multiple-menu-list">
-                                    <li class="multiple-menu-item">
-                                        <label class="my-custom-input">
-                                            <input type="checkbox" name="from-the-intermediary">
-                                            <span class="my-custom-box"></span>
-                                            <span class="my-custom-text">От посредника</span>
-                                        </label>
-                                    </li>
-                                    <li class="multiple-menu-item">
-                                        <label class="my-custom-input">
-                                            <input type="checkbox" name="state-programs">
-                                            <span class="my-custom-box"></span>
-                                            <span class="my-custom-text">Госпрограммы</span>
-                                        </label>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+
+                    {{-- Особенности --}}
+{{--                    @include('pages.properties.particles.create._features_block')--}}
+
                 </div>
                 <div class="create-filter-tags">
                     <div class="filter-tags">
@@ -694,9 +676,7 @@
                             <button class="btn btn-outline-primary" type="button">
                                 Отменить изменения
                             </button>
-                            <button class="btn btn-outline-danger" type="button">
-                                Удалить комплекс
-                            </button>
+
                         </div>
                         <div class="create-btnGroup-right">
                             <button class="btn btn-primary" type="submit">
