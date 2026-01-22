@@ -36,27 +36,17 @@ $('#developer_id').select2({
 	placeholder: 'Выберите девелопера',
 	allowClear: true,
 	ajax: {
-		url: '/api/developers/search',
+		url: '/developers/ajax-search',
 		dataType: 'json',
 		delay: 250,
 		data: function (params) {
 			return {
-				search: params.term,
-				page: params.page || 1
+				q: params.term
 			};
 		},
-		processResults: function (data, params) {
-			params.page = params.page || 1;
+		processResults: function (data) {
 			return {
-				results: data.data.map(function(item) {
-					return {
-						id: item.id,
-						text: item.name
-					};
-				}),
-				pagination: {
-					more: data.current_page < data.last_page
-				}
+				results: data.results
 			};
 		},
 		cache: true
@@ -165,35 +155,32 @@ const BlocksManager = {
 			placeholder: 'Выберите улицу',
 			allowClear: true,
 			ajax: {
-				url: '/api/streets/search',
+				url: '/location/search',
 				dataType: 'json',
 				delay: 250,
 				data: function (params) {
-					// Получаем city_id из формы локации
-					const cityId = $('#city_id').val() || $('input[name="city_id"]').val();
+					// Получаем state_id из формы локации
+					const stateId = $('#state_id').val() || $('input[name="state_id"]').val();
 					return {
-						search: params.term,
-						city_id: cityId,
-						page: params.page || 1
+						q: params.term,
+						state_id: stateId
 					};
 				},
-				processResults: function (data, params) {
-					params.page = params.page || 1;
+				processResults: function (data) {
+					// API возвращает { success: true, results: [...] }
+					const results = data.results || [];
 					return {
-						results: data.data ? data.data.map(function(item) {
+						results: results.map(function(item) {
 							return {
 								id: item.id,
-								text: item.name
+								text: item.name + (item.city_name ? ' (' + item.city_name + ')' : '')
 							};
-						}) : [],
-						pagination: {
-							more: data.current_page < data.last_page
-						}
+						})
 					};
 				},
 				cache: true
 			},
-			minimumInputLength: 0
+			minimumInputLength: 2
 		});
 	}
 };
