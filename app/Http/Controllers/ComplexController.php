@@ -283,7 +283,16 @@ class ComplexController extends Controller
      */
     public function edit(Complex $complex): View
     {
-        $complex->load(['contacts.phones', 'blocks.street', 'blocks.heatingType', 'blocks.wallType', 'developer']);
+        $complex->load([
+            'contacts.phones',
+            'blocks.street',
+            'blocks.heatingType',
+            'blocks.wallType',
+            'developer',
+            'city.state.country',
+            'district',
+            'zone',
+        ]);
 
         return view('pages.complexes.edit', [
             'complex' => $complex,
@@ -296,6 +305,20 @@ class ComplexController extends Controller
             'heatingTypes' => Dictionary::getHeatingTypes(),
             'wallTypes' => Dictionary::getWallTypes(),
             'yearsBuilt' => Dictionary::getYearsBuilt(),
+            'features' => Dictionary::getFeatures(),
+            'conditions' => Dictionary::getConditions(),
+            // Тестовые данные для категорий и типов объектов
+            'categories' => collect([
+                (object)['id' => 1, 'name' => 'Жилая недвижимость'],
+                (object)['id' => 2, 'name' => 'Коммерческая недвижимость'],
+                (object)['id' => 3, 'name' => 'Загородная недвижимость'],
+            ]),
+            'objectTypes' => collect([
+                (object)['id' => 1, 'name' => 'Квартира'],
+                (object)['id' => 2, 'name' => 'Дом'],
+                (object)['id' => 3, 'name' => 'Таунхаус'],
+                (object)['id' => 4, 'name' => 'Пентхаус'],
+            ]),
         ]);
     }
 

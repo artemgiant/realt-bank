@@ -22,8 +22,8 @@ return [
             'icon' => 'img/icon/side-bar/Finanse.svg',
             'tabs' => [
                 ['label' => 'Объекты', 'route' => 'properties.index'],
-                ['label' => 'Девелоперы', 'route' => 'developers.index'],
                 ['label' => 'Комплексы', 'route' => 'complexes.index'],
+                ['label' => 'Девелоперы', 'route' => 'developers.index'],
 //                ['label' => 'Девелоперы', 'route' => 'developers.index'],
             ],
         ],

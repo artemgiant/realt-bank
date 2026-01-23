@@ -4,6 +4,7 @@ namespace App\Models\Reference;
 
 use App\Models\Location\Street;
 use App\Models\Property\Property;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 
 class Block extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'blocks';
 

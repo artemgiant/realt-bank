@@ -146,10 +146,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                {{-- Вторая строка фильтров --}}
-                <div class="full-filter-row">
+
                     {{-- Тип стен --}}
                     <div class="item">
                         <span class="item-label">Тип стен</span>
@@ -196,6 +194,23 @@
                         </div>
                     </div>
 
+
+
+                </div>
+
+                {{-- Вторая строка фильтров --}}
+                <div class="full-filter-row">
+
+
+
+
+                </div>
+
+                {{-- Третья строка фильтров --}}
+                <div class="full-filter-row">
+
+
+
                     {{-- Этажность --}}
                     <div class="item">
                         <label class="item-label" for="floors_from">Этажность</label>
@@ -215,10 +230,8 @@
                             @endforeach
                         </select>
                     </div>
-                </div>
 
-                {{-- Третья строка фильтров --}}
-                <div class="full-filter-row">
+
                     {{-- Поиск по ID --}}
                     <div class="item search-on-id">
                         <label for="search_id">Поиск по ID</label>
@@ -276,15 +289,7 @@
                         </div>
                     </div>
 
-                    {{-- Кнопка сброса --}}
-                    <div class="item filter-btn-outline">
-                        <button class="btn btn-outline-primary" type="button" id="reset-filters-btn">Сбросить</button>
-                    </div>
 
-                    {{-- Кнопка применить --}}
-                    <div class="item filter-btn">
-                        <button class="btn btn-primary" type="submit">Применить</button>
-                    </div>
                 </div>
             </div>
         </div>
