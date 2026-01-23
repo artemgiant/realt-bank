@@ -432,50 +432,92 @@
                     {{-- Локация --}}
                     @include('pages.complexes.particles.edit._location_block')
 
-                    <div class="item w20">
-                        <label class="item-label" for="housing_class_id">Класс жилья</label>
-                        <select id="housing_class_id" name="housing_class_id" class="js-example-responsive3 my-select2" autocomplete="off">
-                            <option value="">Выберите</option>
-                            @foreach($housingClasses as $housingClass)
-                                <option value="{{ $housingClass->id }}" {{ old('housing_class_id', $complex->housing_class_id) == $housingClass->id ? 'selected' : '' }}>
-                                    {{ $housingClass->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <div class="item w10">
+                        <span class="item-label">Класс жилья</span>
+                        <div class="multiple-menu" id="housing-classes-menu">
+                            <button class="multiple-menu-btn" type="button" data-open-menu="false">Выберите</button>
+                            <div class="multiple-menu-wrapper">
+                                <ul class="multiple-menu-list">
+                                    @php
+                                        $selectedHousingClasses = old('housing_classes', $complex->housing_classes ?? []);
+                                        if (is_string($selectedHousingClasses)) {
+                                            $selectedHousingClasses = json_decode($selectedHousingClasses, true) ?? [];
+                                        }
+                                    @endphp
+                                    @foreach($housingClasses as $housingClass)
+                                        <li class="multiple-menu-item">
+                                            <label class="my-custom-input">
+                                                <input type="checkbox" name="housing_classes[]" value="{{ $housingClass->id }}"
+                                                    {{ in_array($housingClass->id, $selectedHousingClasses) ? 'checked' : '' }}>
+                                                <span class="my-custom-box"></span>
+                                                <span class="my-custom-text">{{ $housingClass->name }}</span>
+                                            </label>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="create-filter-row">
-                    <div class="item w15 blue-select2">
-                        <label class="item-label" for="category_id">Категория</label>
-                        <select id="category_id" name="category_id" class="js-example-responsive2" autocomplete="off">
-                            <option value="">Выберите</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id', $complex->category_id) == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="item w20">
-						<span>
-							<label class="item-label" for="object_type_id">Типы объектов</label> /
-							<label class="item-label" for="objects_count">Количество</label>
-						</span>
-                        <div class="item-action-wrapper">
-                            <select id="object_type_id" name="object_type_id" class="js-example-responsive2" autocomplete="off">
-                                <option value="">Выберите</option>
-                                @foreach($objectTypes as $objectType)
-                                    <option value="{{ $objectType->id }}" {{ old('object_type_id', $complex->object_type_id) == $objectType->id ? 'selected' : '' }}>
-                                        {{ $objectType->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            /
-                            <div class="item-inputText-wrapper">
-                                <input class="item-inputText" type="number" id="objects_count" name="objects_count"
-                                       value="{{ old('objects_count', $complex->objects_count) }}"
-                                       autocomplete="off" placeholder="0" min="0">
+                    <div class="item w15">
+                        <span class="item-label">Категория</span>
+                        <div class="multiple-menu" id="categories-menu">
+                            <button class="multiple-menu-btn" type="button" data-open-menu="false">Выберите</button>
+                            <div class="multiple-menu-wrapper">
+                                <ul class="multiple-menu-list">
+                                    @php
+                                        $selectedCategories = old('categories', $complex->categories ?? []);
+                                        if (is_string($selectedCategories)) {
+                                            $selectedCategories = json_decode($selectedCategories, true) ?? [];
+                                        }
+                                    @endphp
+                                    @foreach($complexCategories as $category)
+                                        <li class="multiple-menu-item">
+                                            <label class="my-custom-input">
+                                                <input type="checkbox" name="categories[]" value="{{ $category->id }}"
+                                                    {{ in_array($category->id, $selectedCategories) ? 'checked' : '' }}>
+                                                <span class="my-custom-box"></span>
+                                                <span class="my-custom-text">{{ $category->name }}</span>
+                                            </label>
+                                        </li>
+                                    @endforeach
+                                </ul>
                             </div>
+                        </div>
+                    </div>
+                    <div class="item w15">
+                        <span class="item-label">Типы объектов</span>
+                        <div class="multiple-menu" id="object-types-menu">
+                            <button class="multiple-menu-btn" type="button" data-open-menu="false">Выберите</button>
+                            <div class="multiple-menu-wrapper">
+                                <ul class="multiple-menu-list">
+                                    @php
+                                        $selectedObjectTypes = old('object_types', $complex->object_types ?? []);
+                                        if (is_string($selectedObjectTypes)) {
+                                            $selectedObjectTypes = json_decode($selectedObjectTypes, true) ?? [];
+                                        }
+                                    @endphp
+                                    @foreach($objectTypes as $objectType)
+                                        <li class="multiple-menu-item">
+                                            <label class="my-custom-input">
+                                                <input type="checkbox" name="object_types[]" value="{{ $objectType->id }}"
+                                                    {{ in_array($objectType->id, $selectedObjectTypes) ? 'checked' : '' }}>
+                                                <span class="my-custom-box"></span>
+                                                <span class="my-custom-text">{{ $objectType->name }}</span>
+                                            </label>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item w10">
+                        <label class="item-label" for="objects_count">Количество объектов</label>
+                        <div class="item-inputText-wrapper">
+                            <input class="item-inputText" type="number" id="objects_count" name="objects_count"
+                                   value="{{ old('objects_count', $complex->objects_count) }}"
+                                   autocomplete="off" placeholder="0" min="0">
                         </div>
                     </div>
                     <div class="item w10">
@@ -738,7 +780,7 @@
                                 <path d="M0.471859 5.47374C0.358138 5.36002 0.28775 5.20285 0.287749 5.0293C0.28775 4.68208 0.569081 4.40075 0.916301 4.40075L9.13847 4.40075C9.48563 4.4008 9.76697 4.68213 9.76702 5.0293C9.76702 5.3764 9.48563 5.65779 9.13853 5.65779H0.916357C0.742747 5.65785 0.585581 5.58746 0.471859 5.47374Z" fill="currentColor" />
                                 <path d="M4.583 9.58476C4.46922 9.47098 4.39889 9.31387 4.39889 9.14032L4.39889 0.918164C4.39883 0.571001 4.68022 0.289614 5.02739 0.28967C5.37449 0.28967 5.65588 0.571056 5.65588 0.918164L5.65588 9.14032C5.65583 9.48748 5.37449 9.76881 5.02733 9.76887C4.85389 9.76887 4.69678 9.69853 4.583 9.58476Z" fill="currentColor" />
                             </svg>
-                            Добавить секцию
+                            Добавить
                         </button>
                     </div>
                 </div>

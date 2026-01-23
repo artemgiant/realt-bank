@@ -271,9 +271,10 @@ if (typeof Fancybox !== 'undefined') {
 }
 
 $(document).ready(function () {
-	// Обробник відкриття меню для conditions-menu
-	// (features-menu обробляється в features-tags.js)
-	$('#conditions-menu .multiple-menu-btn').on('click', function (event) {
+	// Обробник відкриття меню для всіх multiple-menu
+	// (conditions, housing-classes, categories, object-types)
+	// features-menu обробляється в features-tags.js
+	$('#conditions-menu .multiple-menu-btn, #housing-classes-menu .multiple-menu-btn, #categories-menu .multiple-menu-btn, #object-types-menu .multiple-menu-btn').on('click', function (event) {
 		event.stopPropagation();
 		const $this = $(this);
 		const currentState = $this.attr('data-open-menu');

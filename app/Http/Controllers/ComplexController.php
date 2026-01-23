@@ -24,24 +24,15 @@ class ComplexController extends Controller
     {
         return view('pages.complexes.index', [
             // Справочники для фильтров
-            'categories' => collect([
-                (object)['id' => 1, 'name' => 'Жилая недвижимость'],
-                (object)['id' => 2, 'name' => 'Коммерческая недвижимость'],
-                (object)['id' => 3, 'name' => 'Загородная недвижимость'],
-            ]),
-            'objectTypes' => collect([
-                (object)['id' => 1, 'name' => 'Квартира'],
-                (object)['id' => 2, 'name' => 'Дом'],
-                (object)['id' => 3, 'name' => 'Таунхаус'],
-                (object)['id' => 4, 'name' => 'Пентхаус'],
-            ]),
+            'complexCategories' => Dictionary::getComplexCategories(),
+            'objectTypes' => Dictionary::getPropertyTypes(),
             'developers' => Developer::orderBy('name')->get(),
             'housingClasses' => Dictionary::getHousingClasses(),
             'heatingTypes' => Dictionary::getHeatingTypes(),
             'wallTypes' => Dictionary::getWallTypes(),
             'yearsBuilt' => Dictionary::getYearsBuilt(),
             'conditions' => Dictionary::getConditions(),
-            'features' => Dictionary::getFeatures(),
+            'features' => Dictionary::getComplexFeatures(),
         ]);
     }
 
@@ -60,20 +51,10 @@ class ComplexController extends Controller
             'heatingTypes' => Dictionary::getHeatingTypes(),
             'wallTypes' => Dictionary::getWallTypes(),
             'yearsBuilt' => Dictionary::getYearsBuilt(),
-            'features' => Dictionary::getFeatures(),
+            'features' => Dictionary::getComplexFeatures(),
             'conditions' => Dictionary::getConditions(),
-            // Тестовые данные для категорий и типов объектов
-            'categories' => collect([
-                (object)['id' => 1, 'name' => 'Жилая недвижимость'],
-                (object)['id' => 2, 'name' => 'Коммерческая недвижимость'],
-                (object)['id' => 3, 'name' => 'Загородная недвижимость'],
-            ]),
-            'objectTypes' => collect([
-                (object)['id' => 1, 'name' => 'Квартира'],
-                (object)['id' => 2, 'name' => 'Дом'],
-                (object)['id' => 3, 'name' => 'Таунхаус'],
-                (object)['id' => 4, 'name' => 'Пентхаус'],
-            ]),
+            'complexCategories' => Dictionary::getComplexCategories(),
+            'objectTypes' => Dictionary::getPropertyTypes(),
         ]);
     }
 
@@ -100,7 +81,14 @@ class ComplexController extends Controller
             'materials_url' => 'nullable|url|max:255',
             'agent_notes' => 'nullable|string|max:5000',
             'special_conditions' => 'nullable|string|max:5000',
-            'housing_class_id' => 'nullable|exists:dictionaries,id',
+
+            // Мульти-выбор (JSON массивы)
+            'housing_classes' => 'nullable|array',
+            'housing_classes.*' => 'exists:dictionaries,id',
+            'categories' => 'nullable|array',
+            'categories.*' => 'exists:dictionaries,id',
+            'object_types' => 'nullable|array',
+            'object_types.*' => 'exists:dictionaries,id',
 
             // Локация
             'city_id' => 'nullable|integer',
@@ -126,9 +114,7 @@ class ComplexController extends Controller
             'price_total' => 'nullable|numeric|min:0',
             'currency' => 'nullable|string|in:USD,UAH,EUR',
 
-            // Категория и тип объекта
-            'category_id' => 'nullable|integer',
-            'object_type_id' => 'nullable|integer',
+            // Количество объектов
             'objects_count' => 'nullable|integer|min:0',
 
             // Состояния и особенности
@@ -198,7 +184,6 @@ class ComplexController extends Controller
                 'description' => $validated['description_ru'] ?? $validated['description_ua'] ?? $validated['description_en'] ?? null,
                 'agent_notes' => $validated['agent_notes'] ?? null,
                 'special_conditions' => $validated['special_conditions'] ?? null,
-                'housing_class_id' => $validated['housing_class_id'] ?? null,
                 'name_translations' => !empty($nameTranslations) ? $nameTranslations : null,
                 'description_translations' => !empty($descriptionTranslations) ? $descriptionTranslations : null,
                 'is_active' => true,
@@ -208,11 +193,13 @@ class ComplexController extends Controller
                 'price_per_m2' => $validated['price_per_m2'] ?? null,
                 'price_total' => $validated['price_total'] ?? null,
                 'currency' => $validated['currency'] ?? 'USD',
-                'category_id' => $validated['category_id'] ?? null,
-                'object_type_id' => $validated['object_type_id'] ?? null,
                 'objects_count' => $validated['objects_count'] ?? null,
                 'conditions' => $validated['conditions'] ?? null,
                 'features' => $validated['features'] ?? null,
+                // Мульти-выбор (JSON массивы)
+                'categories' => $validated['categories'] ?? null,
+                'object_types' => $validated['object_types'] ?? null,
+                'housing_classes' => $validated['housing_classes'] ?? null,
             ]);
 
             // Привязываем контакты через полиморфную связь
@@ -271,7 +258,7 @@ class ComplexController extends Controller
      */
     public function show(Complex $complex): View
     {
-        $complex->load(['developer', 'contacts.phones', 'blocks.street', 'housingClass', 'city', 'district', 'zone']);
+        $complex->load(['developer', 'contacts.phones', 'blocks.street', 'city', 'district', 'zone']);
 
         return view('pages.complexes.show', [
             'complex' => $complex,
@@ -305,20 +292,10 @@ class ComplexController extends Controller
             'heatingTypes' => Dictionary::getHeatingTypes(),
             'wallTypes' => Dictionary::getWallTypes(),
             'yearsBuilt' => Dictionary::getYearsBuilt(),
-            'features' => Dictionary::getFeatures(),
+            'features' => Dictionary::getComplexFeatures(),
             'conditions' => Dictionary::getConditions(),
-            // Тестовые данные для категорий и типов объектов
-            'categories' => collect([
-                (object)['id' => 1, 'name' => 'Жилая недвижимость'],
-                (object)['id' => 2, 'name' => 'Коммерческая недвижимость'],
-                (object)['id' => 3, 'name' => 'Загородная недвижимость'],
-            ]),
-            'objectTypes' => collect([
-                (object)['id' => 1, 'name' => 'Квартира'],
-                (object)['id' => 2, 'name' => 'Дом'],
-                (object)['id' => 3, 'name' => 'Таунхаус'],
-                (object)['id' => 4, 'name' => 'Пентхаус'],
-            ]),
+            'complexCategories' => Dictionary::getComplexCategories(),
+            'objectTypes' => Dictionary::getPropertyTypes(),
         ]);
     }
 
@@ -345,7 +322,28 @@ class ComplexController extends Controller
             'materials_url' => 'nullable|url|max:255',
             'agent_notes' => 'nullable|string|max:5000',
             'special_conditions' => 'nullable|string|max:5000',
-            'housing_class_id' => 'nullable|exists:dictionaries,id',
+
+            // Мульти-выбор (JSON массивы)
+            'housing_classes' => 'nullable|array',
+            'housing_classes.*' => 'exists:dictionaries,id',
+            'categories' => 'nullable|array',
+            'categories.*' => 'exists:dictionaries,id',
+            'object_types' => 'nullable|array',
+            'object_types.*' => 'exists:dictionaries,id',
+
+            // Площадь и цена
+            'area_from' => 'nullable|numeric|min:0',
+            'area_to' => 'nullable|numeric|min:0',
+            'price_per_m2' => 'nullable|numeric|min:0',
+            'price_total' => 'nullable|numeric|min:0',
+            'currency' => 'nullable|string|in:USD,UAH,EUR',
+            'objects_count' => 'nullable|integer|min:0',
+
+            // Состояния и особенности
+            'conditions' => 'nullable|array',
+            'conditions.*' => 'exists:dictionaries,id',
+            'features' => 'nullable|array',
+            'features.*' => 'exists:dictionaries,id',
 
             // Локация
             'city_id' => 'nullable|integer',
@@ -415,9 +413,21 @@ class ComplexController extends Controller
                 'description' => $validated['description_ru'] ?? $validated['description_ua'] ?? $validated['description_en'] ?? null,
                 'agent_notes' => $validated['agent_notes'] ?? null,
                 'special_conditions' => $validated['special_conditions'] ?? null,
-                'housing_class_id' => $validated['housing_class_id'] ?? null,
                 'name_translations' => !empty($nameTranslations) ? $nameTranslations : null,
                 'description_translations' => !empty($descriptionTranslations) ? $descriptionTranslations : null,
+                // Новые поля
+                'area_from' => $validated['area_from'] ?? null,
+                'area_to' => $validated['area_to'] ?? null,
+                'price_per_m2' => $validated['price_per_m2'] ?? null,
+                'price_total' => $validated['price_total'] ?? null,
+                'currency' => $validated['currency'] ?? 'USD',
+                'objects_count' => $validated['objects_count'] ?? null,
+                'conditions' => $validated['conditions'] ?? null,
+                'features' => $validated['features'] ?? null,
+                // Мульти-выбор (JSON массивы)
+                'categories' => $validated['categories'] ?? null,
+                'object_types' => $validated['object_types'] ?? null,
+                'housing_classes' => $validated['housing_classes'] ?? null,
             ]);
 
             // Обновляем контакты
@@ -762,7 +772,6 @@ class ComplexController extends Controller
             'blocks.wallType',
             'blocks.street',
             'contacts.phones',
-            'housingClass',
         ]);
 
         // ========== Фильтры ==========
@@ -772,9 +781,15 @@ class ComplexController extends Controller
             $query->where('id', $searchId);
         }
 
-        // Фильтр по категории
-        if ($categoryId = $request->get('category_id')) {
-            $query->where('category_id', $categoryId);
+        // Фильтр по категории (JSON массив)
+        if ($categoryIds = $request->get('category_id')) {
+            if (is_array($categoryIds)) {
+                $query->where(function ($q) use ($categoryIds) {
+                    foreach ($categoryIds as $categoryId) {
+                        $q->orWhereJsonContains('categories', (int) $categoryId);
+                    }
+                });
+            }
         }
 
         // Фильтр по девелоперу
@@ -782,15 +797,25 @@ class ComplexController extends Controller
             $query->where('developer_id', $developerId);
         }
 
-        // Фильтр по классу жилья
-        if ($housingClassId = $request->get('housing_class_id')) {
-            $query->where('housing_class_id', $housingClassId);
+        // Фильтр по классу жилья (JSON массив)
+        if ($housingClassIds = $request->get('housing_class_id')) {
+            if (is_array($housingClassIds)) {
+                $query->where(function ($q) use ($housingClassIds) {
+                    foreach ($housingClassIds as $housingClassId) {
+                        $q->orWhereJsonContains('housing_classes', (int) $housingClassId);
+                    }
+                });
+            }
         }
 
-        // Фильтр по типу объекта (множественный)
+        // Фильтр по типу объекта (JSON массив)
         if ($objectTypeIds = $request->get('object_type_id')) {
             if (is_array($objectTypeIds)) {
-                $query->whereIn('object_type_id', $objectTypeIds);
+                $query->where(function ($q) use ($objectTypeIds) {
+                    foreach ($objectTypeIds as $objectTypeId) {
+                        $q->orWhereJsonContains('object_types', (int) $objectTypeId);
+                    }
+                });
             }
         }
 
@@ -1006,7 +1031,9 @@ class ComplexController extends Controller
 
                 // Тип объекта
                 'property_type' => [
-                    'category' => $complex->housingClass ? $complex->housingClass->name : 'Жилье',
+                    'category' => $complex->housing_classes
+                        ? Dictionary::whereIn('id', $complex->housing_classes)->pluck('name')->implode(', ')
+                        : 'Жилье',
                     'types' => $complex->objects_count ? "{$complex->objects_count} объектов" : null,
                 ],
 

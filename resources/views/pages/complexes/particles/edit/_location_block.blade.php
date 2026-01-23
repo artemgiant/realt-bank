@@ -94,15 +94,11 @@
     </div>
 </div>
 
-{{-- Номер дома / квартиры --}}
-<div class="item w16">
-    <span>
-        <label class="item-label" for="number-house">№ Дом</label> /
-        <label for="number-apartment">Квартира</label>
-    </span>
-    <div class="item-inputText-wrapper shtrih">
+{{-- Номер дома --}}
+<div class="item w10">
+    <label class="item-label" for="number-house">№ Дом</label>
+    <div class="item-inputText-wrapper">
         <input class="item-inputText" id="number-house" name="building_number" type="text" autocomplete="off" value="{{ old('building_number', $firstBlock?->building_number) }}">
-        <input class="item-inputText" id="number-apartment" name="apartment_number" type="text" autocomplete="off" value="{{ old('apartment_number') }}">
     </div>
 </div>
 {{-- ========== /ЛОКАЦИЯ ========== --}}

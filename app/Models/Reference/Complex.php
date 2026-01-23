@@ -33,7 +33,6 @@ class Complex extends Model
         'materials_url',
         'agent_notes',
         'special_conditions',
-        'housing_class_id',
         'logo_path',
         'photos',
         'plans',
@@ -47,11 +46,13 @@ class Complex extends Model
         'price_per_m2',
         'price_total',
         'currency',
-        'category_id',
-        'object_type_id',
         'objects_count',
         'conditions',
         'features',
+        // Мульти-выбор (JSON массивы)
+        'categories',
+        'object_types',
+        'housing_classes',
     ];
 
     protected $casts = [
@@ -62,6 +63,9 @@ class Complex extends Model
         'plans' => 'array',
         'conditions' => 'array',
         'features' => 'array',
+        'categories' => 'array',
+        'object_types' => 'array',
+        'housing_classes' => 'array',
         'area_from' => 'decimal:2',
         'area_to' => 'decimal:2',
         'price_per_m2' => 'decimal:2',
@@ -101,27 +105,36 @@ class Complex extends Model
     }
 
     /**
-     * Класс жилья (из справочника)
+     * Получить классы жилья (из справочника)
      */
-    public function housingClass(): BelongsTo
+    public function getHousingClassesListAttribute()
     {
-        return $this->belongsTo(Dictionary::class, 'housing_class_id');
+        if (empty($this->housing_classes)) {
+            return collect();
+        }
+        return Dictionary::whereIn('id', $this->housing_classes)->get();
     }
 
     /**
-     * Категория (из справочника)
+     * Получить категории (из справочника)
      */
-    public function category(): BelongsTo
+    public function getCategoriesListAttribute()
     {
-        return $this->belongsTo(Dictionary::class, 'category_id');
+        if (empty($this->categories)) {
+            return collect();
+        }
+        return Dictionary::whereIn('id', $this->categories)->get();
     }
 
     /**
-     * Тип объекта (из справочника)
+     * Получить типы объектов (из справочника)
      */
-    public function objectType(): BelongsTo
+    public function getObjectTypesListAttribute()
     {
-        return $this->belongsTo(Dictionary::class, 'object_type_id');
+        if (empty($this->object_types)) {
+            return collect();
+        }
+        return Dictionary::whereIn('id', $this->object_types)->get();
     }
 
     /**

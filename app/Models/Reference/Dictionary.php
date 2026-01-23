@@ -40,6 +40,8 @@ class Dictionary extends Model
     public const TYPE_YEAR_BUILT = 'year_built';         // Год постройки
     public const TYPE_CONTACT_TYPE = 'contact_type';     // Тип контакта
     public const TYPE_HOUSING_CLASS = 'housing_class';   // Класс жилья
+    public const TYPE_COMPLEX_FEATURE = 'complex_feature'; // Особенности комплексов
+    public const TYPE_COMPLEX_CATEGORY = 'complex_category'; // Категории комплексов
 
     // ========== Scopes ==========
 
@@ -141,6 +143,16 @@ class Dictionary extends Model
     public static function getHousingClasses(): Collection
     {
         return static::getByType(self::TYPE_HOUSING_CLASS);
+    }
+
+    public static function getComplexFeatures(): Collection
+    {
+        return static::getByType(self::TYPE_COMPLEX_FEATURE);
+    }
+
+    public static function getComplexCategories(): Collection
+    {
+        return static::getByType(self::TYPE_COMPLEX_CATEGORY);
     }
 
     // ========== Helper for Select Options ==========
