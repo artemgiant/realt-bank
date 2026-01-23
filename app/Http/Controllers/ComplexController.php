@@ -786,13 +786,13 @@ class ComplexController extends Controller
 
         // Фильтр по категории (JSON массив)
         if ($categoryIds = $request->get('category_id')) {
-            if (is_array($categoryIds)) {
-                $query->where(function ($q) use ($categoryIds) {
-                    foreach ($categoryIds as $categoryId) {
-                        $q->orWhereJsonContains('categories', (int) $categoryId);
-                    }
-                });
-            }
+            // Поддержка как одиночного значения, так и массива
+            $categoryIds = is_array($categoryIds) ? $categoryIds : [$categoryIds];
+            $query->where(function ($q) use ($categoryIds) {
+                foreach ($categoryIds as $categoryId) {
+                    $q->orWhereJsonContains('categories', (int) $categoryId);
+                }
+            });
         }
 
         // Фильтр по девелоперу
@@ -802,13 +802,13 @@ class ComplexController extends Controller
 
         // Фильтр по классу жилья (JSON массив)
         if ($housingClassIds = $request->get('housing_class_id')) {
-            if (is_array($housingClassIds)) {
-                $query->where(function ($q) use ($housingClassIds) {
-                    foreach ($housingClassIds as $housingClassId) {
-                        $q->orWhereJsonContains('housing_classes', (int) $housingClassId);
-                    }
-                });
-            }
+            // Поддержка как одиночного значения, так и массива
+            $housingClassIds = is_array($housingClassIds) ? $housingClassIds : [$housingClassIds];
+            $query->where(function ($q) use ($housingClassIds) {
+                foreach ($housingClassIds as $housingClassId) {
+                    $q->orWhereJsonContains('housing_classes', (int) $housingClassId);
+                }
+            });
         }
 
         // Фильтр по типу объекта (JSON массив)

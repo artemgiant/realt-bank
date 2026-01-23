@@ -9,7 +9,7 @@
             <label for="category_id" class="blue-select2">
                 <select id="category_id" name="category_id" class="js-example-responsive2">
                     <option value="">Категория</option>
-                    @foreach($categories ?? [] as $category)
+                    @foreach($complexCategories ?? [] as $category)
                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
                 </select>
