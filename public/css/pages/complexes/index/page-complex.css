@@ -674,7 +674,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 
 #example tbody tr td .tbody-wrapper>p {
   margin: 0;
-  text-wrap: nowrap;
+  /*text-wrap: nowrap;*/
 }
 
 #example tbody tr td .tbody-wrapper>span {

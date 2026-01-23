@@ -18,19 +18,21 @@ use Illuminate\Support\Str;
  *
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Reference\Complex>
  * # Создать 100 комплексов со всеми связями (контакты + блоки)
-php artisan complexes:generate 100
+* use Database\Factories\Reference\{ComplexFactory, BlockFactory}; BlockFactory::cleanImported(); ComplexFactory::cleanImported(); ComplexFactory::new()->count(10)->create();
+ *
 
-# С указанием количества блоков (по 5 блоков на комплекс)
-php artisan complexes:generate 100 --blocks=5
+php artisan tinker
 
-# Только премиум комплексы
-php artisan complexes:generate 100 --premium
+use Database\Factories\Reference\{ComplexFactory, BlockFactory};
 
-# Только эконом комплексы
-php artisan complexes:generate 100 --economy
+// Удаляем старые импортированные
+$deletedBlocks = BlockFactory::cleanImported();
+$deletedComplexes = ComplexFactory::cleanImported();
+echo "Удалено: {$deletedComplexes} комплексов, {$deletedBlocks} блоков\n";
 
-# Удалить старые и создать новые
-php artisan complexes:generate 100 --clean
+// Создаём новые
+$complexes = ComplexFactory::new()->count(10)->create();
+echo "Создано: {$complexes->count()} комплексов\n";
  */
 class ComplexFactory extends Factory
 {
@@ -120,7 +122,9 @@ class ComplexFactory extends Factory
             'materials_url' => $this->faker->optional(0.4)->url(),
             'agent_notes' => $this->faker->randomElement($this->agentNotes),
             'special_conditions' => $this->faker->randomElement($this->specialConditions),
-            'housing_class_id' => Dictionary::where('type', Dictionary::TYPE_HOUSING_CLASS)->inRandomOrder()->value('id'),
+            'housing_classes' => $this->getRandomDictionaryIds(Dictionary::TYPE_HOUSING_CLASS, 2),
+            'categories' => $this->getRandomDictionaryIds(Dictionary::TYPE_COMPLEX_CATEGORY, 2),
+            'object_types' => $this->getRandomDictionaryIds(Dictionary::TYPE_PROPERTY_TYPE, 3),
             'name_translations' => [
                 'ua' => $name,
                 'ru' => $name,
@@ -133,14 +137,13 @@ class ComplexFactory extends Factory
             'area_from' => $this->faker->randomFloat(2, 25, 50),
             'area_to' => $this->faker->randomFloat(2, 80, 200),
             'price_per_m2' => $this->faker->randomFloat(2, 800, 3000),
-            'price_total' => null,
+            'price_total' => $this->faker->randomFloat(2, 30000, 133000),
             'currency' => 'USD',
-            'category_id' => null,
-            'object_type_id' => null,
             'objects_count' => $this->faker->numberBetween(50, 500),
             'conditions' => $this->getRandomDictionaryIds(Dictionary::TYPE_CONDITION, 2),
             'features' => $this->getRandomDictionaryIds(Dictionary::TYPE_FEATURE, 4),
             'is_active' => true,
+            'source' => 'import',
         ];
     }
 
@@ -263,12 +266,10 @@ class ComplexFactory extends Factory
     }
 
     /**
-     * Удалить все комплексы, созданные вручную
+     * Удалить все комплексы, созданные через импорт/фабрику
      */
-    public static function cleanManual(): int
+    public static function cleanImported(): int
     {
-        return Complex::whereHas('developer', function ($query) {
-            $query->where('source', 'manual');
-        })->forceDelete();
+        return Complex::where('source', 'import')->forceDelete();
     }
 }

@@ -187,6 +187,7 @@ class ComplexController extends Controller
                 'name_translations' => !empty($nameTranslations) ? $nameTranslations : null,
                 'description_translations' => !empty($descriptionTranslations) ? $descriptionTranslations : null,
                 'is_active' => true,
+                'source' => 'manual',
                 // Новые поля
                 'area_from' => $validated['area_from'] ?? null,
                 'area_to' => $validated['area_to'] ?? null,
@@ -579,6 +580,7 @@ class ComplexController extends Controller
                 'heating_type_id' => $blockData['heating_type_id'] ?? null,
                 'wall_type_id' => $blockData['wall_type_id'] ?? null,
                 'is_active' => true,
+                'source' => 'manual',
             ]);
 
             // Сохраняем план блока
@@ -646,6 +648,7 @@ class ComplexController extends Controller
                     'heating_type_id' => $blockData['heating_type_id'] ?? null,
                     'wall_type_id' => $blockData['wall_type_id'] ?? null,
                     'is_active' => true,
+                    'source' => 'manual',
                 ]);
                 $existingBlockIds[] = $block->id;
             }
@@ -1029,13 +1032,10 @@ class ComplexController extends Controller
                     ])),
                 ],
 
-                // Тип объекта
-                'property_type' => [
-                    'category' => $complex->housing_classes
-                        ? Dictionary::whereIn('id', $complex->housing_classes)->pluck('name')->implode(', ')
-                        : 'Жилье',
-                    'types' => $complex->objects_count ? "{$complex->objects_count} объектов" : null,
-                ],
+                // Типы объектов
+                'property_type' => $complex->object_types
+                    ? Dictionary::whereIn('id', $complex->object_types)->pluck('name')->implode(', ')
+                    : null,
 
                 // Площадь
                 'area' => [

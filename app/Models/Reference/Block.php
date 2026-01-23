@@ -30,6 +30,7 @@ class Block extends Model
         'wall_type_id',
         'plan_path',
         'is_active',
+        'source',
     ];
 
     protected $casts = [

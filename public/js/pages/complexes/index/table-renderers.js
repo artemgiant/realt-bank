@@ -45,24 +45,13 @@ window.ComplexRenderers = {
         return html;
     },
 
-    // Тип объекта (категория + типы квартир)
+    // Типы объектов
     propertyType: function (data, type, row) {
         if (!data) {
             return '<div class="tbody-wrapper type"><span class="text-muted">-</span></div>';
         }
 
-        var html = '<div class="tbody-wrapper type">';
-
-        if (data.category) {
-            html += '<p>' + data.category + '</p>';
-        }
-
-        if (data.types) {
-            html += '<span>' + data.types + '</span>';
-        }
-
-        html += '</div>';
-        return html;
+        return '<div class="tbody-wrapper type"><p>' + data + '</p></div>';
     },
 
     // Площадь (диапазон от-до)
@@ -157,11 +146,9 @@ window.ComplexRenderers = {
         }
 
         return '<div class="tbody-wrapper contact">' +
-            '<div>' +
             '<p class="link-name" data-hover-contact="">' + (data.full_name || '-') + '</p>' +
             '<p data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="' + (data.contact_type_name || '') + '">' + (data.contact_type_name || '-') + '</p>' +
             phoneHtml +
-            '</div>' +
             '</div>';
     },
 

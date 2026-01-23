@@ -53,6 +53,8 @@ class Complex extends Model
         'categories',
         'object_types',
         'housing_classes',
+        // Источник создания
+        'source',
     ];
 
     protected $casts = [

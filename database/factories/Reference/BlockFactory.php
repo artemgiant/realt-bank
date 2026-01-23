@@ -46,6 +46,7 @@ class BlockFactory extends Factory
             'wall_type_id' => Dictionary::where('type', Dictionary::TYPE_WALL_TYPE)->inRandomOrder()->value('id'),
             'plan_path' => null,
             'is_active' => true,
+            'source' => 'import',
         ];
     }
 
@@ -107,5 +108,13 @@ class BlockFactory extends Factory
         return $this->state(fn(array $attributes) => [
             'year_built' => $this->faker->numberBetween(2025, 2028),
         ]);
+    }
+
+    /**
+     * Удалить все блоки, созданные через импорт/фабрику
+     */
+    public static function cleanImported(): int
+    {
+        return Block::where('source', 'import')->forceDelete();
     }
 }
