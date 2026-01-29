@@ -17,6 +17,13 @@
         // ID особенности "Комиссия от владельца"
         const OWNER_COMMISSION_FEATURE_ID = '197';
 
+        // Поля этажей
+        const floorInput = document.getElementById('floor');
+        const floorsTotalInput = document.getElementById('floors_total');
+
+        // Чекбокс "Рекламировать объект"
+        const isAdvertisedCheckbox = document.querySelector('input[name="is_advertised"]');
+
         if (!featuresContainer || !tagsContainer) return;
 
         // Обработчик открытия/закрытия меню
@@ -108,6 +115,38 @@
             }, 100);
         }
 
+        // Обработчики изменения этажей
+        if (floorInput) {
+            floorInput.addEventListener('input', function() {
+                handleFloorChange();
+            });
+        }
+
+        if (floorsTotalInput) {
+            floorsTotalInput.addEventListener('input', function() {
+                handleFloorChange();
+            });
+
+            // Проверяем начальные значения при загрузке страницы
+            setTimeout(function() {
+                if (floorInput && floorInput.value) {
+                    handleFloorChange();
+                }
+            }, 100);
+        }
+
+        // Обработчик изменения чекбокса "Рекламировать объект"
+        if (isAdvertisedCheckbox) {
+            isAdvertisedCheckbox.addEventListener('change', function() {
+                handleIsAdvertisedChange(this.checked);
+            });
+
+            // Проверяем начальное значение при загрузке страницы
+            setTimeout(function() {
+                handleIsAdvertisedChange(isAdvertisedCheckbox.checked);
+            }, 100);
+        }
+
         // Инициализация тегов для уже выбранных чекбоксов (при редактировании)
         initExistingFeatures();
 
@@ -134,6 +173,91 @@
                 if (checkbox.checked) {
                     checkbox.checked = false;
                     removeFeatureTagElement(OWNER_COMMISSION_FEATURE_ID);
+                }
+            }
+        }
+
+        /**
+         * Обработка изменения этажа / этажности
+         */
+        function handleFloorChange() {
+            const floor = parseInt((floorInput ? floorInput.value : '').replace(/\s/g, ''), 10);
+            const floorsTotal = parseInt((floorsTotalInput ? floorsTotalInput.value : '').replace(/\s/g, ''), 10);
+
+            // Находим чекбоксы по тексту названия
+            const firstFloorCheckbox = findFeatureCheckboxByName('Первый этаж');
+            const lastFloorCheckbox = findFeatureCheckboxByName('Последний этаж');
+
+            // Первый этаж
+            if (firstFloorCheckbox) {
+                if (floor === 1) {
+                    // Выбираем "Первый этаж"
+                    if (!firstFloorCheckbox.checked) {
+                        firstFloorCheckbox.checked = true;
+                        const featureName = firstFloorCheckbox.closest('.my-custom-input').querySelector('.my-custom-text').textContent;
+                        addFeatureTag(firstFloorCheckbox.value, featureName);
+                    }
+                } else {
+                    // Убираем "Первый этаж"
+                    if (firstFloorCheckbox.checked) {
+                        firstFloorCheckbox.checked = false;
+                        removeFeatureTagElement(firstFloorCheckbox.value);
+                    }
+                }
+            }
+
+            // Последний этаж
+            if (lastFloorCheckbox) {
+                if (floor && floorsTotal && floor === floorsTotal) {
+                    // Выбираем "Последний этаж"
+                    if (!lastFloorCheckbox.checked) {
+                        lastFloorCheckbox.checked = true;
+                        const featureName = lastFloorCheckbox.closest('.my-custom-input').querySelector('.my-custom-text').textContent;
+                        addFeatureTag(lastFloorCheckbox.value, featureName);
+                    }
+                } else {
+                    // Убираем "Последний этаж"
+                    if (lastFloorCheckbox.checked) {
+                        lastFloorCheckbox.checked = false;
+                        removeFeatureTagElement(lastFloorCheckbox.value);
+                    }
+                }
+            }
+        }
+
+        /**
+         * Найти чекбокс особенности по названию
+         */
+        function findFeatureCheckboxByName(featureName) {
+            const items = featuresContainer.querySelectorAll('.multiple-menu-item');
+            for (let i = 0; i < items.length; i++) {
+                const textEl = items[i].querySelector('.my-custom-text');
+                if (textEl && textEl.textContent.trim() === featureName) {
+                    return items[i].querySelector('input[name="features[]"]');
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Обработка изменения чекбокса "Рекламировать объект"
+         */
+        function handleIsAdvertisedChange(isChecked) {
+            const notAdvertisedCheckbox = findFeatureCheckboxByName('Не рекламировать');
+            if (!notAdvertisedCheckbox) return;
+
+            if (!isChecked) {
+                // Галочка снята - выбираем "Не рекламировать"
+                if (!notAdvertisedCheckbox.checked) {
+                    notAdvertisedCheckbox.checked = true;
+                    const featureName = notAdvertisedCheckbox.closest('.my-custom-input').querySelector('.my-custom-text').textContent;
+                    addFeatureTag(notAdvertisedCheckbox.value, featureName);
+                }
+            } else {
+                // Галочка установлена - убираем "Не рекламировать"
+                if (notAdvertisedCheckbox.checked) {
+                    notAdvertisedCheckbox.checked = false;
+                    removeFeatureTagElement(notAdvertisedCheckbox.value);
                 }
             }
         }

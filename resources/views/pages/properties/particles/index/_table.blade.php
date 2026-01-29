@@ -11,6 +11,11 @@
             </div>
         </th>
         <th>
+            <div class="thead-wrapper warnings">
+                <p>Статус</p>
+            </div>
+        </th>
+        <th>
             <div class="thead-wrapper location">
                 <p>Локация</p>
             </div>

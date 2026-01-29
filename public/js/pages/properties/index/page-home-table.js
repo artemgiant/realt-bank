@@ -56,6 +56,14 @@ $(document).ready(function () {
         Filters.updateCounter();
     };
 
+    // Callback для каждой строки - добавляем класс warning-item если нужно
+    settings.rowCallback = function (row, data) {
+        // Добавляем класс warning-item если нет is_advertised или есть "От посредника"
+        if (!data.is_advertised || data.has_from_intermediary) {
+            $(row).addClass('warning-item');
+        }
+    };
+
     var table = $('#example').DataTable(settings);
 
     // ========== Функции перезагрузки ==========

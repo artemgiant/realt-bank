@@ -227,6 +227,8 @@ class PropertyController extends Controller
                 'description' => $property->getTranslation(app()->getLocale())?->description ?? $property->translations->first()?->description ?? '-',
                 'agent_notes' => $property->agent_notes,
                 'features' => $property->features->pluck('name')->toArray(),
+                'is_advertised' => (bool) $property->is_advertised,
+                'has_from_intermediary' => $property->features->contains('name', 'От посредника'),
                 'created_at_formatted' => $property->created_at->format('d.m.Y'),
                 'updated_at_formatted' => $property->updated_at->format('d.m.Y'),
             ];

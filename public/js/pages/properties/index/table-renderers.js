@@ -13,6 +13,25 @@ window.PropertyRenderers = {
             '</label></div>';
     },
 
+    // Колонка статуса/предупреждений
+    warnings: function (data, type, row) {
+        var tags = [];
+
+        // Если нет галочки is_advertised
+        if (!row.is_advertised) {
+            tags.push('<span class="badge bg-warning text-dark">Не рекламируется</span>');
+        }
+
+        // Если есть "От посредника" в features
+        if (row.has_from_intermediary) {
+            tags.push('<span class="badge bg-danger">От посредника</span>');
+        }
+
+        return '<div class="tbody-wrapper warnings">' +
+            (tags.length > 0 ? tags.join(' ') : '') +
+            '</div>';
+    },
+
     // Локация (адрес)
     // Формат: 1) ЖК (жирный), 2) Дом, Улица, Зона, 3) Район, Город, Область, Страна
     location: function (data, type, row) {
