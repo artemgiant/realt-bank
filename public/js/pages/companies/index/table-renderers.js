@@ -72,7 +72,7 @@ window.CompanyRenderers = {
     // Количество офисов
     officesCount: function (data, type, row) {
         return '<div class="tbody-wrapper offices">' +
-            '<button class="btn btn-sm btn-outline-primary offices-btn" type="button" data-company-id="' + row.id + '">' +
+            '<button class="info-footer-btn btn-others offices-btn" type="button" data-company-id="' + row.id + '">' +
             (data || 0) +
             '</button>' +
             '</div>';

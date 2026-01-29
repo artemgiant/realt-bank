@@ -264,6 +264,129 @@ $(document).ready(function () {
         }
     });
 
+    // ========== Офисы (раскрывающийся список) ==========
+
+    // Функция рендеринга строки с офисами
+    function formatOfficesRow(companyId, offices) {
+        var headerHtml = '<div class="table-for-others-info">' +
+            '<p class="paragraph">Офисы</p>' +
+            '<div><div class="thead-wrapper command"><p>' +
+            '<img src="/img/icon/icon-table/people-fill.svg" alt="">' +
+            '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Команда">' +
+            '<img src="/img/icon/icon-info.svg" alt=""></span></p></div></div>' +
+            '<div><div class="thead-wrapper object"><p>' +
+            '<img src="/img/icon/icon-table/house-fill.svg" alt="">' +
+            '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Объекты">' +
+            '<img src="/img/icon/icon-info.svg" alt=""></span></p></div></div>' +
+
+
+            '<div class="wrapper-btn-collapse">' +
+            '<button class="info-footer-btn btn-collapse" type="button">Свернуть</button>' +
+            '</div></div>';
+
+        var rowsHtml = '';
+        if (offices && offices.length > 0) {
+            offices.forEach(function (office) {
+                var logoHtml = office.logo
+                    ? '<img src="' + office.logo + '" alt="" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">'
+                    : '<div style="width: 50px; height: 50px; background: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;"><span style="font-size: 20px; color: #999;">O</span></div>';
+
+                var responsibleHtml = office.responsible
+                    ? '<p class="link-name">' + (office.responsible.name || '-') + '</p>' +
+                      '<span>' + (office.responsible.position || '-') + '</span>' +
+                      (office.responsible.phone ? '<a href="tel:' + office.responsible.phone.replace(/[^0-9+]/g, '') + '">' + office.responsible.phone + '</a>' : '')
+                    : '<span class="text-muted">-</span>';
+
+                rowsHtml += '<tr>' +
+                    '<td><div class="tbody-wrapper photo">' + logoHtml + '</div></td>' +
+                    '<td><div class="tbody-wrapper company">' +
+                    '<strong>' + (office.name || '-') + '</strong>' +
+                    '<p>' + (office.address || '-') + '</p>' +
+                    '<span>' + (office.location || '-') + '</span>' +
+                    '</div></td>' +
+                    '<td><div class="tbody-wrapper responsible">' + responsibleHtml + '</div></td>' +
+                    '<td><div class="tbody-wrapper command"><p><button class="info-footer-btn btn-others" type="button">' + (office.team_count || 0) + '</button></p></div></td>' +
+                    '<td><div class="tbody-wrapper object"><p><button class="info-footer-btn btn-others" type="button">' + (office.properties_count || 0) + '</button></p></div></td>' +
+                    '<td><div class="tbody-wrapper commission"><p>' + (office.commission_from ? 'от ' + office.commission_from : '-') + '</p>' +
+                    (office.commission_to ? '<span>до ' + office.commission_to + '</span>' : '') + '</div></td>' +
+                    '<td><div class="tbody-wrapper block-actions">' +
+                    '<div class="block-actions-wrapper">' +
+                    '<div class="menu-burger"><div class="dropdown">' +
+                    '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                    '<img src="/img/icon/burger-blue.svg" alt=""></button>' +
+                    '<ul class="dropdown-menu">' +
+                    '<li><a class="dropdown-item" href="/offices/' + office.id + '/edit">Редактировать</a></li>' +
+                    '<li><a class="dropdown-item delete-office" href="#" data-id="' + office.id + '">Удалить</a></li>' +
+                    '</ul></div></div>' +
+                    '</div></div></td>' +
+                    '</tr>';
+            });
+        } else {
+            rowsHtml = '<tr><td colspan="10" class="text-center text-muted">Офисы не найдены</td></tr>';
+        }
+
+        var tableHtml = '<div class="table-for-others">' +
+            '<table style="width:98%; margin: auto;"><tbody>' + rowsHtml + '</tbody></table></div>';
+
+        return headerHtml + tableHtml;
+    }
+
+    // Обработчик клика на кнопку офисов
+    $('#companies-table tbody').on('click', '.offices-btn', function () {
+        var $btn = $(this);
+        var companyId = $btn.data('company-id');
+        var originalText = $btn.text();
+        var tr = $btn.closest('tr');
+        var row = table.row(tr);
+
+        // Проверяем, есть ли уже открытая строка офисов
+        var nextTr = tr.next('.dop-info-row-offices');
+        if (nextTr.length) {
+            nextTr.remove();
+            tr.removeClass('shown-offices');
+            return;
+        }
+
+        // Загружаем офисы через AJAX
+        $.ajax({
+            url: '/companies/' + companyId + '/offices',
+            type: 'GET',
+            beforeSend: function () {
+                $btn.prop('disabled', true).text('...');
+            },
+            success: function (response) {
+                var offices = response.data || response;
+                var html = '<tr class="dop-info-row dop-info-row-offices"><td colspan="12">' +
+                    formatOfficesRow(companyId, offices) + '</td></tr>';
+
+                tr.addClass('shown-offices');
+                tr.after(html);
+
+                // Инициализация тултипов
+                var tooltipTriggerList = [].slice.call(tr.next().find('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            },
+            error: function (xhr) {
+                console.error('Ошибка загрузки офисов:', xhr);
+                alert('Ошибка загрузки офисов');
+            },
+            complete: function () {
+                $btn.prop('disabled', false);
+                $btn.text(originalText);
+            }
+        });
+    });
+
+    // Обработчик кнопки "Свернуть" для офисов
+    $('#companies-table tbody').on('click', '.btn-collapse', function () {
+        var officesTr = $(this).closest('.dop-info-row-offices');
+        var parentTr = officesTr.prev();
+        parentTr.removeClass('shown-offices');
+        officesTr.remove();
+    });
+
     // ========== Удаление компании ==========
     $('#companies-table tbody').on('click', '.delete-company', function (e) {
         e.preventDefault();

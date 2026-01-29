@@ -416,6 +416,45 @@ class CompanyController extends Controller
     }
 
     /**
+     * AJAX получение офисов компании
+     */
+    public function getOffices(Company $company): JsonResponse
+    {
+        $offices = $company->offices()->with(['contacts.phones', 'city', 'state', 'street'])->get();
+
+        $data = $offices->map(function ($office) {
+            $contact = $office->contacts->first();
+
+            return [
+                'id' => $office->id,
+                'name' => $office->name,
+                'logo' => null,
+                'address' => $office->building_number
+                    ? ($office->street ? $office->street->name . ', ' : '') . $office->building_number . ($office->office_number ? ', оф. ' . $office->office_number : '')
+                    : ($office->full_address ?? '-'),
+                'location' => implode(', ', array_filter([
+                    $office->city ? $office->city->name : null,
+                    $office->state ? $office->state->name : null,
+                ])),
+                'responsible' => $contact ? [
+                    'name' => $contact->full_name,
+                    'position' => $contact->pivot->role === 'primary' ? 'Ответственный' : 'Контакт',
+                    'phone' => $contact->primary_phone,
+                ] : null,
+                'team_count' => 0,
+                'properties_count' => 0,
+                'deals_count' => 0,
+                'success_deals_count' => 0,
+                'failed_deals_count' => 0,
+                'commission_from' => null,
+                'commission_to' => null,
+            ];
+        });
+
+        return response()->json(['data' => $data]);
+    }
+
+    /**
      * AJAX поиск компаний (для Select2)
      */
     public function ajaxSearch(Request $request): JsonResponse

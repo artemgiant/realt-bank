@@ -123,6 +123,8 @@ Route::middleware('auth')->group(function () {
         ->name('companies.ajax-search');
     Route::get('/companies/ajax-data', [CompanyController::class, 'ajaxData'])
         ->name('companies.ajax-data');
+    Route::get('/companies/{company}/offices', [CompanyController::class, 'getOffices'])
+        ->name('companies.offices');
     Route::resource('companies', CompanyController::class);
 
 });
