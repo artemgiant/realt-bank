@@ -61,8 +61,6 @@ Route::middleware('auth')->group(function () {
 
 
 
-
-
 // ========== Contacts AJAX endpoints ==========
 // Поиск контактов (для select2 / autocomplete)
     Route::get('/contacts/ajax-search', [App\Http\Controllers\ContactController::class, 'ajaxSearch'])
@@ -117,6 +115,15 @@ Route::middleware('auth')->group(function () {
         Route::post('complexes', [ComplexImportController::class, 'import'])->name('complexes.import');
     });
 
+
+
+    Route::get('/companies', function () {
+        return view('pages.companies.index');
+    })->name('companies.index');
+
+    Route::get('/companies/create', function () {
+        return view('pages.companies.create');
+    })->name('companies.create');
 
 });
 
