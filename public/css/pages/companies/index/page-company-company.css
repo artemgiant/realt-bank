@@ -2410,3 +2410,325 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
     width: 100%;
   }
 }
+
+/* ========== Стили для #companies-table (аналог #example) ========== */
+#companies-table {
+  border-bottom: none;
+}
+
+#companies-table thead tr {
+  background-color: transparent;
+}
+
+#companies-table thead tr th {
+  padding: 0;
+  border-bottom: none;
+  text-align: left;
+}
+
+#companies-table thead tr th:hover {
+  outline: none;
+}
+
+#companies-table thead tr th .thead-wrapper {
+  padding: 10px;
+}
+
+#companies-table thead tr th .thead-wrapper.checkBox {
+  max-width: 50px;
+}
+
+#companies-table thead tr th .thead-wrapper.checkBox label {
+  display: flex;
+}
+
+#companies-table thead tr th .thead-wrapper.offices,
+#companies-table thead tr th .thead-wrapper.team,
+#companies-table thead tr th .thead-wrapper.properties,
+#companies-table thead tr th .thead-wrapper.commission {
+  text-align: center;
+}
+
+#companies-table thead tr th .thead-wrapper.block-actions {
+  display: flex;
+  align-items: center;
+  text-align: right;
+  justify-content: flex-end;
+  grid-gap: 20px;
+}
+
+#companies-table thead tr th .thead-wrapper.block-actions .btn {
+  padding: 0;
+  border: none;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border-radius: 6px;
+}
+
+#companies-table thead tr th .thead-wrapper.block-actions .btn:hover {
+  background-color: #F6F8FB;
+}
+
+#companies-table thead tr th .thead-wrapper p {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 108%;
+  color: #aaa;
+  margin: 0;
+}
+
+#companies-table tbody {
+  border-radius: 8px;
+}
+
+#companies-table tbody tr td:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+#companies-table tbody tr td:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+#companies-table tbody tr td {
+  border: none;
+  border-bottom: 1px solid #EFEFEF;
+  background-color: #fff;
+  padding: 0;
+}
+
+#companies-table tbody tr td .tbody-wrapper {
+  padding: 7px 10px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 108%;
+  color: #111;
+}
+
+#companies-table tbody tr td .tbody-wrapper p {
+  margin: 0;
+  text-wrap: nowrap;
+}
+
+#companies-table tbody tr td .tbody-wrapper .link-name {
+  color: #3585F5;
+  text-decoration: none;
+}
+
+#companies-table tbody tr td .tbody-wrapper.checkBox {
+  max-width: 50px;
+}
+
+#companies-table tbody tr td .tbody-wrapper.checkBox label {
+  display: flex;
+}
+
+#companies-table tbody tr td .tbody-wrapper.photo img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+#companies-table tbody tr td .tbody-wrapper.company .company-wrapper {
+  display: flex;
+  align-items: center;
+  grid-gap: 10px;
+}
+
+#companies-table tbody tr td .tbody-wrapper.offices,
+#companies-table tbody tr td .tbody-wrapper.team,
+#companies-table tbody tr td .tbody-wrapper.properties,
+#companies-table tbody tr td .tbody-wrapper.commission {
+  text-align: center;
+}
+
+#companies-table tbody tr td .tbody-wrapper.block-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+#companies-table tbody tr td .tbody-wrapper.block-actions .block-actions-wrapper {
+  display: flex;
+  align-items: center;
+  grid-gap: 4px;
+}
+
+#companies-table tbody tr td .tbody-wrapper.block-actions .details-control {
+  margin-left: 22px;
+}
+
+#companies-table tbody tr td .tbody-dop-info {
+  padding: 16px 10px;
+}
+
+#companies-table_wrapper {
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#companies-table_wrapper div.dt-layout-row:nth-child(1) {
+  grid-gap: 12px;
+  padding: 8px;
+  background-color: transparent;
+  width: 33.33333%;
+  justify-content: flex-end;
+  order: 2;
+  margin: 0;
+  border-radius: 8px 0 0 8px;
+}
+
+#companies-table_wrapper div.dt-layout-row:nth-child(1) label {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: normal;
+  text-align: right;
+  color: #111;
+}
+
+#companies-table_wrapper div.dt-layout-row:nth-child(1) select {
+  border: 1px dashed transparent;
+  border-bottom-color: #3585f5;
+  border-radius: 0;
+  padding: 0;
+  background-color: transparent;
+  font-size: 14px;
+  line-height: normal;
+  font-weight: 700;
+  color: #3585f5;
+  outline: 0;
+}
+
+#companies-table_wrapper div.dt-layout-row:nth-child(2) {
+  width: 100%;
+  margin: 0;
+}
+
+#companies-table_wrapper div.dt-layout-row:nth-child(3) {
+  background-color: transparent;
+  padding: 8px;
+  justify-content: space-between;
+  grid-gap: 12px;
+  width: 66.66666%;
+  order: 1;
+  margin: 0;
+  border-radius: 0 8px 8px 0;
+}
+
+#companies-table_wrapper div.dt-layout-row:nth-child(3) .dt-info {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: normal;
+  color: #111;
+}
+
+#companies-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button {
+  width: 24px;
+  height: 24px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #fff !important;
+  border-radius: 100%;
+  background-color: #3585f5;
+  cursor: pointer;
+  border: none !important;
+  padding: 2px !important;
+  background-image: none !important;
+}
+
+#companies-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button:hover {
+  background: #fff !important;
+  color: #3585f5 !important;
+}
+
+#companies-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.previous,
+#companies-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.next {
+  font-weight: 400;
+  color: #111 !important;
+  width: auto;
+  background-color: transparent;
+  border-radius: 6px;
+}
+
+#companies-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.previous:hover,
+#companies-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.next:hover {
+  background: #3585f5 !important;
+  color: #fff !important;
+}
+
+#companies-table_wrapper div.dt-layout-row:nth-child(3) .dt-paging .dt-paging-button.current {
+  cursor: auto;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+/* ========== Стили для поиска ========== */
+.header-search-on-id {
+  position: relative;
+}
+
+.item-inputSearch-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.item-inputSearch-wrapper label {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.item-inputSearch {
+  width: 100%;
+  padding: 5px 10px;
+  border: none;
+  outline: none;
+  font-weight: 700;
+  font-size: 14px;
+  color: #111;
+  background-color: transparent;
+}
+
+.item-inputSearch::placeholder {
+  font-weight: 700;
+  font-size: 14px;
+  color: #aaa;
+}
+
+.item-inputSearchBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.item-inputSearchBtn:hover {
+  background-color: #f6f8fb;
+}
+
+/* ========== Стили для select фильтров ========== */
+.header-filter-select {
+  min-width: 120px;
+}
+
+.header-filter-select .form-select {
+  border: none;
+  background-color: #fff;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #111;
+  padding: 5px 30px 5px 10px;
+  cursor: pointer;
+}

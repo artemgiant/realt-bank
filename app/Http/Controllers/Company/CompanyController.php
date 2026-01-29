@@ -291,8 +291,67 @@ class CompanyController extends Controller
             }
         }
 
-        // Фильтр по городу
-        if ($request->filled('city_id')) {
+        // Фильтр по локации (новая логика)
+        // Сначала проверяем, выбраны ли конкретные города (мульти-выбор)
+        $selectedCityIds = [];
+        if ($request->filled('city_ids')) {
+            $decoded = json_decode($request->input('city_ids'), true);
+            if (is_array($decoded) && count($decoded) > 0) {
+                $selectedCityIds = $decoded;
+            }
+        }
+
+        // Если выбраны конкретные города - фильтруем только по ним
+        if (!empty($selectedCityIds)) {
+            $query->whereIn('city_id', $selectedCityIds);
+        }
+        // Иначе фильтруем по локации (страна/регион)
+        elseif ($request->filled('location_type') && $request->filled('location_id')) {
+            $locationType = $request->input('location_type');
+            $locationId = (int) $request->input('location_id');
+
+            // Маппинг 'region' -> 'state' (JS отправляет 'region', в БД хранится 'state_id')
+            if ($locationType === 'region') {
+                $locationType = 'state';
+            }
+
+            switch ($locationType) {
+                case 'country':
+                    // Для страны: ищем компании с этой страной напрямую
+                    // или компании в городах этой страны
+                    $query->where(function ($q) use ($locationId) {
+                        $q->where('country_id', $locationId);
+                        // Также ищем по городам этой страны (через state)
+                        $stateIds = \App\Models\Location\State::where('country_id', $locationId)->pluck('id')->toArray();
+                        if (!empty($stateIds)) {
+                            $cityIds = \App\Models\Location\City::whereIn('state_id', $stateIds)->pluck('id')->toArray();
+                            if (!empty($cityIds)) {
+                                $q->orWhereIn('city_id', $cityIds);
+                            }
+                            $q->orWhereIn('state_id', $stateIds);
+                        }
+                    });
+                    break;
+
+                case 'state':
+                    // Для области: ищем компании с этой областью или с городами в этой области
+                    $query->where(function ($q) use ($locationId) {
+                        $q->where('state_id', $locationId);
+                        $cityIds = \App\Models\Location\City::where('state_id', $locationId)->pluck('id')->toArray();
+                        if (!empty($cityIds)) {
+                            $q->orWhereIn('city_id', $cityIds);
+                        }
+                    });
+                    break;
+
+                case 'city':
+                    // Для города: точное совпадение
+                    $query->where('city_id', $locationId);
+                    break;
+            }
+        }
+        // Совместимость со старым фильтром по городу
+        elseif ($request->filled('city_id')) {
             $query->where('city_id', $request->input('city_id'));
         }
 

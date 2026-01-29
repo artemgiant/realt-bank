@@ -28,6 +28,11 @@ window.CompanyFilters = {
         // Фильтр по статусу (is_active)
         d.status = $form.find('[name="status"]').val();
 
+        // Фильтр локации
+        d.location_type = $('#lfType').val();
+        d.location_id = $('#lfId').val();
+        d.city_ids = $('#lfCities').val(); // JSON массив выбранных городов
+
         return d;
     },
 

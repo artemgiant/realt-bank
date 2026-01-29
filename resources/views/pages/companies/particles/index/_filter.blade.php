@@ -2,6 +2,9 @@
     <div class="filter">
         <div class="filter-header">
 
+            {{-- Фильтр по локации --}}
+            @include('pages.companies.particles.index._location_filter')
+
             {{-- Поиск по названию / ID --}}
             <div class="header-search-on-id">
                 <div class="item-inputSearch-wrapper">

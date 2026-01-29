@@ -4,6 +4,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/pages/companies/index/page-company-company.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pages/companies/index/location-filter.css') }}">
 @endpush
 
 @section('header')
@@ -45,4 +46,5 @@
     <script src="{{ asset('js/pages/companies/index/table-config.js') }}"></script>
     <script src="{{ asset('js/pages/companies/index/table-filters.js') }}"></script>
     <script src="{{ asset('js/pages/companies/index/page-companies-table.js') }}"></script>
+    <script src="{{ asset('js/pages/companies/index/location-filter.js') }}"></script>
 @endpush
