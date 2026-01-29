@@ -391,8 +391,8 @@ class CompanyController extends Controller
                 ],
                 'director' => [
                     'has_contact' => (bool) $contact,
-                    'full_name' => $contact?->full_name,
-                    'phone' => $contact?->primary_phone,
+                    'full_name' => $contact ? $contact->full_name : null,
+                    'phone' => $contact ? $contact->primary_phone : null,
                 ],
                 'offices_count' => $company->offices->count(),
                 'team_count' => 0,
@@ -402,8 +402,8 @@ class CompanyController extends Controller
                 'actions' => $company->id,
                 'website' => $company->website,
                 'description' => $company->description,
-                'created_at_formatted' => $company->created_at?->format('d.m.Y H:i'),
-                'updated_at_formatted' => $company->updated_at?->format('d.m.Y H:i'),
+                'created_at_formatted' => $company->created_at ? $company->created_at->format('d.m.Y H:i') : null,
+                'updated_at_formatted' => $company->updated_at ? $company->updated_at->format('d.m.Y H:i') : null,
             ];
         });
 
@@ -453,13 +453,29 @@ class CompanyController extends Controller
 
         // Добавляем новые офисы
         foreach ($offices as $index => $officeData) {
-            if (empty($officeData['name'])) {
+            // Проверяем, есть ли хотя бы одно название
+            $nameUa = $officeData['name_ua'] ?? null;
+            $nameRu = $officeData['name_ru'] ?? null;
+            $nameEn = $officeData['name_en'] ?? null;
+
+            if (empty($nameUa) && empty($nameRu) && empty($nameEn)) {
                 continue;
             }
 
+            // Основное название (приоритет: RU -> UA -> EN)
+            $mainName = $nameRu ?? $nameUa ?? $nameEn ?? 'Офис ' . ($index + 1);
+
+            // Мультиязычные названия
+            $nameTranslations = array_filter([
+                'ua' => $nameUa,
+                'ru' => $nameRu,
+                'en' => $nameEn,
+            ]);
+
             $office = CompanyOffice::create([
                 'company_id' => $company->id,
-                'name' => $officeData['name'],
+                'name' => $mainName,
+                'name_translations' => !empty($nameTranslations) ? $nameTranslations : null,
                 'country_id' => $officeData['country_id'] ?? null,
                 'state_id' => $officeData['state_id'] ?? null,
                 'city_id' => $officeData['city_id'] ?? null,

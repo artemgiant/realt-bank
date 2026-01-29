@@ -46,7 +46,9 @@ class StoreCompanyRequest extends FormRequest
 
             // ========== Офисы ==========
             'offices' => ['nullable', 'array'],
-            'offices.*.name' => ['required_with:offices', 'string', 'max:255'],
+            'offices.*.name_ua' => ['nullable', 'string', 'max:255'],
+            'offices.*.name_ru' => ['nullable', 'string', 'max:255'],
+            'offices.*.name_en' => ['nullable', 'string', 'max:255'],
             'offices.*.country_id' => ['nullable', 'exists:countries,id'],
             'offices.*.state_id' => ['nullable', 'exists:states,id'],
             'offices.*.city_id' => ['nullable', 'exists:cities,id'],
@@ -57,6 +59,8 @@ class StoreCompanyRequest extends FormRequest
             'offices.*.office_number' => ['nullable', 'string', 'max:50'],
             'offices.*.contact_ids' => ['nullable', 'array'],
             'offices.*.contact_ids.*' => ['exists:contacts,id'],
+            'offices.*.photos' => ['nullable', 'array'],
+            'offices.*.photos.*' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
         ];
     }
 
@@ -83,7 +87,10 @@ class StoreCompanyRequest extends FormRequest
             'logo' => 'логотип',
             'contact_ids' => 'контакты',
             'offices' => 'офисы',
-            'offices.*.name' => 'название офиса',
+            'offices.*.name_ua' => 'название офиса (UA)',
+            'offices.*.name_ru' => 'название офиса (RU)',
+            'offices.*.name_en' => 'название офиса (EN)',
+            'offices.*.photos' => 'фото офиса',
         ];
     }
 
@@ -97,7 +104,9 @@ class StoreCompanyRequest extends FormRequest
             'logo.image' => 'Файл должен быть изображением',
             'logo.mimes' => 'Разрешены только: JPEG, PNG, WebP',
             'logo.max' => 'Максимальный размер логотипа 2MB',
-            'offices.*.name.required_with' => 'Укажите название офиса',
+            'offices.*.photos.*.image' => 'Файл должен быть изображением',
+            'offices.*.photos.*.mimes' => 'Разрешены только: JPEG, PNG, WebP',
+            'offices.*.photos.*.max' => 'Максимальный размер фото 5MB',
         ];
     }
 

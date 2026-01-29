@@ -39,6 +39,35 @@
 
 @section('content')
     <!-- початок main	-->
+
+    {{-- Сообщения об успехе/ошибке --}}
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    {{-- Ошибки валидации --}}
+    @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Пожалуйста, исправьте ошибки:</strong>
+            <ul class="mb-0 mt-2">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <form action="{{ route('companies.store') }}" method="POST" enctype="multipart/form-data" id="company-form">
         @csrf
 
@@ -144,9 +173,10 @@
                                         <div class="text_advertising-wrapper">
                                             <label class="green" for="name-agency-ua">Назва агенції</label>
                                             <div class="item-inputText-wrapper">
-                                                <input class="item-inputText" type="text"
+                                                <input class="item-inputText @error('name_ua') is-invalid @enderror" type="text"
                                                        data-input-lang="ua" id="name-agency-ua" autocomplete="off"
                                                        name="name_ua"
+                                                       value="{{ old('name_ua') }}"
                                                        placeholder="Назва">
                                             </div>
                                         </div>
@@ -158,9 +188,10 @@
                                         <div class="text_advertising-wrapper">
                                             <label class="green" for="name-agency-ru">Название агентства</label>
                                             <div class="item-inputText-wrapper">
-                                                <input class="item-inputText" type="text"
+                                                <input class="item-inputText @error('name_ru') is-invalid @enderror" type="text"
                                                        data-input-lang="ru" id="name-agency-ru" autocomplete="off"
                                                        name="name_ru"
+                                                       value="{{ old('name_ru') }}"
                                                        placeholder="Название">
                                             </div>
                                         </div>
@@ -172,9 +203,10 @@
                                         <div class="text_advertising-wrapper">
                                             <label class="green" for="name-agency-en">The name of the agency</label>
                                             <div class="item-inputText-wrapper">
-                                                <input class="item-inputText" type="text"
+                                                <input class="item-inputText @error('name_en') is-invalid @enderror" type="text"
                                                        data-input-lang="en" id="name-agency-en" autocomplete="off"
                                                        name="name_en"
+                                                       value="{{ old('name_en') }}"
                                                        placeholder="The name">
                                             </div>
                                         </div>
@@ -194,7 +226,7 @@
 			<span>
 				<label class="item-label" for="site-agency">Сайт агентства</label>
 			</span>
-                        <input class="item-inputText" id="site-agency" type="text" autocomplete="off" name="website" placeholder="https://linkname.com">
+                        <input class="item-inputText @error('website') is-invalid @enderror" id="site-agency" type="text" autocomplete="off" name="website" value="{{ old('website') }}" placeholder="https://linkname.com">
                     </div>
                 </div>
                 <div class="block-row">
@@ -204,8 +236,8 @@
 				<span>
 					<label class="item-label" for="code-EDRPOU-TIN">КОД ЕГРПОУ/ИНН</label>
 				</span>
-                            <input class="item-inputText" id="code-EDRPOU-TIN" type="text" autocomplete="off"
-                                   name="edrpou_code" placeholder="1234567890">
+                            <input class="item-inputText @error('edrpou_code') is-invalid @enderror" id="code-EDRPOU-TIN" type="text" autocomplete="off"
+                                   name="edrpou_code" value="{{ old('edrpou_code') }}" placeholder="1234567890">
                         </div>
                         <div class="item">
 				<span class="label">
@@ -236,8 +268,8 @@
 				<span>
 					<label class="item-label" for="type_company">Тип агенства</label>
 				</span>
-                            <input class="item-inputText" id="type_company" type="text" autocomplete="off"
-                                   name="company_type" placeholder="Тип агентства">
+                            <input class="item-inputText @error('company_type') is-invalid @enderror" id="type_company" type="text" autocomplete="off"
+                                   name="company_type" value="{{ old('company_type') }}" placeholder="Тип агентства">
                         </div>
                     </div>
 
@@ -276,10 +308,10 @@
 								<label for="about-agency-ua">Про агенцію</label>
 							</span>
                                             <div class="item-inputText-wrapper">
-								<textarea class="item-textareaText" type="text"
+								<textarea class="item-textareaText @error('description_ua') is-invalid @enderror" type="text"
                                           data-input-lang="ua" id="about-agency-ua"
                                           autocomplete="off" name="description_ua"
-                                          placeholder="Введіть текст"></textarea>
+                                          placeholder="Введіть текст">{{ old('description_ua') }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -292,10 +324,10 @@
 									<label for="about-agency-ru">Об агентстве</label>
 								</span>
                                             <div class="item-inputText-wrapper">
-									<textarea class="item-textareaText" type="text"
+									<textarea class="item-textareaText @error('description_ru') is-invalid @enderror" type="text"
                                               data-input-lang="ru" id="about-agency-ru"
                                               autocomplete="off" name="description_ru"
-                                              placeholder="Введите текст"></textarea>
+                                              placeholder="Введите текст">{{ old('description_ru') }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -308,10 +340,10 @@
 								<label for="about-agency-en">About agency</label>
 							</span>
                                             <div class="item-inputText-wrapper">
-								<textarea class="item-textareaText" type="text"
+								<textarea class="item-textareaText @error('description_en') is-invalid @enderror" type="text"
                                           data-input-lang="en" id="about-agency-en"
                                           autocomplete="off" name="description_en"
-                                          placeholder="Enter text"></textarea>
+                                          placeholder="Enter text">{{ old('description_en') }}</textarea>
                                             </div>
                                         </div>
                                     </div>

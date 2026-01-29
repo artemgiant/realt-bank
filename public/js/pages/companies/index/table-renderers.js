@@ -127,9 +127,6 @@ window.CompanyRenderers = {
             '</div>' +
             '</div>' : '') +
             '</div>' +
-            '<button type="button" class="details-control">' +
-            '<img src="/img/icon/plus.svg" alt="">' +
-            '</button>' +
             '</div>';
     }
 };
