@@ -9,6 +9,7 @@ use App\Models\Location\District;
 use App\Models\Location\State;
 use App\Models\Location\Street;
 use App\Models\Location\Zone;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -16,7 +17,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CompanyOffice extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
+
+    protected static function newFactory(): \Database\Factories\CompanyOfficeFactory
+    {
+        return \Database\Factories\CompanyOfficeFactory::new();
+    }
 
     protected $table = 'company_offices';
 

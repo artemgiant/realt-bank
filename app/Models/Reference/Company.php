@@ -23,6 +23,11 @@ class Company extends Model
 
     protected $table = 'companies';
 
+    protected static function newFactory(): \Database\Factories\CompanyFactory
+    {
+        return \Database\Factories\CompanyFactory::new();
+    }
+
     protected $fillable = [
         'name',
         'slug',
