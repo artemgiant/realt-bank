@@ -121,7 +121,7 @@ Route::middleware('auth')->group(function () {
         return view('pages.companies.index');
     })->name('companies.index');
 
-    Route::get('/companies/create', function () {
+    Route::get('/companies-create', function () {
         return view('pages.companies.create');
     })->name('companies.create');
 

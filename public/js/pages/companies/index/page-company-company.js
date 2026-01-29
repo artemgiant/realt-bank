@@ -97,7 +97,7 @@ $(document).ready(function () {
 			// Створюємо новий рядок з таблицею
 			const dopInfoRow = `
         <tr class="dop-info-row">
-            <td colspan="12">
+            <td colspan="9">
                 <div class="table-for-others-info">
                     <p class="paragraph">Офисы</p>
                     <div>
@@ -120,50 +120,14 @@ $(document).ready(function () {
 							</p>
 						</div>
 					</div>
-					<div>
-						<div class="thead-wrapper client">
-							<p>
-								<img src="./img/icon/icon-table/person-fill.svg" alt="">
-								<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Сделки">
-									<img src="./img/icon/icon-info.svg" alt="">
-								</span>
-							</p>
-						</div>
-					</div>
-					<div>
-						<div class="thead-wrapper succeed">
-							<p>
-								<img src="./img/icon/icon-table/hand-thumbs-up-fill.svg" alt="">
-								<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Успешные сделки">
-									<img src="./img/icon/icon-info.svg" alt="">
-								</span>
-							</p>
-						</div>
-					</div>
-					<div>
-						<div class="thead-wrapper nosucceed">
-							<p>
-								<img src="./img/icon/icon-table/hand-thumbs-down-fill.svg" alt="">
-								<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Неуспешные сделки">
-									<img src="./img/icon/icon-info.svg" alt="">
-								</span>
-							</p>
-						</div>
-					</div>
+			
                     <div class="wrapper-btn-collapse">
 	                    <button class="info-footer-btn btn-collapse" type="button">Свернуть</button>
 					</div>
 				</div>
                 <div class="table-for-others">
                     <table id="example2" style="width:98%;  margin: auto;">
-                        <col width="27.46763%" valign="middle">
-                        <col width="8.51063%" valign="middle">
-                        <col width="9.29363%" valign="middle">
-                        <col width="10.94563%" valign="middle">
-                        <col width="7.03262%" valign="middle">
-                        <col width="8.77162%" valign="middle">
-                        <col width="8.59762%" valign="middle">
-                        <col width="19.38062%" valign="middle">
+               
                         <tbody>
                         <tr>
                         	<td>
@@ -192,26 +156,8 @@ $(document).ready(function () {
 									<p><button class="info-footer-btn btn-others" type="button">1000</button></p>
 								</div>
 							</td>
-							<td>
-								<div class="tbody-wrapper object">
-									<p><button class="info-footer-btn btn-others" type="button">10000</button></p>
-								</div>
-							</td>
-							<td>
-								<div class="tbody-wrapper client">
-									<p><button class="info-footer-btn btn-others" type="button">1000</button></p>
-								</div>
-							</td>
-							<td>
-								<div class="tbody-wrapper succeed">
-									<p><button class="info-footer-btn btn-others" type="button">100000</button></p>
-								</div>
-							</td>
-							<td>
-								<div class="tbody-wrapper nosucceed">
-									<p><button class="info-footer-btn btn-others" type="button">100</button></p>
-								</div>
-							</td>
+						
+						
                             <td>
                                 <div class="tbody-wrapper commission">
                                     <p>от 1000</p>
