@@ -440,12 +440,10 @@
 @endsection
 
 @push('scripts')
-
-    <script src="./js/pages/function_on_pages-create.min.js" type="module"></script>
-    <script src="./js/pages/my-dropdown.min.js"></script>
-    <script src="./js/pages/page-create-agency.js" type="module"></script>
-    <script src="./js/pages/add-contact-modal.min.js" type="module"></script>
-
+    <script src="{{ asset('js/pages/my-dropdown.min.js') }}"></script>
+    <script src="{{ asset('js/pages/companies/create/function_on_pages-create.js') }}" type="module"></script>
+    <script src="{{ asset('js/pages/companies/create/page-create-agency.js') }}" type="module"></script>
+    <script src="{{ asset('js/pages/companies/create/location-search.js') }}" type="module"></script>
 @endpush
 
 
