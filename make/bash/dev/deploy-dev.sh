@@ -26,7 +26,7 @@ php artisan migrate
 #php artisan db:seed --class=CountrySeeder
 
 
-#php artisan db:seed --class=DictionarySeeder --force
+php artisan db:seed --class=DictionarySeeder --force
 
 
 
@@ -41,6 +41,10 @@ php artisan migrate
 #Очистить и создать  девелопера
 #php artisan tinker --execute="\App\Models\Reference\Developer::factory()->cleanAndCreate(100);"
 
+
+
+#Очистить и создать  комплексы и блоки
+php artisan tinker --execute="use Database\Factories\Reference\{ComplexFactory, BlockFactory}; BlockFactory::cleanImported(); ComplexFactory::cleanImported(); ComplexFactory::new()->count(100)->create();"
 
 #php artisan storage:link
 

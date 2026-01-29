@@ -3,6 +3,8 @@
 namespace App\Models\Contact;
 
 use App\Models\Property\Property;
+use App\Models\Reference\Company;
+use App\Models\Reference\CompanyOffice;
 use App\Models\Reference\Developer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -73,6 +75,26 @@ class Contact extends Model
     public function developers(): MorphToMany
     {
         return $this->morphedByMany(Developer::class, 'contactable')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * Компании (полиморфная many-to-many)
+     */
+    public function companies(): MorphToMany
+    {
+        return $this->morphedByMany(Company::class, 'contactable')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * Офисы компаний (полиморфная many-to-many)
+     */
+    public function companyOffices(): MorphToMany
+    {
+        return $this->morphedByMany(CompanyOffice::class, 'contactable')
             ->withPivot('role')
             ->withTimestamps();
     }

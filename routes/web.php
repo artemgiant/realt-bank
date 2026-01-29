@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Company\CompanyController;
 use App\Http\Controllers\ComplexController;
 use App\Http\Controllers\Developer\DeveloperController;
 use App\Http\Controllers\Import\ComplexImportController;
@@ -117,13 +118,12 @@ Route::middleware('auth')->group(function () {
 
 
 
-    Route::get('/companies', function () {
-        return view('pages.companies.index');
-    })->name('companies.index');
-
-    Route::get('/companies-create', function () {
-        return view('pages.companies.create');
-    })->name('companies.create');
+    // ========== Companies ==========
+    Route::get('/companies/ajax-search', [CompanyController::class, 'ajaxSearch'])
+        ->name('companies.ajax-search');
+    Route::get('/companies/ajax-data', [CompanyController::class, 'ajaxData'])
+        ->name('companies.ajax-data');
+    Route::resource('companies', CompanyController::class);
 
 });
 
