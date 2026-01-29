@@ -3120,6 +3120,57 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   margin-top: 0;
 }
 
+/* Office Name with Language Tabs */
+.office-name-with-tabs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.office-name-with-tabs .item-label {
+  margin-bottom: 0;
+}
+
+.office-name-tabs {
+  border-bottom: none;
+  gap: 4px;
+}
+
+.office-name-tabs .nav-item {
+  margin-bottom: 0;
+}
+
+.office-name-tabs .nav-link {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #64748b;
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+
+.office-name-tabs .nav-link:hover {
+  color: #3585f5;
+  border-color: #3585f5;
+}
+
+.office-name-tabs .nav-link.active {
+  background: #3585f5;
+  border-color: #3585f5;
+  color: #fff;
+}
+
+.office-name-content {
+  width: 100%;
+}
+
+.office-name-content .tab-pane {
+  padding: 0;
+}
+
 /* Office Photos Upload */
 .office-photos-item {
   flex: 1;

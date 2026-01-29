@@ -187,7 +187,7 @@
 
 
 
-{{-- #TODO LOCATION BLOCK HERE--}}
+
                     @include('pages/companies/particles/create/_location_block_company')
 
                     <div class="item">
@@ -244,6 +244,7 @@
 
                     <div class="item w75">
                         <div class="tab-the-name">
+
                             <ul class="nav nav-tabs" id="tab-about-agency" role="tablist">
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link" id="ua-tab-about-agency" data-bs-toggle="tab"
@@ -263,8 +264,8 @@
                                             aria-controls="en-tab-pane-about-agency" aria-selected="false">EN
                                     </button>
                                 </li>
-
                             </ul>
+
 
                             <div class="tab-content">
                                 <div class="tab-pane fade" id="ua-tab-pane-about-agency" role="tabpanel"
@@ -366,13 +367,62 @@
                         </button>
                     </div>
                     <div class="block-row">
+
+
                         <div class="item w25">
-                            <span>
-                                <label class="item-label green">Название офиса</label>
-                            </span>
-                            <input class="item-inputText office-name-input" type="text" autocomplete="off"
-                                   name="offices[__INDEX__][name]" placeholder="Например: Главный офис">
+                            <div class="tab-the-name">
+                                <ul class="nav nav-tabs" id="tab-office-name-__INDEX__" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="ua-tab-office-__INDEX__" data-bs-toggle="tab" data-bs-target="#ua-tab-pane-office-__INDEX__" type="button" role="tab" aria-controls="ua-tab-pane-office-__INDEX__" aria-selected="false" tabindex="-1">UA</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="ru-tab-office-__INDEX__" data-bs-toggle="tab" data-bs-target="#ru-tab-pane-office-__INDEX__" type="button" role="tab" aria-controls="ru-tab-pane-office-__INDEX__" aria-selected="true">RU</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="en-tab-office-__INDEX__" data-bs-toggle="tab" data-bs-target="#en-tab-pane-office-__INDEX__" type="button" role="tab" aria-controls="en-tab-pane-office-__INDEX__" aria-selected="false" tabindex="-1">EN</button>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content">
+                                    <div class="tab-pane fade" id="ua-tab-pane-office-__INDEX__" role="tabpanel" aria-labelledby="ua-tab-office-__INDEX__" tabindex="0">
+                                        <div class="tab-content-right">
+                                            <div class="text_advertising-wrapper">
+                                                <label class="green" for="name-office-ua-__INDEX__">Назва офісу</label>
+                                                <div class="item-inputText-wrapper">
+                                                    <input class="item-inputText office-name-input" type="text" data-input-lang="ua" id="name-office-ua-__INDEX__" autocomplete="off" name="offices[__INDEX__][name_ua]" placeholder="Назва">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade show active" id="ru-tab-pane-office-__INDEX__" role="tabpanel" aria-labelledby="ru-tab-office-__INDEX__" tabindex="0">
+                                        <div class="tab-content-right">
+                                            <div class="text_advertising-wrapper">
+                                                <label class="green" for="name-office-ru-__INDEX__">Название офиса</label>
+                                                <div class="item-inputText-wrapper">
+                                                    <input class="item-inputText office-name-input" type="text" data-input-lang="ru" id="name-office-ru-__INDEX__" autocomplete="off" name="offices[__INDEX__][name_ru]" placeholder="Название">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="en-tab-pane-office-__INDEX__" role="tabpanel" aria-labelledby="en-tab-office-__INDEX__" tabindex="0">
+                                        <div class="tab-content-right">
+                                            <div class="text_advertising-wrapper">
+                                                <label class="green" for="name-office-en-__INDEX__">Office name</label>
+                                                <div class="item-inputText-wrapper">
+                                                    <input class="item-inputText office-name-input" type="text" data-input-lang="en" id="name-office-en-__INDEX__" autocomplete="off" name="offices[__INDEX__][name_en]" placeholder="Name">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
+
+
+
+
+
                         <div class="item office-photos-item">
                             <label class="item-label green">Фото офиса</label>
                             <div class="office-photos-upload" data-office-index="__INDEX__">
