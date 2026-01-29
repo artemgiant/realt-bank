@@ -3004,3 +3004,135 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
     max-width: 100%;
   }
 }
+
+/* ========== Office Manager Styles ========== */
+
+.block-offices .block-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.btn-add-office {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #3585F5;
+  background: transparent;
+  border: 1.5px solid #3585F5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-add-office:hover {
+  background: #3585F5;
+  color: #fff;
+}
+
+.btn-add-office svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Empty state */
+.offices-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: #f8fafc;
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+  margin-top: 16px;
+}
+
+.offices-empty-icon {
+  margin-bottom: 12px;
+  opacity: 0.6;
+}
+
+.offices-empty-text {
+  color: #94a3b8;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+/* Office item */
+.block-offices-item {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 16px;
+  position: relative;
+}
+
+.block-offices-item:first-child {
+  margin-top: 0;
+}
+
+.office-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.office-number {
+  font-size: 14px;
+  font-weight: 600;
+  color: #3585F5;
+}
+
+.btn-remove-office {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: #fef2f2;
+  border: none;
+  border-radius: 8px;
+  color: #ef4444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-remove-office:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.block-offices-item .block-row {
+  margin-top: 12px;
+}
+
+.block-offices-item .block-row:first-of-type {
+  margin-top: 0;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .block-offices .block-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-add-office {
+    margin-top: 8px;
+  }
+
+  .office-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}

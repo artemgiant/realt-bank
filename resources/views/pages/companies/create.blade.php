@@ -324,101 +324,91 @@
             <div class="block-offices">
                 <h3 class="block-title">
                     <span>Офисы</span>
+                    <button type="button" class="btn btn-add-office" id="btn-add-office" title="Добавить офис">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 0C7.55228 0 8 0.447715 8 1V6H13C13.5523 6 14 6.44772 14 7C14 7.55228 13.5523 8 13 8H8V13C8 13.5523 7.55228 14 7 14C6.44772 14 6 13.5523 6 13V8H1C0.447715 8 0 7.55228 0 7C0 6.44772 0.447715 6 1 6H6V1C6 0.447715 6.44772 0 7 0Z" fill="currentColor"/>
+                        </svg>
+                        <span>Добавить офис</span>
+                    </button>
                 </h3>
-                <div class="block-offices-list">
-                    <div class="block-offices-item">
-                        <div class="block-row">
-                            <div class="item">
-                                <div class="add_new-tel">
-                                    <button type="button" class="btn btn-new-tel">
-                                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                    d="M0.471859 5.47374C0.358138 5.36002 0.28775 5.20285 0.287749 5.0293C0.28775 4.68208 0.569081 4.40075 0.916301 4.40075L9.13847 4.40075C9.48563 4.4008 9.76697 4.68213 9.76702 5.0293C9.76702 5.3764 9.48563 5.65779 9.13853 5.65779H0.916357C0.742747 5.65785 0.585581 5.58746 0.471859 5.47374Z"
-                                                    fill="#3585F5"/>
-                                            <path
-                                                    d="M4.583 9.58476C4.46922 9.47098 4.39889 9.31387 4.39889 9.14032L4.39889 0.918164C4.39883 0.571001 4.68022 0.289614 5.02739 0.28967C5.37449 0.28967 5.65588 0.571056 5.65588 0.918164L5.65588 9.14032C5.65583 9.48748 5.37449 9.76881 5.02733 9.76887C4.85389 9.76887 4.69678 9.69853 4.583 9.58476Z"
-                                                    fill="#3585F5"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                                <span>
-						<label class="item-label green" for="agency-branch">Название офиса</label>
-					</span>
-                                <input class="item-inputText" id="agency-branch" type="text" autocomplete="off"
-                                       name="offices[0][name]" placeholder="Название">
-                            </div>
 
-                            <div class="item w75">
+                {{-- Контейнер для офисов --}}
+                <div class="block-offices-list" id="offices-container">
+                    {{-- Офисы добавляются через JS --}}
+                </div>
 
+                {{-- Пустое состояние --}}
+                <div class="offices-empty-state" id="offices-empty">
+                    <div class="offices-empty-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 21H21M5 21V7L13 3V21M19 21V11L13 7M9 9V9.01M9 13V13.01M9 17V17.01" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <p class="offices-empty-text">Офисы не добавлены</p>
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="btn-add-first-office">
+                        <svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" class="me-1">
+                            <path d="M7 0C7.55228 0 8 0.447715 8 1V6H13C13.5523 6 14 6.44772 14 7C14 7.55228 13.5523 8 13 8H8V13C8 13.5523 7.55228 14 7 14C6.44772 14 6 13.5523 6 13V8H1C0.447715 8 0 7.55228 0 7C0 6.44772 0.447715 6 1 6H6V1C6 0.447715 6.44772 0 7 0Z" fill="currentColor"/>
+                        </svg>
+                        Добавить первый офис
+                    </button>
+                </div>
+            </div>
 
-                                {{-- Контейнер для списка контактов --}}
-                                <div id="contacts-list-container">
-                                    {{-- Контакты будут добавляться через JS --}}
-                                </div>
-
-                                {{-- Блок добавления контакта (показывается если нет контактов) --}}
-                                <div class="item">
-                                    <ul class="block-info" id="add-contact-block">
-                                        <li class="block-info-item">
-                                            <div class="info-title-wrapper">
-                                                <h2 class="info-title">Контакт</h2>
-                                                <button class="btn btn-add-client" type="button" data-bs-toggle="modal"
-                                                        data-bs-target="#add-contact-modal">
-                                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
-                                                         xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                                d="M4.47186 9.47374C4.35814 9.36002 4.28775 9.20285 4.28775 9.0293C4.28775 8.68208 4.56908 8.40075 4.9163 8.40075L13.1385 8.40075C13.4856 8.4008 13.767 8.68213 13.767 9.0293C13.767 9.3764 13.4856 9.65779 13.1385 9.65779H4.91636C4.74275 9.65785 4.58558 9.58746 4.47186 9.47374Z"
-                                                                fill="#AAAAAA"></path>
-                                                        <path
-                                                                d="M8.583 13.5848C8.46922 13.471 8.39889 13.3139 8.39889 13.1403L8.39889 4.91816C8.39883 4.571 8.68022 4.28961 9.02739 4.28967C9.37449 4.28967 9.65588 4.57106 9.65588 4.91816L9.65588 13.1403C9.65583 13.4875 9.37449 13.7688 9.02733 13.7689C8.85389 13.7689 8.69678 13.6985 8.583 13.5848Z"
-                                                                fill="#AAAAAA"></path>
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                            <div class="info-avatar">
-                                                <picture>
-                                                    <source srcset="{{ asset('img/icon/default-avatar-table.svg') }}"
-                                                            type="image/webp">
-                                                    <img src="{{ asset('img/icon/default-avatar-table.svg') }}" alt="Avatar">
-                                                </picture>
-                                            </div>
-                                            <div class="info-contacts">
-                                                <p class="info-contacts-name text-muted">Контакт не выбран</p>
-                                                <p class="info-description text-muted">Нажмите + чтобы добавить</p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                {{-- Кнопка добавления еще одного контакта (показывается когда есть хотя бы один) --}}
-                                <div id="add-more-contact-btn" class="d-none mb-3">
-                                    <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="modal"
-                                            data-bs-target="#add-contact-modal">
-                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
-                                             xmlns="http://www.w3.org/2000/svg" class="me-1">
-                                            <path
-                                                    d="M4.47186 9.47374C4.35814 9.36002 4.28775 9.20285 4.28775 9.0293C4.28775 8.68208 4.56908 8.40075 4.9163 8.40075L13.1385 8.40075C13.4856 8.4008 13.767 8.68213 13.767 9.0293C13.767 9.3764 13.4856 9.65779 13.1385 9.65779H4.91636C4.74275 9.65785 4.58558 9.58746 4.47186 9.47374Z"
-                                                    fill="currentColor"></path>
-                                            <path
-                                                    d="M8.583 13.5848C8.46922 13.471 8.39889 13.3139 8.39889 13.1403L8.39889 4.91816C8.39883 4.571 8.68022 4.28961 9.02739 4.28967C9.37449 4.28967 9.65588 4.57106 9.65588 4.91816L9.65588 13.1403C9.65583 13.4875 9.37449 13.7688 9.02733 13.7689C8.85389 13.7689 8.69678 13.6985 8.583 13.5848Z"
-                                                    fill="currentColor"></path>
-                                        </svg>
-                                        Добавить контакт
-                                    </button>
-                                </div>
-
-
+            {{-- Шаблон офиса (скрытый) --}}
+            <template id="office-template">
+                <div class="block-offices-item" data-office-index="__INDEX__">
+                    <div class="office-header">
+                        <span class="office-number">Офис #<span class="office-num">__NUM__</span></span>
+                        <button type="button" class="btn btn-remove-office" title="Удалить офис">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1.75 3.5H12.25M5.25 6.125V10.125M8.75 6.125V10.125M2.625 3.5L3.5 11.375C3.5 11.8391 3.68437 12.2842 4.01256 12.6124C4.34075 12.9406 4.78587 13.125 5.25 13.125H8.75C9.21413 13.125 9.65925 12.9406 9.98744 12.6124C10.3156 12.2842 10.5 11.8391 10.5 11.375L11.375 3.5M4.8125 3.5V1.75C4.8125 1.51794 4.90469 1.29538 5.06909 1.13128C5.2335 0.966875 5.45625 0.875 5.6875 0.875H8.3125C8.54375 0.875 8.7665 0.966875 8.93091 1.13128C9.09531 1.29538 9.1875 1.51794 9.1875 1.75V3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="block-row">
+                        <div class="item w25">
+                            <span><label class="item-label green">Название офиса</label></span>
+                            <input class="item-inputText office-name-input" type="text" autocomplete="off"
+                                   name="offices[__INDEX__][name]" placeholder="Например: Главный офис">
+                        </div>
+                    </div>
+                    <div class="block-row">
+                        <div class="item selects w16">
+                            <label class="item-label">Регион</label>
+                            <div class="state-search-wrapper" data-office="__INDEX__">
+                                <input type="text" class="state-search-input" placeholder="Введите регион..." autocomplete="off">
+                                <span class="state-search-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M15.1171 16C15.0002 16.0003 14.8845 15.9774 14.7767 15.9327C14.6687 15.888 14.5707 15.8223 14.4884 15.7396L11.465 12.7218C10.224 13.6956 8.6916 14.224 7.11391 14.2222C5.70692 14.2222 4.33151 13.8052 3.16164 13.0238C1.99176 12.2424 1.07995 11.1318 0.541519 9.83244C0.00308508 8.53306 -0.137797 7.1032 0.136693 5.7238C0.411184 4.34438 1.08872 3.07731 2.08362 2.0828C3.07852 1.08829 4.34609 0.411022 5.72606 0.136639C7.106 -0.137743 8.53643 0.00308386 9.83632 0.541306C11.1362 1.07953 12.2472 1.99098 13.029 3.16039C13.8106 4.3298 14.2278 5.70467 14.2278 7.11111C14.231 8.69031 13.7023 10.2245 12.7268 11.4667L15.7458 14.4889C15.8679 14.6135 15.9508 14.7714 15.9839 14.9427C16.017 15.114 15.9988 15.2914 15.9318 15.4524C15.8647 15.6136 15.7517 15.7515 15.6069 15.8488C15.462 15.9462 15.2916 15.9988 15.1171 16ZM7.11391 1.77778C6.05867 1.77778 5.02712 2.09058 4.14971 2.67661C3.2723 3.26264 2.58844 4.0956 2.18462 5.07013C1.78079 6.04467 1.67513 7.11706 1.881 8.15155C2.08687 9.18613 2.59502 10.1364 3.34119 10.8823C4.08737 11.6283 5.03806 12.1362 6.07302 12.342C7.10796 12.5477 8.18073 12.4421 9.1557 12.0385C10.1307 11.6348 10.9639 10.9512 11.5502 10.0741C12.1364 9.19706 12.4493 8.16595 12.4493 7.11111C12.4477 5.69713 11.885 4.34154 10.8848 3.3417C9.88461 2.34186 8.52843 1.77943 7.11391 1.77778Z" fill="currentColor"/></svg></span>
+                                <span class="state-search-spinner"></span>
+                                <button type="button" class="state-search-clear">×</button>
+                                <div class="state-search-dropdown"></div>
+                                <input type="hidden" name="offices[__INDEX__][state_id]">
+                                <input type="hidden" name="offices[__INDEX__][country_id]">
                             </div>
                         </div>
-                        <div class="block-row">
-
-
-                            @include('pages/companies/particles/create/_location_block_office')
+                        <div class="item w33">
+                            <label class="item-label">Улица</label>
+                            <div class="location-search-wrapper" data-office="__INDEX__">
+                                <input type="text" class="location-search-input" placeholder="Введите улицу..." autocomplete="off">
+                                <span class="location-search-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M15.1171 16C15.0002 16.0003 14.8845 15.9774 14.7767 15.9327C14.6687 15.888 14.5707 15.8223 14.4884 15.7396L11.465 12.7218C10.224 13.6956 8.6916 14.224 7.11391 14.2222C5.70692 14.2222 4.33151 13.8052 3.16164 13.0238C1.99176 12.2424 1.07995 11.1318 0.541519 9.83244C0.00308508 8.53306 -0.137797 7.1032 0.136693 5.7238C0.411184 4.34438 1.08872 3.07731 2.08362 2.0828C3.07852 1.08829 4.34609 0.411022 5.72606 0.136639C7.106 -0.137743 8.53643 0.00308386 9.83632 0.541306C11.1362 1.07953 12.2472 1.99098 13.029 3.16039C13.8106 4.3298 14.2278 5.70467 14.2278 7.11111C14.231 8.69031 13.7023 10.2245 12.7268 11.4667L15.7458 14.4889C15.8679 14.6135 15.9508 14.7714 15.9839 14.9427C16.017 15.114 15.9988 15.2914 15.9318 15.4524C15.8647 15.6136 15.7517 15.7515 15.6069 15.8488C15.462 15.9462 15.2916 15.9988 15.1171 16ZM7.11391 1.77778C6.05867 1.77778 5.02712 2.09058 4.14971 2.67661C3.2723 3.26264 2.58844 4.0956 2.18462 5.07013C1.78079 6.04467 1.67513 7.11706 1.881 8.15155C2.08687 9.18613 2.59502 10.1364 3.34119 10.8823C4.08737 11.6283 5.03806 12.1362 6.07302 12.342C7.10796 12.5477 8.18073 12.4421 9.1557 12.0385C10.1307 11.6348 10.9639 10.9512 11.5502 10.0741C12.1364 9.19706 12.4493 8.16595 12.4493 7.11111C12.4477 5.69713 11.885 4.34154 10.8848 3.3417C9.88461 2.34186 8.52843 1.77943 7.11391 1.77778Z" fill="currentColor"/></svg></span>
+                                <span class="location-search-spinner"></span>
+                                <button type="button" class="location-search-clear">×</button>
+                                <div class="location-search-dropdown"></div>
+                                <input type="hidden" name="offices[__INDEX__][street_id]">
+                                <input type="hidden" name="offices[__INDEX__][city_id]">
+                                <input type="hidden" name="offices[__INDEX__][district_id]">
+                                <input type="hidden" name="offices[__INDEX__][zone_id]">
+                            </div>
+                        </div>
+                        <div class="item w16">
+                            <span><label class="item-label">№ Дом</label> / <label>Офис</label></span>
+                            <div class="item-inputText-wrapper shtrih">
+                                <input class="item-inputText" name="offices[__INDEX__][building_number]" type="text" autocomplete="off" placeholder="12">
+                                <input class="item-inputText" name="offices[__INDEX__][office_number]" type="text" autocomplete="off" placeholder="5">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </template>
 
             <div class="block-my-btns">
                 <div class="block-my-btns-left">
@@ -444,6 +434,7 @@
     <script src="{{ asset('js/pages/companies/create/function_on_pages-create.js') }}" type="module"></script>
     <script src="{{ asset('js/pages/companies/create/page-create-agency.js') }}" type="module"></script>
     <script src="{{ asset('js/pages/companies/create/location-search.js') }}" type="module"></script>
+    <script src="{{ asset('js/pages/companies/create/office-manager.js') }}"></script>
 @endpush
 
 
