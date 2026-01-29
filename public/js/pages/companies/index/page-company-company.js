@@ -1,4 +1,4 @@
-import {HoverOnInformationAgent} from "./info-agent-or-contact-modal.js";
+import {HoverOnInformationAgent} from "./../../info-agent-or-contact-modal.js";
 
 $(document).ready(function () {
 	const table = $('#example').DataTable({
@@ -31,9 +31,6 @@ $(document).ready(function () {
 			{ data: 'offices', name: 'Офис' },
 			{ data: 'command', name: 'Команда' },
 			{ data: 'object', name: 'Объ' },
-			{ data: 'client', name: 'Кли' },
-			{ data: 'succeed', name: 'Усп' },
-			{ data: 'nosucceed', name: 'Не усп' },
 			{ data: 'commission', name: 'Комиссия' },
 			{
 				data: null,
@@ -78,7 +75,7 @@ $(document).ready(function () {
 	table.on('draw', function() {
 		// Отримуємо кількість записів, які відображаються
 		const recordsDisplay = table.page.info().recordsDisplay;
-		
+
 		// Змінюємо текст елемента, обгортаючи кількість записів у тег <b>
 		$('#example_info').html('Всего: <b>' + recordsDisplay + '</b>');
 	});
@@ -86,11 +83,11 @@ $(document).ready(function () {
 	// Обробник кліку на кнопку "btn-others" в блоці client
 	$('#example tbody').on('click', '.offices .btn-others', function(e) {
 		e.stopPropagation(); // Зупиняємо спливання події
-		
+
 		const button = $(this);
 		const row = button.closest('tr');
 		const isExpanded = row.next().hasClass('dop-info-row');
-		
+
 		// Якщо рядок вже розгорнутий - нічого не робимо
 		if (isExpanded) {
 			row[0].classList.remove('active');
@@ -269,17 +266,17 @@ $(document).ready(function () {
 	// Обробник кліку для кнопки "Свернуть"
 	$('#example tbody').on('click', '.btn-collapse', function(e) {
 		e.stopPropagation();
-		
+
 		const closeButton = $(this);
 		// Знаходимо батьківський рядок dop-info-row
 		const dopInfoRow = closeButton.closest('.dop-info-row');
-		
+
 		// Знаходимо попередній рядок (основний) - використовуємо jQuery об'єкт
 		const mainRow = dopInfoRow.prev();
-		
+
 		// Видаляємо клас active з основного рядка
 		mainRow.removeClass('active');
-		
+
 		// Видаляємо рядок з деталями
 		dopInfoRow.remove();
 	});
@@ -292,38 +289,38 @@ $(document).ready(function () {
 			$('tbody .my-custom-input input').length;
 		$('thead .my-custom-input input').prop('checked', allChecked);
 	});
-	
+
 	const initTooltips = function () {
 		const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 		const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 	};
-	
+
 	// Викликаємо ініціалізацію Tooltip після створення таблиці
 	initTooltips();
-	
+
 	// Викликаємо ініціалізацію Tooltip після оновлення таблиці
 	table.on('draw', function () {
 		initTooltips();
 	});
-	
+
 	// Викликаємо ініціалізацію Tooltip після динамічного додавання рядків
 	$('#example tbody').on('click', '.details-control, .details-control-dop, #btn-others', function () {
 		setTimeout(() => {
 			initTooltips();
-			
+
 		}, 0);
 	});
 	$(".js-example-responsive2.currency").select2({
 		width: 'resolve',
 		minimumResultsForSearch: -1,
 	});
-	
+
 	$(".js-example-responsive2.company").select2({
 		width: 'resolve',
 		placeholder: 'Компания',
 	});
 
-	
+
 	function initPhotoHoverPreview() {
 		// Створюємо попап для прев'ю фото (якщо ще не існує)
 		if ($('#photo-preview-popup').length === 0) {
@@ -333,18 +330,18 @@ $(document).ready(function () {
             </div>
         `);
 		}
-		
+
 		const $popup = $('#photo-preview-popup');
 		const $popupImg = $popup.find('img');
 		const $closeBtn = $('#close-photo-preview');
 		let hoverTimeout;
-		
+
 		// Обробник наведення на фото
 		$('.tbody-wrapper.photo img').hover(
 			function() {
 				const $img = $(this);
 				const imgSrc = $img.attr('src');
-				
+
 				hoverTimeout = setTimeout(function() {
 					$popupImg.attr('src', imgSrc);
 					$popup.show();
@@ -355,7 +352,7 @@ $(document).ready(function () {
 				$popup.hide();
 			}
 		);
-		
+
 		// Обробник наведення на сам попап
 		$popup.hover(
 			function() {
@@ -365,21 +362,21 @@ $(document).ready(function () {
 				$popup.hide();
 			}
 		);
-		
+
 		// Обробник кліку на кнопку закриття
 		$closeBtn.on('click', function() {
 			$popup.hide();
 		});
 	}
-	
+
 	// Ініціалізуємо функціонал при завантаженні сторінки
 	initPhotoHoverPreview();
 	// Викликаємо ініціалізацію Tooltip після оновлення таблиці
 	table.on('draw', function () {
 		initPhotoHoverPreview();
 	});
-	
-	
+
+
 	new HoverOnInformationAgent({
 		containerSelector:'#example',
 		hoverAttribute:'data-hover-agent',
