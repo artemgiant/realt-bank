@@ -367,9 +367,24 @@
                     </div>
                     <div class="block-row">
                         <div class="item w25">
-                            <span><label class="item-label green">Название офиса</label></span>
+                            <span>
+                                <label class="item-label green">Название офиса</label>
+                            </span>
                             <input class="item-inputText office-name-input" type="text" autocomplete="off"
                                    name="offices[__INDEX__][name]" placeholder="Например: Главный офис">
+                        </div>
+                        <div class="item office-photos-item">
+                            <label class="item-label green">Фото офиса</label>
+                            <div class="office-photos-upload" data-office-index="__INDEX__">
+                                <div class="office-photos-preview"></div>
+                                <label class="office-photos-add">
+                                    <input type="file" name="offices[__INDEX__][photos][]" multiple accept="image/*" class="office-photos-input">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <span>Добавить фото</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div class="block-row">
@@ -433,7 +448,7 @@
     <script src="{{ asset('js/pages/my-dropdown.min.js') }}"></script>
     <script src="{{ asset('js/pages/companies/create/function_on_pages-create.js') }}" type="module"></script>
     <script src="{{ asset('js/pages/companies/create/page-create-agency.js') }}" type="module"></script>
-    <script src="{{ asset('js/pages/companies/create/location-search.js') }}" type="module"></script>
+    <script src="{{ asset('js/pages/companies/create/location-search.js') }}"></script>
     <script src="{{ asset('js/pages/companies/create/office-manager.js') }}"></script>
 @endpush
 

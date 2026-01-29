@@ -7,6 +7,9 @@
 
     let officeIndex = 0;
 
+    // Хранилище файлов фотографий для каждого офиса
+    const officePhotos = {};
+
     const elements = {
         container: null,
         emptyState: null,
@@ -35,7 +38,7 @@
             elements.addFirstBtn.addEventListener('click', addOffice);
         }
 
-        // Делегирование для кнопок удаления
+        // Делегирование для кнопок удаления офиса и фото
         elements.container.addEventListener('click', function(e) {
             const removeBtn = e.target.closest('.btn-remove-office');
             if (removeBtn) {
@@ -43,6 +46,23 @@
                 if (officeItem) {
                     removeOffice(officeItem);
                 }
+                return;
+            }
+
+            // Удаление фото
+            const photoRemoveBtn = e.target.closest('.photo-remove');
+            if (photoRemoveBtn) {
+                const thumb = photoRemoveBtn.closest('.office-photo-thumb');
+                if (thumb) {
+                    removePhoto(thumb);
+                }
+            }
+        });
+
+        // Делегирование для загрузки фото
+        elements.container.addEventListener('change', function(e) {
+            if (e.target.classList.contains('office-photos-input')) {
+                handlePhotoUpload(e.target);
             }
         });
 
@@ -65,6 +85,9 @@
 
         // Добавляем в контейнер
         elements.container.appendChild(officeElement);
+
+        // Инициализируем хранилище фото для этого офиса
+        officePhotos[officeIndex] = [];
 
         // Инкрементируем индекс
         officeIndex++;
@@ -94,6 +117,12 @@
     }
 
     function removeOffice(officeElement) {
+        // Очищаем хранилище фотографий этого офиса
+        const officeIdx = officeElement.dataset.officeIndex;
+        if (officePhotos[officeIdx]) {
+            delete officePhotos[officeIdx];
+        }
+
         // Анимация удаления
         officeElement.style.transition = 'opacity 0.2s, transform 0.2s';
         officeElement.style.opacity = '0';
@@ -127,6 +156,99 @@
             // Показываем кнопку в заголовке только если есть офисы
             elements.addBtn.style.display = hasOffices ? 'inline-flex' : 'none';
         }
+    }
+
+    // ========== Работа с фотографиями офисов ==========
+
+    function handlePhotoUpload(input) {
+        const uploadWrapper = input.closest('.office-photos-upload');
+        const officeIdx = uploadWrapper.dataset.officeIndex;
+        const previewContainer = uploadWrapper.querySelector('.office-photos-preview');
+
+        if (!officePhotos[officeIdx]) {
+            officePhotos[officeIdx] = [];
+        }
+
+        const files = Array.from(input.files);
+
+        files.forEach((file, index) => {
+            if (!file.type.startsWith('image/')) return;
+
+            // Добавляем файл в хранилище
+            const photoId = Date.now() + '_' + index;
+            officePhotos[officeIdx].push({
+                id: photoId,
+                file: file
+            });
+
+            // Создаём превью
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const thumb = document.createElement('div');
+                thumb.className = 'office-photo-thumb';
+                thumb.dataset.photoId = photoId;
+                thumb.dataset.officeIndex = officeIdx;
+                thumb.innerHTML = `
+                    <img src="${e.target.result}" alt="Фото офиса">
+                    <button type="button" class="photo-remove" title="Удалить фото">×</button>
+                `;
+                previewContainer.appendChild(thumb);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Обновляем скрытый input с файлами
+        updateFileInput(officeIdx, uploadWrapper);
+
+        // Сбрасываем input для возможности повторного выбора тех же файлов
+        input.value = '';
+    }
+
+    function removePhoto(thumbElement) {
+        const photoId = thumbElement.dataset.photoId;
+        const officeIdx = thumbElement.dataset.officeIndex;
+        const uploadWrapper = thumbElement.closest('.office-photos-upload');
+
+        // Удаляем из хранилища
+        if (officePhotos[officeIdx]) {
+            officePhotos[officeIdx] = officePhotos[officeIdx].filter(p => p.id !== photoId);
+        }
+
+        // Анимация удаления
+        thumbElement.style.transition = 'opacity 0.2s, transform 0.2s';
+        thumbElement.style.opacity = '0';
+        thumbElement.style.transform = 'scale(0.8)';
+
+        setTimeout(() => {
+            thumbElement.remove();
+            // Обновляем скрытый input
+            updateFileInput(officeIdx, uploadWrapper);
+        }, 200);
+    }
+
+    function updateFileInput(officeIdx, uploadWrapper) {
+        // Создаём новый FileList из хранилища
+        const dataTransfer = new DataTransfer();
+
+        if (officePhotos[officeIdx]) {
+            officePhotos[officeIdx].forEach(photo => {
+                dataTransfer.items.add(photo.file);
+            });
+        }
+
+        // Находим или создаём скрытый input для отправки
+        let hiddenInput = uploadWrapper.querySelector('.office-photos-hidden');
+        if (!hiddenInput) {
+            hiddenInput = document.createElement('input');
+            hiddenInput.type = 'file';
+            hiddenInput.name = `offices[${officeIdx}][photos][]`;
+            hiddenInput.multiple = true;
+            hiddenInput.className = 'office-photos-hidden';
+            hiddenInput.style.display = 'none';
+            uploadWrapper.appendChild(hiddenInput);
+        }
+
+        hiddenInput.files = dataTransfer.files;
     }
 
     // Инициализация при загрузке DOM
