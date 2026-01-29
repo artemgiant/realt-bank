@@ -788,7 +788,7 @@
                 <template id="block-template">
                     <li class="create-filter-locations-item block-item" data-block-index="__INDEX__">
                         <div class="item w15">
-                            <label class="green" for="blocks-__INDEX__-name">Секция / Корпус</label>
+                            <label class="green" for="blocks-__INDEX__-name">Корпус / Секция </label>
                             <div class="item-inputText-wrapper">
                                 <input class="item-inputText" type="text" id="blocks-__INDEX__-name" name="blocks[__INDEX__][name]" autocomplete="off" placeholder="Введите название">
                             </div>

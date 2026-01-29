@@ -553,13 +553,13 @@
 
 
                 <div class="create-filter-locations">
-                    <h5 class="mb-3">Секции / Корпуса</h5>
+                    <h5 class="mb-3">Корпуса / Секции </h5>
 
                     <ul class="create-filter-locations-list" id="blocks-list">
                         {{-- Первый блок (индекс 0) --}}
                         <li class="create-filter-locations-item block-item" data-block-index="0">
                             <div class="item w15">
-                                <label class="green" for="blocks-0-name">Секция / Корпус</label>
+                                <label class="green" for="blocks-0-name">Корпус / Секция</label>
                                 <div class="item-inputText-wrapper">
                                     <input class="item-inputText" type="text" id="blocks-0-name" name="blocks[0][name]"
                                            value="{{ old('blocks.0.name') }}"
@@ -665,7 +665,7 @@
                 <template id="block-template">
                     <li class="create-filter-locations-item block-item" data-block-index="__INDEX__">
                         <div class="item w15">
-                            <label class="green" for="blocks-__INDEX__-name">Секция / Корпус</label>
+                            <label class="green" for="blocks-__INDEX__-name">Корпус / Секция </label>
                             <div class="item-inputText-wrapper">
                                 <input class="item-inputText" type="text" id="blocks-__INDEX__-name" name="blocks[__INDEX__][name]"
                                        autocomplete="off" placeholder="Введите название">
