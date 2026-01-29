@@ -10,6 +10,7 @@
 @section('header')
     <x-crm.header
             :addButton="true"
+            title="Компании"
             addButtonText="Добавить"
             addButtonUrl="{{ route('companies.create') }}"
     />

@@ -39,12 +39,15 @@ return [
 //            'icon' => 'img/icon/side-bar/Tasks.svg',
 //            'tabs' => [],
 //        ],
-//        [
-//            'name' => 'Агентство',
-//            'route' => 'agency.index',
-//            'icon' => 'img/icon/side-bar/Company1.svg',
-//            'tabs' => [],
-//        ],
+        [
+            'name' => 'Агентство',
+            'route' => 'companies.index',
+            'icon' => 'img/icon/side-bar/Company1.svg',
+            'tabs' => [
+                ['label' => 'Компании', 'route' => 'companies.index'],
+
+            ],
+        ],
     ],
 
     /*
