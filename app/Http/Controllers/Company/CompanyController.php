@@ -20,15 +20,9 @@ class CompanyController extends Controller
     /**
      * Display a listing of companies.
      */
-    public function index(Request $request): View
+    public function index(): View
     {
-        $companies = Company::with(['contacts.phones', 'offices', 'city', 'state'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
-
-        return view('pages.companies.index', [
-            'companies' => $companies,
-        ]);
+        return view('pages.companies.index');
     }
 
     /**
@@ -347,7 +341,10 @@ class CompanyController extends Controller
                 'commission' => '-',
                 'is_active' => $company->is_active,
                 'actions' => $company->id,
+                'website' => $company->website,
+                'description' => $company->description,
                 'created_at_formatted' => $company->created_at?->format('d.m.Y H:i'),
+                'updated_at_formatted' => $company->updated_at?->format('d.m.Y H:i'),
             ];
         });
 
