@@ -57,14 +57,21 @@
 
     {{-- Ошибки валидации --}}
     @if($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Пожалуйста, исправьте ошибки:</strong>
-            <ul class="mb-0 mt-2">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="form-validation-error">
+            <div class="validation-error-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 7V13H13V7H11ZM11 15V17H13V15H11Z" fill="white"/>
+                </svg>
+            </div>
+            <div class="validation-error-content">
+                <strong class="validation-error-title">Пожалуйста, исправьте ошибки:</strong>
+                <ul class="validation-error-list">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+
         </div>
     @endif
 
@@ -90,7 +97,7 @@
                     <ul class="block-info" id="add-contact-block">
                         <li class="block-info-item">
                             <div class="info-title-wrapper">
-                                <h2 class="info-title">Контакт</h2>
+                                <h2 class="info-title">Контакт </h2>
                                 <button class="btn btn-add-client" type="button" data-bs-toggle="modal"
                                         data-bs-target="#add-contact-modal">
                                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
@@ -171,7 +178,7 @@
                                      aria-labelledby="ua-tab" tabindex="0">
                                     <div class="tab-content-right">
                                         <div class="text_advertising-wrapper">
-                                            <label class="green" for="name-agency-ua">Назва агенції</label>
+                                            <label class="green" for="name-agency-ua">Назва агенції <span class="text-danger">*</span></label>
                                             <div class="item-inputText-wrapper">
                                                 <input class="item-inputText @error('name_ua') is-invalid @enderror" type="text"
                                                        data-input-lang="ua" id="name-agency-ua" autocomplete="off"
@@ -186,7 +193,7 @@
                                      aria-labelledby="ru-tab" tabindex="0">
                                     <div class="tab-content-right">
                                         <div class="text_advertising-wrapper">
-                                            <label class="green" for="name-agency-ru">Название агентства</label>
+                                            <label class="green" for="name-agency-ru">Название агентства <span class="text-danger">*</span></label>
                                             <div class="item-inputText-wrapper">
                                                 <input class="item-inputText @error('name_ru') is-invalid @enderror" type="text"
                                                        data-input-lang="ru" id="name-agency-ru" autocomplete="off"
@@ -201,7 +208,7 @@
                                      aria-labelledby="en-tab" tabindex="0">
                                     <div class="tab-content-right">
                                         <div class="text_advertising-wrapper">
-                                            <label class="green" for="name-agency-en">The name of the agency</label>
+                                            <label class="green" for="name-agency-en">The name of the agency <span class="text-danger">*</span></label>
                                             <div class="item-inputText-wrapper">
                                                 <input class="item-inputText @error('name_en') is-invalid @enderror" type="text"
                                                        data-input-lang="en" id="name-agency-en" autocomplete="off"
@@ -234,7 +241,7 @@
                     <div class="item">
                         <div class="item">
 				<span>
-					<label class="item-label" for="code-EDRPOU-TIN">КОД ЕГРПОУ/ИНН</label>
+					<label class="item-label" for="code-EDRPOU-TIN">КОД ЕГРПОУ/ИНН <span class="text-danger">*</span></label>
 				</span>
                             <input class="item-inputText @error('edrpou_code') is-invalid @enderror" id="code-EDRPOU-TIN" type="text" autocomplete="off"
                                    name="edrpou_code" value="{{ old('edrpou_code') }}" placeholder="1234567890">
@@ -266,7 +273,7 @@
 
                         <div class="item">
 				<span>
-					<label class="item-label" for="type_company">Тип агентства</label>
+					<label class="item-label" for="type_company">Тип агентства <span class="text-danger">*</span></label>
 				</span>
                             <select class="item-inputText @error('company_type') is-invalid @enderror" id="type_company" name="company_type">
                                 <option value="">Выберите тип</option>
@@ -359,7 +366,7 @@
 
             <div class="block-offices">
                 <h3 class="block-title">
-                    <span>Офисы</span>
+                    <span>Офисы <span class="text-danger">*</span></span>
                     <button type="button" class="btn btn-add-office" id="btn-add-office" title="Добавить офис">
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M7 0C7.55228 0 8 0.447715 8 1V6H13C13.5523 6 14 6.44772 14 7C14 7.55228 13.5523 8 13 8H8V13C8 13.5523 7.55228 14 7 14C6.44772 14 6 13.5523 6 13V8H1C0.447715 8 0 7.55228 0 7C0 6.44772 0.447715 6 1 6H6V1C6 0.447715 6.44772 0 7 0Z" fill="currentColor"/>
