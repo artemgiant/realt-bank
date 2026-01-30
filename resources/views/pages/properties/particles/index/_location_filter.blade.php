@@ -56,6 +56,7 @@
 
         <input type="hidden" id="lfType" name="location_type">
         <input type="hidden" id="lfId" name="location_id">
+        <input type="hidden" id="lfCities" name="city_ids">
         <input type="hidden" id="lfDetails" name="detail_ids">
     </div>
 </div>

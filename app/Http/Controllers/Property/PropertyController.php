@@ -498,8 +498,27 @@ class PropertyController extends Controller
             $query->whereDate('created_at', '<=', $request->created_to);
         }
 
-        // ========== Фильтр: Локация (новый) ==========
-        if ($request->filled('location_type') && $request->filled('location_id')) {
+        // ========== Фильтр: Мульти-выбор городов ==========
+        if ($request->filled('city_ids')) {
+            $cityIds = json_decode($request->input('city_ids'), true);
+
+            if (is_array($cityIds) && !empty($cityIds)) {
+                $query->where(function ($q) use ($cityIds) {
+                    $q->whereIn('city_id', $cityIds)
+                        ->orWhereHas('street', function ($sq) use ($cityIds) {
+                            $sq->whereIn('city_id', $cityIds);
+                        })
+                        ->orWhereHas('district', function ($dq) use ($cityIds) {
+                            $dq->whereIn('city_id', $cityIds);
+                        })
+                        ->orWhereHas('zone', function ($zq) use ($cityIds) {
+                            $zq->whereIn('city_id', $cityIds);
+                        });
+                });
+            }
+        }
+        // ========== Фильтр: Локация (страна/регион) ==========
+        elseif ($request->filled('location_type') && $request->filled('location_id')) {
             $locationType = $request->location_type;
             $locationId = $request->location_id;
 
@@ -522,21 +541,6 @@ class PropertyController extends Controller
                         $q->where('state_id', $locationId)
                             ->orWhereHas('city', function ($cq) use ($locationId) {
                                 $cq->where('state_id', $locationId);
-                            });
-                    });
-                    break;
-                case 'city':
-                    // Ищем объекты с city_id или через связанные улицы/районы/зоны
-                    $query->where(function ($q) use ($locationId) {
-                        $q->where('city_id', $locationId)
-                            ->orWhereHas('street', function ($sq) use ($locationId) {
-                                $sq->where('city_id', $locationId);
-                            })
-                            ->orWhereHas('district', function ($dq) use ($locationId) {
-                                $dq->where('city_id', $locationId);
-                            })
-                            ->orWhereHas('zone', function ($zq) use ($locationId) {
-                                $zq->where('city_id', $locationId);
                             });
                     });
                     break;

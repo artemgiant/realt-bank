@@ -45,7 +45,8 @@
         mode: 'location',
         category: 'all',
         location: null,
-        path: { country: null, region: null, city: null },
+        path: { country: null, region: null },
+        cities: [],
         details: []
     };
 
@@ -110,8 +111,7 @@
         let html = '';
         if (path.country) {
             html += `<span class="lf-crumb ${path.region ? 'lf-clickable' : ''}" data-type="country">${path.country.name}</span>`;
-            if (path.region) html += `<span class="lf-sep">→</span><span class="lf-crumb ${path.city ? 'lf-clickable' : ''}" data-type="region">${path.region.name}</span>`;
-            if (path.city) html += `<span class="lf-sep">→</span><span class="lf-crumb" data-type="city">${path.city.name}</span>`;
+            if (path.region) html += `<span class="lf-sep">→</span><span class="lf-crumb" data-type="region">${path.region.name}</span>`;
         }
         el.breadcrumbs.innerHTML = html;
         el.breadcrumbs.classList.toggle('lf-visible', !!html && mode === 'location');
@@ -163,7 +163,11 @@
         const sec = $(`lf-${key}`), type = TYPES[key];
         sec.querySelector('ul').innerHTML = items.map(item => {
             const name = highlight(item.name, query), parent = item.city || item.region || item.complex || '',
-                selected = multi && state.details.some(d => d.type === type && d.id === item.id);
+                selected = multi && (
+                    type === 'city'
+                        ? state.cities.some(c => c.id === item.id)
+                        : state.details.some(d => d.type === type && d.id === item.id)
+                );
             return `<li data-type="${type}" data-id="${item.id}" data-name="${item.name}" class="${selected ? 'lf-selected' : ''}"><div class="lf-item-content">${multi ? `<div class="lf-checkbox"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>` : ''}<span><span class="lf-name">${name}</span>${parent ? `<span class="lf-parent">, ${parent}</span>` : ''}</span></div><span class="lf-count">${item.count.toLocaleString()}</span></li>`;
         }).join('');
         sec.classList.remove('lf-hidden');
@@ -193,18 +197,16 @@
                 data.regions.length ? renderSection('regions', data.regions) : showEmpty('Нет областей');
             }
         } else if (location.type === 'region') {
-            // Загружаем города для Регионы
+            // Загружаем города для региона (мульти-выбор)
             const data = await loadData({ location_type: 'region', location_id: location.id });
             if (data && data.cities) {
-                data.cities.length ? renderSection('cities', data.cities) : showEmpty('Нет городов');
+                data.cities.length ? renderSection('cities', data.cities, true) : showEmpty('Нет городов');
             }
-        } else {
-            showEmpty('Город выбран. Перейдите в "Локация"');
         }
     };
 
     const showDetail = async () => {
-        if (!state.path.city && !state.path.region) {
+        if (state.cities.length === 0 && !state.path.region) {
             showEmpty('Сначала выберите город');
             return;
         }
@@ -213,9 +215,10 @@
         const detailType = state.category === 'all' ? null : TYPES[state.category];
         const params = { detail_type: detailType };
 
-        if (state.path.city) {
-            params.city_id = state.path.city.id;
-        } else {
+        if (state.cities.length > 0) {
+            // Если выбраны города - передаём первый для загрузки деталей
+            params.city_id = state.cities[0].id;
+        } else if (state.path.region) {
             params.location_type = 'region';
             params.location_id = state.path.region.id;
         }
@@ -266,7 +269,7 @@
 
             if (!has) showEmpty('Ничего не найдено');
 
-        } else if (state.path.city || state.path.region) {
+        } else if (state.cities.length > 0 || state.path.region) {
             // Поиск в режиме Detail
             const detailType = state.category === 'all' ? null : TYPES[state.category];
             const params = {
@@ -274,9 +277,9 @@
                 search: query
             };
 
-            if (state.path.city) {
-                params.city_id = state.path.city.id;
-            } else {
+            if (state.cities.length > 0) {
+                params.city_id = state.cities[0].id;
+            } else if (state.path.region) {
                 params.location_type = 'region';
                 params.location_id = state.path.region.id;
             }
@@ -301,31 +304,38 @@
 
     const selectLocation = (type, id, name) => {
         if (type === 'country') {
-            state.path = { country: { id, name }, region: null, city: null };
+            state.path = { country: { id, name }, region: null };
+            state.cities = [];
             state.details = [];
         } else if (type === 'region') {
             const region = DATA.regions.find(r => r.id === id),
                 country = DATA.countries.find(c => c.id === region?.countryId);
             state.path = {
                 country: country ? { id: country.id, name: country.name } : state.path.country,
-                region: { id, name },
-                city: null
+                region: { id, name }
             };
-            state.details = [];
-        } else if (type === 'city') {
-            const city = DATA.cities.find(c => c.id === id), region = DATA.regions.find(r => r.id === city?.regionId),
-                country = DATA.countries.find(c => c.id === region?.countryId);
-            state.path = {
-                country: country ? { id: country.id, name: country.name } : state.path.country,
-                region: region ? { id: region.id, name: region.name } : state.path.region,
-                city: { id, name }
-            };
+            state.cities = [];
             state.details = [];
         }
         state.location = { type, id, name };
         el.search.value = '';
         renderTags();
-        type === 'city' ? setMode('detail') : update();
+        update();
+    };
+
+    const toggleCity = (id, name) => {
+        const idx = state.cities.findIndex(c => c.id === id);
+        idx >= 0 ? state.cities.splice(idx, 1) : state.cities.push({ id, name });
+        renderTags();
+        updateHidden();
+        update();
+    };
+
+    const removeCity = (id) => {
+        state.cities = state.cities.filter(c => c.id !== id);
+        renderTags();
+        updateHidden();
+        if (state.isOpen) update();
     };
 
     const toggleDetail = (type, id, name) => {
@@ -342,7 +352,8 @@
     };
     const clearAll = () => {
         state.location = null;
-        state.path = { country: null, region: null, city: null };
+        state.path = { country: null, region: null };
+        state.cities = [];
         state.details = [];
         renderTags();
         updateHidden(); // Обновляем скрытые поля и таблицу
@@ -353,11 +364,11 @@
         if (type === 'country' && state.path.country) {
             state.location = { type: 'country', ...state.path.country };
             state.path.region = null;
-            state.path.city = null;
+            state.cities = [];
             state.details = [];
         } else if (type === 'region' && state.path.region) {
             state.location = { type: 'region', ...state.path.region };
-            state.path.city = null;
+            state.cities = [];
             state.details = [];
         }
         renderTags();
@@ -365,27 +376,50 @@
     };
 
     const renderTags = () => {
+        // Тег локации (страна/регион)
         if (state.location) {
             el.locationTag.innerHTML = `<span class="lf-tag"><span class="lf-tag-type">${TYPE_NAMES[state.location.type]}</span>${state.location.name}<button data-action="clear">×</button></span>`;
             el.clear.classList.add('lf-visible');
         } else el.locationTag.innerHTML = '';
+
+        // Комбинированный контент для detailWrap: города + детали
+        let wrapHtml = '';
+
+        // Теги городов (мульти-выбор)
+        if (state.cities.length > 0) {
+            const first = state.cities[0], more = state.cities.length - 1;
+            wrapHtml += `<span class="lf-tag">${first.name}`;
+            if (more > 0) wrapHtml += `<span class="lf-badge" data-action="cities-tooltip">+${more}</span>`;
+            wrapHtml += `<button data-action="clear-cities">×</button></span>`;
+            wrapHtml += '<div class="lf-tooltip lf-cities-tooltip" id="lfCitiesTooltip">';
+            if (more > 0) state.cities.slice(1).forEach(c => {
+                wrapHtml += `<div class="lf-tooltip-item"><span class="lf-tip-name"><span class="lf-tip-type">Город</span>${c.name}</span><button class="lf-tip-remove" data-action="remove-city" data-id="${c.id}">×</button></div>`;
+            });
+            wrapHtml += '</div>';
+            el.clear.classList.add('lf-visible');
+        }
+
+        // Теги деталей
         if (state.details.length) {
             const first = state.details[0], more = state.details.length - 1;
-            let html = `<span class="lf-tag">${first.name}`;
-            if (more > 0) html += `<span class="lf-badge" data-action="tooltip">+${more}</span>`;
-            html += `<button data-action="clear-details">×</button></span><div class="lf-tooltip" id="lfTooltip">`;
+            wrapHtml += `<span class="lf-tag">${first.name}`;
+            if (more > 0) wrapHtml += `<span class="lf-badge" data-action="tooltip">+${more}</span>`;
+            wrapHtml += `<button data-action="clear-details">×</button></span><div class="lf-tooltip" id="lfTooltip">`;
             if (more > 0) state.details.slice(1).forEach(d => {
-                html += `<div class="lf-tooltip-item"><span class="lf-tip-name"><span class="lf-tip-type">${TYPE_NAMES[d.type]}</span>${d.name}</span><button class="lf-tip-remove" data-action="remove" data-type="${d.type}" data-id="${d.id}">×</button></div>`;
+                wrapHtml += `<div class="lf-tooltip-item"><span class="lf-tip-name"><span class="lf-tip-type">${TYPE_NAMES[d.type]}</span>${d.name}</span><button class="lf-tip-remove" data-action="remove" data-type="${d.type}" data-id="${d.id}">×</button></div>`;
             });
-            html += '</div>';
-            el.detailWrap.innerHTML = html;
-        } else el.detailWrap.innerHTML = '<div class="lf-tooltip" id="lfTooltip"></div>';
+            wrapHtml += '</div>';
+        }
+
+        if (!wrapHtml) wrapHtml = '<div class="lf-tooltip" id="lfTooltip"></div>';
+        el.detailWrap.innerHTML = wrapHtml;
         updateHidden();
     };
 
     const updateHidden = (triggerReload = true) => {
         $('lfType').value = state.location?.type || '';
         $('lfId').value = state.location?.id || '';
+        $('lfCities').value = JSON.stringify(state.cities.map(c => c.id));
         $('lfDetails').value = JSON.stringify(state.details.map(d => ({ type: d.type, id: d.id })));
 
         // Обновляем таблицу недвижимости (если не отключено)
@@ -429,21 +463,48 @@
         const li = e.target.closest('li');
         if (li) {
             const { type, id, name } = li.dataset;
-            if (state.mode === 'location' && LOCATION_TYPES.includes(type)) selectLocation(type, +id, name); else if (state.mode === 'detail' && DETAIL_TYPES.includes(type)) toggleDetail(type, +id, name);
+            if (state.mode === 'location') {
+                if (type === 'city' && state.location?.type === 'region') {
+                    toggleCity(+id, name);  // мульти-выбор городов
+                } else if (type !== 'city' && LOCATION_TYPES.includes(type)) {
+                    selectLocation(type, +id, name);
+                }
+            } else if (state.mode === 'detail' && DETAIL_TYPES.includes(type)) {
+                toggleDetail(type, +id, name);
+            }
         }
     });
     $('lfTags').addEventListener('click', e => {
         const action = e.target.dataset.action;
-        if (action === 'clear') clearAll(); else if (action === 'clear-details') {
+        if (action === 'clear') clearAll();
+        else if (action === 'clear-cities') {
+            state.cities = [];
+            renderTags();
+            updateHidden();
+            if (state.isOpen) update();
+        }
+        else if (action === 'clear-details') {
             state.details = [];
             renderTags();
+            updateHidden();
             if (state.isOpen) update();
-        } else if (action === 'tooltip') $('lfTooltip')?.classList.add('lf-visible'); else if (action === 'remove') removeDetail(e.target.dataset.type, +e.target.dataset.id);
+        }
+        else if (action === 'tooltip') $('lfTooltip')?.classList.add('lf-visible');
+        else if (action === 'cities-tooltip') $('lfCitiesTooltip')?.classList.add('lf-visible');
+        else if (action === 'remove') removeDetail(e.target.dataset.type, +e.target.dataset.id);
+        else if (action === 'remove-city') removeCity(+e.target.dataset.id);
     });
     $('lfTags').addEventListener('mouseenter', e => {
-        if (e.target.classList.contains('lf-badge')) $('lfTooltip')?.classList.add('lf-visible');
+        if (e.target.classList.contains('lf-badge')) {
+            const action = e.target.dataset.action;
+            if (action === 'cities-tooltip') $('lfCitiesTooltip')?.classList.add('lf-visible');
+            else $('lfTooltip')?.classList.add('lf-visible');
+        }
     }, true);
-    el.detailWrap.addEventListener('mouseleave', () => $('lfTooltip')?.classList.remove('lf-visible'));
+    el.detailWrap.addEventListener('mouseleave', () => {
+        $('lfTooltip')?.classList.remove('lf-visible');
+        $('lfCitiesTooltip')?.classList.remove('lf-visible');
+    });
     document.addEventListener('click', e => {
         if (!el.container.contains(e.target)) close();
     });
@@ -474,8 +535,7 @@
                             // Устанавливаем Одесскую регион по умолчанию
                             state.path = {
                                 country: { id: ukraine.id, name: ukraine.name },
-                                region: { id: odessaRegion.id, name: odessaRegion.name },
-                                city: null
+                                region: { id: odessaRegion.id, name: odessaRegion.name }
                             };
                             state.location = { type: 'region', id: odessaRegion.id, name: odessaRegion.name };
                             renderTags();

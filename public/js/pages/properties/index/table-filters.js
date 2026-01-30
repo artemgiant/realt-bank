@@ -75,6 +75,7 @@ window.PropertyFilters = {
         // Фильтр локации (новый)
         d.location_type = $('#lfType').val();
         d.location_id = $('#lfId').val();
+        d.city_ids = $('#lfCities').val();    // JSON массив выбранных городов
         d.detail_ids = $('#lfDetails').val(); // JSON массив деталей
 
         return d;
