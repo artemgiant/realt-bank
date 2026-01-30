@@ -33,7 +33,9 @@
 
             <div class="header-btn">
                 {{-- Счетчик активных фильтров --}}
-                <div class="full-filter-btn-wrapper">
+                <div class="full-filter-btn-wrapper" style="
+    margin-left: 10px;
+">
                     <div class="full-filter-counter" style="display: none;">
                         <span>0</span>
                         <button type="button" id="delete-params-on-filter">
