@@ -40,11 +40,6 @@
             </div>
         </th>
         <th>
-            <div class="thead-wrapper commission">
-                <p>Комиссия</p>
-            </div>
-        </th>
-        <th>
             <div class="thead-wrapper block-actions">
                 <div class="menu-burger">
                     <div class="dropdown">

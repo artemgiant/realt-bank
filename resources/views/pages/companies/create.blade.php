@@ -266,10 +266,13 @@
 
                         <div class="item">
 				<span>
-					<label class="item-label" for="type_company">Тип агенства</label>
+					<label class="item-label" for="type_company">Тип агентства</label>
 				</span>
-                            <input class="item-inputText @error('company_type') is-invalid @enderror" id="type_company" type="text" autocomplete="off"
-                                   name="company_type" value="{{ old('company_type') }}" placeholder="Тип агентства">
+                            <select class="item-inputText @error('company_type') is-invalid @enderror" id="type_company" name="company_type">
+                                <option value="">Выберите тип</option>
+                                <option value="agency" {{ old('company_type') == 'agency' ? 'selected' : '' }}>Агентство</option>
+                                <option value="franchise" {{ old('company_type') == 'franchise' ? 'selected' : '' }}>Франшиза</option>
+                            </select>
                         </div>
                     </div>
 

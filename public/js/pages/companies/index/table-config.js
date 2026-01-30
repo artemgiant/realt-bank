@@ -46,11 +46,6 @@ window.CompanyTableConfig = {
                 render: R.propertiesCount
             },
             {
-                data: 'commission',
-                orderable: false,
-                render: R.commission
-            },
-            {
                 data: 'actions',
                 orderable: false,
                 render: R.actions

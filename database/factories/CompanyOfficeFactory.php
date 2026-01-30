@@ -7,6 +7,7 @@ use App\Models\Location\District;
 use App\Models\Location\Zone;
 use App\Models\Reference\Company;
 use App\Models\Reference\CompanyOffice;
+use Database\Factories\Contact\ContactFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -83,6 +84,30 @@ class CompanyOfficeFactory extends Factory
             'name' => 'Главный офис',
             'sort_order' => 0,
         ]);
+    }
+
+    /**
+     * Офис с контактами
+     */
+    public function withContacts(int $count = 2, bool $withPhones = true): static
+    {
+        return $this->afterCreating(function (CompanyOffice $office) use ($count, $withPhones) {
+            $roles = ['manager', 'administrator', 'consultant', 'receptionist'];
+
+            for ($i = 0; $i < $count; $i++) {
+                $contactFactory = ContactFactory::new();
+
+                if ($withPhones) {
+                    $contactFactory = $contactFactory->withPhones(rand(1, 2));
+                }
+
+                $contact = $contactFactory->create();
+
+                $office->contacts()->attach($contact->id, [
+                    'role' => $i === 0 ? 'primary' : $roles[array_rand($roles)],
+                ]);
+            }
+        });
     }
 
     /**

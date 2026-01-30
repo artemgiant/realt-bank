@@ -268,67 +268,123 @@ $(document).ready(function () {
 
     // Функция рендеринга строки с офисами
     function formatOfficesRow(companyId, offices) {
-        var headerHtml = '<div class="table-for-others-info">' +
-            '<p class="paragraph">Офисы</p>' +
-            '<div><div class="thead-wrapper command"><p>' +
-            '<img src="/img/icon/icon-table/people-fill.svg" alt="">' +
-            '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Команда">' +
-            '<img src="/img/icon/icon-info.svg" alt=""></span></p></div></div>' +
-            '<div><div class="thead-wrapper object"><p>' +
-            '<img src="/img/icon/icon-table/house-fill.svg" alt="">' +
-            '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Объекты">' +
-            '<img src="/img/icon/icon-info.svg" alt=""></span></p></div></div>' +
+        // Генерируем строки таблицы для каждого офиса
+        var officesRows = '';
 
-
-            '<div class="wrapper-btn-collapse">' +
-            '<button class="info-footer-btn btn-collapse" type="button">Свернуть</button>' +
-            '</div></div>';
-
-        var rowsHtml = '';
         if (offices && offices.length > 0) {
-            offices.forEach(function (office) {
-                var logoHtml = office.logo
-                    ? '<img src="' + office.logo + '" alt="" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">'
-                    : '<div style="width: 50px; height: 50px; background: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;"><span style="font-size: 20px; color: #999;">O</span></div>';
+            offices.forEach(function(office) {
+                var logoSrc = office.logo || './img/image.png';
+                var officeName = office.name || '-';
+                var officeAddress = office.address || '-';
+                var officeLocation = office.location || '';
+                var teamCount = office.team_count || 0;
+                var propertiesCount = office.properties_count || 0;
 
-                var responsibleHtml = office.responsible
-                    ? '<p class="link-name">' + (office.responsible.name || '-') + '</p>' +
-                      '<span>' + (office.responsible.position || '-') + '</span>' +
-                      (office.responsible.phone ? '<a href="tel:' + office.responsible.phone.replace(/[^0-9+]/g, '') + '">' + office.responsible.phone + '</a>' : '')
-                    : '<span class="text-muted">-</span>';
+                // Контакт офиса
+                var responsibleHtml = '';
+                if (office.responsible) {
+                    var contactName = office.responsible.name || '-';
+                    var contactPosition = office.responsible.position || '';
+                    var contactPhone = office.responsible.phone || '';
+                    var phoneLink = contactPhone ? '<a href="tel:' + contactPhone.replace(/[^+\d]/g, '') + '">' + contactPhone + '</a>' : '';
 
-                rowsHtml += '<tr>' +
-                    '<td><div class="tbody-wrapper photo">' + logoHtml + '</div></td>' +
-                    '<td><div class="tbody-wrapper company">' +
-                    '<strong>' + (office.name || '-') + '</strong>' +
-                    '<p>' + (office.address || '-') + '</p>' +
-                    '<span>' + (office.location || '-') + '</span>' +
-                    '</div></td>' +
-                    '<td><div class="tbody-wrapper responsible">' + responsibleHtml + '</div></td>' +
-                    '<td><div class="tbody-wrapper command"><p><button class="info-footer-btn btn-others" type="button">' + (office.team_count || 0) + '</button></p></div></td>' +
-                    '<td><div class="tbody-wrapper object"><p><button class="info-footer-btn btn-others" type="button">' + (office.properties_count || 0) + '</button></p></div></td>' +
-                    '<td><div class="tbody-wrapper commission"><p>' + (office.commission_from ? 'от ' + office.commission_from : '-') + '</p>' +
-                    (office.commission_to ? '<span>до ' + office.commission_to + '</span>' : '') + '</div></td>' +
-                    '<td><div class="tbody-wrapper block-actions">' +
-                    '<div class="block-actions-wrapper">' +
-                    '<div class="menu-burger"><div class="dropdown">' +
-                    '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                    '<img src="/img/icon/burger-blue.svg" alt=""></button>' +
-                    '<ul class="dropdown-menu">' +
-                    '<li><a class="dropdown-item" href="/offices/' + office.id + '/edit">Редактировать</a></li>' +
-                    '<li><a class="dropdown-item delete-office" href="#" data-id="' + office.id + '">Удалить</a></li>' +
-                    '</ul></div></div>' +
-                    '</div></div></td>' +
-                    '</tr>';
+                    responsibleHtml = '<div class="tbody-wrapper responsible">' +
+                        '<p class="link-name" data-hover-agent>' + contactName + '</p>' +
+                        (contactPosition ? '<span>' + contactPosition + '</span>' : '') +
+                        phoneLink +
+                        '</div>';
+                } else {
+                    responsibleHtml = '<div class="tbody-wrapper responsible"><span>-</span></div>';
+                }
+
+                officesRows += '<tr>' +
+                    '<td>' +
+                        '<div class="tbody-wrapper photo">' +
+                            '<img src="' + logoSrc + '" alt="">' +
+                        '</div>' +
+                    '</td>' +
+                    '<td>' +
+                        '<div class="tbody-wrapper company">' +
+                            '<strong>' + officeName + '</strong>' +
+                            '<p>' + officeAddress + '</p>' +
+                            (officeLocation ? '<span>' + officeLocation + '</span>' : '') +
+                        '</div>' +
+                    '</td>' +
+                    '<td>' + responsibleHtml + '</td>' +
+                    '<td>' +
+                        '<div class="tbody-wrapper command">' +
+                            '<p><button class="info-footer-btn btn-others" type="button">' + teamCount + '</button></p>' +
+                        '</div>' +
+                    '</td>' +
+                    '<td>' +
+                        '<div class="tbody-wrapper object">' +
+                            '<p><button class="info-footer-btn btn-others" type="button">' + propertiesCount + '</button></p>' +
+                        '</div>' +
+                    '</td>' +
+                    '<td>' +
+                        '<div class="tbody-wrapper block-actions">' +
+
+                            '<div class="block-actions-wrapper">' +
+                                '<div class="menu-burger">' +
+                                    '<div class="dropdown">' +
+                                        '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                                            '<img src="./img/icon/burger-blue.svg" alt="">' +
+                                        '</button>' +
+                                        '<ul class="dropdown-menu">' +
+                                            '<li><a class="dropdown-item" href="#">Обновить</a></li>' +
+                                            '<li><a class="dropdown-item" href="#">Редактировать</a></li>' +
+                                        '</ul>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<label class="bookmark">' +
+                                    '<input type="checkbox">' +
+                                    '<span>' +
+                                        '<img class="non-checked" src="./img/icon/bookmark.svg" alt="">' +
+                                        '<img class="on-checked" src="./img/icon/bookmark-cheked.svg" alt="">' +
+                                    '</span>' +
+                                '</label>' +
+                            '</div>' +
+                        '</div>' +
+                    '</td>' +
+                '</tr>';
             });
         } else {
-            rowsHtml = '<tr><td colspan="10" class="text-center text-muted">Офисы не найдены</td></tr>';
+            officesRows = '<tr><td colspan="6"><p style="text-align: center; padding: 20px;">Офисы не найдены</p></td></tr>';
         }
 
-        var tableHtml = '<div class="table-for-others">' +
-            '<table style="width:98%; margin: auto;"><tbody>' + rowsHtml + '</tbody></table></div>';
+        var dopInfoRow = '<div class="table-for-others-info">' +
+            '<p class="paragraph">Офисы</p>' +
+            '<div>' +
+                '<div class="thead-wrapper command">' +
+                    '<p>' +
+                        '<img src="./img/icon/icon-table/people-fill.svg" alt="">' +
+                        '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Команда">' +
+                            '<img src="./img/icon/icon-info.svg" alt="">' +
+                        '</span>' +
+                    '</p>' +
+                '</div>' +
+            '</div>' +
+            '<div>' +
+                '<div class="thead-wrapper object">' +
+                    '<p>' +
+                        '<img src="./img/icon/icon-table/house-fill.svg" alt="">' +
+                        '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Объекты">' +
+                            '<img src="./img/icon/icon-info.svg" alt="">' +
+                        '</span>' +
+                    '</p>' +
+                '</div>' +
+            '</div>' +
+            '<div class="wrapper-btn-collapse">' +
+                '<button class="info-footer-btn btn-collapse" type="button">Свернуть</button>' +
+            '</div>' +
+        '</div>' +
+        '<div class="table-for-others">' +
+            '<table id="example2" style="width:98%; margin: auto;">' +
+                '<tbody>' + officesRows + '</tbody>' +
+            '</table>' +
+        '</div>';
 
-        return headerHtml + tableHtml;
+        return dopInfoRow;
     }
 
     // Обработчик клика на кнопку офисов

@@ -36,16 +36,16 @@ class StoreCompanyRequest extends FormRequest
 
             // ========== Основные поля ==========
             'website' => ['nullable', 'url', 'max:255'],
-            'edrpou_code' => ['nullable', 'string', 'max:20'],
-            'company_type' => ['nullable', 'string', 'max:100'],
+            'edrpou_code' => ['required', 'string', 'max:20'],
+            'company_type' => ['required', 'string', 'in:agency,franchise'],
             'logo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
 
             // ========== Контакты компании ==========
-            'contact_ids' => ['nullable', 'array'],
+            'contact_ids' => ['required', 'array', 'min:1'],
             'contact_ids.*' => ['exists:contacts,id'],
 
             // ========== Офисы ==========
-            'offices' => ['nullable', 'array'],
+            'offices' => ['required', 'array', 'min:1'],
             'offices.*.name_ua' => ['nullable', 'string', 'max:255'],
             'offices.*.name_ru' => ['nullable', 'string', 'max:255'],
             'offices.*.name_en' => ['nullable', 'string', 'max:255'],
@@ -104,6 +104,13 @@ class StoreCompanyRequest extends FormRequest
             'logo.image' => 'Файл должен быть изображением',
             'logo.mimes' => 'Разрешены только: JPEG, PNG, WebP',
             'logo.max' => 'Максимальный размер логотипа 2MB',
+            'edrpou_code.required' => 'Укажите код ЕГРПОУ/ИНН',
+            'company_type.required' => 'Выберите тип агентства',
+            'company_type.in' => 'Выберите корректный тип агентства',
+            'contact_ids.required' => 'Необходимо добавить хотя бы один контакт',
+            'contact_ids.min' => 'Необходимо добавить хотя бы один контакт',
+            'offices.required' => 'Необходимо добавить хотя бы один офис',
+            'offices.min' => 'Необходимо добавить хотя бы один офис',
             'offices.*.photos.*.image' => 'Файл должен быть изображением',
             'offices.*.photos.*.mimes' => 'Разрешены только: JPEG, PNG, WebP',
             'offices.*.photos.*.max' => 'Максимальный размер фото 5MB',
@@ -111,17 +118,38 @@ class StoreCompanyRequest extends FormRequest
     }
 
     /**
-     * Валидация: хотя бы одно название должно быть заполнено
+     * Валидация: хотя бы одно название должно быть заполнено + минимум 1 офис с названием
      */
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
+            // Проверка названия компании
             $nameUa = $this->input('name_ua');
             $nameRu = $this->input('name_ru');
             $nameEn = $this->input('name_en');
 
             if (empty($nameUa) && empty($nameRu) && empty($nameEn)) {
                 $validator->errors()->add('name_ru', 'Укажите название хотя бы на одном языке');
+            }
+
+            // Проверка наличия хотя бы одного офиса с названием
+            $offices = $this->input('offices', []);
+            $validOfficeCount = 0;
+
+            if (is_array($offices)) {
+                foreach ($offices as $office) {
+                    $officeNameUa = $office['name_ua'] ?? null;
+                    $officeNameRu = $office['name_ru'] ?? null;
+                    $officeNameEn = $office['name_en'] ?? null;
+
+                    if (!empty($officeNameUa) || !empty($officeNameRu) || !empty($officeNameEn)) {
+                        $validOfficeCount++;
+                    }
+                }
+            }
+
+            if ($validOfficeCount === 0) {
+                $validator->errors()->add('offices', 'Необходимо добавить хотя бы один офис с названием');
             }
         });
     }

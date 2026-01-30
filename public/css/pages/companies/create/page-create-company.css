@@ -94,7 +94,6 @@ ul {
   line-height: normal;
   font-weight: 700;
   font-size: 14px;
-  color: #111;
   min-height: 30px;
 }
 
@@ -226,7 +225,7 @@ ul {
   font-weight: 400;
   font-size: 14px;
   line-height: 100%;
-  color: #111;
+
 }
 
 .my-custom-input .my-custom-text::first-letter {
@@ -267,7 +266,7 @@ ul {
 .modal#geoModal .label {
   font-weight: 400;
   font-size: 14px;
-  color: #111;
+
   line-height: 100%;
 }
 
@@ -281,7 +280,7 @@ ul {
   font-weight: 700;
   font-size: 14px;
   line-height: 100%;
-  color: #111;
+
 }
 
 .modal#geoModal input:focus {
@@ -293,7 +292,7 @@ ul {
 .modal#geoModal .modal-title {
   font-weight: 400;
   font-size: 24px;
-  color: #111;
+
   line-height: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -454,7 +453,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 }
 
 .data-list > span {
-  color: #111;
+
 }
 
 .data-list-counter {
@@ -478,7 +477,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   font-weight: 400;
   font-size: 24px;
   line-height: normal;
-  color: #111;
+
   margin-bottom: 0;
 }
 
@@ -781,7 +780,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   width: 100%;
   font-weight: 700;
   font-size: 14px;
-  color: #111;
+
   line-height: normal;
   outline: none;
   padding: 6px 54px 6px 32px;
@@ -1011,7 +1010,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 .eqweqw {
   font-weight: 700;
   font-size: 14px;
-  color: #111;
+
 }
 
 #map-container {
@@ -1070,7 +1069,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   display: inline-block;
   font-weight: 400;
   font-size: 14px;
-  color: #111;
+
   line-height: 100%;
   margin-bottom: 6px;
 }
@@ -1092,7 +1091,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   font-weight: 700;
   font-size: 14px;
   line-height: 100%;
-  color: #111;
+
   resize: none;
 }
 
@@ -1150,7 +1149,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   font-weight: 400;
   line-height: normal;
   font-size: 24px;
-  color: #111;
+
   margin-bottom: 0;
 }
 
@@ -1167,7 +1166,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   font-weight: 700;
   font-size: 14px;
   line-height: normal;
-  color: #111;
+
   margin-right: 18px;
 }
 
@@ -1179,7 +1178,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   font-weight: 700;
   font-size: 14px;
   line-height: normal;
-  color: #111;
+
 }
 
 .create-header-update span {
@@ -1236,10 +1235,9 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   border: none;
   outline: none;
   width: 100%;
-  font-weight: 700;
   font-size: 14px;
   line-height: 100%;
-  color: #111;
+
 }
 
 .item-inputText::-webkit-input-placeholder {
@@ -1381,7 +1379,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   font-weight: 400;
   font-size: 24px;
   line-height: 100%;
-  color: #111;
+
   margin-bottom: 0;
 }
 
@@ -1699,7 +1697,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 .modal-row label {
   font-weight: 400;
   font-size: 14px;
-  color: #111;
+
   line-height: 100%;
 }
 
@@ -1778,7 +1776,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 .history-info-item p {
   font-weight: 700;
   font-size: 14px;
-  color: #111;
+
   line-height: 100%;
   margin-bottom: 0;
 }
@@ -1815,7 +1813,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   line-height: 100%;
   font-size: 14px;
   display: block;
-  color: #111;
+
 }
 
 .data span:last-of-type input {
@@ -1993,7 +1991,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   background-color: #FFFFFF;
   font-weight: 700;
   font-size: 14px;
-  color: #111;
+
   border-radius: 6px;
   height: 30px;
   border: none;
@@ -2118,7 +2116,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   font-size: 12px;
   line-height: 100%;
   font-weight: 400;
-  color: #111;
+
   margin: 0;
 }
 
@@ -2139,14 +2137,14 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   font-weight: 400;
   font-size: 14px;
   line-height: 100%;
-  color: #111;
+
   margin: 0;
 }
 
 .block-info .info-contacts-company {
   font-weight: 400;
   line-height: 100%;
-  color: #111;
+
   font-size: 12px;
   margin: 0 0 10px 0;
 }
@@ -2156,7 +2154,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   font-weight: 700;
   font-size: 14px;
   line-height: 100%;
-  color: #111;
+
   -webkit-text-decoration: underline dashed;
           text-decoration: underline dashed;
 }
@@ -2165,7 +2163,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   font-weight: 700;
   font-size: 14px;
   line-height: 100%;
-  color: #111;
+
   text-decoration: underline;
   margin-bottom: 10px;
 }
@@ -2200,7 +2198,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   font-weight: 700;
   font-size: 14px;
   line-height: normal;
-  color: #111;
+
 }
 
 .data span:last-of-type input {
@@ -2238,7 +2236,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 
 .block-offices .block-info-item .info-title {
   font-weight: 400;
-  color: #111;
+
 }
 
 .block-offices-item {
@@ -2543,7 +2541,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   display: inline-block;
   font-weight: 400;
   font-size: 14px;
-  color: #111;
+
   line-height: normal;
   margin-bottom: 6px;
 }
@@ -2551,7 +2549,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 .photo-info-text {
   font-weight: 400;
   font-size: 14px;
-  color: #111;
+
 }
 
 .photo-loader-global {
@@ -3277,4 +3275,22 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+/* Валидация офисов */
+.offices-validation-error {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.shake-animation {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-10px); }
+  40%, 80% { transform: translateX(10px); }
 }

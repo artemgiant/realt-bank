@@ -44,7 +44,14 @@ php artisan db:seed --class=DictionarySeeder --force
 
 
 #Очистить и создать  комплексы и блоки
-php artisan tinker --execute="use Database\Factories\Reference\{ComplexFactory, BlockFactory}; BlockFactory::cleanImported(); ComplexFactory::cleanImported(); ComplexFactory::new()->count(100)->create();"
+#php artisan tinker --execute="use Database\Factories\Reference\{ComplexFactory, BlockFactory}; BlockFactory::cleanImported(); ComplexFactory::cleanImported(); ComplexFactory::new()->count(100)->create();"
+
+php artisan tinker --execute="use Database\Factories\CompanyFactory; CompanyFactory::cleanAll(); App\Models\Reference\Company::factory()->count(20)->create()->each(fn(\$c) => App\Models\Reference\CompanyOffice::factory()->count(rand(1,5))->create(['company_id' => \$c->id]));"
+
+
+
+
+php artisan db:seed --class=DictionarySeeder
 
 #php artisan storage:link
 
