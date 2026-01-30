@@ -46,25 +46,8 @@
 
 @section('content')
     <div class="create">
-        {{-- Сообщения об ошибках --}}
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>Ошибки валидации:</strong>
-                <ul class="mb-0 mt-2">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
+        {{-- Сообщения об успехе/ошибке/валидации --}}
+        <x-alerts />
 
         <form id="property-form" action="{{ route('properties.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
