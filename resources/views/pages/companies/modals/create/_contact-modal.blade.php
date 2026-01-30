@@ -81,10 +81,10 @@
                         <div class="modal-row">
                             <div class="item w25 selects">
                                 <label class="item-label green" for="tags-client-modal">Теги</label>
-                                <select id="tags-client-modal" name="tags" class="js-example-responsive2 my-select2" autocomplete="off">
-                                    <option value="">Выберите тег</option>
-                                    <option value="Посредник">Посредник</option>
-                                    <option value="VIP">VIP</option>
+                                <select id="tags-client-modal" name="tags[]" class="js-example-responsive2 my-select2" multiple autocomplete="off">
+                                    @foreach(\App\Models\Reference\Dictionary::getAgentTags() as $tag)
+                                        <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="item w75">

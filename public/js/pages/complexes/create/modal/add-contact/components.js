@@ -66,8 +66,9 @@ window.ContactModal.Components = {
                 options: {
                     dropdownParent: $('#add-contact-modal'),
                     width: '100%',
-                    placeholder: 'Выберите тег',
+                    placeholder: 'Выберите теги',
                     allowClear: true,
+                    multiple: true,
                     language: { noResults: function() { return "Результатов не найдено"; } }
                 }
             },

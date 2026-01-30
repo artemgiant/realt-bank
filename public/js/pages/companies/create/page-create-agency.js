@@ -16,6 +16,16 @@ $(".js-example-responsive2").select2({
 	minimumResultsForSearch: -1,
 });
 
+// Инициализация Select2 для тегов контакта (множественный выбор)
+$("#tags-client-modal").select2({
+	dropdownParent: $('#add-contact-modal'),
+	width: '100%',
+	placeholder: 'Выберите теги',
+	allowClear: true,
+	multiple: true,
+	language: { noResults: function() { return "Результатов не найдено"; } }
+});
+
 
 
 new PhotoLoaderMini({

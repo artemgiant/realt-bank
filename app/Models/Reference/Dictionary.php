@@ -43,6 +43,7 @@ class Dictionary extends Model
     public const TYPE_COMPLEX_FEATURE = 'complex_feature'; // Особенности комплексов
     public const TYPE_COMPLEX_CATEGORY = 'complex_category'; // Категории комплексов
     public const TYPE_AGENCY_TYPE = 'agency_type';         // Тип агентства
+    public const TYPE_AGENT_TAG = 'agent_tag';             // Теги агентов
 
     // ========== Scopes ==========
 
@@ -159,6 +160,11 @@ class Dictionary extends Model
     public static function getAgencyTypes(): Collection
     {
         return static::getByType(self::TYPE_AGENCY_TYPE);
+    }
+
+    public static function getAgentTags(): Collection
+    {
+        return static::getByType(self::TYPE_AGENT_TAG);
     }
 
     // ========== Helper for Select Options ==========
