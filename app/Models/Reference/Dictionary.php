@@ -42,6 +42,7 @@ class Dictionary extends Model
     public const TYPE_HOUSING_CLASS = 'housing_class';   // Класс жилья
     public const TYPE_COMPLEX_FEATURE = 'complex_feature'; // Особенности комплексов
     public const TYPE_COMPLEX_CATEGORY = 'complex_category'; // Категории комплексов
+    public const TYPE_AGENCY_TYPE = 'agency_type';         // Тип агентства
 
     // ========== Scopes ==========
 
@@ -153,6 +154,11 @@ class Dictionary extends Model
     public static function getComplexCategories(): Collection
     {
         return static::getByType(self::TYPE_COMPLEX_CATEGORY);
+    }
+
+    public static function getAgencyTypes(): Collection
+    {
+        return static::getByType(self::TYPE_AGENCY_TYPE);
     }
 
     // ========== Helper for Select Options ==========

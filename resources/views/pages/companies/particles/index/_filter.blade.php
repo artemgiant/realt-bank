@@ -23,9 +23,9 @@
             <div class="item selects">
                 <select id="filter-type" name="company_type" class="js-example-responsive2 my-select2">
                     <option value="">Все типы</option>
-                    <option value="agency">Агентство</option>
-                    <option value="developer">Девелопер</option>
-                    <option value="broker">Брокер</option>
+                    @foreach($agencyTypes as $agencyType)
+                        <option value="{{ $agencyType->id }}">{{ $agencyType->name }}</option>
+                    @endforeach
                 </select>
             </div>
 

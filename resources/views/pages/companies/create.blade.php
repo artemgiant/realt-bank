@@ -245,8 +245,9 @@
 				</span>
                             <select class="item-inputText @error('company_type') is-invalid @enderror" id="type_company" name="company_type">
                                 <option value="">Выберите тип</option>
-                                <option value="agency" {{ old('company_type') == 'agency' ? 'selected' : '' }}>Агентство</option>
-                                <option value="franchise" {{ old('company_type') == 'franchise' ? 'selected' : '' }}>Франшиза</option>
+                                @foreach($agencyTypes as $agencyType)
+                                    <option value="{{ $agencyType->id }}" {{ old('company_type') == $agencyType->id ? 'selected' : '' }}>{{ $agencyType->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>

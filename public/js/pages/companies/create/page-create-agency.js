@@ -14,6 +14,9 @@ $(".js-example-responsive2").select2({
 	width: 'resolve',
 	minimumResultsForSearch: -1,
 });
+
+
+
 new PhotoLoaderMini({
 	inputIdSelector: '#loading-photo',
 	wrapperClassSelector: '.photo-info-list',

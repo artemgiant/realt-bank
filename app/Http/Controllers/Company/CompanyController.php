@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Models\Contact\Contact;
 use App\Models\Reference\Company;
+use App\Models\Reference\Dictionary;
 use App\Models\Reference\CompanyOffice;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -22,7 +23,9 @@ class CompanyController extends Controller
      */
     public function index(): View
     {
-        return view('pages.companies.index');
+        return view('pages.companies.index', [
+            'agencyTypes' => Dictionary::getAgencyTypes(),
+        ]);
     }
 
     /**
@@ -36,6 +39,7 @@ class CompanyController extends Controller
                 ->orderBy('first_name')
                 ->limit(100)
                 ->get(),
+            'agencyTypes' => Dictionary::getAgencyTypes(),
         ]);
     }
 

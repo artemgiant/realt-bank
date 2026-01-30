@@ -308,6 +308,12 @@ class DictionarySeeder extends Seeder
                 'Логистический / Индустриальный комплекс',
             ],
 
+            // Тип агентства
+            Dictionary::TYPE_AGENCY_TYPE => [
+                'Агентство',
+                'Франшиза',
+            ],
+
             // Особенности комплексов
             Dictionary::TYPE_COMPLEX_FEATURE => [
                 'Генератор',
