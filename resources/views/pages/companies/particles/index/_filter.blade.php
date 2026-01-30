@@ -20,8 +20,8 @@
             </div>
 
             {{-- Фильтр по типу компании --}}
-            <div class="header-filter-select">
-                <select class="form-select" id="filter-type" name="company_type">
+            <div class="item selects">
+                <select id="filter-type" name="company_type" class="js-example-responsive2 my-select2">
                     <option value="">Все типы</option>
                     <option value="agency">Агентство</option>
                     <option value="developer">Девелопер</option>
@@ -29,14 +29,7 @@
                 </select>
             </div>
 
-            {{-- Фильтр по статусу --}}
-            <div class="header-filter-select">
-                <select class="form-select" id="filter-status" name="status">
-                    <option value="">Все</option>
-                    <option value="active">Активные</option>
-                    <option value="inactive">Архив</option>
-                </select>
-            </div>
+
 
             <div class="header-btn">
                 {{-- Счетчик активных фильтров --}}

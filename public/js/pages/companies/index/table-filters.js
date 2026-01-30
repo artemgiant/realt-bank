@@ -2,6 +2,16 @@
  * Логика фильтров для таблицы компаний
  * Объект доступен через window.CompanyFilters
  */
+
+// Инициализация Select2
+$(document).ready(function() {
+    $('.js-example-responsive2').select2({
+        width: 'resolve',
+        placeholder: 'Все типы',
+        minimumResultsForSearch: -1
+    });
+});
+
 window.CompanyFilters = {
 
     // Селектор формы фильтров
