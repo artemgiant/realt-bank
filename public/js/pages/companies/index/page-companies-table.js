@@ -398,8 +398,11 @@ $(document).ready(function () {
         // Проверяем, есть ли уже открытая строка офисов
         var nextTr = tr.next('.dop-info-row-offices');
         if (nextTr.length) {
-            nextTr.remove();
-            tr.removeClass('shown-offices');
+            // Плавно сворачиваем
+            nextTr.find('td > div').slideUp(300, function() {
+                nextTr.remove();
+                tr.removeClass('shown-offices');
+            });
             return;
         }
 
@@ -412,11 +415,15 @@ $(document).ready(function () {
             },
             success: function (response) {
                 var offices = response.data || response;
-                var html = '<tr class="dop-info-row dop-info-row-offices"><td colspan="12">' +
-                    formatOfficesRow(companyId, offices) + '</td></tr>';
+                var content = formatOfficesRow(companyId, offices);
+                var html = '<tr class="dop-info-row dop-info-row-offices"><td colspan="12"><div class="offices-slide-wrapper" style="display: none;">' +
+                    content + '</div></td></tr>';
 
                 tr.addClass('shown-offices');
                 tr.after(html);
+
+                // Плавно раскрываем
+                tr.next().find('.offices-slide-wrapper').slideDown(300);
 
                 // Инициализация тултипов
                 var tooltipTriggerList = [].slice.call(tr.next().find('[data-bs-toggle="tooltip"]'));
@@ -439,8 +446,11 @@ $(document).ready(function () {
     $('#companies-table tbody').on('click', '.btn-collapse', function () {
         var officesTr = $(this).closest('.dop-info-row-offices');
         var parentTr = officesTr.prev();
-        parentTr.removeClass('shown-offices');
-        officesTr.remove();
+        // Плавно сворачиваем
+        officesTr.find('.offices-slide-wrapper').slideUp(300, function() {
+            parentTr.removeClass('shown-offices');
+            officesTr.remove();
+        });
     });
 
     // ========== Удаление компании ==========

@@ -1,0 +1,10 @@
+@charset "UTF-8";
+
+/**
+ * Common CRM styles
+ */
+
+/* Prevent page jump when scrollbar appears/disappears */
+html {
+    scrollbar-gutter: stable;
+}
