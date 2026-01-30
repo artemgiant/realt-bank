@@ -1,0 +1,172 @@
+/**
+ * Стили для компонента алертов и сообщений об ошибках
+ * Подключение: <link rel="stylesheet" href="{{ asset('css/components/alerts.css') }}">
+ */
+
+/* ========================================
+   Bootstrap Alert расширения
+   ======================================== */
+.alert {
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+    border-left: 4px solid #38a169;
+    color: #276749;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border-left: 4px solid #e53e3e;
+    color: #c53030;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fffaf0 0%, #feebc8 100%);
+    border-left: 4px solid #dd6b20;
+    color: #c05621;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%);
+    border-left: 4px solid #3182ce;
+    color: #2c5282;
+}
+
+/* ========================================
+   Стили для блока ошибок валидации формы
+   ======================================== */
+.form-validation-error {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 48px 16px 20px;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border: 1px solid #fc8181;
+    border-left: 4px solid #e53e3e;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.15);
+    animation: alertSlideIn 0.3s ease-out;
+}
+
+@keyframes alertSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.validation-error-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #e53e3ecc;
+    border-radius: 50%;
+    color: #fff;
+}
+
+.validation-error-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.validation-error-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.validation-error-title {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    color: #c53030;
+    margin-bottom: 10px;
+}
+
+.validation-error-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.validation-error-list li {
+    position: relative;
+    padding-left: 20px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 14px;
+    color: #742a2a;
+    line-height: 1.5;
+}
+
+.validation-error-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background: #e53e3e;
+    border-radius: 50%;
+}
+
+.validation-error-list li + li {
+    border-top: 1px dashed rgba(229, 62, 62, 0.3);
+}
+
+.validation-error-close {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(229, 62, 62, 0.3);
+    border-radius: 8px;
+    color: #c53030;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.validation-error-close:hover {
+    background: rgba(229, 62, 62, 0.1);
+    border-color: rgba(229, 62, 62, 0.3);
+}
+
+.validation-error-close:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+/* ========================================
+   Анимация тряски для ошибок
+   ======================================== */
+.shake-animation {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-10px); }
+    40%, 80% { transform: translateX(10px); }
+}
