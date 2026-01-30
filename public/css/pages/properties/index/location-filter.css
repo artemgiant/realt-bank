@@ -19,7 +19,7 @@
     line-height: 1.4;
     box-sizing: border-box;
     width: 100%;
-    max-width: 600px;
+    max-width:800px;
 }
 
 .lf-root *, .lf-root *::before, .lf-root *::after {
@@ -30,7 +30,7 @@
 
 .lf-container {
     width: 100%;
-    max-width: 600px;
+    max-width:800px;
     position: relative;
 }
 

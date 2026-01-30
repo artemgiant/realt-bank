@@ -50,6 +50,19 @@
         details: []
     };
 
+    // Debounce для отложенного обновления таблицы
+    let reloadTimeout = null;
+    const RELOAD_DELAY = 500; // 500мс задержка
+
+    const debouncedReload = () => {
+        if (reloadTimeout) clearTimeout(reloadTimeout);
+        reloadTimeout = setTimeout(() => {
+            if (typeof window.reloadPropertiesTable === 'function') {
+                window.reloadPropertiesTable();
+            }
+        }, RELOAD_DELAY);
+    };
+
     const $ = id => document.getElementById(id);
     const el = {
         container: $('lfContainer'),
@@ -327,7 +340,8 @@
         const idx = state.cities.findIndex(c => c.id === id);
         idx >= 0 ? state.cities.splice(idx, 1) : state.cities.push({ id, name });
         renderTags();
-        updateHidden();
+        updateHidden(false); // Не обновляем таблицу сразу
+        debouncedReload();   // Используем debounce
         update();
     };
 
@@ -378,7 +392,7 @@
     const renderTags = () => {
         // Тег локации (страна/регион)
         if (state.location) {
-            el.locationTag.innerHTML = `<span class="lf-tag"><span class="lf-tag-type">${TYPE_NAMES[state.location.type]}</span>${state.location.name}<button data-action="clear">×</button></span>`;
+            el.locationTag.innerHTML = `<span class="lf-tag" ><span class="lf-tag-type">${TYPE_NAMES[state.location.type]}</span>${state.location.name}<button data-action="clear">×</button></span>`;
             el.clear.classList.add('lf-visible');
         } else el.locationTag.innerHTML = '';
 
@@ -388,7 +402,7 @@
         // Теги городов (мульти-выбор)
         if (state.cities.length > 0) {
             const first = state.cities[0], more = state.cities.length - 1;
-            wrapHtml += `<span class="lf-tag">${first.name}`;
+            wrapHtml += `<span class="lf-tag" style="margin-right: 8px">${first.name}`;
             if (more > 0) wrapHtml += `<span class="lf-badge" data-action="cities-tooltip">+${more}</span>`;
             wrapHtml += `<button data-action="clear-cities">×</button></span>`;
             wrapHtml += '<div class="lf-tooltip lf-cities-tooltip" id="lfCitiesTooltip">';
