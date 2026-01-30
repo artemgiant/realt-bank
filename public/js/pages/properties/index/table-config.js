@@ -17,11 +17,7 @@ window.PropertyTableConfig = {
                 orderable: false,
                 render: R.checkbox
             },
-            {
-                data: 'warnings',
-                orderable: false,
-                render: R.warnings
-            },
+
             {
                 data: 'location',
                 render: R.location
