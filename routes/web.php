@@ -3,6 +3,7 @@
 use App\Http\Controllers\Company\CompanyController;
 use App\Http\Controllers\ComplexController;
 use App\Http\Controllers\Developer\DeveloperController;
+use App\Http\Controllers\Employee\EmployeeController;
 use App\Http\Controllers\Import\ComplexImportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Property\PropertyController;
@@ -126,6 +127,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/companies/{company}/offices', [CompanyController::class, 'getOffices'])
         ->name('companies.offices');
     Route::resource('companies', CompanyController::class);
+
+    // ========== Employees ==========
+    Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
 
 });
 
