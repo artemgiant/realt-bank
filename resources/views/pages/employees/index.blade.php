@@ -34,5 +34,13 @@
 @endpush
 
 @push('scripts')
-    {{-- JS будет добавлен позже --}}
+    {{-- Модули таблицы (порядок важен!) --}}
+    <script src="{{ asset('js/pages/employees/index/table-config.js') }}"></script>
+    <script src="{{ asset('js/pages/employees/index/table-renderers.js') }}"></script>
+    <script src="{{ asset('js/pages/employees/index/table-filters.js') }}"></script>
+    <script src="{{ asset('js/pages/employees/index/page-employees-table.js') }}"></script>
+
+    {{-- Общие утилиты --}}
+    <script src="{{ asset('js/pages/filter2.js') }}"></script>
+    <script src="{{ asset('js/pages/add-employee-modal.js') }}"></script>
 @endpush
