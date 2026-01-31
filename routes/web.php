@@ -129,7 +129,15 @@ Route::middleware('auth')->group(function () {
     Route::resource('companies', CompanyController::class);
 
     // ========== Employees ==========
-    Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
+    Route::get('/employees/ajax-search', [EmployeeController::class, 'ajaxSearch'])
+        ->name('employees.ajax-search');
+    Route::get('/employees/ajax-data', [EmployeeController::class, 'ajaxData'])
+        ->name('employees.ajax-data');
+    Route::patch('/employees/{employee}/position', [EmployeeController::class, 'updatePosition'])
+        ->name('employees.update-position');
+    Route::patch('/employees/{employee}/office', [EmployeeController::class, 'updateOffice'])
+        ->name('employees.update-office');
+    Route::resource('employees', EmployeeController::class);
 
 });
 

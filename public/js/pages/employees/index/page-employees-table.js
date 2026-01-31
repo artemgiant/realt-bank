@@ -244,8 +244,7 @@
         filters.initMultipleMenu();
 
         // Инициализация DataTables
-        // Пока закомментировано, т.к. нет AJAX endpoint
-        // initDataTable();
+        initDataTable();
 
         // Инициализация обработчиков
         initEventHandlers();

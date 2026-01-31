@@ -44,8 +44,8 @@ return [
             'route' => 'companies.index',
             'icon' => 'img/icon/side-bar/Company1.svg',
             'tabs' => [
-                ['label' => 'Компании', 'route' => 'companies.index'],
                 ['label' => 'Команда', 'route' => 'employees.index'],
+                ['label' => 'Компании', 'route' => 'companies.index'],
 
             ],
         ],

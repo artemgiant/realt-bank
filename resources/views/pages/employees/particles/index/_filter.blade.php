@@ -9,9 +9,9 @@
         <label for="position" class="blue-select2">
             <select id="position" class="js-example-responsive2 position">
                 <option></option>
-                <option>Агент</option>
-                <option>Менеджер</option>
-                <option>Руководитель</option>
+                @foreach($positions as $position)
+                    <option value="{{ $position->id }}">{{ $position->name }}</option>
+                @endforeach
             </select>
         </label>
 
@@ -19,9 +19,9 @@
         <label for="statusagents">
             <select id="statusagents" class="js-example-responsive2 statusagents">
                 <option></option>
-                <option>Активный</option>
-                <option>Неактивный</option>
-                <option>Заблокирован</option>
+                @foreach($statuses as $status)
+                    <option value="{{ $status->id }}">{{ $status->name }}</option>
+                @endforeach
             </select>
         </label>
 
@@ -29,9 +29,9 @@
         <label for="company">
             <select id="company" class="js-example-responsive2 company">
                 <option></option>
-                <option>Компания 1</option>
-                <option>Компания 2</option>
-                <option>Компания 3</option>
+                @foreach($companies as $company)
+                    <option value="{{ $company->id }}">{{ $company->name }}</option>
+                @endforeach
             </select>
         </label>
 
@@ -39,9 +39,9 @@
         <label for="offices">
             <select id="offices" class="js-example-responsive2 offices">
                 <option></option>
-                <option>Офис 1</option>
-                <option>Офис 2</option>
-                <option>Офис 3</option>
+                @foreach($offices as $office)
+                    <option value="{{ $office->id }}">{{ $office->name }}</option>
+                @endforeach
             </select>
         </label>
 
@@ -63,27 +63,15 @@
                                 <span class="my-custom-text">Все</span>
                             </label>
                         </li>
-                        <li class="multiple-menu-item">
-                            <label class="my-custom-input">
-                                <input type="checkbox" name="tag_1">
-                                <span class="my-custom-box"></span>
-                                <span class="my-custom-text">Тег 1</span>
-                            </label>
-                        </li>
-                        <li class="multiple-menu-item">
-                            <label class="my-custom-input">
-                                <input type="checkbox" name="tag_2">
-                                <span class="my-custom-box"></span>
-                                <span class="my-custom-text">Тег 2</span>
-                            </label>
-                        </li>
-                        <li class="multiple-menu-item">
-                            <label class="my-custom-input">
-                                <input type="checkbox" name="tag_3">
-                                <span class="my-custom-box"></span>
-                                <span class="my-custom-text">Тег 3</span>
-                            </label>
-                        </li>
+                        @foreach($tags as $tag)
+                            <li class="multiple-menu-item">
+                                <label class="my-custom-input">
+                                    <input type="checkbox" name="{{ $tag->id }}">
+                                    <span class="my-custom-box"></span>
+                                    <span class="my-custom-text">{{ $tag->name }}</span>
+                                </label>
+                            </li>
+                        @endforeach
                     </ul>
                 </div>
             </div>
@@ -100,7 +88,7 @@
             </span>
         </div>
 
-        {{-- Кнопка расширенного фильтра --}}
+        {{-- Кнопка сброса фильтров --}}
         <div class="header-btn">
             <div class="full-filter-btn-wrapper">
                 <button class="btn btn-primary" disabled id="full-filter-btn">

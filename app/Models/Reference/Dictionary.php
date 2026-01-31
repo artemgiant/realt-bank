@@ -44,6 +44,8 @@ class Dictionary extends Model
     public const TYPE_COMPLEX_CATEGORY = 'complex_category'; // Категории комплексов
     public const TYPE_AGENCY_TYPE = 'agency_type';         // Тип агентства
     public const TYPE_AGENT_TAG = 'agent_tag';             // Теги агентов
+    public const TYPE_EMPLOYEE_POSITION = 'employee_position'; // Должности сотрудников
+    public const TYPE_EMPLOYEE_STATUS = 'employee_status';     // Статусы сотрудников
 
     // ========== Scopes ==========
 
@@ -165,6 +167,16 @@ class Dictionary extends Model
     public static function getAgentTags(): Collection
     {
         return static::getByType(self::TYPE_AGENT_TAG);
+    }
+
+    public static function getEmployeePositions(): Collection
+    {
+        return static::getByType(self::TYPE_EMPLOYEE_POSITION);
+    }
+
+    public static function getEmployeeStatuses(): Collection
+    {
+        return static::getByType(self::TYPE_EMPLOYEE_STATUS);
     }
 
     // ========== Helper for Select Options ==========
