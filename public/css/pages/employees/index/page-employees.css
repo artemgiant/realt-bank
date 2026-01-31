@@ -517,7 +517,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
           transform: translateX(-50%);
 }
 
-.header-actions .btn {
+.header-actions .btn,#example thead tr th .thead-wrapper.block-actions .btn.btn-primary {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1030,9 +1030,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   border-radius: 6px;
 }
 
-#example thead tr th .thead-wrapper.block-actions .btn:hover {
-  background-color: #F6F8FB;
-}
+
 
 #example thead tr th .thead-wrapper p {
   font-weight: 700;

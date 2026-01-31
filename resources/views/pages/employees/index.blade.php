@@ -7,16 +7,10 @@
 @endpush
 
 @section('header')
-
     <x-crm.header
-            :addButton="true"
-            title="Компании"
-            addButtonText="Добавить"
-
+        :addButton="false"
+        title="Команда"
     />
-
-
-
 @endsection
 
 @section('content')
