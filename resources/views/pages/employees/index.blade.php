@@ -36,5 +36,7 @@
 
     {{-- Общие утилиты --}}
     <script src="{{ asset('js/pages/filter2.js') }}"></script>
+    {{-- PhoneInputManager для модалки добавления сотрудника --}}
+    <script src="{{ asset('js/pages/function_on_pages-create.js') }}"></script>
     <script src="{{ asset('js/pages/add-employee-modal.js') }}"></script>
 @endpush

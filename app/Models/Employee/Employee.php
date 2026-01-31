@@ -6,6 +6,7 @@ use App\Models\Reference\Company;
 use App\Models\Reference\CompanyOffice;
 use App\Models\Reference\Dictionary;
 use App\Models\User;
+use Database\Factories\EmployeeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +18,11 @@ class Employee extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'employees';
+
+    protected static function newFactory(): EmployeeFactory
+    {
+        return EmployeeFactory::new();
+    }
 
     protected $fillable = [
         'user_id',

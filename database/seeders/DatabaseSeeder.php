@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
 
             // Географія (Country -> Region)
             CountrySeeder::class,
+
+            // Співробітники
+            EmployeeSeeder::class,
         ]);
     }
 }

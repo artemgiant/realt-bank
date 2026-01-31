@@ -5,6 +5,58 @@
     'use strict';
 
     let select2Initialized = false;
+    let phoneInputManager = null;
+
+    /**
+     * Инициализация PhoneInputManager для телефонов
+     */
+    function initPhoneInput() {
+        // Уничтожаем предыдущий экземпляр если есть
+        if (phoneInputManager && typeof phoneInputManager.destroy === 'function') {
+            phoneInputManager.destroy();
+        }
+
+        if (typeof PhoneInputManager !== 'undefined') {
+            phoneInputManager = new PhoneInputManager({
+                btnSelector: '.btn-new-tel',
+                wrapperSelector: '#add-employee-modal .item.phone',
+                inputClass: 'tel-contact',
+                maxPhones: 5,
+                initialCountry: 'ua',
+                utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js',
+                countryMasks: {
+                    'ua': '(99) 999-99-99',
+                    'ru': '(999) 999-99-99',
+                    'by': '(99) 999-99-99',
+                    'kz': '(999) 999-99-99',
+                    'default': '(999) 999-99-99'
+                }
+            });
+            console.log('PhoneInputManager initialized');
+        } else {
+            console.warn('PhoneInputManager not found, trying fallback intl-tel-input');
+            // Fallback: простая инициализация intl-tel-input без PhoneInputManager
+            initSimplePhoneInput();
+        }
+    }
+
+    /**
+     * Простая инициализация intl-tel-input (fallback)
+     */
+    function initSimplePhoneInput() {
+        const phoneInput = document.querySelector('#add-employee-modal #phone');
+        if (phoneInput && typeof intlTelInput !== 'undefined') {
+            const iti = intlTelInput(phoneInput, {
+                initialCountry: 'ua',
+                preferredCountries: ['ua', 'ru', 'by', 'kz', 'pl'],
+                separateDialCode: true,
+                utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js'
+            });
+            // Сохраняем instance для возможного уничтожения
+            $(phoneInput).data('iti', iti);
+            console.log('Simple intl-tel-input initialized');
+        }
+    }
 
     /**
      * Инициализация Select2 для модалки
@@ -274,6 +326,7 @@
         initSelect2();
         initDatePickers();
         initPhotoPreview();
+        initPhoneInput();
     }
 
     /**
@@ -298,6 +351,22 @@
                     $(selector).select2('destroy');
                 }
             });
+
+            // Destroy PhoneInputManager
+            if (phoneInputManager && typeof phoneInputManager.destroy === 'function') {
+                phoneInputManager.destroy();
+                phoneInputManager = null;
+            }
+
+            // Destroy simple intl-tel-input fallback
+            const $phoneInput = $('#add-employee-modal #phone');
+            if ($phoneInput.data('iti')) {
+                $phoneInput.data('iti').destroy();
+                $phoneInput.removeData('iti');
+            }
+
+            // Удаляем дополнительные поля телефона (если были добавлены)
+            $('#add-employee-modal .item.phone [data-phone-item]').not(':first').remove();
 
             select2Initialized = false;
         });
