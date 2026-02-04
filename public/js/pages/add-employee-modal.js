@@ -1,7 +1,7 @@
 /**
  * Модуль модалки добавления сотрудника
  */
-(function($) {
+(function ($) {
     'use strict';
 
     let select2Initialized = false;
@@ -72,6 +72,7 @@
                     width: '100%',
                     placeholder: 'Выберите теги',
                     allowClear: true,
+                    closeOnSelect: false,
                     language: { noResults: () => "Результатов не найдено" }
                 }
             },
@@ -155,10 +156,10 @@
         // День рождения
         if ($('#birthday').length && $.fn.daterangepicker) {
             $('#birthday').daterangepicker(datePickerOptions);
-            $('#birthday').on('apply.daterangepicker', function(ev, picker) {
+            $('#birthday').on('apply.daterangepicker', function (ev, picker) {
                 $(this).val(picker.startDate.format('DD.MM.YYYY'));
             });
-            $('#birthday').on('cancel.daterangepicker', function() {
+            $('#birthday').on('cancel.daterangepicker', function () {
                 $(this).val('');
             });
         }
@@ -166,10 +167,10 @@
         // Активен до
         if ($('#active_until').length && $.fn.daterangepicker) {
             $('#active_until').daterangepicker(datePickerOptions);
-            $('#active_until').on('apply.daterangepicker', function(ev, picker) {
+            $('#active_until').on('apply.daterangepicker', function (ev, picker) {
                 $(this).val(picker.startDate.format('DD.MM.YYYY'));
             });
-            $('#active_until').on('cancel.daterangepicker', function() {
+            $('#active_until').on('cancel.daterangepicker', function () {
                 $(this).val('');
             });
         }
@@ -179,11 +180,11 @@
      * Превью фото
      */
     function initPhotoPreview() {
-        $('#photo').on('change', function() {
+        $('#photo').on('change', function () {
             const file = this.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     $('#photo-preview img').attr('src', e.target.result);
                     $('#photo-preview').show();
                 };
@@ -191,7 +192,7 @@
             }
         });
 
-        $('#remove-photo').on('click', function() {
+        $('#remove-photo').on('click', function () {
             $('#photo').val('');
             $('#photo-preview').hide();
             $('#photo-preview img').attr('src', '');
@@ -276,7 +277,7 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
                     // Закрыть модалку
                     $('#add-employee-modal').modal('hide');
@@ -300,7 +301,7 @@
                     }
                 }
             },
-            error: function(xhr) {
+            error: function (xhr) {
                 if (xhr.status === 422) {
                     // Ошибки валидации
                     const errors = xhr.responseJSON.errors;
@@ -310,7 +311,7 @@
                     alert('Ошибка при создании сотрудника');
                 }
             },
-            complete: function() {
+            complete: function () {
                 // Скрыть loader
                 $btnText.removeClass('d-none');
                 $btnLoader.addClass('d-none');
@@ -336,12 +337,12 @@
         const $modal = $('#add-employee-modal');
 
         // При открытии модалки
-        $modal.on('shown.bs.modal', function() {
+        $modal.on('shown.bs.modal', function () {
             setTimeout(initModalComponents, 100);
         });
 
         // При закрытии модалки
-        $modal.on('hidden.bs.modal', function() {
+        $modal.on('hidden.bs.modal', function () {
             resetForm();
 
             // Destroy Select2
@@ -372,14 +373,14 @@
         });
 
         // Отправка формы
-        $('#add-employee-form').on('submit', function(e) {
+        $('#add-employee-form').on('submit', function (e) {
             e.preventDefault();
             submitForm();
         });
     }
 
     // Инициализация при готовности DOM
-    $(document).ready(function() {
+    $(document).ready(function () {
         initEventHandlers();
         console.log('Add employee modal initialized');
     });

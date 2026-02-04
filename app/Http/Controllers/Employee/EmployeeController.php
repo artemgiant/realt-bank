@@ -7,6 +7,7 @@ use App\Models\Employee\Employee;
 use App\Models\Reference\Company;
 use App\Models\Reference\CompanyOffice;
 use App\Models\Reference\Dictionary;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -139,7 +140,8 @@ class EmployeeController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8',
             'phone' => 'nullable|string|max:50',
             'birthday' => 'nullable|date',
             'company_id' => 'nullable|exists:companies,id',
@@ -154,10 +156,23 @@ class EmployeeController extends Controller
             'active_until' => 'nullable|date',
         ]);
 
+        // Создание пользователя
+        $user = User::create([
+            'name' => trim($validated['first_name'] . ' ' . $validated['last_name']),
+            'email' => $validated['email'],
+            'password' => $validated['password'], // автоматически хешируется благодаря cast
+        ]);
+
         // Загрузка фото
         if ($request->hasFile('photo')) {
             $validated['photo_path'] = $request->file('photo')->store('employees', 'public');
         }
+
+        // Привязка user_id к сотруднику
+        $validated['user_id'] = $user->id;
+
+        // Удаляем password из validated, так как его нет в fillable Employee
+        unset($validated['password']);
 
         $employee = Employee::create($validated);
 
