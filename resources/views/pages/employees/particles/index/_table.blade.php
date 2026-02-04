@@ -153,11 +153,9 @@
                             </picture>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Обновить</a></li>
-                            <li><a class="dropdown-item" href="#">Редактировать</a></li>
-                            <li><a class="dropdown-item" href="#">Удалить</a></li>
-                            <li><a class="dropdown-item" href="#">Отложить</a></li>
-                            <li><a class="dropdown-item" href="#">Передать</a></li>
+                            <li><a class="dropdown-item" href="#">Оплатить</a></li>
+                            <li><a class="dropdown-item" href="#">Уволить</a></li>
+                            <li><a class="dropdown-item" href="#">Заблокировать</a></li>
                         </ul>
                     </div>
                 </div>
@@ -170,14 +168,11 @@
                             </picture>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Самые новые</a></li>
-                            <li><a class="dropdown-item" href="#">Самые дешевые</a></li>
-                            <li><a class="dropdown-item" href="#">Самые дорогие</a></li>
-                            <li><a class="dropdown-item" href="#">Самые дешевые/м<sup>2</sup></a></li>
-                            <li><a class="dropdown-item" href="#">Самые дорогие/м<sup>2</sup></a></li>
-                            <li><a class="dropdown-item" href="#">Наименьшая площадь</a></li>
-                            <li><a class="dropdown-item" href="#">Наибольшая площадь</a></li>
-                            <li><a class="dropdown-item" href="#">Самые старые</a></li>
+                            <li><a class="dropdown-item" href="#">Дата добавления</a></li>
+                            <li><a class="dropdown-item" href="#">Количество объектов </a></li>
+                            <li><a class="dropdown-item" href="#">Количество сделок</a></li>
+                            <li><a class="dropdown-item" href="#">По времени последней активности</a></li>
+                            <li><a class="dropdown-item" href="#">Оплачено до</a></li>
                         </ul>
                     </div>
                 </div>

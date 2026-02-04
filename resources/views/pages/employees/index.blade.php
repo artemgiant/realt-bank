@@ -1,6 +1,6 @@
 @extends('layouts.crm')
 
-@section('title', 'Команда - Realt Bank')
+@section('title', 'Сотрудники - Realt Bank')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/pages/employees/index/page-employees.css') }}">
@@ -9,7 +9,7 @@
 @section('header')
     <x-crm.header
         :addButton="false"
-        title="Команда"
+        title="Сотрудники"
     />
 @endsection
 
