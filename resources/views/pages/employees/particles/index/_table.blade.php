@@ -2,14 +2,14 @@
     <col width="3.0%" valign="middle">
     <col width="6.0%" valign="middle">
     <col width="15.038%" valign="middle">
-    <col width="14.587%" valign="middle">
-    <col width="14.587%" valign="middle">
+    <col width="17.587%" valign="middle">
+    <col width="17.587%" valign="middle">
     <col width="6.0%" valign="middle">
     <col width="6.0%" valign="middle">
     <col width="6.0%" valign="middle">
     <col width="8.0%" valign="middle">
     <col width="9.223%" valign="middle">
-    <col width="11.565%" valign="middle">
+    <col width="6%" valign="middle">
 
     <thead>
     <tr>

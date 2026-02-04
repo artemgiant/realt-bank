@@ -1160,7 +1160,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 
 #example tbody tr td .tbody-wrapper.offices label,
 #example tbody tr td .tbody-wrapper.position label {
-  display: block;
+  display: flex;
   width: 100%;
 }
 
