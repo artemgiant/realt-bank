@@ -359,9 +359,9 @@ class FileUploader {
 }
 
 class PhotoLoader {
-	constructor (options) {
+	constructor(options) {
 		// Перевірка обов'язкових параметрів
-		if ( !options.inputId) {
+		if (!options.inputId) {
 			throw new Error('Необходимо указать inputId');
 		}
 
@@ -403,7 +403,7 @@ class PhotoLoader {
 		}
 	}
 
-	createGlobalLoader () {
+	createGlobalLoader() {
 		this.globalLoader = document.createElement('div');
 		this.globalLoader.className = 'photo-loader-global';
 		this.globalLoader.innerHTML = `
@@ -417,14 +417,14 @@ class PhotoLoader {
 		this.globalLoader.style.display = 'none';
 	}
 
-	showLoader () {
+	showLoader() {
 		if (this.globalLoader) {
 			this.globalLoader.style.display = 'flex';
 		}
 	}
 
-	initSortable () {
-		if ( !this.renderContainer || typeof Sortable === 'undefined') return;
+	initSortable() {
+		if (!this.renderContainer || typeof Sortable === 'undefined') return;
 
 		new Sortable(this.renderContainer, {
 			animation: 150, // тривалість анімації
@@ -436,7 +436,7 @@ class PhotoLoader {
 		});
 	}
 
-	handleSortEnd (evt) {
+	handleSortEnd(evt) {
 		// Оновлюємо масив photoArray відповідно до нового порядку
 		const movedItem = this.photoArray[evt.oldIndex];
 		this.photoArray.splice(evt.oldIndex, 1);
@@ -446,14 +446,14 @@ class PhotoLoader {
 		this.render();
 	}
 
-	hideLoader () {
+	hideLoader() {
 		if (this.globalLoader) {
 			this.globalLoader.style.display = 'none';
 		}
 	}
 
-	updateProgress (loaded, total) {
-		if ( !this.globalLoader) return;
+	updateProgress(loaded, total) {
+		if (!this.globalLoader) return;
 		const progress = Math.round((loaded / total) * 100);
 		const progressElement = this.globalLoader.querySelector('.photo-loader-progress');
 		if (progressElement) {
@@ -461,7 +461,7 @@ class PhotoLoader {
 		}
 	}
 
-	init () {
+	init() {
 		this.input.addEventListener('change', async (e) => {
 			if (this.isProcessing) return;
 			this.isProcessing = true;
@@ -489,7 +489,7 @@ class PhotoLoader {
 		});
 	}
 
-	async handleFileUpload (event, progressCallback) {
+	async handleFileUpload(event, progressCallback) {
 		const files = Array.from(event.target.files);
 
 		if (this.photoArray.length + files.length > this.maxPhotos) {
@@ -527,7 +527,7 @@ class PhotoLoader {
 		this.displayResults();
 	}
 
-	handleImage (file) {
+	handleImage(file) {
 		return new Promise((resolve, reject) => {
 			const isHeic = file.type === 'image/heic' ||
 				file.type === 'image/heif' ||
@@ -544,7 +544,7 @@ class PhotoLoader {
 		});
 	}
 
-	convertHeicToJpg (file) {
+	convertHeicToJpg(file) {
 		return new Promise((resolve, reject) => {
 			heic2any({
 				blob: file,
@@ -554,14 +554,14 @@ class PhotoLoader {
 				const newFile = new File(
 					[conversionResult],
 					file.name.replace(/\.(heic|heif)$/i, '.jpg'),
-					{type: 'image/jpeg', lastModified: Date.now()}
+					{ type: 'image/jpeg', lastModified: Date.now() }
 				);
 				resolve(newFile);
 			}).catch(reject);
 		});
 	}
 
-	processImageFile (file, resolve, reject) {
+	processImageFile(file, resolve, reject) {
 		const img = new Image();
 		const url = URL.createObjectURL(file);
 
@@ -581,7 +581,7 @@ class PhotoLoader {
 				const width = img.naturalWidth;
 				const height = img.naturalHeight;
 
-				if ( !this.checkImageSize || (width >= this.minWidth && height >= this.minHeight)) {
+				if (!this.checkImageSize || (width >= this.minWidth && height >= this.minHeight)) {
 					const photoItem = {
 						id: this.generateUniqueId(),
 						name: file.name,
@@ -595,7 +595,7 @@ class PhotoLoader {
 					};
 
 					// Якщо перевірка розмірів вимкнена, обробляємо зображення
-					if ( !this.checkImageSize && (width < this.minWidth || height < this.minHeight)) {
+					if (!this.checkImageSize && (width < this.minWidth || height < this.minHeight)) {
 						this.resizeImageToMinimum(file, photoItem)
 							.then(resizedPhoto => {
 								this.validPhotos.push(resizedPhoto);
@@ -635,11 +635,11 @@ class PhotoLoader {
 		img.src = url;
 	}
 
-	generateUniqueId () {
+	generateUniqueId() {
 		return Date.now().toString(36) + Math.random().toString(36).substr(2);
 	}
 
-	handleInvalidFile (file) {
+	handleInvalidFile(file) {
 		this.invalidPhotos.push({
 			text: `Файл "${file.name}" не является изображением. Допустимы только изображения (JPG/PNG/HEIC/HEIF).`,
 			file: file
@@ -647,12 +647,12 @@ class PhotoLoader {
 	}
 
 
-	displayResults () {
+	displayResults() {
 		this.displayErrors();
 		this.render();
 	}
 
-	clearOldObjectUrls () {
+	clearOldObjectUrls() {
 		this.photoArray.forEach(item => {
 			if (item.objectUrl) {
 				URL.revokeObjectURL(item.objectUrl);
@@ -661,16 +661,16 @@ class PhotoLoader {
 		});
 	}
 
-	clearErrors () {
-		if ( !this.wrapper || !this.errorContainer) return;
+	clearErrors() {
+		if (!this.wrapper || !this.errorContainer) return;
 
 		this.wrapper.classList.remove('error');
 		const errorElements = this.errorContainer.querySelectorAll('.error');
 		errorElements.forEach(element => element.remove());
 	}
 
-	displayErrors () {
-		if ( !this.wrapper || !this.errorContainer) return;
+	displayErrors() {
+		if (!this.wrapper || !this.errorContainer) return;
 
 		this.clearErrors();
 
@@ -686,8 +686,8 @@ class PhotoLoader {
 		}
 	}
 
-	render () {
-		if ( !this.renderContainer) return;
+	render() {
+		if (!this.renderContainer) return;
 
 		this.destroyAllTooltips();
 
@@ -718,7 +718,7 @@ class PhotoLoader {
 		this.initSortable();
 	}
 
-	createSpinnerElement () {
+	createSpinnerElement() {
 		const spinnerDiv = document.createElement('div');
 		spinnerDiv.className = 'spinner-border text-primary';
 		spinnerDiv.style.width = '50px';
@@ -733,7 +733,7 @@ class PhotoLoader {
 		return spinnerDiv;
 	}
 
-	createPhotoElement (item) {
+	createPhotoElement(item) {
 		const photoItem = document.createElement('li');
 		photoItem.classList.add('photo-info-item');
 		photoItem.setAttribute('data-photo-id', item.id);
@@ -821,8 +821,8 @@ class PhotoLoader {
 		return photoItem;
 	}
 
-	initEventHandlers () {
-		if ( !this.renderContainer) return;
+	initEventHandlers() {
+		if (!this.renderContainer) return;
 
 		this.renderContainer.addEventListener('change', (e) => {
 			if (e.target.matches('input[type="checkbox"][data-cheked-photo-id]')) {
@@ -855,9 +855,9 @@ class PhotoLoader {
 		});
 	}
 
-	editPhoto (photoId) {
+	editPhoto(photoId) {
 		const photo = this.photoArray.find(p => p.id === photoId);
-		if ( !photo) return;
+		if (!photo) return;
 
 		// Create a temporary canvas to get the image data
 		const img = new Image();
@@ -874,10 +874,10 @@ class PhotoLoader {
 		img.src = photo.objectUrl;
 	}
 
-	initImageEditor (imageSrc, photoItem) {
+	initImageEditor(imageSrc, photoItem) {
 		const isMobile = ('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth < 1024;
 
-		if ( !document.body.classList.contains('lock')) {
+		if (!document.body.classList.contains('lock')) {
 			document.body.classList.add('lock');
 		}
 
@@ -914,18 +914,18 @@ class PhotoLoader {
 				const referenceSize = 2000; // Базовий розмір для порівняння
 				const maxDimension = Math.max(imageWidth, imageHeight);
 
-// Базові розміри для ПК та мобільних
+				// Базові розміри для ПК та мобільних
 				const baseDesktopSize = 20;  // Для ПК
 				const baseMobileSize = 30;   // Для телефонів (більше, бо пальцями працювати)
 
-// Коефіцієнт масштабування (від 0.5 до 2)
+				// Коефіцієнт масштабування (від 0.5 до 2)
 				const scaleFactor = Math.min(2, Math.max(0.5, maxDimension / referenceSize));
 
-// Обмеження розмірів (min/max)
-				const desktopLimits = {min: 25, max: 150}; // Для ПК
-				const mobileLimits = {min: 55, max: 150};   // Для телефонів
+				// Обмеження розмірів (min/max)
+				const desktopLimits = { min: 25, max: 150 }; // Для ПК
+				const mobileLimits = { min: 55, max: 150 };   // Для телефонів
 
-// Фінальний розрахунок
+				// Фінальний розрахунок
 				let cornerSize;
 				if (isMobile) {
 					cornerSize = Math.min(
@@ -939,7 +939,7 @@ class PhotoLoader {
 					);
 				}
 
-// Розмір кутів для обрізки (у 3 рази більший)
+				// Розмір кутів для обрізки (у 3 рази більший)
 				const cropCornerSize = cornerSize * 3;
 				const editorOptions = {
 					includeUI: {
@@ -1075,7 +1075,7 @@ class PhotoLoader {
 		};
 	}
 
-	addEditorButtons (editorContainer, photoItem) {
+	addEditorButtons(editorContainer, photoItem) {
 		const buttonContainer = document.createElement('div');
 		buttonContainer.className = 'btn-tui-wrapper';
 
@@ -1094,8 +1094,8 @@ class PhotoLoader {
 		editorContainer.appendChild(buttonContainer);
 	}
 
-	saveEditedImage (photoItem) {
-		if ( !this.imageEditor) return;
+	saveEditedImage(photoItem) {
+		if (!this.imageEditor) return;
 
 		// Get edited image as blob
 		const editedImageData = this.imageEditor.toDataURL();
@@ -1124,7 +1124,7 @@ class PhotoLoader {
 		}
 	}
 
-	closeImageEditor () {
+	closeImageEditor() {
 		if (this.imageEditor) {
 			this.imageEditor.destroy();
 			this.imageEditor = null;
@@ -1145,9 +1145,9 @@ class PhotoLoader {
 		}
 	}
 
-	togglePhotoSelection (photoId) {
+	togglePhotoSelection(photoId) {
 		const photo = this.photoArray.find(p => p.id === photoId);
-		if ( !photo) return;
+		if (!photo) return;
 
 		photo.isCheked = !photo.isCheked;
 
@@ -1171,9 +1171,9 @@ class PhotoLoader {
 		}
 	}
 
-	deletePhoto (photoId) {
+	deletePhoto(photoId) {
 		const photoElement = this.renderContainer.querySelector(`[data-photo-id="${photoId}"]`);
-		if ( !photoElement) return;
+		if (!photoElement) return;
 
 		const photoIndex = this.photoArray.findIndex(photo => photo.id === photoId);
 		if (photoIndex === -1) return;
@@ -1201,11 +1201,11 @@ class PhotoLoader {
 		photoElement.remove();
 	}
 
-	movePhoto (photoId) {
+	movePhoto(photoId) {
 		console.log(`Переместить фото с идентификатором: ${photoId}`);
 	}
 
-	initFancybox () {
+	initFancybox() {
 		if (typeof Fancybox === 'undefined') return;
 
 		if (Fancybox.getInstance()) {
@@ -1240,14 +1240,14 @@ class PhotoLoader {
 		});
 	}
 
-	initTooltips () {
+	initTooltips() {
 		if (typeof bootstrap === 'undefined' || !bootstrap.Tooltip) return;
 
 		const tooltipElements = this.renderContainer && this.renderContainer.querySelectorAll('[data-bs-toggle="tooltip"]') || [];
 
 		tooltipElements.forEach(el => {
 			try {
-				if ( !this.tooltips.has(el)) {
+				if (!this.tooltips.has(el)) {
 					const tooltip = new bootstrap.Tooltip(el, {
 						trigger: 'hover',
 						placement: 'top'
@@ -1260,7 +1260,7 @@ class PhotoLoader {
 		});
 	}
 
-	destroyAllTooltips () {
+	destroyAllTooltips() {
 		this.tooltips.forEach((tooltip, element) => {
 			try {
 				if (tooltip && typeof tooltip.dispose === 'function') {
@@ -1273,11 +1273,11 @@ class PhotoLoader {
 		this.tooltips.clear();
 	}
 
-	getSelectedPhotos () {
+	getSelectedPhotos() {
 		return this.photoArray.filter(photo => photo.isCheked);
 	}
 
-	destroy () {
+	destroy() {
 		this.clearOldObjectUrls();
 		this.destroyAllTooltips();
 		this.closeImageEditor();
@@ -1307,7 +1307,7 @@ class PhotoLoader {
 	 * @param {Object} photoItem - Об'єкт фото для оновлення
 	 * @returns {Promise<Object>} Обіцянка, що повертає оновлений об'єкт фото
 	 */
-	resizeImageToMinimum (file, photoItem) {
+	resizeImageToMinimum(file, photoItem) {
 		return new Promise((resolve, reject) => {
 			const img = new Image();
 			const url = URL.createObjectURL(file);
@@ -1349,7 +1349,7 @@ class PhotoLoader {
 
 					// Конвертуємо canvas назад у файл
 					canvas.toBlob(blob => {
-						if ( !blob) {
+						if (!blob) {
 							reject(new Error('Ошибка при создании blob из canvas'));
 							return;
 						}
@@ -1388,8 +1388,8 @@ class PhotoLoader {
 }
 
 class PhotoLoaderMini {
-	constructor (options) {
-		if ( !options.inputIdSelector) {
+	constructor(options) {
+		if (!options.inputIdSelector) {
 			throw new Error('Необходимо указать inputId');
 		}
 
@@ -1438,7 +1438,7 @@ class PhotoLoaderMini {
 		}
 	}
 
-	createGlobalLoader () {
+	createGlobalLoader() {
 		this.globalLoader = document.createElement('div');
 		this.globalLoader.className = 'photo-loader-global';
 		this.globalLoader.innerHTML = `
@@ -1452,20 +1452,20 @@ class PhotoLoaderMini {
 		this.globalLoader.style.display = 'none';
 	}
 
-	showLoader () {
+	showLoader() {
 		if (this.globalLoader) {
 			this.globalLoader.style.display = 'flex';
 		}
 	}
 
-	hideLoader () {
+	hideLoader() {
 		if (this.globalLoader) {
 			this.globalLoader.style.display = 'none';
 		}
 	}
 
-	updateProgress (loaded, total) {
-		if ( !this.globalLoader) return;
+	updateProgress(loaded, total) {
+		if (!this.globalLoader) return;
 		const progress = Math.round((loaded / total) * 100);
 		const progressElement = this.globalLoader.querySelector('.photo-loader-progress');
 		if (progressElement) {
@@ -1473,7 +1473,7 @@ class PhotoLoaderMini {
 		}
 	}
 
-	init () {
+	init() {
 		this.input.addEventListener('change', async (e) => {
 			if (this.isProcessing) return;
 			this.isProcessing = true;
@@ -1508,7 +1508,7 @@ class PhotoLoaderMini {
 		});
 	}
 
-	async handleFileUpload (event, progressCallback) {
+	async handleFileUpload(event, progressCallback) {
 		const files = Array.from(event.target.files);
 
 		if (this.photoArray.length + files.length > this.maxPhotos) {
@@ -1546,7 +1546,7 @@ class PhotoLoaderMini {
 		this.displayResults();
 	}
 
-	handleImage (file) {
+	handleImage(file) {
 		return new Promise((resolve, reject) => {
 			const isHeic = file.type === 'image/heic' ||
 				file.type === 'image/heif' ||
@@ -1563,7 +1563,7 @@ class PhotoLoaderMini {
 		});
 	}
 
-	convertHeicToJpg (file) {
+	convertHeicToJpg(file) {
 		return new Promise((resolve, reject) => {
 			heic2any({
 				blob: file,
@@ -1573,14 +1573,14 @@ class PhotoLoaderMini {
 				const newFile = new File(
 					[conversionResult],
 					file.name.replace(/\.(heic|heif)$/i, '.jpg'),
-					{type: 'image/jpeg', lastModified: Date.now()}
+					{ type: 'image/jpeg', lastModified: Date.now() }
 				);
 				resolve(newFile);
 			}).catch(reject);
 		});
 	}
 
-	processImageFile (file, resolve, reject) {
+	processImageFile(file, resolve, reject) {
 		const img = new Image();
 		const url = URL.createObjectURL(file);
 
@@ -1601,7 +1601,7 @@ class PhotoLoaderMini {
 				const height = img.naturalHeight;
 
 				// Автоматичне масштабування до 800px по меншій стороні
-				this.resizeImageToMinimum(file, {width, height})
+				this.resizeImageToMinimum(file, { width, height })
 					.then(resizedPhoto => {
 						this.validPhotos.push(resizedPhoto);
 						this.photoArray.push(resizedPhoto);
@@ -1628,7 +1628,7 @@ class PhotoLoaderMini {
 		img.src = url;
 	}
 
-	resizeImageToMinimum (file, originalDimensions) {
+	resizeImageToMinimum(file, originalDimensions) {
 		return new Promise((resolve, reject) => {
 			const img = new Image();
 			const url = URL.createObjectURL(file);
@@ -1657,7 +1657,7 @@ class PhotoLoaderMini {
 					ctx.drawImage(img, 0, 0, newWidth, newHeight);
 
 					canvas.toBlob(blob => {
-						if ( !blob) {
+						if (!blob) {
 							reject(new Error('Ошибка при создании blob из canvas'));
 							return;
 						}
@@ -1695,23 +1695,23 @@ class PhotoLoaderMini {
 		});
 	}
 
-	generateUniqueId () {
+	generateUniqueId() {
 		return Date.now().toString(36) + Math.random().toString(36).substr(2);
 	}
 
-	handleInvalidFile (file) {
+	handleInvalidFile(file) {
 		this.invalidPhotos.push({
 			text: `Файл "${file.name}" не является изображением. Допустимы только изображения (JPG/PNG/HEIC/HEIF).`,
 			file: file
 		});
 	}
 
-	displayResults () {
+	displayResults() {
 		this.displayErrors();
 		this.render();
 	}
 
-	clearOldObjectUrls () {
+	clearOldObjectUrls() {
 		this.photoArray.forEach(item => {
 			if (item.objectUrl) {
 				URL.revokeObjectURL(item.objectUrl);
@@ -1720,16 +1720,16 @@ class PhotoLoaderMini {
 		});
 	}
 
-	clearErrors () {
-		if ( !this.wrapper || !this.errorContainer) return;
+	clearErrors() {
+		if (!this.wrapper || !this.errorContainer) return;
 
 		this.wrapper.classList.remove('error');
 		const errorElements = this.errorContainer.querySelectorAll('.error');
 		errorElements.forEach(element => element.remove());
 	}
 
-	displayErrors () {
-		if ( !this.wrapper || !this.errorContainer) return;
+	displayErrors() {
+		if (!this.wrapper || !this.errorContainer) return;
 
 		this.clearErrors();
 
@@ -1745,8 +1745,8 @@ class PhotoLoaderMini {
 		}
 	}
 
-	render () {
-		if ( !this.renderContainer) return;
+	render() {
+		if (!this.renderContainer) return;
 
 		// Видаляємо тільки фото-елементи
 		const photoItems = this.renderContainer.querySelectorAll('.photo-info-item');
@@ -1754,7 +1754,7 @@ class PhotoLoaderMini {
 
 		// Додаємо всі фото
 		this.photoArray.forEach(item => {
-			if ( !item.objectUrl) {
+			if (!item.objectUrl) {
 				item.objectUrl = URL.createObjectURL(item.file);
 			}
 			const photoItem = this.createPhotoElement(item);
@@ -1778,13 +1778,13 @@ class PhotoLoaderMini {
 		this.initEventHandlers();
 	}
 
-	toggleUploadButtonVisibility () {
+	toggleUploadButtonVisibility() {
 		if (this.uploadButton) {
 			this.uploadButton.style.display = this.photoArray.length === 0 ? 'block' : 'none';
 		}
 	}
 
-	createSpinnerElement () {
+	createSpinnerElement() {
 		const spinnerDiv = document.createElement('div');
 		spinnerDiv.className = 'spinner-border text-primary';
 		spinnerDiv.style.width = '50px';
@@ -1799,7 +1799,7 @@ class PhotoLoaderMini {
 		return spinnerDiv;
 	}
 
-	createPhotoElement (item) {
+	createPhotoElement(item) {
 		const photoItem = document.createElement('li');
 		photoItem.classList.add('photo-info-item');
 		photoItem.setAttribute('data-photo-id', item.id);
@@ -1849,8 +1849,8 @@ class PhotoLoaderMini {
 		return photoItem;
 	}
 
-	initEventHandlers () {
-		if ( !this.renderContainer) return;
+	initEventHandlers() {
+		if (!this.renderContainer) return;
 
 		this.renderContainer.addEventListener('change', (e) => {
 			if (e.target.matches('input[type="checkbox"][data-cheked-photo-id]')) {
@@ -1869,9 +1869,9 @@ class PhotoLoaderMini {
 	}
 
 
-	deletePhoto (photoId) {
+	deletePhoto(photoId) {
 		const photoElement = this.renderContainer.querySelector(`[data-photo-id="${photoId}"]`);
-		if ( !photoElement) return;
+		if (!photoElement) return;
 
 		const photoIndex = this.photoArray.findIndex(photo => photo.id === photoId);
 		if (photoIndex === -1) return;
@@ -1896,7 +1896,7 @@ class PhotoLoaderMini {
 		this.toggleUploadButtonVisibility();
 	}
 
-	initFancybox () {
+	initFancybox() {
 		if (typeof Fancybox === 'undefined') return;
 
 		if (Fancybox.getInstance()) {
@@ -1980,8 +1980,8 @@ class PhotoLoaderMini {
 }
 
 class PhoneInputManager {
-	constructor (options) {
-		this.options = {...options};
+	constructor(options) {
+		this.options = { ...options };
 		this.phoneCounter = 1;
 		this.wrapper = document.querySelector(this.options.wrapperSelector);
 		if (this.wrapper) {
@@ -1990,8 +1990,8 @@ class PhoneInputManager {
 		}
 	}
 
-	init () {
-		if ( !this.btnAddTel || !this.wrapper) return;
+	init() {
+		if (!this.btnAddTel || !this.wrapper) return;
 
 		// Рахуємо початкову кількість телефонів
 		this.phoneCounter = this.wrapper.querySelectorAll('[data-phone-item]').length;
@@ -2018,7 +2018,7 @@ class PhoneInputManager {
 		}
 	}
 
-	addPhoneField (e) {
+	addPhoneField(e) {
 		const currentPhones = this.wrapper.querySelectorAll('[data-phone-item]').length;
 
 		if (currentPhones >= this.options.maxPhones) {
@@ -2028,7 +2028,7 @@ class PhoneInputManager {
 
 		this.phoneCounter++;
 		const newItem = this.createPhoneField();
-		this.wrapper.querySelector('[data-phone-item]').appendChild(newItem);
+		this.wrapper.appendChild(newItem);
 
 		this.initTelInput(newItem.querySelector(`.${this.options.inputClass}`));
 		this.addDeleteButton(newItem);
@@ -2038,7 +2038,7 @@ class PhoneInputManager {
 		}
 	}
 
-	createPhoneField () {
+	createPhoneField() {
 		const newItem = document.createElement('div');
 		newItem.className = 'item';
 		newItem.setAttribute('data-phone-item', '');
@@ -2059,7 +2059,7 @@ class PhoneInputManager {
 		return newItem;
 	}
 
-	addDeleteButton (item) {
+	addDeleteButton(item) {
 		const btnContainer = item.querySelector('.add_new-tel');
 		const btn = btnContainer.querySelector('.btn-new-tel');
 
@@ -2077,7 +2077,7 @@ class PhoneInputManager {
 		});
 	}
 
-	removePhoneField (item) {
+	removePhoneField(item) {
 		item.remove();
 
 		// Показуємо кнопку додавання, якщо кількість номерів менше максимальної
@@ -2090,7 +2090,7 @@ class PhoneInputManager {
 		this.phoneCounter = currentPhones;
 	}
 
-	initTelInput (inputElement) {
+	initTelInput(inputElement) {
 		const $input = $(inputElement);
 
 		// Перевіряємо, чи вже ініціалізовано для цього поля
@@ -2126,19 +2126,12 @@ class PhoneInputManager {
 		});
 
 		$input.on('keypress', (e) => {
-			if ( !/[0-9]/.test(String.fromCharCode(e.which))) {
+			if (!/[0-9]/.test(String.fromCharCode(e.which))) {
 				e.preventDefault();
 			}
 		});
 
-		$input.on('blur', () => {
-			if ($input.val()) {
-				const number = iti.getNumber();
-				if (number) {
-					$input.val(number.replace(/[^\d]/g, ''));
-				}
-			}
-		});
+
 
 		// Застосовуємо маску відразу при ініціалізації
 		applyPhoneMask(iti.getSelectedCountryData().iso2);
@@ -2155,10 +2148,3 @@ window.FileUploader = FileUploader;
 window.PhotoLoader = PhotoLoader;
 window.PhotoLoaderMini = PhotoLoaderMini;
 window.PhoneInputManager = PhoneInputManager;
-
-export {
-	FileUploader,
-	PhotoLoader,
-	PhotoLoaderMini,
-	PhoneInputManager,
-};

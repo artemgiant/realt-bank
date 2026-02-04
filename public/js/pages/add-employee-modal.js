@@ -25,11 +25,11 @@
                 initialCountry: 'ua',
                 utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js',
                 countryMasks: {
-                    'ua': '(99) 999-99-99',
-                    'ru': '(999) 999-99-99',
-                    'by': '(99) 999-99-99',
-                    'kz': '(999) 999-99-99',
-                    'default': '(999) 999-99-99'
+                    'ua': '(00) 000-00-00',
+                    'ru': '(000) 000-00-00',
+                    'by': '(00) 000-00-00',
+                    'kz': '(000) 000-00-00',
+                    'default': '(000) 000-00-00'
                 }
             });
             console.log('PhoneInputManager initialized');

@@ -23,6 +23,7 @@
     </div>
 @endsection
 
+
 @push('modals')
     @include('pages.employees.modals._add-employee')
 @endpush

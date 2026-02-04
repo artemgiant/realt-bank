@@ -9,7 +9,7 @@ window.EmployeeFilters = {
     /**
      * Собрать все параметры фильтра для AJAX запроса
      */
-    getParams: function() {
+    getParams: function () {
         const params = {};
 
         // Поиск по имени/email/телефону
@@ -44,7 +44,7 @@ window.EmployeeFilters = {
 
         // Теги (множественный выбор)
         const selectedTags = [];
-        $('.multiple-menu-list input[type="checkbox"]:checked').each(function() {
+        $('.multiple-menu-list input[type="checkbox"]:checked').each(function () {
             const name = $(this).attr('name');
             if (name && name !== 'complex-all' && !name.startsWith('checkbox-all')) {
                 selectedTags.push(name);
@@ -72,7 +72,7 @@ window.EmployeeFilters = {
     /**
      * Установить сортировку
      */
-    setSort: function(column, direction) {
+    setSort: function (column, direction) {
         this.sortColumn = column;
         this.sortDirection = direction || 'asc';
     },
@@ -80,7 +80,7 @@ window.EmployeeFilters = {
     /**
      * Сбросить все фильтры
      */
-    reset: function() {
+    reset: function () {
         // Очистить текстовые поля
         $('#search-name-email-phone').val('');
         $('#datapiker').val('');
@@ -106,7 +106,7 @@ window.EmployeeFilters = {
     /**
      * Обновить счетчик активных фильтров
      */
-    updateFilterCount: function() {
+    updateFilterCount: function () {
         let count = 0;
         const params = this.getParams();
 
@@ -134,14 +134,14 @@ window.EmployeeFilters = {
     /**
      * Инициализация Select2 для фильтров
      */
-    initSelect2: function() {
+    initSelect2: function () {
         // Инициализация Select2 для фильтров в шапке
-        $('.js-example-responsive2').each(function() {
+        $('.js-example-responsive2').each(function () {
             const $select = $(this);
             const placeholder = $select.attr('id');
 
             let placeholderText = 'Выберите...';
-            switch(placeholder) {
+            switch (placeholder) {
                 case 'position': placeholderText = 'Должность'; break;
                 case 'statusagents': placeholderText = 'Статус'; break;
                 case 'company': placeholderText = 'Компания'; break;
@@ -160,9 +160,10 @@ window.EmployeeFilters = {
     /**
      * Инициализация DateRangePicker
      */
-    initDatePicker: function() {
+    initDatePicker: function () {
         if (typeof moment !== 'undefined' && $.fn.daterangepicker) {
             $('#datapiker').daterangepicker({
+                singleDatePicker: true,
                 autoUpdateInput: false,
                 locale: {
                     format: 'DD.MM.YYYY',
@@ -180,13 +181,13 @@ window.EmployeeFilters = {
                 }
             });
 
-            $('#datapiker').on('apply.daterangepicker', function(ev, picker) {
-                $(this).val(picker.startDate.format('DD.MM.YYYY') + ' - ' + picker.endDate.format('DD.MM.YYYY'));
+            $('#datapiker').on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('DD.MM.YYYY'));
                 // Триггер для обновления таблицы
                 $(this).trigger('filter:change');
             });
 
-            $('#datapiker').on('cancel.daterangepicker', function(ev, picker) {
+            $('#datapiker').on('cancel.daterangepicker', function (ev, picker) {
                 $(this).val('');
                 $(this).trigger('filter:change');
             });
@@ -196,9 +197,9 @@ window.EmployeeFilters = {
     /**
      * Инициализация multiple menu (теги)
      */
-    initMultipleMenu: function() {
+    initMultipleMenu: function () {
         // Открытие/закрытие меню
-        $(document).on('click', '.multiple-menu-btn', function(e) {
+        $(document).on('click', '.multiple-menu-btn', function (e) {
             e.stopPropagation();
             const $wrapper = $(this).siblings('.multiple-menu-wrapper');
             const isOpen = $(this).attr('data-open-menu') === 'true';
@@ -214,7 +215,7 @@ window.EmployeeFilters = {
         });
 
         // Закрытие при клике вне меню
-        $(document).on('click', function(e) {
+        $(document).on('click', function (e) {
             if (!$(e.target).closest('.multiple-menu').length) {
                 $('.multiple-menu-btn').attr('data-open-menu', 'false');
                 $('.multiple-menu-wrapper').hide();
@@ -222,7 +223,7 @@ window.EmployeeFilters = {
         });
 
         // Логика "Все" чекбокса
-        $(document).on('change', '.multiple-menu-list input[data-name="checkbox-all"]', function() {
+        $(document).on('change', '.multiple-menu-list input[data-name="checkbox-all"]', function () {
             const isChecked = $(this).is(':checked');
             $(this).closest('.multiple-menu-list')
                 .find('input[type="checkbox"]')
@@ -231,7 +232,7 @@ window.EmployeeFilters = {
         });
 
         // Снять "Все" при выборе конкретного тега
-        $(document).on('change', '.multiple-menu-list input[type="checkbox"]:not([data-name="checkbox-all"])', function() {
+        $(document).on('change', '.multiple-menu-list input[type="checkbox"]:not([data-name="checkbox-all"])', function () {
             const $list = $(this).closest('.multiple-menu-list');
             const $allCheckbox = $list.find('input[data-name="checkbox-all"]');
 
@@ -247,11 +248,11 @@ window.EmployeeFilters = {
         });
 
         // Поиск в меню
-        $(document).on('input', '.multiple-menu-search', function() {
+        $(document).on('input', '.multiple-menu-search', function () {
             const searchText = $(this).val().toLowerCase();
             const $items = $(this).closest('.multiple-menu-wrapper').find('.multiple-menu-item');
 
-            $items.each(function() {
+            $items.each(function () {
                 const text = $(this).find('.my-custom-text').text().toLowerCase();
                 $(this).toggle(text.includes(searchText));
             });

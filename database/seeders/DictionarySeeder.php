@@ -17,7 +17,7 @@ class DictionarySeeder extends Seeder
         $seederKeys = [];
 
         $dictionaries = [
-            // Тип сделки
+                // Тип сделки
             Dictionary::TYPE_DEAL_TYPE => [
                 'Продажа квартир',
                 'Продажа комнат',
@@ -33,14 +33,14 @@ class DictionarySeeder extends Seeder
                 'Аренда паркинг/гараж',
             ],
 
-            // Вид сделки
+                // Вид сделки
             Dictionary::TYPE_DEAL_KIND => [
                 'Нотариальная',
                 'Переуступка',
                 'Отдел продаж',
             ],
 
-            // Тип здания
+                // Тип здания
             Dictionary::TYPE_BUILDING_TYPE => [
                 'Новострой',
                 'Хрущевка',
@@ -62,7 +62,7 @@ class DictionarySeeder extends Seeder
             ],
 
 
-            // Тип недвижимости
+                // Тип недвижимости
             Dictionary::TYPE_PROPERTY_TYPE => [
                 'Квартира',
                 'Пентхаус',
@@ -90,7 +90,7 @@ class DictionarySeeder extends Seeder
                 'Бокс',
             ],
 
-            // Состояние
+                // Состояние
             Dictionary::TYPE_CONDITION => [
                 'С ремонтом',
                 'Жилая',
@@ -98,7 +98,7 @@ class DictionarySeeder extends Seeder
                 'Без ремонта',
             ],
 
-            // Тип стен
+                // Тип стен
             Dictionary::TYPE_WALL_TYPE => [
                 'Кирпич',
                 'Силикатный кирпич',
@@ -127,7 +127,7 @@ class DictionarySeeder extends Seeder
                 'Блочно-кирпичный',
             ],
 
-            // Отопление
+                // Отопление
             Dictionary::TYPE_HEATING_TYPE => [
                 'Централизованное',
                 'Индивидуальное газовое отопление',
@@ -142,7 +142,7 @@ class DictionarySeeder extends Seeder
                 'Тепловой насос / альтернативное',
             ],
 
-            // Количество комнат
+                // Количество комнат
             Dictionary::TYPE_ROOM_COUNT => [
                 ['name' => '1 комната', 'value' => '1'],
                 ['name' => '2 комнаты', 'value' => '2'],
@@ -156,7 +156,7 @@ class DictionarySeeder extends Seeder
                 ['name' => '10+ комнат', 'value' => '10+'],
             ],
 
-            // Количество ванных
+                // Количество ванных
             Dictionary::TYPE_BATHROOM_COUNT => [
                 ['name' => '1 ванная', 'value' => '1'],
                 ['name' => '2 ванных', 'value' => '2'],
@@ -170,7 +170,7 @@ class DictionarySeeder extends Seeder
                 ['name' => '10+ ванных', 'value' => '10+'],
             ],
 
-            // Высота потолков
+                // Высота потолков
             Dictionary::TYPE_CEILING_HEIGHT => [
                 ['name' => 'До 2.5 м', 'value' => '2.5'],
                 ['name' => '2.5 – 2.7 м', 'value' => '2.7'],
@@ -181,7 +181,7 @@ class DictionarySeeder extends Seeder
                 ['name' => 'Выше 5.0 м', 'value' => '5.1'],
             ],
 
-            // Год постройки
+                // Год постройки
             Dictionary::TYPE_YEAR_BUILT => [
                 ['name' => '2037+', 'value' => '2037+'],
                 ['name' => '2036', 'value' => '2036'],
@@ -226,7 +226,7 @@ class DictionarySeeder extends Seeder
                 ['name' => 'До 1949', 'value' => '1949'],
             ],
 
-            // Особенности
+                // Особенности
             Dictionary::TYPE_FEATURE => [
                 'От посредника',
                 'Комиссия от владельца',
@@ -262,7 +262,7 @@ class DictionarySeeder extends Seeder
                 'Не рекламировать',
             ],
 
-            // Теги контактов
+                // Теги контактов
             Dictionary::TYPE_CONTACT_TAG => [
                 'Собственник',
                 'Посредник',
@@ -273,7 +273,7 @@ class DictionarySeeder extends Seeder
                 'Постоянный клиент',
             ],
 
-            // Тип контакта
+                // Тип контакта
             Dictionary::TYPE_CONTACT_TYPE => [
                 'Эксклюзив \ Владелец',
                 'Владелец  \  Представитель (Без комиссии )',
@@ -281,7 +281,7 @@ class DictionarySeeder extends Seeder
                 'Девелопер',
             ],
 
-            // Класс жилья
+                // Класс жилья
             Dictionary::TYPE_HOUSING_CLASS => [
                 'Эконом',
                 'Комфорт',
@@ -293,7 +293,7 @@ class DictionarySeeder extends Seeder
                 'Курортный',
             ],
 
-            // Категории комплексов
+                // Категории комплексов
             Dictionary::TYPE_COMPLEX_CATEGORY => [
                 'Жилой комплекс',
                 'Апарт-комплекс',
@@ -310,13 +310,13 @@ class DictionarySeeder extends Seeder
                 'Логистический / Индустриальный комплекс',
             ],
 
-            // Тип агентства
+                // Тип агентства
             Dictionary::TYPE_AGENCY_TYPE => [
                 'Агентство',
                 'Франшиза',
             ],
 
-            // Особенности комплексов
+                // Особенности комплексов
             Dictionary::TYPE_COMPLEX_FEATURE => [
                 'Генератор',
                 'Резервное питание',
@@ -352,24 +352,24 @@ class DictionarySeeder extends Seeder
                 'Возле детсада',
             ],
 
-            // Должности сотрудников
+                // Должности сотрудников
             Dictionary::TYPE_EMPLOYEE_POSITION => [
                 'Агент',
-                'Менеджер відділу',
-                'Адміністратор офісу',
-                'Керівник офісу',
-                'Адміністратор агентства',
+                'Менеджер отдела',
+                'Администратор офиса',
+                'Руководитель офиса',
+                'Администратор агентства',
                 'Директор агентства',
             ],
 
-            // Статусы сотрудников
+                // Статусы сотрудников
             Dictionary::TYPE_EMPLOYEE_STATUS => [
                 'Активний',
                 'Неактивний',
                 'Заблокований',
             ],
 
-            // Теги агентов
+                // Теги агентов
             Dictionary::TYPE_AGENT_TAG => [
                 // Языки
                 'Английский',
