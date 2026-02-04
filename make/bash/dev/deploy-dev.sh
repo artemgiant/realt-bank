@@ -47,11 +47,14 @@ php artisan db:seed --class=DictionarySeeder --force
 #php artisan tinker --execute="use Database\Factories\Reference\{ComplexFactory, BlockFactory}; BlockFactory::cleanImported(); ComplexFactory::cleanImported(); ComplexFactory::new()->count(100)->create();"
 
 #Создать компании с контактами и офисами
-  php artisan tinker --execute="use Database\Factories\CompanyFactory; CompanyFactory::cleanAll(); App\Models\Reference\Company::factory()->count(20)->withContacts(2)->withOffices(rand(1,3), 2)->create();"
+#  php artisan tinker --execute="use Database\Factories\CompanyFactory; CompanyFactory::cleanAll(); App\Models\Reference\Company::factory()->count(20)->withContacts(2)->withOffices(rand(1,3), 2)->create();"
 
 
 
 php artisan db:seed --class=DictionarySeeder
+
+#Удалить и  Создать сотрудников
+ php artisan tinker --execute="App\Models\Employee\Employee::query()->forceDelete(); App\Models\Employee\Employee::factory()->count(100)->create();"
 
 #php artisan storage:link
 

@@ -8,7 +8,7 @@ window.CompanyTableConfig = {
     ajaxUrl: '/companies/ajax-data',
 
     // Определение колонок
-    getColumns: function() {
+    getColumns: function () {
         var R = window.CompanyRenderers;
 
         return [
@@ -46,6 +46,11 @@ window.CompanyTableConfig = {
                 render: R.propertiesCount
             },
             {
+                data: 'deals_count',
+                orderable: false,
+                render: R.dealsCount
+            },
+            {
                 data: 'actions',
                 orderable: false,
                 render: R.actions
@@ -71,7 +76,7 @@ window.CompanyTableConfig = {
     },
 
     // Базовые настройки DataTables
-    getBaseSettings: function() {
+    getBaseSettings: function () {
         return {
             processing: true,
             serverSide: true,

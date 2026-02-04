@@ -401,6 +401,7 @@ class CompanyController extends Controller
                 'offices_count' => $company->offices->count(),
                 'team_count' => 0,
                 'properties_count' => 0,
+                'deals_count' => 0,
                 'commission' => '-',
                 'is_active' => $company->is_active,
                 'actions' => $company->id,
