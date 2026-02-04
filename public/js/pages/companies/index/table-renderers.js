@@ -92,6 +92,13 @@ window.CompanyRenderers = {
             '</div>';
     },
 
+    // Количество сделок
+    dealsCount: function (data, type, row) {
+        return '<div class="tbody-wrapper deals">' +
+            '<p>' + (data || 0) + '</p>' +
+            '</div>';
+    },
+
     // Комиссия
     commission: function (data, type, row) {
         return '<div class="tbody-wrapper commission">' +
@@ -117,15 +124,15 @@ window.CompanyRenderers = {
             '</div>' +
             '</div>' +
             (row.website ? '<div class="menu-info">' +
-            '<div class="dropdown">' +
-            '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-            '<img src="/img/icon/copylinked.svg" alt="">' +
-            '</button>' +
-            '<ul class="dropdown-menu">' +
-            '<li><a class="dropdown-item" href="' + row.website + '" target="_blank"><span>Сайт компании</span></a></li>' +
-            '</ul>' +
-            '</div>' +
-            '</div>' : '') +
+                '<div class="dropdown">' +
+                '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                '<img src="/img/icon/copylinked.svg" alt="">' +
+                '</button>' +
+                '<ul class="dropdown-menu">' +
+                '<li><a class="dropdown-item" href="' + row.website + '" target="_blank"><span>Сайт компании</span></a></li>' +
+                '</ul>' +
+                '</div>' +
+                '</div>' : '') +
             '</div>' +
             '</div>';
     }

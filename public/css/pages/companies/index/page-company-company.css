@@ -2542,6 +2542,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 #companies-table tbody tr td .tbody-wrapper.offices,
 #companies-table tbody tr td .tbody-wrapper.team,
 #companies-table tbody tr td .tbody-wrapper.properties,
+#companies-table tbody tr td .tbody-wrapper.deals,
 #companies-table tbody tr td .tbody-wrapper.commission {
   text-align: center;
 }
