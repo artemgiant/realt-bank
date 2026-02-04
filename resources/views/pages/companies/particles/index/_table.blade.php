@@ -21,7 +21,7 @@
         </th>
         <th>
             <div class="thead-wrapper director">
-                <p>Директор</p>
+                <p>Контакт</p>
             </div>
         </th>
         <th>

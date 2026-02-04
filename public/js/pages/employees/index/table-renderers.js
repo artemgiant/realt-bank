@@ -20,7 +20,7 @@ window.EmployeeRenderers = {
      * Рендер фото сотрудника
      */
     photo: function(data, type, row) {
-        const photoUrl = row.photo_url || '/img/default-avatar.png';
+        const photoUrl = row.photo_url || '/img/default-avatar.jpeg';
         const photoWebp = row.photo_webp || photoUrl;
 
         return `
