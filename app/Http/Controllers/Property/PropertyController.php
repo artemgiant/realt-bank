@@ -227,6 +227,8 @@ class PropertyController extends Controller
                 'description' => $property->getTranslation(app()->getLocale())?->description ?? $property->translations->first()?->description ?? '-',
                 'agent_notes' => $property->agent_notes,
                 'features' => $property->features->pluck('name')->toArray(),
+                'youtube_url' => $property->youtube_url,
+                'tiktok_url' => $property->tiktok_url,
                 'created_at_formatted' => $property->created_at->format('d.m.Y'),
                 'updated_at_formatted' => $property->updated_at->format('d.m.Y'),
             ];
@@ -903,6 +905,7 @@ class PropertyController extends Controller
                 'wall_type_id' => $validated['wall_type_id'] ?? null,
                 'heating_type_id' => $validated['heating_type_id'] ?? null,
                 'source_id' => $validated['source_id'] ?? null,
+                'contact_type_id' => $validated['contact_type_id'] ?? null,
 
                 // Location
                 'country_id' => $validated['country_id'] ?? null,
@@ -1036,6 +1039,259 @@ class PropertyController extends Controller
     {
         $photoService = app(PhotoUploadService::class);
         $photoService->uploadPhotos($property, $files);
+    }
+
+    /**
+     * Show the form for editing the specified property.
+     */
+    public function edit(Property $property): View
+    {
+        $property->load([
+            'contacts.phones',
+            'translations',
+            'features',
+            'photos',
+            'documents',
+            'complex',
+            'block',
+            'country',
+            'state',
+            'city',
+            'district',
+            'zone',
+            'street',
+        ]);
+
+        return view('pages.properties.edit', [
+            'property' => $property,
+
+            // Валюты
+            'currencies' => Currency::active()->get(),
+
+            // Источники
+            'sources' => Source::active()->orderBy('name')->get(),
+
+            // Комплексы
+            'complexes' => Complex::active()->orderBy('name')->get(),
+
+            // Контакты (для модального окна)
+            'contacts' => Contact::with('phones')->orderBy('last_name')->orderBy('first_name')->limit(100)->get(),
+
+            // Страны
+            'countries' => Country::active()->orderBy('name')->get(),
+
+            // Справочники
+            'dealTypes' => Dictionary::getDealTypes(),
+            'dealKinds' => Dictionary::getDealKinds(),
+            'buildingTypes' => Dictionary::getBuildingTypes(),
+            'propertyTypes' => Dictionary::getPropertyTypes(),
+            'conditions' => Dictionary::getConditions(),
+            'wallTypes' => Dictionary::getWallTypes(),
+            'heatingTypes' => Dictionary::getHeatingTypes(),
+            'roomCounts' => Dictionary::getRoomCounts(),
+            'bathroomCounts' => Dictionary::getBathroomCounts(),
+            'ceilingHeights' => Dictionary::getCeilingHeights(),
+            'features' => Dictionary::getFeatures(),
+            'contactTypes' => Dictionary::getContactTypes(),
+
+            // Годы постройки
+            'yearsBuilt' => Dictionary::getYearsBuilt(),
+        ]);
+    }
+
+    /**
+     * Update the specified property in storage.
+     */
+    public function update(Request $request, Property $property): RedirectResponse
+    {
+        $validated = $request->validate([
+            // Required
+            'deal_type_id' => 'required|exists:dictionaries,id',
+            'currency_id' => 'required|exists:currencies,id',
+
+            // Dictionaries (optional)
+            'deal_kind_id' => 'nullable|exists:dictionaries,id',
+            'building_type_id' => 'nullable|exists:dictionaries,id',
+            'property_type_id' => 'nullable|exists:dictionaries,id',
+            'room_count_id' => 'nullable|exists:dictionaries,id',
+            'condition_id' => 'nullable|exists:dictionaries,id',
+            'bathroom_count_id' => 'nullable|exists:dictionaries,id',
+            'ceiling_height_id' => 'nullable|exists:dictionaries,id',
+            'wall_type_id' => 'nullable|exists:dictionaries,id',
+            'heating_type_id' => 'nullable|exists:dictionaries,id',
+            'source_id' => 'nullable|exists:sources,id',
+            'contact_type_id' => 'nullable|exists:dictionaries,id',
+
+            // Location
+            'country_id' => 'nullable|exists:countries,id',
+            'state_id' => 'nullable|exists:states,id',
+            'city_id' => 'nullable|exists:cities,id',
+            'district_id' => 'nullable|exists:districts,id',
+            'zone_id' => 'nullable|exists:zones,id',
+            'street_id' => 'nullable|exists:streets,id',
+            'building_number' => 'nullable|string|max:50',
+            'apartment_number' => 'nullable|string|max:50',
+
+            // Complex
+            'complex_id' => 'nullable|exists:complexes,id',
+            'block_id' => 'nullable|exists:blocks,id',
+
+            // Numbers
+            'area_total' => 'nullable|numeric|min:0',
+            'area_living' => 'nullable|numeric|min:0',
+            'area_kitchen' => 'nullable|numeric|min:0',
+            'area_land' => 'nullable|numeric|min:0',
+            'floor' => 'nullable|integer|min:0',
+            'floors_total' => 'nullable|integer|min:1',
+            'year_built' => 'nullable|exists:dictionaries,id',
+            'price' => 'nullable|numeric|min:0',
+            'commission' => 'nullable|string|max:100',
+
+            // Настройки
+            'is_advertised' => 'nullable|boolean',
+            'is_visible_to_agents' => 'nullable|boolean',
+
+            // Text
+            'youtube_url' => 'nullable|url|max:255',
+            'tiktok_url' => 'nullable|url|max:255',
+            'external_url' => 'nullable|url|max:255',
+            'title_ru' => 'nullable|string|max:255',
+            'agent_notes' => 'nullable|string|max:5000',
+            'description_ua' => 'nullable|string|max:10000',
+            'description_ru' => 'nullable|string|max:10000',
+            'description_en' => 'nullable|string|max:10000',
+
+            // Контакты
+            'contact_ids' => 'nullable|array',
+            'contact_ids.*' => 'exists:contacts,id',
+
+            // Документы
+            'documents' => 'nullable|array|max:10',
+            'documents.*' => 'file|max:5120',
+
+            // Фотографии
+            'photos' => 'nullable|array|max:20',
+            'photos.*' => 'file|mimes:jpeg,jpg,png,webp,heic,heif|max:10240',
+        ], [
+            'deal_type_id.required' => 'Выберите тип сделки',
+            'deal_type_id.exists' => 'Выбранный тип сделки не существует',
+            'currency_id.required' => 'Выберите валюту',
+            'currency_id.exists' => 'Выбранная валюта не существует',
+            'price.numeric' => 'Цена должна быть числом',
+            'price.min' => 'Цена не может быть отрицательной',
+            'area_total.numeric' => 'Площадь должна быть числом',
+            'year_built.exists' => 'Выбранный год постройки не существует',
+            'floors_total.integer' => 'Этажность должна быть целым числом',
+            'youtube_url.url' => 'Введите корректную ссылку на YouTube',
+            'contact_ids.array' => 'Неверный формат контактов',
+            'contact_ids.*.exists' => 'Выбранный контакт не существует',
+            'documents.array' => 'Неверный формат документов',
+            'documents.max' => 'Максимум 10 документов',
+            'documents.*.file' => 'Ошибка загрузки файла',
+            'documents.*.max' => 'Максимальный размер файла 5MB',
+            'photos.array' => 'Неверный формат фотографий',
+            'photos.max' => 'Максимум 20 фотографий',
+            'photos.*.file' => 'Ошибка загрузки фото',
+            'photos.*.mimes' => 'Разрешены только: JPEG, PNG, WebP, HEIC',
+            'photos.*.max' => 'Максимальный размер фото 10MB',
+        ]);
+
+
+        try {
+            DB::beginTransaction();
+
+            // Вычисляем цену за м²
+            $pricePerM2 = null;
+            if (!empty($validated['price']) && !empty($validated['area_total']) && $validated['area_total'] > 0) {
+                $pricePerM2 = $validated['price'] / $validated['area_total'];
+            }
+            // ========== Обновляем основную запись ==========
+            $property->update([
+                // Required
+                'deal_type_id' => $validated['deal_type_id'],
+                'currency_id' => $validated['currency_id'],
+
+                // Dictionaries
+                'deal_kind_id' => $validated['deal_kind_id'] ?? null,
+                'building_type_id' => $validated['building_type_id'] ?? null,
+                'property_type_id' => $validated['property_type_id'] ?? null,
+                'room_count_id' => $validated['room_count_id'] ?? null,
+                'condition_id' => $validated['condition_id'] ?? null,
+                'bathroom_count_id' => $validated['bathroom_count_id'] ?? null,
+                'ceiling_height_id' => $validated['ceiling_height_id'] ?? null,
+                'wall_type_id' => $validated['wall_type_id'] ?? null,
+                'heating_type_id' => $validated['heating_type_id'] ?? null,
+                'source_id' => $validated['source_id'] ?? null,
+                'contact_type_id' => $validated['contact_type_id'] ?? null,
+
+                // Location
+                'country_id' => $validated['country_id'] ?? null,
+                'state_id' => $validated['state_id'] ?? null,
+                'city_id' => $validated['city_id'] ?? null,
+                'district_id' => $validated['district_id'] ?? null,
+                'zone_id' => $validated['zone_id'] ?? null,
+                'street_id' => $validated['street_id'] ?? null,
+                'building_number' => $validated['building_number'] ?? null,
+                'apartment_number' => $validated['apartment_number'] ?? null,
+
+                // Complex
+                'complex_id' => $validated['complex_id'] ?? null,
+                'block_id' => $validated['block_id'] ?? null,
+
+                // Numbers
+                'area_total' => $validated['area_total'] ?? null,
+                'area_living' => $validated['area_living'] ?? null,
+                'area_kitchen' => $validated['area_kitchen'] ?? null,
+                'area_land' => $validated['area_land'] ?? null,
+                'floor' => $validated['floor'] ?? null,
+                'floors_total' => $validated['floors_total'] ?? null,
+                'year_built' => $validated['year_built'] ?? null,
+                'price' => $validated['price'] ?? null,
+                'price_per_m2' => $pricePerM2,
+                'commission' => $validated['commission'] ?? null,
+
+                // Text
+                'youtube_url' => $validated['youtube_url'] ?? null,
+                'tiktok_url' => $validated['tiktok_url'] ?? null,
+                'external_url' => $validated['external_url'] ?? null,
+                'agent_notes' => $validated['agent_notes'] ?? null,
+
+                'is_advertised' => !empty($validated['is_advertised']),
+                'is_visible_to_agents' => !empty($validated['is_visible_to_agents']),
+            ]);
+
+            // ========== Сохраняем переводы ==========
+            $this->saveTranslations($property, $validated);
+
+            // ========== Синхронизируем контакты ==========
+            $property->contacts()->sync($validated['contact_ids'] ?? []);
+
+            // ========== Синхронизируем особенности ==========
+            $property->features()->sync($request->input('features', []));
+
+            // ========== Сохраняем новые документы ==========
+            if ($request->hasFile('documents')) {
+                $this->saveDocuments($property, $request->file('documents'));
+            }
+
+            // ========== Сохраняем новые фотографии ==========
+            if ($request->hasFile('photos')) {
+                $photoService = app(PhotoUploadService::class);
+                $photoService->uploadPhotos($property, $request->file('photos'));
+            }
+
+            DB::commit();
+            return redirect()
+                ->route('properties.edit', $property)
+                ->with('success', 'Объект успешно обновлён!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()
+                ->withInput()
+                ->with('error', 'Ошибка при обновлении объекта: ' . $e->getMessage());
+        }
     }
 
 

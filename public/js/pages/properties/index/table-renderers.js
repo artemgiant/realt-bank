@@ -142,7 +142,7 @@ window.PropertyRenderers = {
             '                                 </button>\n' +
             '                                 <ul class="dropdown-menu" style="">\n' +
             '                                    <li><a class="dropdown-item" href="#">Обновить</a></li>\n' +
-            '                                    <li><a class="dropdown-item" href="#">Редактировать</a></li>\n' +
+            '                                    <li><a class="dropdown-item" href="/properties/' + row.id + '/edit">Редактировать</a></li>\n' +
             '                                    <li><a class="dropdown-item" href="#">Удалить</a></li>\n' +
             '                                    <li><a class="dropdown-item" href="#">Отложить</a></li>\n' +
             '                                    <li><a class="dropdown-item" href="#">Передати</a></li>\n' +
@@ -155,10 +155,8 @@ window.PropertyRenderers = {
             '                                     <img src="./img/icon/copylinked.svg" alt="">\n' +
             '                                 </button>\n' +
             '                                 <ul class="dropdown-menu">\n' +
-            '                                    <li><a class="dropdown-item" href="#"><span>На сайте</span></a></li>\n' +
-            '                                    <li><a class="dropdown-item" href="#"><span>На Rem.ua</span></a></li>\n' +
-            '                                    <li><a class="dropdown-item" href="#"><span>Видео Youtube</span></a></li>\n' +
-            '                                    <li><a class="dropdown-item" href="#"><span>На карте</span></a></li>\n' +
+            (row.youtube_url ? '                                    <li><a class="dropdown-item" href="' + row.youtube_url + '" target="_blank"><span>Видео Youtube</span></a></li>\n' : '') +
+            (row.tiktok_url ? '                                    <li><a class="dropdown-item" href="' + row.tiktok_url + '" target="_blank"><span>Видео TikTok</span></a></li>\n' : '') +
             '                                 </ul>\n' +
             '                              </div>\n' +
             '                           </div>\n' +

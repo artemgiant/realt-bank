@@ -31,6 +31,7 @@ class Property extends Model
         // Связи
         'user_id',
         'source_id',
+        'contact_type_id',
         'currency_id',
         'is_advertised',
 

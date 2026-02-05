@@ -64,9 +64,11 @@
                 }
             });
 
-            // Форматируем существующее значение
+            // Форматируем существующее значение (отбрасываем десятичную часть)
             if (input.value) {
-                input.value = formatNumber(input.value.replace(/[^\d]/g, ''));
+                var clean = input.value.replace(/\s/g, '');
+                var intPart = clean.split('.')[0].split(',')[0];
+                input.value = formatNumber(intPart.replace(/[^\d]/g, ''));
             }
         }
 
@@ -137,9 +139,11 @@
                 }
             });
 
-            // Форматируем существующее значение
+            // Форматируем существующее значение (отбрасываем .00 от decimal cast)
             if (input.value) {
-                input.value = formatNumber(input.value.replace(/[^\d]/g, ''));
+                var clean = input.value.replace(/\s/g, '');
+                var intPart = clean.split('.')[0].split(',')[0];
+                input.value = formatNumber(intPart.replace(/[^\d]/g, ''));
             }
         }
 

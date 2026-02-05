@@ -21,7 +21,7 @@ class StorePropertyRequest extends FormRequest
     {
         return [
             // ========== Основні зв'язки ==========
-            'contact_id' => ['nullable', 'exists:contacts,id'],
+            'contact_id' => ['required', 'exists:contacts,id'],
             'source_id' => ['nullable', 'exists:sources,id'],
             'currency_id' => ['required', 'exists:currencies,id'],
 
