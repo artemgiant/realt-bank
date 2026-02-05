@@ -86,8 +86,24 @@ class EmployeeController extends Controller
         $start = $request->input('start', 0);
         $length = $request->input('length', 10);
 
+        // Сортировка
+        $sortColumn = $request->input('sort_column', 'created_at');
+        $sortDirection = $request->input('sort_direction', 'desc');
+
+        // Маппинг колонок сортировки
+        $sortableColumns = [
+            'created_at' => 'created_at',
+            'objects_count' => 'objects_count',      // TODO: когда будет связь с объектами
+            'deals_count' => 'deals_count',          // TODO: когда будет связь со сделками
+            'last_activity' => 'last_activity_at',   // TODO: когда будет поле последней активности
+            'active_until' => 'active_until',
+        ];
+
+        $orderBy = $sortableColumns[$sortColumn] ?? 'created_at';
+        $orderDirection = in_array($sortDirection, ['asc', 'desc']) ? $sortDirection : 'desc';
+
         $employees = $query
-            ->orderBy('created_at', 'desc')
+            ->orderBy($orderBy, $orderDirection)
             ->skip($start)
             ->take($length)
             ->get();

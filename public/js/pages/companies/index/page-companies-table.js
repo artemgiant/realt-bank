@@ -352,34 +352,34 @@ $(document).ready(function () {
             officesRows = '<tr><td colspan="6"><p style="text-align: center; padding: 20px;">Офисы не найдены</p></td></tr>';
         }
 
-        var dopInfoRow = '<div class="table-for-others-info">' +
-            '<p class="paragraph">Офисы</p>' +
-            '<div>' +
-                '<div class="thead-wrapper command">' +
-                    '<p>' +
-                        '<img src="./img/icon/icon-table/people-fill.svg" alt="">' +
-                        '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Команда">' +
-                            '<img src="./img/icon/icon-info.svg" alt="">' +
-                        '</span>' +
-                    '</p>' +
-                '</div>' +
-            '</div>' +
-            '<div>' +
-                '<div class="thead-wrapper object">' +
-                    '<p>' +
-                        '<img src="./img/icon/icon-table/house-fill.svg" alt="">' +
-                        '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Объекты">' +
-                            '<img src="./img/icon/icon-info.svg" alt="">' +
-                        '</span>' +
-                    '</p>' +
-                '</div>' +
-            '</div>' +
-            '<div class="wrapper-btn-collapse">' +
-                '<button class="info-footer-btn btn-collapse" type="button">Свернуть</button>' +
-            '</div>' +
-        '</div>' +
-        '<div class="table-for-others">' +
+        var dopInfoRow = '<div class="table-for-others">' +
             '<table id="example2" style="width:98%; margin: auto;">' +
+                '<thead>' +
+                    '<tr>' +
+                        '<th></th>' +
+                        '<th class="offices-header-title">Офисы</th>' +
+                        '<th></th>' +
+                        '<th class="offices-header-icon">' +
+                            '<p>' +
+                                '<img src="./img/icon/icon-table/people-fill.svg" alt="">' +
+                                '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Команда">' +
+                                    '<img src="./img/icon/icon-info.svg" alt="">' +
+                                '</span>' +
+                            '</p>' +
+                        '</th>' +
+                        '<th class="offices-header-icon">' +
+                            '<p>' +
+                                '<img src="./img/icon/icon-table/house-fill.svg" alt="">' +
+                                '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Объекты">' +
+                                    '<img src="./img/icon/icon-info.svg" alt="">' +
+                                '</span>' +
+                            '</p>' +
+                        '</th>' +
+                        '<th class="offices-header-collapse">' +
+                            '<button class="info-footer-btn btn-collapse" type="button">Свернуть</button>' +
+                        '</th>' +
+                    '</tr>' +
+                '</thead>' +
                 '<tbody>' + officesRows + '</tbody>' +
             '</table>' +
         '</div>';

@@ -1512,6 +1512,51 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   color: #111;
 }
 
+#companies-table tbody tr.dop-info-row td .table-for-others thead tr th {
+  padding: 14px 10px;
+  background-color: transparent;
+  border-bottom: none;
+  vertical-align: middle;
+}
+
+#companies-table tbody tr.dop-info-row td .table-for-others thead tr th.offices-header-title {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: normal;
+  color: #111;
+}
+
+#companies-table tbody tr.dop-info-row td .table-for-others thead tr th.offices-header-icon {
+  text-align: center;
+}
+
+#companies-table tbody tr.dop-info-row td .table-for-others thead tr th.offices-header-icon p {
+  display: inline-block;
+  position: relative;
+  margin-bottom: 0;
+}
+
+#companies-table tbody tr.dop-info-row td .table-for-others thead tr th.offices-header-icon span {
+  position: absolute;
+  right: -20px;
+  top: -5px;
+}
+
+#companies-table tbody tr.dop-info-row td .table-for-others thead tr th.offices-header-collapse {
+  text-align: right;
+}
+
+#companies-table tbody tr.dop-info-row td .table-for-others thead tr th.offices-header-collapse .info-footer-btn.btn-collapse {
+  border: none;
+  border-bottom: 1px dashed #3585f5;
+  background-color: transparent;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: normal;
+  color: #3585f5;
+  padding: 0;
+}
+
 #companies-table tbody tr.dop-info-row td .table-for-others-info {
   display: -webkit-box;
   display: -ms-flexbox;
