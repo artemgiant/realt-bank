@@ -48,7 +48,7 @@ class StorePropertyRequest extends FormRequest
             'building_type_id' => ['nullable', 'exists:dictionaries,id'],
             'property_type_id' => ['nullable', 'exists:dictionaries,id'],
             'condition_id' => ['nullable', 'exists:dictionaries,id'],
-            'wall_type_id' => ['nullable', 'exists:dictionaries,id'],
+            'wall_type_id' => ['required', 'exists:dictionaries,id'],
             'heating_type_id' => ['nullable', 'exists:dictionaries,id'],
             'room_count_id' => ['nullable', 'exists:dictionaries,id'],
             'bathroom_count_id' => ['nullable', 'exists:dictionaries,id'],

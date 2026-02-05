@@ -260,15 +260,18 @@
 
                         {{-- Тип стен --}}
                         <div class="item selects ">
-                            <label class="item-label" for="wall_type_id">Тип стен</label>
-                            <select id="wall_type_id" name="wall_type_id" class="js-example-responsive3 my-select2">
-                                <option value=""></option>
+                            <label class="item-label" for="wall_type_id">Тип стен <span class="text-danger">*</span></label>
+                            <select id="wall_type_id" name="wall_type_id" class="js-example-responsive3 my-select2" required>
+                                <option value="">Выберите тип стен</option>
                                 @foreach($wallTypes as $wallType)
                                     <option value="{{ $wallType->id }}" {{ old('wall_type_id') == $wallType->id ? 'selected' : '' }}>
                                         {{ $wallType->name }}
                                     </option>
                                 @endforeach
                             </select>
+                            @error('wall_type_id')
+                            <span class="text-danger small">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         {{-- Отопление --}}
