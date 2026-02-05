@@ -164,7 +164,6 @@ window.EmployeeFilters = {
         if (typeof moment !== 'undefined' && $.fn.daterangepicker) {
             $('#datapiker').daterangepicker({
                 autoUpdateInput: false,
-                showDropdowns: true,
                 alwaysShowCalendars: true,
                 ranges: {
                     'Сегодня': [moment(), moment()],

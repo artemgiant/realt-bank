@@ -381,36 +381,6 @@ table.dataTable.display > tbody > tr:nth-child(odd) > * {
           box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0);
 }
 
-.daterangepicker {
-  width: auto !important;
-}
-
-@media (min-width: 564px) {
-  .daterangepicker .drp-calendar.left {
-    clear: none !important;
-  }
-}
-
-.daterangepicker .drp-buttons .btn.btn-primary {
-  --bs-btn-bg: #3585f5;
-  --bs-btn-border-color: #3585f5;
-  --bs-btn-hover-bg: #3585f5;
-  --bs-btn-hover-border-color: #3585f5;
-  --bs-btn-active-bg: #3585f5;
-  --bs-btn-active-border-color: #3585f5;
-  --bs-btn-disabled-bg: #3585f5;
-  --bs-btn-disabled-border-color: #3585f5;
-}
-
-.daterangepicker td.in-range {
-  background-color: #e6f1ff;
-}
-
-.daterangepicker td.active,
-.daterangepicker td.active:hover {
-  background-color: #3585f5;
-}
-
 div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   position: absolute;
   bottom: 8px;

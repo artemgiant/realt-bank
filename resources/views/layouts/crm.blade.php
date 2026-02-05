@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="{{ asset('css/lib/bootstrap.v5.3.3.min.css') }}">
     <link href="https://cdn.datatables.net/v/dt/dt-2.2.2/datatables.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/lib/data-range-picker.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/lib/daterangepicker-custom.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lib/fancybox.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/css/intlTelInput.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">

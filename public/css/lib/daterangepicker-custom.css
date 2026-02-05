@@ -1,0 +1,187 @@
+/**
+ * Кастомные стили для DateRangePicker
+ * Цветовая схема системы: #04254e -> #3585f5
+ */
+
+/* Основной контейнер */
+.daterangepicker {
+    font-family: inherit;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e0e0e0;
+}
+
+/* Горизонтальное расположение календарей */
+@media (min-width: 564px) {
+    .daterangepicker .drp-calendar.left {
+        clear: none !important;
+    }
+}
+
+/* Панель быстрого выбора (ranges) */
+.daterangepicker .ranges ul {
+    padding: 10px 0;
+    width: auto;
+    min-width: 160px;
+}
+
+.daterangepicker .ranges li {
+    padding: 8px 16px;
+    margin: 2px 8px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.daterangepicker .ranges li:hover {
+    background-color: #e6f1ff;
+    color: #3585f5;
+}
+
+.daterangepicker .ranges li.active {
+    background: linear-gradient(135deg, #04254e, #3585f5);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(4, 37, 78, 0.3);
+}
+
+/* Заголовок месяца/года */
+.daterangepicker .drp-calendar .calendar-table .month {
+    padding: 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Стрелки навигации */
+.daterangepicker .drp-calendar .calendar-table th.prev,
+.daterangepicker .drp-calendar .calendar-table th.next {
+    color: #3585f5;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.daterangepicker .drp-calendar .calendar-table th.prev:hover,
+.daterangepicker .drp-calendar .calendar-table th.next:hover {
+    background-color: #e6f1ff;
+}
+
+/* Дни недели */
+.daterangepicker .drp-calendar .calendar-table th {
+    font-weight: 600;
+    color: #666;
+    font-size: 12px;
+}
+
+/* Ячейки дат */
+.daterangepicker .drp-calendar .calendar-table td {
+    border-radius: 4px;
+    font-size: 13px;
+    transition: all 0.15s ease;
+}
+
+.daterangepicker .drp-calendar .calendar-table td:hover {
+    background-color: #e6f1ff;
+}
+
+.daterangepicker .drp-calendar .calendar-table td.available:hover {
+    background-color: #e6f1ff;
+    color: #3585f5;
+}
+
+/* Выбранный диапазон */
+.daterangepicker td.in-range {
+    background-color: #e6f1ff;
+    color: #3585f5;
+}
+
+/* Активная (выбранная) дата */
+.daterangepicker td.active,
+.daterangepicker td.active:hover {
+    background: linear-gradient(135deg, #04254e, #3585f5);
+    color: #fff;
+}
+
+/* Начало и конец диапазона */
+.daterangepicker td.start-date {
+    border-radius: 4px 0 0 4px;
+}
+
+.daterangepicker td.end-date {
+    border-radius: 0 4px 4px 0;
+}
+
+.daterangepicker td.start-date.end-date {
+    border-radius: 4px;
+}
+
+/* Неактивные даты (другой месяц) */
+.daterangepicker td.off,
+.daterangepicker td.off.in-range,
+.daterangepicker td.off.start-date,
+.daterangepicker td.off.end-date {
+    color: #ccc;
+    background-color: transparent;
+    background: transparent;
+}
+
+/* Сегодняшняя дата */
+.daterangepicker td.today {
+    font-weight: 700;
+}
+
+/* Панель кнопок */
+.daterangepicker .drp-buttons {
+    border-top: 1px solid #e0e0e0;
+    padding: 10px 15px;
+}
+
+/* Текст выбранного диапазона */
+.daterangepicker .drp-selected {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Кнопка Применить */
+.daterangepicker .drp-buttons .btn.btn-primary,
+.daterangepicker .drp-buttons .applyBtn {
+    background: linear-gradient(135deg, #04254e, #3585f5) !important;
+    border: none !important;
+    color: #fff !important;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(4, 37, 78, 0.3);
+    transition: all 0.2s ease;
+}
+
+.daterangepicker .drp-buttons .btn.btn-primary:hover,
+.daterangepicker .drp-buttons .applyBtn:hover {
+    background: linear-gradient(135deg, #03203f, #2a6fdc) !important;
+    box-shadow: 0 4px 12px rgba(4, 37, 78, 0.4);
+}
+
+.daterangepicker .drp-buttons .btn.btn-primary:active,
+.daterangepicker .drp-buttons .applyBtn:active {
+    background: linear-gradient(135deg, #021a33, #1f5bb8) !important;
+}
+
+/* Кнопка Отмена */
+.daterangepicker .drp-buttons .cancelBtn {
+    color: #666;
+    background-color: transparent;
+    border: 1px solid #ddd;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.daterangepicker .drp-buttons .cancelBtn:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+    color: #333;
+}
