@@ -385,14 +385,10 @@ table.dataTable.display > tbody > tr:nth-child(odd) > * {
   width: auto !important;
 }
 
-.daterangepicker .drp-calendars {
-  display: flex;
-  flex-direction: row;
-}
-
-.daterangepicker .drp-calendar {
-  float: none !important;
-  clear: none !important;
+@media (min-width: 564px) {
+  .daterangepicker .drp-calendar.left {
+    clear: none !important;
+  }
 }
 
 .daterangepicker .drp-buttons .btn.btn-primary {
@@ -901,7 +897,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 }
 
 .filter-header > .data {
-  min-width: 200px;
+  min-width: 230px;
 }
 
 .container-fluid {

@@ -163,8 +163,16 @@ window.EmployeeFilters = {
     initDatePicker: function () {
         if (typeof moment !== 'undefined' && $.fn.daterangepicker) {
             $('#datapiker').daterangepicker({
-                singleDatePicker: true,
                 autoUpdateInput: false,
+                showDropdowns: true,
+                alwaysShowCalendars: true,
+                ranges: {
+                    'Сегодня': [moment(), moment()],
+                    'Вчера': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Последние 7 дней': [moment().subtract(6, 'days'), moment()],
+                    'Последние 30 дней': [moment().subtract(29, 'days'), moment()],
+                    'Этот месяц': [moment().startOf('month'), moment().endOf('month')]
+                },
                 locale: {
                     format: 'DD.MM.YYYY',
                     separator: ' - ',
@@ -182,7 +190,11 @@ window.EmployeeFilters = {
             });
 
             $('#datapiker').on('apply.daterangepicker', function (ev, picker) {
-                $(this).val(picker.startDate.format('DD.MM.YYYY'));
+                if (picker.startDate.isSame(picker.endDate, 'day')) {
+                    $(this).val(picker.startDate.format('DD.MM.YYYY'));
+                } else {
+                    $(this).val(picker.startDate.format('DD.MM.YYYY') + ' - ' + picker.endDate.format('DD.MM.YYYY'));
+                }
                 // Триггер для обновления таблицы
                 $(this).trigger('filter:change');
             });
