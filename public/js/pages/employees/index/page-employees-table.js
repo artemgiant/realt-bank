@@ -155,7 +155,7 @@
         });
 
         // Сортировка по клику на пункт меню
-        $(document).on('click', '.sort-item', function (e) {
+        $(document).on('click', '.sort-item:not(.disabled)', function (e) {
             e.preventDefault();
             const $item = $(this);
             const sortColumn = $item.data('sort');
