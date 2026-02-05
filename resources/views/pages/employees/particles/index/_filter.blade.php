@@ -80,7 +80,7 @@
         {{-- Date picker --}}
         <div class="data">
             <span>
-                <input class="item-inputText date-piker" type="text" id="datapiker" autocomplete="off">
+                <input class="item-inputText date-piker" type="text" id="datapiker" autocomplete="off" placeholder="Выберите дату">
                 <picture>
                     <source srcset="{{ asset('img/icon/calendar.svg') }}" type="image/webp">
                     <img src="{{ asset('img/icon/calendar.svg') }}" alt="">
