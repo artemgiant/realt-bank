@@ -167,12 +167,12 @@
                                 <img src="{{ asset('img/icon/sorting.svg') }}" alt="">
                             </picture>
                         </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Дата добавления</a></li>
-                            <li><a class="dropdown-item" href="#">Количество объектов </a></li>
-                            <li><a class="dropdown-item" href="#">Количество сделок</a></li>
-                            <li><a class="dropdown-item" href="#">По времени последней активности</a></li>
-                            <li><a class="dropdown-item" href="#">Оплачено до</a></li>
+                        <ul class="dropdown-menu dropdown-menu-sorting">
+                            <li><a class="dropdown-item sort-item active" href="#" data-sort="created_at" data-direction="desc">Дата добавления</a></li>
+                            <li><a class="dropdown-item sort-item" href="#" data-sort="objects_count" data-direction="desc">Количество объектов</a></li>
+                            <li><a class="dropdown-item sort-item" href="#" data-sort="deals_count" data-direction="desc">Количество сделок</a></li>
+                            <li><a class="dropdown-item sort-item" href="#" data-sort="last_activity" data-direction="desc">По времени последней активности</a></li>
+                            <li><a class="dropdown-item sort-item" href="#" data-sort="active_until" data-direction="asc">Оплачено до</a></li>
                         </ul>
                     </div>
                 </div>

@@ -4094,3 +4094,37 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
     max-width: 100%;
   }
 }
+
+/* Стили для сортировки */
+.dropdown-menu-sorting .sort-item {
+  position: relative;
+  padding-left: 28px;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-menu-sorting .sort-item::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-menu-sorting .sort-item.active {
+  background-color: rgba(53, 133, 245, 0.1);
+  color: #3585f5;
+  font-weight: 500;
+}
+
+.dropdown-menu-sorting .sort-item.active::before {
+  background-color: #3585f5;
+}
+
+.dropdown-menu-sorting .sort-item:hover {
+  background-color: rgba(53, 133, 245, 0.15);
+}

@@ -146,6 +146,30 @@
         // Сброс фильтров
         $('#full-filter-btn').on('click', function () {
             filters.reset();
+            // Сбросить активный пункт сортировки на "Дата добавления"
+            $('.sort-item').removeClass('active');
+            $('.sort-item[data-sort="created_at"]').addClass('active');
+            if (employeesTable) {
+                employeesTable.ajax.reload();
+            }
+        });
+
+        // Сортировка по клику на пункт меню
+        $(document).on('click', '.sort-item', function (e) {
+            e.preventDefault();
+            const $item = $(this);
+            const sortColumn = $item.data('sort');
+            const sortDirection = $item.data('direction');
+
+            // Убрать активный класс со всех пунктов
+            $('.sort-item').removeClass('active');
+            // Добавить активный класс текущему пункту
+            $item.addClass('active');
+
+            // Установить сортировку в фильтрах
+            filters.setSort(sortColumn, sortDirection);
+
+            // Перезагрузить таблицу
             if (employeesTable) {
                 employeesTable.ajax.reload();
             }
@@ -191,23 +215,114 @@
 
         // Изменение должности в таблице
         $(document).on('change', '.position-select', function () {
-            const employeeId = $(this).data('employee-id');
-            const positionId = $(this).val();
+            const $select = $(this);
+            const employeeId = $select.data('employee-id');
+            const positionId = $select.val();
+            const previousValue = $select.data('previous-value') || '';
 
-            $.ajax({
-                url: `/employees/${employeeId}/position`,
-                type: 'PATCH',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: { position_id: positionId },
-                success: function (response) {
-                    console.log('Position updated');
-                },
-                error: function (xhr) {
-                    console.error('Position update error:', xhr);
+            // Если уже есть кнопки подтверждения, удалить их
+            $select.closest('.tbody-wrapper').find('.position-confirm-buttons').remove();
+
+            // Сохранить предыдущее значение если его еще нет
+            if (!$select.data('previous-value')) {
+                $select.data('previous-value', previousValue);
+            }
+
+            // Создать кнопки подтверждения
+            const $confirmButtons = $(`
+                <div class="position-confirm-buttons">
+                    <button type="button" class="btn-position-confirm" title="Подтвердить">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" fill="#28a745"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="btn-position-cancel" title="Отменить">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" fill="#dc3545"/>
+                        </svg>
+                    </button>
+                </div>
+            `);
+
+            // Вставить кнопки после Select2 контейнера
+            const $select2Container = $select.next('.select2-container');
+            if ($select2Container.length) {
+                $select2Container.css('max-width', 'calc(100% - 70px)');
+                $select2Container.after($confirmButtons);
+            } else {
+                $select.css('max-width', 'calc(100% - 70px)');
+                $select.after($confirmButtons);
+            }
+
+            // Обработчик подтверждения
+            $confirmButtons.find('.btn-position-confirm').on('click', function () {
+                $.ajax({
+                    url: `/employees/${employeeId}/position`,
+                    type: 'PATCH',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: { position_id: positionId },
+                    success: function (response) {
+                        console.log('Position updated');
+                        $select.data('previous-value', positionId);
+
+                        $confirmButtons.remove();
+
+                        const $select2Container = $select.next('.select2-container');
+                        if ($select2Container.length) {
+                            $select2Container.css('max-width', '');
+                        } else {
+                            $select.css('max-width', '');
+                        }
+
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success('Должность обновлена');
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error('Position update error:', xhr);
+                        $select.val(previousValue).trigger('change.select2');
+
+                        $confirmButtons.remove();
+
+                        const $select2Container = $select.next('.select2-container');
+                        if ($select2Container.length) {
+                            $select2Container.css('max-width', '');
+                        } else {
+                            $select.css('max-width', '');
+                        }
+
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error('Ошибка при обновлении должности');
+                        } else {
+                            alert('Ошибка при обновлении должности');
+                        }
+                    }
+                });
+            });
+
+            // Обработчик отмены
+            $confirmButtons.find('.btn-position-cancel').on('click', function () {
+                $select.val(previousValue).trigger('change.select2');
+
+                $confirmButtons.remove();
+
+                const $select2Container = $select.next('.select2-container');
+                if ($select2Container.length) {
+                    $select2Container.css('max-width', '');
+                } else {
+                    $select.css('max-width', '');
                 }
             });
+        });
+
+        // Сохранить начальное значение при инициализации селекта должности
+        $(document).on('select2:open', '.position-select', function () {
+            const $select = $(this);
+            if (!$select.data('previous-value')) {
+                $select.data('previous-value', $select.val());
+            }
         });
 
         // Изменение офиса в таблице
@@ -366,20 +481,21 @@
     }
 
     /**
-     * Добавить стили для кнопок подтверждения офиса
+     * Добавить стили для кнопок подтверждения офиса и должности
      */
     function addConfirmButtonStyles() {
-        if ($('#office-confirm-buttons-styles').length === 0) {
+        if ($('#confirm-buttons-styles').length === 0) {
             const styles = `
-                <style id="office-confirm-buttons-styles">
-                    .office-confirm-buttons {
+                <style id="confirm-buttons-styles">
+                    .office-confirm-buttons,
+                    .position-confirm-buttons {
                         display: inline-flex;
                         gap: 8px;
                         margin-left: 8px;
                         vertical-align: middle;
                         animation: fadeIn 0.2s ease-in;
                     }
-                    
+
                     @keyframes fadeIn {
                         from {
                             opacity: 0;
@@ -390,9 +506,11 @@
                             transform: scale(1);
                         }
                     }
-                    
+
                     .btn-office-confirm,
-                    .btn-office-cancel {
+                    .btn-office-cancel,
+                    .btn-position-confirm,
+                    .btn-position-cancel {
                         display: inline-flex;
                         align-items: center;
                         justify-content: center;
@@ -405,29 +523,35 @@
                         cursor: pointer;
                         transition: all 0.2s ease;
                     }
-                    
-                    .btn-office-confirm:hover {
+
+                    .btn-office-confirm:hover,
+                    .btn-position-confirm:hover {
                         background: #28a745;
                         border-color: #28a745;
                         transform: scale(1.1);
                     }
-                    
-                    .btn-office-confirm:hover svg path {
+
+                    .btn-office-confirm:hover svg path,
+                    .btn-position-confirm:hover svg path {
                         fill: white;
                     }
-                    
-                    .btn-office-cancel:hover {
+
+                    .btn-office-cancel:hover,
+                    .btn-position-cancel:hover {
                         background: #dc3545;
                         border-color: #dc3545;
                         transform: scale(1.1);
                     }
-                    
-                    .btn-office-cancel:hover svg path {
+
+                    .btn-office-cancel:hover svg path,
+                    .btn-position-cancel:hover svg path {
                         fill: white;
                     }
-                    
+
                     .btn-office-confirm:active,
-                    .btn-office-cancel:active {
+                    .btn-office-cancel:active,
+                    .btn-position-confirm:active,
+                    .btn-position-cancel:active {
                         transform: scale(0.95);
                     }
                 </style>
