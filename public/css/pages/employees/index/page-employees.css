@@ -4125,6 +4125,23 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   background-color: #3585f5;
 }
 
-.dropdown-menu-sorting .sort-item:hover {
+.dropdown-menu-sorting .sort-item:hover:not(.disabled) {
   background-color: rgba(53, 133, 245, 0.15);
+}
+
+.dropdown-menu-sorting .sort-item.disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.dropdown-menu-sorting .sort-item.disabled:hover {
+  background-color: transparent;
+}
+
+.dropdown-menu-sorting .sort-soon {
+  font-size: 11px;
+  color: #9ca3af;
+  font-style: italic;
+  margin-left: 4px;
 }
