@@ -706,12 +706,42 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   display: flex;
 }
 
+#example tbody tr td .tbody-wrapper.photo {
+  position: relative;
+}
+
 #example tbody tr td .tbody-wrapper.photo>picture img {
   width: 60px;
   height: 40px;
   border-radius: 8px;
   -o-object-fit: cover;
   object-fit: cover;
+}
+
+#example tbody tr td .tbody-wrapper.photo .photo-hover-preview {
+  display: none;
+  position: absolute;
+  left: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  padding: 4px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+
+#example tbody tr td .tbody-wrapper.photo .photo-hover-preview img {
+  display: block;
+  width: 280px;
+  height: auto;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+#example tbody tr td .tbody-wrapper.photo:hover .photo-hover-preview {
+  display: block;
 }
 
 #example tbody tr td .tbody-wrapper.price p {

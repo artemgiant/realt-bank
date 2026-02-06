@@ -98,6 +98,9 @@ window.PropertyRenderers = {
             '<img src="' + data.main + '" alt="" class="table-photo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">' +
             '</a>';
 
+        // Превью при наведении
+        html += '<div class="photo-hover-preview"><img src="' + data.main + '" alt=""></div>';
+
         // Остальные фото — скрытые ссылки для галереи
         if (data.all && data.all.length > 1) {
             for (var i = 0; i < data.all.length; i++) {
