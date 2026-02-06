@@ -581,6 +581,9 @@
 
 
 
+    {{-- SortableJS для перемещения фотографий --}}
+    <script src="{{ asset('js/lib/sortable.min.js') }}"></script>
+
     {{-- Основной скрипт страницы --}}
     <script src="{{ asset('js/pages/properties/create/page-create.js') }}" type="module"></script>
 

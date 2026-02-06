@@ -426,24 +426,55 @@ class PhotoLoader {
 	initSortable () {
 		if ( !this.renderContainer || typeof Sortable === 'undefined') return;
 
-		new Sortable(this.renderContainer, {
-			animation: 150, // тривалість анімації
-			ghostClass: 'sortable-ghost', // клас для "привида" елемента, який переміщається
-			chosenClass: 'sortable-chosen', // клас для виділеного елемента
-			dragClass: 'sortable-drag', // клас під час перетягування
-			handle: '.btn-move', // елемент, за який можна тягнути
-			onEnd: (evt) => this.handleSortEnd(evt) // обробник завершення перетягування
+		// Знищуємо попередній екземпляр Sortable
+		if (this.sortableInstance) {
+			this.sortableInstance.destroy();
+			this.sortableInstance = null;
+		}
+
+		this.sortableInstance = new Sortable(this.renderContainer, {
+			animation: 150,
+			ghostClass: 'sortable-ghost',
+			chosenClass: 'sortable-chosen',
+			dragClass: 'sortable-drag',
+			handle: '.btn-move',
+			filter: '.photo-info-btn-wrapper',
+			onEnd: (evt) => this.handleSortEnd(evt)
 		});
 	}
 
 	handleSortEnd (evt) {
+		if (evt.oldIndex === evt.newIndex) return;
+
 		// Оновлюємо масив photoArray відповідно до нового порядку
 		const movedItem = this.photoArray[evt.oldIndex];
 		this.photoArray.splice(evt.oldIndex, 1);
 		this.photoArray.splice(evt.newIndex, 0, movedItem);
 
-		// Оновлюємо відображення (необов'язково, якщо Sortable вже оновив DOM)
-		this.render();
+		// Синхронізуємо validPhotos з photoArray
+		this.validPhotos = [...this.photoArray];
+
+		// Оновлюємо бейдж головного фото
+		this.updateMainPhotoBadge();
+	}
+
+	updateMainPhotoBadge () {
+		if ( !this.renderContainer) return;
+
+		const allItems = this.renderContainer.querySelectorAll('.photo-info-item');
+		allItems.forEach((item, index) => {
+			let badge = item.querySelector('.main-photo-badge');
+			if (index === 0) {
+				if ( !badge) {
+					badge = document.createElement('div');
+					badge.className = 'main-photo-badge';
+					badge.textContent = 'Главное фото';
+					item.insertBefore(badge, item.firstChild);
+				}
+			} else {
+				if (badge) badge.remove();
+			}
+		});
 	}
 
 	hideLoader () {
@@ -694,9 +725,9 @@ class PhotoLoader {
 		const uploadButton = this.renderContainer.querySelector('.photo-info-btn-wrapper');
 		const fragment = document.createDocumentFragment();
 
-		this.photoArray.forEach(item => {
+		this.photoArray.forEach((item, index) => {
 			item.objectUrl = URL.createObjectURL(item.file);
-			const photoItem = this.createPhotoElement(item);
+			const photoItem = this.createPhotoElement(item, index);
 			fragment.appendChild(photoItem);
 		});
 
@@ -733,14 +764,17 @@ class PhotoLoader {
 		return spinnerDiv;
 	}
 
-	createPhotoElement (item) {
+	createPhotoElement (item, index = 0) {
 		const photoItem = document.createElement('li');
 		photoItem.classList.add('photo-info-item');
 		photoItem.setAttribute('data-photo-id', item.id);
 
 		const spinner = this.createSpinnerElement();
 
+		const mainBadge = index === 0 ? '<div class="main-photo-badge">Главное фото</div>' : '';
+
 		photoItem.innerHTML = `
+            ${mainBadge}
             <label>
                 <input type="checkbox" ${item.isCheked ? 'checked' : ''}
                        data-cheked-photo-id="${item.id}">
@@ -836,13 +870,6 @@ class PhotoLoader {
 				const btn = e.target.closest('.btn-delete');
 				const photoId = btn.dataset.deleteId;
 				this.deletePhoto(photoId);
-				e.preventDefault();
-			}
-
-			if (e.target.closest('.btn-move')) {
-				const btn = e.target.closest('.btn-move');
-				const photoId = btn.dataset.moveId;
-				this.movePhoto(photoId);
 				e.preventDefault();
 			}
 
@@ -1199,10 +1226,6 @@ class PhotoLoader {
 		this.photoArray.splice(photoIndex, 1);
 		this.validPhotos = this.validPhotos.filter(photo => photo.id !== photoId);
 		photoElement.remove();
-	}
-
-	movePhoto (photoId) {
-		console.log(`Переместить фото с идентификатором: ${photoId}`);
 	}
 
 	initFancybox () {
