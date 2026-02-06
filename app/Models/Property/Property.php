@@ -87,6 +87,7 @@ class Property extends Model
         // Настройки
         'is_visible_to_agents',
         'notes',
+        'personal_notes',
         'agent_notes',
         'status',
     ];

@@ -226,6 +226,7 @@ class PropertyController extends Controller
                 'title' => $property->getTranslation(app()->getLocale())?->title ?? $property->translations->first()?->title ?? '-',
                 'description' => $property->getTranslation('ru')?->description ?? $property->translations->first()?->description ?? '-',
                 'agent_notes' => $property->agent_notes,
+                'personal_notes' => $property->personal_notes,
                 'features' => $property->features->pluck('name')->toArray(),
                 'youtube_url' => $property->youtube_url,
                 'tiktok_url' => $property->tiktok_url,
@@ -838,6 +839,7 @@ class PropertyController extends Controller
             // Text
             'youtube_url' => 'nullable|url|max:255',
             'title_ru' => 'nullable|string|max:255',
+            'personal_notes' => 'nullable|string|max:5000',
             'agent_notes' => 'nullable|string|max:5000',
             'description_ua' => 'nullable|string|max:10000',
             'description_ru' => 'nullable|string|max:10000',
@@ -940,6 +942,7 @@ class PropertyController extends Controller
 
                 // Text
                 'youtube_url' => $validated['youtube_url'] ?? null,
+                'personal_notes' => $validated['personal_notes'] ?? null,
                 'agent_notes' => $validated['agent_notes'] ?? null,
 
                 'is_advertised' => !empty($validated['is_advertised']),
@@ -1160,6 +1163,7 @@ class PropertyController extends Controller
             'tiktok_url' => 'nullable|url|max:255',
             'external_url' => 'nullable|url|max:255',
             'title_ru' => 'nullable|string|max:255',
+            'personal_notes' => 'nullable|string|max:5000',
             'agent_notes' => 'nullable|string|max:5000',
             'description_ua' => 'nullable|string|max:10000',
             'description_ru' => 'nullable|string|max:10000',
@@ -1258,6 +1262,7 @@ class PropertyController extends Controller
                 'youtube_url' => $validated['youtube_url'] ?? null,
                 'tiktok_url' => $validated['tiktok_url'] ?? null,
                 'external_url' => $validated['external_url'] ?? null,
+                'personal_notes' => $validated['personal_notes'] ?? null,
                 'agent_notes' => $validated['agent_notes'] ?? null,
 
                 'is_advertised' => !empty($validated['is_advertised']),

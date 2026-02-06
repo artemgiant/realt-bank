@@ -139,7 +139,7 @@
         <div class="item">
             <label for="personal-notes">Заметки</label>
             <div class="item-inputText-wrapper">
-                <textarea class="item-textareaText " id="personal-notes" autocomplete="off" placeholder="Введите текст">{{ old('notes', $property->notes) }}</textarea>
+                <textarea class="item-textareaText " id="personal-notes" name="personal_notes" autocomplete="off" placeholder="Введите текст">{{ old('personal_notes', $property->personal_notes) }}</textarea>
             </div>
         </div>
     </div>

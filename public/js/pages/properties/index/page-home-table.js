@@ -247,6 +247,11 @@ $(document).ready(function () {
 
     // ========== Детальная информация (child row) ==========
 
+    function nl2br(str) {
+        if (!str) return '';
+        return str.replace(/\n/g, '<br>');
+    }
+
     function formatChildRow(data) {
         // Формируем теги особенностей
         var featuresHtml = '';
@@ -273,9 +278,9 @@ $(document).ready(function () {
         }
 
         var descriptionHtml = '<div class="description-text">' +
-            '<span class="short-text">' + shortDesc + '</span>' +
+            '<span class="short-text">' + nl2br(shortDesc) + '</span>' +
             (hasMore ?
-                '<span class="full-text" style="display: none;">' + fullDesc + '</span>' +
+                '<span class="full-text" style="display: none;">' + nl2br(fullDesc) + '</span>' +
                 '<button class="btn btn-show-text" type="button">Ещё</button>'
                 : '') +
             '</div>';
@@ -283,8 +288,8 @@ $(document).ready(function () {
         // Заметки
         var agentNotesHtml = data.agent_notes ?
             '<p class="description-note">' +
-            '<strong>Примечание для агентов:</strong>' +
-            '<span>' + data.agent_notes + '</span>' +
+            '<strong>Примечание для агентов: </strong>' +
+            '<span>' + nl2br(data.agent_notes) + '</span>' +
             '</p>' : '';
 
         // Форматируем даты
@@ -300,10 +305,11 @@ $(document).ready(function () {
             '<h2 class="description-title">' + title + '</h2>' +
             descriptionHtml +
             agentNotesHtml +
+            (data.personal_notes ?
             '<p class="description-note">' +
-            '<strong>Заметка:</strong>' +
-            '<span>Покупает тому-то, продает свою там-то, звонить тогда-то текст личной заметки</span>' +
-            '</p>' +
+            '<strong>Заметка: </strong>' +
+            '<span>' + nl2br(data.personal_notes) + '</span>' +
+            '</p>' : '') +
             '</div>' +
 
             '<ul class="block-info">' +
