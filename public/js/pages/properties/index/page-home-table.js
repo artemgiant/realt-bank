@@ -54,6 +54,18 @@ $(document).ready(function () {
 
         // Обновляем счетчик фильтров после каждой перезагрузки
         Filters.updateCounter();
+
+        // Инициализация FancyBox для фото в таблице
+        if (typeof Fancybox !== 'undefined') {
+            Fancybox.unbind('#example [data-fancybox]');
+            Fancybox.bind('#example [data-fancybox]', {
+                Thumbs: false,
+                Toolbar: true,
+                Images: {
+                    zoom: true,
+                },
+            });
+        }
     };
 
 

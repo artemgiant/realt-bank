@@ -84,11 +84,31 @@ window.PropertyRenderers = {
             '</div>';
     },
 
-    // Фото
+    // Фото (с галереей FancyBox)
     photo: function (data, type, row) {
-        return '<div class="tbody-wrapper photo">' +
-            (data !== '-' ? data : '<span class="text-muted">-</span>') +
-            '</div>';
+        if (data === '-' || !data || !data.main) {
+            return '<div class="tbody-wrapper photo"><span class="text-muted">-</span></div>';
+        }
+
+        var galleryId = 'property-' + row.id;
+        var html = '<div class="tbody-wrapper photo">';
+
+        // Главное фото — видимая ссылка
+        html += '<a href="' + data.main + '" data-fancybox="' + galleryId + '" style="cursor:pointer;">' +
+            '<img src="' + data.main + '" alt="" class="table-photo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">' +
+            '</a>';
+
+        // Остальные фото — скрытые ссылки для галереи
+        if (data.all && data.all.length > 1) {
+            for (var i = 0; i < data.all.length; i++) {
+                if (data.all[i] !== data.main) {
+                    html += '<a href="' + data.all[i] + '" data-fancybox="' + galleryId + '" style="display:none;"></a>';
+                }
+            }
+        }
+
+        html += '</div>';
+        return html;
     },
 
     // Цена + цена за м² + комиссия от владельца
@@ -144,8 +164,6 @@ window.PropertyRenderers = {
             '                                    <li><a class="dropdown-item" href="#">Обновить</a></li>\n' +
             '                                    <li><a class="dropdown-item" href="/properties/' + row.id + '/edit">Редактировать</a></li>\n' +
             '                                    <li><a class="dropdown-item" href="#">Удалить</a></li>\n' +
-            '                                    <li><a class="dropdown-item" href="#">Отложить</a></li>\n' +
-            '                                    <li><a class="dropdown-item" href="#">Передати</a></li>\n' +
             '                                 </ul>\n' +
             '                              </div>\n' +
             '                           </div>\n' +

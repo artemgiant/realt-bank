@@ -662,16 +662,20 @@ class PropertyController extends Controller
     /**
      * Форматирование фото для таблицы
      */
-    private function formatPhoto(Property $property): string
+    private function formatPhoto(Property $property): array|string
     {
-        $mainPhoto = $property->photos->firstWhere('is_main', true)
-            ?? $property->photos->first();
+        $photos = $property->photos->sortBy('sort_order');
 
-        if ($mainPhoto) {
-            return '<img src="' . Storage::url($mainPhoto->path) . '" alt="" class="table-photo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">';
+        if ($photos->isEmpty()) {
+            return '-';
         }
 
-        return '-';
+        $mainPhoto = $photos->firstWhere('is_main', true) ?? $photos->first();
+
+        return [
+            'main' => Storage::url($mainPhoto->path),
+            'all' => $photos->map(fn($photo) => Storage::url($photo->path))->values()->toArray(),
+        ];
     }
 
     /**
