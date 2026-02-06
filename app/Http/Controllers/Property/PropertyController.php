@@ -224,7 +224,7 @@ class PropertyController extends Controller
                 'contact' => $this->formatContact($property),
                 // Data for child row
                 'title' => $property->getTranslation(app()->getLocale())?->title ?? $property->translations->first()?->title ?? '-',
-                'description' => $property->getTranslation(app()->getLocale())?->description ?? $property->translations->first()?->description ?? '-',
+                'description' => $property->getTranslation('ru')?->description ?? $property->translations->first()?->description ?? '-',
                 'agent_notes' => $property->agent_notes,
                 'features' => $property->features->pluck('name')->toArray(),
                 'youtube_url' => $property->youtube_url,
