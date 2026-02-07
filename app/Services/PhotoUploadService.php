@@ -341,7 +341,10 @@ class PhotoUploadService
             foreach ($photoIds as $order => $photoId) {
                 PropertyPhoto::where('id', $photoId)
                     ->where('property_id', $property->id)
-                    ->update(['sort_order' => $order]);
+                    ->update([
+                        'sort_order' => $order,
+                        'is_main' => $order === 0,
+                    ]);
             }
 
             return true;
