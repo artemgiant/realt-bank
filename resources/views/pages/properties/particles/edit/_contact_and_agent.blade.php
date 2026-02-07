@@ -104,7 +104,7 @@
     <div class="right">
         <input type="hidden" name="assigned_agent_id" id="assigned-agent-id" value="">
         @php
-            $propertyAgent = \App\Models\Employee\Employee::where('user_id', $property->user_id)->first();
+            $propertyAgent = $property->employee ?? \App\Models\Employee\Employee::where('user_id', $property->user_id)->first();
         @endphp
         <ul class="block-info" id="agent-block">
             <li class="block-info-item">

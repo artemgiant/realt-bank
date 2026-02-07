@@ -900,16 +900,27 @@ class PropertyController extends Controller
 
             // ========== Определяем агента ==========
             $userId = auth()->id();
+            $employeeId = null;
             if (!empty($validated['assigned_agent_id'])) {
                 $assignedAgent = \App\Models\Employee\Employee::find($validated['assigned_agent_id']);
-                if ($assignedAgent && $assignedAgent->user_id) {
-                    $userId = $assignedAgent->user_id;
+                if ($assignedAgent) {
+                    $employeeId = $assignedAgent->id;
+                    if ($assignedAgent->user_id) {
+                        $userId = $assignedAgent->user_id;
+                    }
+                }
+            }
+            if (!$employeeId) {
+                $currentEmployee = \App\Models\Employee\Employee::where('user_id', auth()->id())->first();
+                if ($currentEmployee) {
+                    $employeeId = $currentEmployee->id;
                 }
             }
 
             // ========== Создаем основную запись ==========
             $property = Property::create([
                 'user_id' => $userId,
+                'employee_id' => $employeeId,
 
                 // Required
                 'deal_type_id' => $validated['deal_type_id'],
@@ -1074,6 +1085,7 @@ class PropertyController extends Controller
             'features',
             'photos',
             'documents',
+            'employee.company',
             'complex',
             'block',
             'country',
@@ -1237,8 +1249,11 @@ class PropertyController extends Controller
             // ========== Передача агенту ==========
             if (!empty($validated['assigned_agent_id'])) {
                 $assignedAgent = \App\Models\Employee\Employee::find($validated['assigned_agent_id']);
-                if ($assignedAgent && $assignedAgent->user_id) {
-                    $property->update(['user_id' => $assignedAgent->user_id]);
+                if ($assignedAgent) {
+                    $property->employee_id = $assignedAgent->id;
+                    if ($assignedAgent->user_id) {
+                        $property->user_id = $assignedAgent->user_id;
+                    }
                 }
             }
 

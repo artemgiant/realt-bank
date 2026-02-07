@@ -14,6 +14,7 @@ use App\Models\Reference\Complex;
 use App\Models\Reference\Currency;
 use App\Models\Reference\Dictionary;
 use App\Models\Reference\Source;
+use App\Models\Employee\Employee;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,7 @@ class Property extends Model
     protected $fillable = [
         // Связи
         'user_id',
+        'employee_id',
         'source_id',
         'contact_type_id',
         'currency_id',
@@ -111,6 +113,11 @@ class Property extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class);
     }
 
     /**
