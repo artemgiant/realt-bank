@@ -127,7 +127,7 @@ window.PropertyRenderers = {
     contact: function (data, type, row) {
         // Проверяем есть ли контакт
         if (!data || !data.has_contact) {
-            return '<div class="tbody-wrapper contact"><span class="text-muted">-</span></div>';
+            return '<div class="tbody-wrapper contact"></div>';
         }
 
         // Формируем ссылку на телефон
@@ -139,7 +139,7 @@ window.PropertyRenderers = {
 
         return '<div class="tbody-wrapper contact">' +
             '<p class="link-name">' + (data.full_name || '-') + '</p>' +
-            '<p data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="' + (data.contact_type_name || '') + '">' + (data.contact_type_name || '-') + '</p>' +
+            (data.contact_type_name ? '<p data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="' + data.contact_type_name + '">' + data.contact_type_name + '</p>' : '') +
             phoneHtml +
             '</div>';
     },

@@ -147,6 +147,8 @@ class PropertyController extends Controller
             'buildingType',
             'photos',
             'contacts.phones',
+            'employee',
+            'contactType',
             // Локация
             'complex',
             'street',
@@ -709,9 +711,9 @@ class PropertyController extends Controller
      */
     private function formatContact(Property $property): array
     {
-        $contact = $property->contacts->first();
+        $employee = $property->employee;
 
-        if (!$contact) {
+        if (!$employee) {
             return [
                 'has_contact' => false,
             ];
@@ -719,9 +721,9 @@ class PropertyController extends Controller
 
         return [
             'has_contact' => true,
-            'full_name' => $contact->full_name,
-            'contact_type_name' => $contact->contact_type_name,
-            'phone' => $contact->primary_phone,
+            'full_name' => $employee->full_name,
+            'contact_type_name' => $property->contactType?->name,
+            'phone' => $employee->phone,
         ];
     }
 

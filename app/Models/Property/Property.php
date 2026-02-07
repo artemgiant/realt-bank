@@ -120,6 +120,11 @@ class Property extends Model
         return $this->belongsTo(Employee::class);
     }
 
+    public function contactType(): BelongsTo
+    {
+        return $this->belongsTo(Dictionary::class, 'contact_type_id');
+    }
+
     /**
      * Контакты объекта недвижимости (полиморфная many-to-many)
      */
