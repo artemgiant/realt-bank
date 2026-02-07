@@ -848,6 +848,9 @@ class PropertyController extends Controller
             'description_ru' => 'nullable|string|max:10000',
             'description_en' => 'nullable|string|max:10000',
 
+            // Агент (передача)
+            'assigned_agent_id' => 'nullable|exists:employees,id',
+
             // Контакты
             'contact_ids' => 'nullable|array',
             'contact_ids.*' => 'exists:contacts,id',
@@ -895,9 +898,18 @@ class PropertyController extends Controller
                 $pricePerM2 = $validated['price'] / $validated['area_total'];
             }
 
+            // ========== Определяем агента ==========
+            $userId = auth()->id();
+            if (!empty($validated['assigned_agent_id'])) {
+                $assignedAgent = \App\Models\Employee\Employee::find($validated['assigned_agent_id']);
+                if ($assignedAgent && $assignedAgent->user_id) {
+                    $userId = $assignedAgent->user_id;
+                }
+            }
+
             // ========== Создаем основную запись ==========
             $property = Property::create([
-                'user_id' => auth()->id(),
+                'user_id' => $userId,
 
                 // Required
                 'deal_type_id' => $validated['deal_type_id'],
@@ -1072,8 +1084,11 @@ class PropertyController extends Controller
             'street',
         ]);
 
+        $agent = \App\Models\Employee\Employee::where('user_id', auth()->id())->first();
+
         return view('pages.properties.edit', [
             'property' => $property,
+            'agent' => $agent,
 
             // Валюты
             'currencies' => Currency::active()->get(),
@@ -1172,6 +1187,9 @@ class PropertyController extends Controller
             'description_ru' => 'nullable|string|max:10000',
             'description_en' => 'nullable|string|max:10000',
 
+            // Агент (передача)
+            'assigned_agent_id' => 'nullable|exists:employees,id',
+
             // Контакты
             'contact_ids' => 'nullable|array',
             'contact_ids.*' => 'exists:contacts,id',
@@ -1216,6 +1234,14 @@ class PropertyController extends Controller
             if (!empty($validated['price']) && !empty($validated['area_total']) && $validated['area_total'] > 0) {
                 $pricePerM2 = $validated['price'] / $validated['area_total'];
             }
+            // ========== Передача агенту ==========
+            if (!empty($validated['assigned_agent_id'])) {
+                $assignedAgent = \App\Models\Employee\Employee::find($validated['assigned_agent_id']);
+                if ($assignedAgent && $assignedAgent->user_id) {
+                    $property->update(['user_id' => $assignedAgent->user_id]);
+                }
+            }
+
             // ========== Обновляем основную запись ==========
             $property->update([
                 // Required

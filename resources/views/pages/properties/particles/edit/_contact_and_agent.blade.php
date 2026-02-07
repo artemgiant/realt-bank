@@ -102,7 +102,11 @@
 
 
     <div class="right">
-        <ul class="block-info">
+        <input type="hidden" name="assigned_agent_id" id="assigned-agent-id" value="">
+        @php
+            $propertyAgent = \App\Models\Employee\Employee::where('user_id', $property->user_id)->first();
+        @endphp
+        <ul class="block-info" id="agent-block">
             <li class="block-info-item">
                 <div class="info-title-wrapper">
                     <h2 class="info-title">Агент</h2>
@@ -113,26 +117,24 @@
                         </svg>
                     </button>
                 </div>
-                <div class="info-avatar">
+                <div class="info-avatar" id="agent-avatar-wrapper">
                     <picture>
-                        <source srcset="{{ asset('img/icon/default-avatar-table.svg') }}" type="image/webp">
-                        <img src="{{ asset('img/icon/default-avatar-table.svg') }}" alt="Avatar">
+                        @if($propertyAgent && $propertyAgent->photo_url)
+                            <img src="{{ $propertyAgent->photo_url }}" alt="Avatar" id="agent-avatar-img">
+                        @else
+                            <source srcset="{{ asset('img/icon/default-avatar-table.svg') }}" type="image/webp">
+                            <img src="{{ asset('img/icon/default-avatar-table.svg') }}" alt="Avatar" id="agent-avatar-img">
+                        @endif
                     </picture>
                 </div>
                 <div class="info-contacts">
-                    <p class="info-contacts-name">{{ $property->user?->name ?? 'Агент' }}</p>
-                    <p class="info-description">{{ $property->user?->company?->name ?? '' }}</p>
-                </div>
-                <div class="info-links">
-                    <a href="https://wa.me/380XXXXXXXXX">
-                        <picture><source srcset="{{asset('/img/icon/icon-table/cnapchat.svg')}}" type="image/webp"><img src="{{asset('/img/icon/icon-table/cnapchat.svg')}}" alt=""></picture>
-                    </a>
-                    <a href="viber://chat?number=%2B380XXXXXXXXX">
-                        <picture><source srcset="{{asset('/img/icon/icon-table/viber.svg')}}" type="image/webp"><img src="{{asset('/img/icon/icon-table/viber.svg')}}" alt=""></picture>
-                    </a>
-                    <a href="https://t.me/+380XXXXXXXXX">
-                        <picture><source srcset="{{asset('/img/icon/icon-table/tg.svg')}}" type="image/webp"><img src="{{asset('/img/icon/icon-table/tg.svg')}}" alt=""></picture>
-                    </a>
+                    <p class="info-contacts-name" id="agent-name-display">{{ $propertyAgent->full_name ?? ($property->user?->name ?? 'Агент') }}</p>
+                    <p class="info-description" id="agent-company-display">{{ $propertyAgent->company?->name ?? '' }}</p>
+                    @if($propertyAgent && $propertyAgent->phone)
+                        <a href="tel:{{ $propertyAgent->phone }}" class="info-contacts-tel" id="agent-phone-display">{{ $propertyAgent->phone }}</a>
+                    @else
+                        <a href="tel:" class="info-contacts-tel" id="agent-phone-display" style="display:none;"></a>
+                    @endif
                 </div>
             </li>
         </ul>

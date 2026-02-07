@@ -601,7 +601,8 @@
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/handlers.js') }}"></script>
     <script src="{{ asset('js/pages/properties/create/modal/add-contact/main.js') }}"></script>
 
-
+    {{-- Модуль передачи агенту --}}
+    <script src="{{ asset('js/pages/properties/create/modal/transfer-agent/main.js') }}"></script>
 
 {{--    LOcation SEARCH--}}
     <script src="{{ asset('js/pages/properties/create/complex-block.js') }}"></script>

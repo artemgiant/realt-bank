@@ -210,6 +210,7 @@ class EmployeeController extends Controller
             'success' => true,
             'employee' => [
                 'id' => $employee->id,
+                'user_id' => $employee->user_id,
                 'first_name' => $employee->first_name,
                 'last_name' => $employee->last_name,
                 'middle_name' => $employee->middle_name,
@@ -338,10 +339,19 @@ class EmployeeController extends Controller
     {
         $search = $request->input('q', '');
 
-        $employees = Employee::query()
+        $query = Employee::query()
             ->active()
-            ->when($search, fn($q) => $q->search($search))
-            ->limit(20)
+            ->when($search, fn($q) => $q->search($search));
+
+        if ($request->filled('office_id')) {
+            $query->where('office_id', $request->office_id);
+        }
+
+        if ($request->filled('company_id')) {
+            $query->where('company_id', $request->company_id);
+        }
+
+        $employees = $query->limit(20)
             ->get(['id', 'first_name', 'last_name', 'phone']);
 
         $results = $employees->map(fn($e) => [
@@ -351,4 +361,5 @@ class EmployeeController extends Controller
 
         return response()->json(['results' => $results]);
     }
+
 }

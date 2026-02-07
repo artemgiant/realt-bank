@@ -68,7 +68,8 @@
 
 
     <div class="right">
-        <ul class="block-info">
+        <input type="hidden" name="assigned_agent_id" id="assigned-agent-id" value="">
+        <ul class="block-info" id="agent-block">
             <li class="block-info-item">
                 <div class="info-title-wrapper">
                     <h2 class="info-title">Агент</h2>
@@ -79,25 +80,29 @@
                         </svg>
                     </button>
                 </div>
-                <div class="info-avatar">
+                <div class="info-avatar" id="agent-avatar-wrapper">
                     <picture>
                         @if($agent && $agent->photo_url)
-                            <img src="{{ $agent->photo_url }}" alt="Avatar">
+                            <img src="{{ $agent->photo_url }}" alt="Avatar" id="agent-avatar-img">
                         @else
                             <source srcset="{{ asset('img/icon/default-avatar-table.svg') }}" type="image/webp">
-                            <img src="{{ asset('img/icon/default-avatar-table.svg') }}" alt="Avatar">
+                            <img src="{{ asset('img/icon/default-avatar-table.svg') }}" alt="Avatar" id="agent-avatar-img">
                         @endif
                     </picture>
                 </div>
                 <div class="info-contacts">
                     @if($agent)
-                        <p class="info-contacts-name">{{ $agent->full_name }}</p>
-                        <p class="info-description">{{ $agent->company?->name ?? '' }}</p>
+                        <p class="info-contacts-name" id="agent-name-display">{{ $agent->full_name }}</p>
+                        <p class="info-description" id="agent-company-display">{{ $agent->company?->name ?? '' }}</p>
                         @if($agent->phone)
-                            <a href="tel:{{ $agent->phone }}" class="info-contacts-tel">{{ $agent->phone }}</a>
+                            <a href="tel:{{ $agent->phone }}" class="info-contacts-tel" id="agent-phone-display">{{ $agent->phone }}</a>
+                        @else
+                            <a href="tel:" class="info-contacts-tel" id="agent-phone-display" style="display:none;"></a>
                         @endif
                     @else
-                        <p class="info-contacts-name text-muted">Агент не найден</p>
+                        <p class="info-contacts-name text-muted" id="agent-name-display">Агент не найден</p>
+                        <p class="info-description" id="agent-company-display"></p>
+                        <a href="tel:" class="info-contacts-tel" id="agent-phone-display" style="display:none;"></a>
                     @endif
                 </div>
             </li>
