@@ -46,12 +46,14 @@
             // Добавляем фото из PhotoLoader
             if (photoLoader && photoLoader.photoArray && photoLoader.photoArray.length > 0) {
                 photoLoader.photoArray.forEach((photo, index) => {
-                    if (photo.file) {
+                    if (photo.isExisting && photo.serverId) {
+                        // Существующие фото - отправляем их ID в порядке следования
+                        formData.append('existing_photo_ids[]', photo.serverId);
+                    } else if (photo.file) {
+                        // Новые фото - отправляем файлы
                         formData.append('photos[]', photo.file, photo.name);
                     }
                 });
-
-                console.log(`Добавлено ${photoLoader.photoArray.length} фото в форму`);
             }
 
             // Показываем лоадер

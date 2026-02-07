@@ -752,7 +752,10 @@ class PropertyController extends Controller
      */
     public function create(): View
     {
+        $agent = \App\Models\Employee\Employee::where('user_id', auth()->id())->first();
+
         return view('pages.properties.create', [
+            'agent' => $agent,
             // Валюты
             'currencies' => Currency::active()->get(),
 
@@ -1283,6 +1286,12 @@ class PropertyController extends Controller
                 $this->saveDocuments($property, $request->file('documents'));
             }
 
+            // ========== Обновляем порядок существующих фото ==========
+            if ($request->has('existing_photo_ids')) {
+                $photoService = app(PhotoUploadService::class);
+                $photoService->updateOrder($property, $request->input('existing_photo_ids'));
+            }
+
             // ========== Сохраняем новые фотографии ==========
             if ($request->hasFile('photos')) {
                 $photoService = app(PhotoUploadService::class);
@@ -1303,7 +1312,37 @@ class PropertyController extends Controller
         }
     }
 
+    /**
+     * Delete a photo via AJAX.
+     */
+    public function deletePhoto(Property $property, PropertyPhoto $photo): JsonResponse
+    {
+        if ($photo->property_id !== $property->id) {
+            return response()->json(['success' => false, 'message' => 'Фото не принадлежит этому объекту'], 403);
+        }
 
+        $photoService = app(PhotoUploadService::class);
+        $result = $photoService->deletePhoto($photo);
+
+        return response()->json(['success' => $result]);
+    }
+
+    /**
+     * Reorder photos via AJAX.
+     */
+    public function reorderPhotos(Request $request, Property $property): JsonResponse
+    {
+        $photoIds = $request->input('photo_ids', []);
+
+        if (empty($photoIds)) {
+            return response()->json(['success' => false, 'message' => 'Нет фото для сортировки'], 400);
+        }
+
+        $photoService = app(PhotoUploadService::class);
+        $result = $photoService->updateOrder($property, $photoIds);
+
+        return response()->json(['success' => $result]);
+    }
 
 
 

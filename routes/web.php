@@ -42,6 +42,12 @@ Route::middleware('auth')->group(function () {
     // Properties CRUD
     Route::resource('properties', PropertyController::class);
 
+    // Property Photos AJAX endpoints
+    Route::delete('/properties/{property}/photos/{photo}', [PropertyController::class, 'deletePhoto'])
+        ->name('properties.photos.delete');
+    Route::post('/properties/{property}/photos/reorder', [PropertyController::class, 'reorderPhotos'])
+        ->name('properties.photos.reorder');
+
 
 // Location routes (существующие)
     Route::prefix('location')->group(function () {

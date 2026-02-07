@@ -81,25 +81,24 @@
                 </div>
                 <div class="info-avatar">
                     <picture>
-                        <source srcset="{{ asset('img/icon/default-avatar-table.svg') }}" type="image/webp">
-                        <img src="{{ asset('img/icon/default-avatar-table.svg') }}" alt="Avatar">
+                        @if($agent && $agent->photo_url)
+                            <img src="{{ $agent->photo_url }}" alt="Avatar">
+                        @else
+                            <source srcset="{{ asset('img/icon/default-avatar-table.svg') }}" type="image/webp">
+                            <img src="{{ asset('img/icon/default-avatar-table.svg') }}" alt="Avatar">
+                        @endif
                     </picture>
                 </div>
                 <div class="info-contacts">
-                    <p class="info-contacts-name">Длинноеимя Доброльский</p>
-                    <p class="info-description">Real Estate Name</p>
-                    <a href="tel:+381231257869" class="info-contacts-tel">+38 (123) 125 - 78 - 69</a>
-                </div>
-                <div class="info-links">
-                    <a href="https://wa.me/380XXXXXXXXX">
-                        <picture><source srcset="{{asset('/img/icon/icon-table/cnapchat.svg')}}" type="image/webp"><img src="{{asset('/img/icon/icon-table/cnapchat.svg')}}" alt=""></picture>
-                    </a>
-                    <a href="viber://chat?number=%2B380XXXXXXXXX">
-                        <picture><source srcset="{{asset('/img/icon/icon-table/viber.svg')}}" type="image/webp"><img src="{{asset('/img/icon/icon-table/viber.svg')}}" alt=""></picture>
-                    </a>
-                    <a href="https://t.me/+380XXXXXXXXX">
-                        <picture><source srcset="{{asset('/img/icon/icon-table/tg.svg')}}" type="image/webp"><img src="{{asset('/img/icon/icon-table/tg.svg')}}" alt=""></picture>
-                    </a>
+                    @if($agent)
+                        <p class="info-contacts-name">{{ $agent->full_name }}</p>
+                        <p class="info-description">{{ $agent->company?->name ?? '' }}</p>
+                        @if($agent->phone)
+                            <a href="tel:{{ $agent->phone }}" class="info-contacts-tel">{{ $agent->phone }}</a>
+                        @endif
+                    @else
+                        <p class="info-contacts-name text-muted">Агент не найден</p>
+                    @endif
                 </div>
             </li>
         </ul>

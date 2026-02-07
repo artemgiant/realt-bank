@@ -551,18 +551,6 @@
                         <div class="photo-info-left">
                             <span class="photo-info-left-title">Фото объекта</span>
 
-                            {{-- Существующие фото --}}
-                            @if($property->photos->count() > 0)
-                                <div class="existing-photos mb-3" style="display: flex; flex-wrap: wrap; gap: 10px;">
-                                    @foreach($property->photos as $photo)
-                                        <div class="existing-photo-item" style="position: relative;">
-                                            <img src="{{ Storage::url($photo->path) }}" alt=""
-                                                 style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endif
-
                             <div class="photo-info-list-wrapper">
                                 <ul class="photo-info-list">
                                     <li class="photo-info-btn-wrapper">
@@ -670,5 +658,43 @@
     <script src="{{ asset('js/lib/tui-image-editor.min.js') }}"></script>
     <script src="{{ asset('js/lib/heic2any.min.js') }}"></script>
 
+    {{-- Загрузка существующих фото в PhotoLoader --}}
+    @if($property->photos->count() > 0)
+        @php
+            $existingPhotosData = $property->photos->map(function($photo) use ($property) {
+                return [
+                    'id' => $photo->id,
+                    'url' => $photo->thumbnail_url,
+                    'originalUrl' => $photo->url,
+                    'name' => $photo->filename,
+                    'deleteUrl' => route('properties.photos.delete', [$property->id, $photo->id]),
+                ];
+            })->values();
+            $reorderUrlData = route('properties.photos.reorder', $property->id);
+        @endphp
+        <script>
+            (function () {
+                var existingPhotos = @json($existingPhotosData);
+                var reorderUrl = @json($reorderUrlData);
+
+                function loadPhotos() {
+                    if (window.photoLoaderInstance) {
+                        window.photoLoaderInstance.reorderUrl = reorderUrl;
+                        window.photoLoaderInstance.loadExistingPhotos(existingPhotos);
+                    } else {
+                        setTimeout(loadPhotos, 200);
+                    }
+                }
+
+                if (document.readyState === 'complete') {
+                    setTimeout(loadPhotos, 300);
+                } else {
+                    window.addEventListener('load', function () {
+                        setTimeout(loadPhotos, 300);
+                    });
+                }
+            })();
+        </script>
+    @endif
 
 @endpush

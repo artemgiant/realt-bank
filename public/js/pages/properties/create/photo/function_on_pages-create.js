@@ -394,6 +394,9 @@ class PhotoLoader {
 		this.globalLoader = null;
 		this.imageEditor = null;
 
+		// URL для перезортировки фото (для страницы редактирования)
+		this.reorderUrl = options.reorderUrl || null;
+
 		// Ініціалізація
 		if (this.input && this.wrapper) {
 			this.createGlobalLoader();
@@ -456,6 +459,31 @@ class PhotoLoader {
 
 		// Оновлюємо бейдж головного фото
 		this.updateMainPhotoBadge();
+
+		// Сохраняем порядок на сервере для существующих фото
+		this.saveOrderToServer();
+	}
+
+	saveOrderToServer () {
+		if (!this.reorderUrl) return;
+
+		const existingPhotoIds = this.photoArray
+			.filter(p => p.isExisting && p.serverId)
+			.map(p => p.serverId);
+
+		if (existingPhotoIds.length === 0) return;
+
+		const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+		fetch(this.reorderUrl, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRF-TOKEN': csrfToken,
+				'X-Requested-With': 'XMLHttpRequest',
+				'Accept': 'application/json'
+			},
+			body: JSON.stringify({ photo_ids: existingPhotoIds })
+		}).catch(error => console.error('Ошибка сохранения порядка фото:', error));
 	}
 
 	updateMainPhotoBadge () {
@@ -518,6 +546,33 @@ class PhotoLoader {
 				this.updateProgress(0, 1); // Скидаємо прогрес
 			}
 		});
+	}
+
+	/**
+	 * Загрузка существующих фото с сервера (для страницы редактирования)
+	 * @param {Array} photos - массив объектов {id, url, originalUrl, name, deleteUrl}
+	 */
+	loadExistingPhotos (photos) {
+		if (!photos || !Array.isArray(photos) || photos.length === 0) return;
+
+		photos.forEach(photo => {
+			const photoItem = {
+				id: this.generateUniqueId(),
+				serverId: photo.id,
+				name: photo.name || 'photo',
+				serverUrl: photo.url,
+				originalUrl: photo.originalUrl || photo.url,
+				deleteUrl: photo.deleteUrl,
+				isCheked: true,
+				isExisting: true,
+				file: null,
+				objectUrl: null
+			};
+			this.validPhotos.push(photoItem);
+			this.photoArray.push(photoItem);
+		});
+
+		this.render();
 	}
 
 	async handleFileUpload (event, progressCallback) {
@@ -685,7 +740,7 @@ class PhotoLoader {
 
 	clearOldObjectUrls () {
 		this.photoArray.forEach(item => {
-			if (item.objectUrl) {
+			if (item.objectUrl && !item.isExisting) {
 				URL.revokeObjectURL(item.objectUrl);
 				item.objectUrl = null;
 			}
@@ -726,7 +781,9 @@ class PhotoLoader {
 		const fragment = document.createDocumentFragment();
 
 		this.photoArray.forEach((item, index) => {
-			item.objectUrl = URL.createObjectURL(item.file);
+			if (item.file) {
+				item.objectUrl = URL.createObjectURL(item.file);
+			}
 			const photoItem = this.createPhotoElement(item, index);
 			fragment.appendChild(photoItem);
 		});
@@ -768,10 +825,14 @@ class PhotoLoader {
 		const photoItem = document.createElement('li');
 		photoItem.classList.add('photo-info-item');
 		photoItem.setAttribute('data-photo-id', item.id);
+		if (item.isExisting) {
+			photoItem.setAttribute('data-server-id', item.serverId);
+		}
 
 		const spinner = this.createSpinnerElement();
 
 		const mainBadge = index === 0 ? '<div class="main-photo-badge">Главное фото</div>' : '';
+		const imgSrc = item.isExisting ? item.serverUrl : item.objectUrl;
 
 		photoItem.innerHTML = `
             ${mainBadge}
@@ -783,7 +844,7 @@ class PhotoLoader {
             </label>
             <div class="photo-info-item-actions">
                 <button type="button" class="btn-see" aria-label="eye"
-                        data-fancybox data-src="${item.objectUrl}">
+                        data-fancybox data-src="${item.isExisting ? item.originalUrl : imgSrc}">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M14.5 8C14.5 8 11.6 12 8 12C4.4 12 1.5 8 1.5 8C1.5 8 4.4 4 8 4C11.6 4 14.5 8 14.5 8Z" stroke="#3585F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linejoin="round" />
                         <path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z" stroke="#3585F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linejoin="round" />
@@ -824,7 +885,7 @@ class PhotoLoader {
 		imageContainer.appendChild(spinner);
 
 		const img = new Image();
-		img.src = item.objectUrl;
+		img.src = imgSrc;
 		img.alt = item.name;
 		img.dataset.bsToggle = 'tooltip';
 		img.dataset.bsPlacement = 'top';
@@ -886,8 +947,8 @@ class PhotoLoader {
 		const photo = this.photoArray.find(p => p.id === photoId);
 		if ( !photo) return;
 
-		// Create a temporary canvas to get the image data
 		const img = new Image();
+		img.crossOrigin = 'anonymous';
 		img.onload = () => {
 			const canvas = document.createElement('canvas');
 			canvas.width = img.width;
@@ -895,10 +956,9 @@ class PhotoLoader {
 			const ctx = canvas.getContext('2d');
 			ctx.drawImage(img, 0, 0);
 
-			// Initialize TUI Image Editor
 			this.initImageEditor(canvas.toDataURL('image/jpeg'), photo);
 		};
-		img.src = photo.objectUrl;
+		img.src = photo.isExisting ? photo.originalUrl : photo.objectUrl;
 	}
 
 	initImageEditor (imageSrc, photoItem) {
@@ -1139,6 +1199,12 @@ class PhotoLoader {
 				photoItem.file = editedFile;
 				photoItem.objectUrl = URL.createObjectURL(editedFile);
 
+				// Если фото было с сервера, помечаем как отредактированное (станет новым файлом)
+				if (photoItem.isExisting) {
+					photoItem.isExisting = false;
+					photoItem.wasEdited = true;
+				}
+
 				// Update the display
 				this.render();
 
@@ -1205,6 +1271,27 @@ class PhotoLoader {
 		const photoIndex = this.photoArray.findIndex(photo => photo.id === photoId);
 		if (photoIndex === -1) return;
 
+		const photoToDelete = this.photoArray[photoIndex];
+
+		// Если это существующее фото с сервера - удаляем через AJAX
+		if (photoToDelete.isExisting && photoToDelete.deleteUrl) {
+			const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+			fetch(photoToDelete.deleteUrl, {
+				method: 'DELETE',
+				headers: {
+					'X-CSRF-TOKEN': csrfToken,
+					'X-Requested-With': 'XMLHttpRequest',
+					'Accept': 'application/json'
+				}
+			}).then(response => response.json())
+				.then(data => {
+					if (!data.success) {
+						console.error('Ошибка удаления фото с сервера');
+					}
+				})
+				.catch(error => console.error('Ошибка удаления фото:', error));
+		}
+
 		const img = photoElement.querySelector('img');
 		if (img) {
 			const tooltip = bootstrap.Tooltip.getInstance(img);
@@ -1214,8 +1301,7 @@ class PhotoLoader {
 			}
 		}
 
-		const photoToDelete = this.photoArray[photoIndex];
-		if (photoToDelete.objectUrl) {
+		if (photoToDelete.objectUrl && !photoToDelete.isExisting) {
 			try {
 				URL.revokeObjectURL(photoToDelete.objectUrl);
 			} catch (e) {
@@ -1226,6 +1312,9 @@ class PhotoLoader {
 		this.photoArray.splice(photoIndex, 1);
 		this.validPhotos = this.validPhotos.filter(photo => photo.id !== photoId);
 		photoElement.remove();
+
+		// Обновляем бейдж главного фото
+		this.updateMainPhotoBadge();
 	}
 
 	initFancybox () {
