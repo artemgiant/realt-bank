@@ -275,7 +275,7 @@ $(document).ready(function () {
         var btnClass = 'btn btn-outline-primary btn-block-info-toggle';
         var detailHtml = '';
         if (showContactCard) {
-            detailHtml = '<li class="block-info-item block-info-detail d-none">' +
+            detailHtml = '<li class="block-info-item block-info-detail block-info-detail-hidden">' +
                 '<div class="info-title-wrapper"><h2 class="info-title">Клиент</h2></div>' +
                 '<div class="info-avatar">' +
                 '<img src="' + escapeHtml(defaultAvatar) + '" alt="">' +
@@ -288,7 +288,7 @@ $(document).ready(function () {
                 '</li>';
         } else {
             var agentPhoto = (agent.photo_url && agent.photo_url.length) ? escapeHtml(agent.photo_url) : defaultAvatar;
-            detailHtml = '<li class="block-info-item block-info-detail d-none">' +
+            detailHtml = '<li class="block-info-item block-info-detail block-info-detail-hidden">' +
                 '<div class="info-title-wrapper"><h2 class="info-title">Агент</h2></div>' +
                 '<div class="info-avatar">' +
                 '<img src="' + escapeHtml(agentPhoto) + '" alt="">' +
@@ -443,7 +443,7 @@ $(document).ready(function () {
     // Обработчик кнопки "Показать контакты" / "Связаться с агентом" в block-info
     $('#example tbody').on('click', '.btn-block-info-toggle', function () {
         var $blockInfo = $(this).closest('.block-info');
-        $blockInfo.find('.block-info-detail').toggleClass('d-none');
+        $blockInfo.find('.block-info-detail').toggleClass('block-info-detail-hidden');
     });
 
     // ========== Инициализация ==========

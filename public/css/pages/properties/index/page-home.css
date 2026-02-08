@@ -912,6 +912,41 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   margin-bottom: 0;
 }
 
+/* Блок контакта/агента в таблиці — плавна поява + картка */
+#example tbody tr td .tbody-dop-info .info-main-left .block-info .block-info-detail {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.28s ease, visibility 0s linear;
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+#example tbody tr td .tbody-dop-info .info-main-left .block-info .block-info-detail .info-title {
+  color: #6c757d;
+  font-size: 13px;
+}
+#example tbody tr td .tbody-dop-info .info-main-left .block-info .block-info-detail .info-contacts-name {
+  font-weight: 600;
+  color: #334553;
+}
+#example tbody tr td .tbody-dop-info .info-main-left .block-info .block-info-detail .info-contacts-tel {
+  color: #3585f5;
+  text-decoration: none;
+  font-weight: 500;
+}
+#example tbody tr td .tbody-dop-info .info-main-left .block-info .block-info-detail .info-contacts-tel:hover {
+  text-decoration: underline;
+}
+/* Прихований стан — плавне зникнення, visibility з затримкою щоб таблиця не стрибала */
+#example tbody tr td .tbody-dop-info .info-main-left .block-info .block-info-detail.block-info-detail-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.28s ease, visibility 0s linear 0.28s;
+}
+
 #example tbody tr td .tbody-dop-info .info-main-left .filter-tags {
   width: 100%;
 }
