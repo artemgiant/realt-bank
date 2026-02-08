@@ -252,12 +252,71 @@ $(document).ready(function () {
         return str.replace(/\n/g, '<br>');
     }
 
+    function escapeHtml(str) {
+        if (str == null) return '';
+        var div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function buildBlockInfo(data) {
+        var isVisibleToAgents = !!data.is_visible_to_agents;
+        var contact = data.contact_for_display || null;
+        var agent = data.agent || null;
+        var defaultAvatar = './img/icon/default-avatar-table.svg';
+
+        var showContactCard = isVisibleToAgents && contact;
+        var showAgentCard = !isVisibleToAgents && agent;
+        if (!showContactCard && !showAgentCard) {
+            return '<ul class="block-info"></ul>';
+        }
+
+        var btnText = showContactCard ? 'Показать контакты' : 'Связаться с агентом';
+        var btnClass = 'btn btn-outline-primary btn-block-info-toggle';
+        var detailHtml = '';
+        if (showContactCard) {
+            detailHtml = '<li class="block-info-item block-info-detail d-none">' +
+                '<div class="info-title-wrapper"><h2 class="info-title">Клиент</h2></div>' +
+                '<div class="info-avatar">' +
+                '<img src="' + escapeHtml(defaultAvatar) + '" alt="">' +
+                '</div>' +
+                '<div class="info-contacts">' +
+                '<p class="info-contacts-name">' + escapeHtml(contact.full_name) + '</p>' +
+                '<p class="info-description">' + escapeHtml(contact.contact_type_name) + '</p>' +
+                '<a href="tel:' + escapeHtml((contact.phone || '').replace(/\s/g, '')) + '" class="info-contacts-tel">' + escapeHtml(contact.phone || '-') + '</a>' +
+                '</div>' +
+                '</li>';
+        } else {
+            var agentPhoto = (agent.photo_url && agent.photo_url.length) ? escapeHtml(agent.photo_url) : defaultAvatar;
+            detailHtml = '<li class="block-info-item block-info-detail d-none">' +
+                '<div class="info-title-wrapper"><h2 class="info-title">Агент</h2></div>' +
+                '<div class="info-avatar">' +
+                '<img src="' + escapeHtml(agentPhoto) + '" alt="">' +
+                '</div>' +
+                '<div class="info-contacts">' +
+                '<p class="info-contacts-name">' + escapeHtml(agent.full_name) + '</p>' +
+                '<p class="info-description">' + escapeHtml(agent.company_name || '') + '</p>' +
+                '<a href="tel:' + escapeHtml((agent.phone || '').replace(/\s/g, '')) + '" class="info-contacts-tel">' + escapeHtml(agent.phone || '-') + '</a>' +
+                '</div>' +
+                '</li>';
+        }
+
+        return '<ul class="block-info">' +
+            '<li class="block-info-item">' +
+            '<div class="info-btn-wrapper">' +
+            '<button class="' + btnClass + '" type="button">' + escapeHtml(btnText) + '</button>' +
+            '</div>' +
+            '</li>' +
+            detailHtml +
+            '</ul>';
+    }
+
     function formatChildRow(data) {
         // Формируем теги особенностей
         var featuresHtml = '';
         if (data.features && data.features.length > 0) {
             data.features.forEach(function (feature) {
-                featuresHtml += '<div class="badge rounded-pill">' + feature + '</div>';
+                featuresHtml += '<div class="badge rounded-pill">' + escapeHtml(feature) + '</div>';
             });
         }
 
@@ -278,9 +337,9 @@ $(document).ready(function () {
         }
 
         var descriptionHtml = '<div class="description-text">' +
-            '<span class="short-text">' + nl2br(shortDesc) + '</span>' +
+            '<span class="short-text">' + nl2br(escapeHtml(shortDesc)) + '</span>' +
             (hasMore ?
-                '<span class="full-text" style="display: none;">' + nl2br(fullDesc) + '</span>' +
+                '<span class="full-text" style="display: none;">' + nl2br(escapeHtml(fullDesc)) + '</span>' +
                 '<button class="btn btn-show-text" type="button">Ещё</button>'
                 : '') +
             '</div>';
@@ -289,7 +348,7 @@ $(document).ready(function () {
         var agentNotesHtml = data.agent_notes ?
             '<p class="description-note">' +
             '<strong>Примечание для агентов: </strong>' +
-            '<span>' + nl2br(data.agent_notes) + '</span>' +
+            '<span>' + nl2br(escapeHtml(data.agent_notes)) + '</span>' +
             '</p>' : '';
 
         // Форматируем даты
@@ -302,25 +361,17 @@ $(document).ready(function () {
             '<div class="info-main-left">' +
             '<div class="info-main-left-wrapper">' +
             '<div class="description">' +
-            '<h2 class="description-title">' + title + '</h2>' +
+            '<h2 class="description-title">' + escapeHtml(title) + '</h2>' +
             descriptionHtml +
             agentNotesHtml +
             (data.personal_notes ?
             '<p class="description-note">' +
             '<strong>Заметка: </strong>' +
-            '<span>' + nl2br(data.personal_notes) + '</span>' +
+            '<span>' + nl2br(escapeHtml(data.personal_notes)) + '</span>' +
             '</p>' : '') +
             '</div>' +
 
-            '<ul class="block-info">' +
-            '<li class="block-info-item">' +
-            '<div class="info-btn-wrapper">' +
-            '<a class="btn btn-outline-primary" href="#">' +
-            'Связаться с агентом' +
-            '</a>' +
-            '</div>' +
-            '</li>' +
-            '</ul>' +
+            buildBlockInfo(data) +
 
             '</div>' +
             '<div class="filter-tags">' +
@@ -387,6 +438,12 @@ $(document).ready(function () {
         shortText.hide();
         fullText.show();
         $(this).hide();
+    });
+
+    // Обработчик кнопки "Показать контакты" / "Связаться с агентом" в block-info
+    $('#example tbody').on('click', '.btn-block-info-toggle', function () {
+        var $blockInfo = $(this).closest('.block-info');
+        $blockInfo.find('.block-info-detail').toggleClass('d-none');
     });
 
     // ========== Инициализация ==========

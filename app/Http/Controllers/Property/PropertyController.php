@@ -147,7 +147,7 @@ class PropertyController extends Controller
             'buildingType',
             'photos',
             'contacts.phones',
-            'employee',
+            'employee.company',
             'contactType',
             // Локация
             'complex',
@@ -234,6 +234,10 @@ class PropertyController extends Controller
                 'tiktok_url' => $property->tiktok_url,
                 'created_at_formatted' => $property->created_at->format('d.m.Y'),
                 'updated_at_formatted' => $property->updated_at->format('d.m.Y'),
+                // Block-info: contact vs agent visibility
+                'is_visible_to_agents' => (bool) $property->is_visible_to_agents,
+                'contact_for_display' => $this->formatContactForDisplay($property),
+                'agent' => $this->formatAgentForDisplay($property),
             ];
         }
 
@@ -724,6 +728,40 @@ class PropertyController extends Controller
             'full_name' => $employee->full_name,
             'contact_type_name' => $property->contactType?->name,
             'phone' => $employee->phone,
+        ];
+    }
+
+    /**
+     * Контакт объекта (клиент) для блока block-info в child row
+     * Первый контакт из property->contacts
+     */
+    private function formatContactForDisplay(Property $property): ?array
+    {
+        $contact = $property->contacts->first();
+        if (!$contact) {
+            return null;
+        }
+        return [
+            'full_name' => $contact->full_name,
+            'contact_type_name' => $contact->contact_type_name ?? '-',
+            'phone' => $contact->primary_phone ?? '-',
+        ];
+    }
+
+    /**
+     * Агент (сотрудник) для блока block-info в child row
+     */
+    private function formatAgentForDisplay(Property $property): ?array
+    {
+        $employee = $property->employee;
+        if (!$employee) {
+            return null;
+        }
+        return [
+            'full_name' => $employee->full_name,
+            'company_name' => $employee->company?->name ?? '',
+            'phone' => $employee->phone ?? '-',
+            'photo_url' => $employee->photo_url,
         ];
     }
 
