@@ -39,6 +39,7 @@ class Dictionary extends Model
     public const TYPE_CONTACT_TAG = 'contact_tag';       // Теги контактов
     public const TYPE_YEAR_BUILT = 'year_built';         // Год постройки
     public const TYPE_CONTACT_TYPE = 'contact_type';     // Тип контакта
+    public const TYPE_CONTACT_ROLE = 'contact_role';     // Роль контакта
     public const TYPE_HOUSING_CLASS = 'housing_class';   // Класс жилья
     public const TYPE_COMPLEX_FEATURE = 'complex_feature'; // Особенности комплексов
     public const TYPE_COMPLEX_CATEGORY = 'complex_category'; // Категории комплексов
@@ -67,6 +68,11 @@ class Dictionary extends Model
     public static function getContactTypes(): Collection
     {
         return static::getByType(self::TYPE_CONTACT_TYPE);
+    }
+
+    public static function getContactRoles(): Collection
+    {
+        return static::getByType(self::TYPE_CONTACT_ROLE);
     }
 
     // ========== Static Methods ==========

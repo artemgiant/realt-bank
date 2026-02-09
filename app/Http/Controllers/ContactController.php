@@ -143,6 +143,9 @@ class ContactController extends Controller
             'phones' => 'required|array|min:1',
             'phones.*.phone' => 'required|string|max:50',
             'phones.*.is_primary' => 'nullable|boolean',
+            // Роли контакта (множественный выбор)
+            'roles' => 'nullable|array',
+            'roles.*' => 'exists:dictionaries,id',
             // Property ID для привязки (опционально)
             'property_id' => 'nullable|exists:properties,id',
         ], [
@@ -196,10 +199,15 @@ class ContactController extends Controller
                 $contact->properties()->attach($request->property_id);
             }
 
+            // Синхронизация ролей
+            if ($request->has('roles')) {
+                $contact->roles()->sync($request->input('roles', []));
+            }
+
             DB::commit();
 
             // Загружаем связи для ответа
-            $contact->load('phones');
+            $contact->load(['phones', 'roles']);
 
             return response()->json([
                 'success' => true,
@@ -357,9 +365,14 @@ class ContactController extends Controller
             // Обновление телефонов
             $this->savePhones($contact, $request->phones);
 
+            // Синхронизация ролей
+            if ($request->has('roles')) {
+                $contact->roles()->sync($request->input('roles', []));
+            }
+
             DB::commit();
 
-            $contact->load('phones');
+            $contact->load(['phones', 'roles']);
 
             return response()->json([
                 'success' => true,

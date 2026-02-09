@@ -649,6 +649,25 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   background-color: #F6F8FB;
 }
 
+/* Плавное открытие/закрытие дочірнього рядка — таблиця не стрибає */
+#example tbody tr.dop-info-row td {
+  overflow: hidden;
+  vertical-align: top;
+}
+#example tbody tr.dop-info-row td .tbody-dop-info {
+  transition: max-height 0.35s ease, padding 0.35s ease;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+#example tbody tr.dop-info-row.dop-info-row-closed td .tbody-dop-info {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+#example tbody tr.dop-info-row:not(.dop-info-row-closed) td .tbody-dop-info {
+  max-height: 1200px;
+}
+
 #example tbody tr td:first-child {
   border-radius: 8px 0 0 8px;
 }

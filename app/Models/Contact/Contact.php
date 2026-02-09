@@ -6,8 +6,10 @@ use App\Models\Property\Property;
 use App\Models\Reference\Company;
 use App\Models\Reference\CompanyOffice;
 use App\Models\Reference\Developer;
+use App\Models\Reference\Dictionary;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
@@ -110,6 +112,16 @@ class Contact extends Model
             ->withTimestamps();
     }
 
+    /**
+     * Роли контакта (many-to-many через pivot таблицу)
+     */
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Dictionary::class, 'contact_role', 'contact_id', 'role_id')
+            ->where('dictionaries.type', Dictionary::TYPE_CONTACT_ROLE)
+            ->withTimestamps();
+    }
+
     // ========== Accessors: Имя ==========
 
     /**
@@ -151,6 +163,15 @@ class Contact extends Model
     public function getContactTypeNameAttribute(): string
     {
         return self::TYPES[$this->contact_type] ?? '-';
+    }
+
+    /**
+     * Роли контакта как строка (для отображения)
+     */
+    public function getRolesNamesAttribute(): string
+    {
+        $roles = $this->roles()->pluck('name')->toArray();
+        return !empty($roles) ? implode(', ', $roles) : '-';
     }
 
     // ========== Accessors: Телефоны ==========

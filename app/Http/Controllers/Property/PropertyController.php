@@ -824,6 +824,7 @@ class PropertyController extends Controller
             'ceilingHeights' => Dictionary::getCeilingHeights(),
             'features' => Dictionary::getFeatures(),
             'contactTypes' => Dictionary::getContactTypes(),
+            'contactRoles' => Dictionary::getContactRoles(),
 
             // Годы постройки (от текущего до 1950)
             'yearsBuilt' => Dictionary::getYearsBuilt(),
@@ -1170,6 +1171,7 @@ class PropertyController extends Controller
             'ceilingHeights' => Dictionary::getCeilingHeights(),
             'features' => Dictionary::getFeatures(),
             'contactTypes' => Dictionary::getContactTypes(),
+            'contactRoles' => Dictionary::getContactRoles(),
 
             // Годы постройки
             'yearsBuilt' => Dictionary::getYearsBuilt(),

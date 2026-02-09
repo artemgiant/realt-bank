@@ -397,27 +397,35 @@ $(document).ready(function () {
             '</div>';
     }
 
-    // Обработчик клика на кнопку разворачивания
+    // Обработчик клика на кнопку разворачивания (плавное открытие/закрытие)
     $('#example tbody').on('click', '.details-control', function () {
         var tr = $(this).closest('tr');
         var row = table.row(tr);
         var icon = $(this).find('img');
 
         if (row.child.isShown()) {
-            // Закрываем строку
-            row.child.hide();
-            tr.removeClass('shown');
-            icon.attr('src', './img/icon/plus.svg');
+            // Плавное закрытие: анимация, затем скрытие
+            var childTr = $(row.child());
+            childTr.addClass('dop-info-row-closed');
+            childTr.one('transitionend', function () {
+                row.child.hide();
+                tr.removeClass('shown');
+                icon.attr('src', './img/icon/plus.svg');
+            });
         } else {
-            // Открываем строку
+            // Открываем строку в свёрнутом виде, затем плавно разворачиваем
             row.child(formatChildRow(row.data())).show();
+            var childTr = $(row.child());
+            childTr.addClass('dop-info-row dop-info-row-closed');
+            childTr.find('td').css('border-bottom', 'none');
             tr.addClass('shown');
             icon.attr('src', './img/icon/minus.svg');
 
-            // Добавляем класс к созданной строке (tr) и стили для td
-            var childTr = $(row.child());
-            childTr.addClass('dop-info-row');
-            childTr.find('td').css('border-bottom', 'none');
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    childTr.removeClass('dop-info-row-closed');
+                });
+            });
         }
     });
 
