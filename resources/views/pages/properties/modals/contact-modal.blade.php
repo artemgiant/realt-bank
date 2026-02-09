@@ -96,19 +96,23 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="modal-row">
-                            <div class="item w25 selects">
-                                <label class="item-label green" for="tags-client-modal">Теги</label>
-                                <select id="tags-client-modal" name="tags" class="js-example-responsive2 my-select2"
+
+
+                        <div class=" item w25 selects mb-3">
+                            <label class="item-label green" for="tags-client-modal">Теги</label>
+                            <select id="tags-client-modal" name="tags" class="js-example-responsive2 my-select2"
                                     autocomplete="off">
-                                    <option value="">Выберите тег</option>
-                                    @if(isset($contactTags))
-                                        @foreach($contactTags as $tag)
-                                            <option value="{{ $tag->name }}">{{ $tag->name }}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                            </div>
+                                @if(isset($contactTags))
+                                    @foreach($contactTags as $tag)
+                                        <option value="{{ $tag->name }}">{{ $tag->name }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+
+
+                        <div class="modal-row">
+
                             <div class="item w75">
                                 <label for="comment-contact-modal">Комментарий</label>
                                 <div class="item-inputText-wrapper">
@@ -117,6 +121,8 @@
                                 </div>
                             </div>
                         </div>
+
+
                         <div class="modal-row files">
                             <div class="item photo-loader">
                                 <span class="label">Фото</span>
