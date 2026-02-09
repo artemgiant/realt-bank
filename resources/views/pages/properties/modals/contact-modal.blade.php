@@ -102,8 +102,11 @@
                                 <select id="tags-client-modal" name="tags" class="js-example-responsive2 my-select2"
                                     autocomplete="off">
                                     <option value="">Выберите тег</option>
-                                    <option value="Посредник">Посредник</option>
-                                    <option value="VIP">VIP</option>
+                                    @if(isset($contactTags))
+                                        @foreach($contactTags as $tag)
+                                            <option value="{{ $tag->name }}">{{ $tag->name }}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                             <div class="item w75">

@@ -825,6 +825,7 @@ class PropertyController extends Controller
             'features' => Dictionary::getFeatures(),
             'contactTypes' => Dictionary::getContactTypes(),
             'contactRoles' => Dictionary::getContactRoles(),
+            'contactTags' => Dictionary::getContactTags(),
 
             // Годы постройки (от текущего до 1950)
             'yearsBuilt' => Dictionary::getYearsBuilt(),
@@ -1172,6 +1173,7 @@ class PropertyController extends Controller
             'features' => Dictionary::getFeatures(),
             'contactTypes' => Dictionary::getContactTypes(),
             'contactRoles' => Dictionary::getContactRoles(),
+            'contactTags' => Dictionary::getContactTags(),
 
             // Годы постройки
             'yearsBuilt' => Dictionary::getYearsBuilt(),
