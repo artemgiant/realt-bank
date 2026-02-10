@@ -66,6 +66,15 @@ $(document).ready(function () {
                 },
             });
         }
+
+        // Инициализация тултипов для новых элементов таблицы
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('#example [data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            // Проверяем, не инициализирован ли уже тултип, чтобы избежать ошибок
+            if (!bootstrap.Tooltip.getInstance(tooltipTriggerEl)) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            }
+        });
     };
 
 
