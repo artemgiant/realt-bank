@@ -154,9 +154,9 @@ window.ContactModal.ContactList = {
         var nameEl = card.querySelector('.contact-name');
         if (nameEl) nameEl.textContent = contact.full_name || '-';
 
-        // Тип контакта
+        // Роли контакта через запятую (из roles-contact-modal / API roles_names)
         var typeEl = card.querySelector('.contact-type');
-        if (typeEl) typeEl.textContent = contact.contact_type_name || '-';
+        if (typeEl) typeEl.textContent = contact.roles_names || contact.contact_type_name || '-';
 
         // Телефон
         var phoneLink = card.querySelector('.contact-phone');

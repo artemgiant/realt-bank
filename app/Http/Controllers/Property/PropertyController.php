@@ -745,6 +745,7 @@ class PropertyController extends Controller
         return [
             'full_name' => $contact->full_name,
             'contact_type_name' => $contact->contact_type_name ?? '-',
+            'roles_names' => $contact->roles_names ?? '-',
             'phone' => $contact->primary_phone ?? '-',
         ];
     }
@@ -1126,6 +1127,7 @@ class PropertyController extends Controller
     {
         $property->load([
             'contacts.phones',
+            'contacts.roles',
             'translations',
             'features',
             'photos',

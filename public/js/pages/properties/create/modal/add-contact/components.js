@@ -73,6 +73,17 @@ window.ContactModal.Components = {
                 }
             },
             {
+                selector: '#roles-contact-modal',
+                options: {
+                    dropdownParent: $('#add-contact-modal'),
+                    width: '100%',
+                    placeholder: 'Выберите роли',
+                    allowClear: true,
+                    multiple: true,
+                    language: { noResults: function() { return "Результатов не найдено"; } }
+                }
+            },
+            {
                 selector: '#type-contact-modal',
                 options: {
                     dropdownParent: $('#add-contact-modal'),
@@ -182,7 +193,7 @@ window.ContactModal.Components = {
         }
 
         // Уничтожаем Select2
-        ['#tags-client-modal', '#type-contact-modal'].forEach(function(selector) {
+        ['#tags-client-modal', '#roles-contact-modal', '#type-contact-modal'].forEach(function(selector) {
             var $el = $(selector);
             if ($el.data('select2')) {
                 $el.select2('destroy');

@@ -184,6 +184,24 @@ window.ContactModal.Api = {
             formData.append('phones[' + index + '][is_primary]', phone.is_primary ? '1' : '0');
         });
 
+        // Роли: Select2 может не синхронизировать multi-select с FormData — добавляем явно
+        var rolesSelect = form.querySelector('#roles-contact-modal');
+        if (rolesSelect) {
+            var keysToDeleteRoles = [];
+            for (var p of formData.entries()) {
+                if (p[0] === 'roles[]' || p[0].indexOf('roles[') === 0) keysToDeleteRoles.push(p[0]);
+            }
+            keysToDeleteRoles.forEach(function(k) { formData.delete(k); });
+            var rolesVal = typeof $ !== 'undefined' && $(rolesSelect).data('select2')
+                ? $(rolesSelect).val()
+                : Array.from(rolesSelect.selectedOptions).map(function(opt) { return opt.value; });
+            if (Array.isArray(rolesVal)) {
+                rolesVal.forEach(function(roleId) {
+                    if (roleId) formData.append('roles[]', roleId);
+                });
+            }
+        }
+
         return formData;
     }
 };

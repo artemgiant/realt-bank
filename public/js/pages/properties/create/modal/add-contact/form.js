@@ -85,6 +85,11 @@ window.ContactModal.Form = {
         if (contact.contact_type) {
             $('#type-contact-modal').val(contact.contact_type).trigger('change');
         }
+        if (contact.roles && contact.roles.length) {
+            $('#roles-contact-modal').val(contact.roles).trigger('change');
+        } else {
+            $('#roles-contact-modal').val(null).trigger('change');
+        }
         if (contact.tags) {
             $('#tags-client-modal').val(contact.tags).trigger('change');
         }
@@ -109,6 +114,7 @@ window.ContactModal.Form = {
 
         // Сбрасываем select2
         $('#type-contact-modal').val('').trigger('change');
+        $('#roles-contact-modal').val(null).trigger('change');
         $('#tags-client-modal').val('').trigger('change');
 
         // Скрываем индикатор

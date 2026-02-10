@@ -220,6 +220,7 @@ class ContactController extends Controller
                     'email' => $contact->email,
                     'contact_type' => $contact->contact_type,
                     'contact_type_name' => $contact->contact_type_name,
+                    'roles_names' => $contact->roles_names,
                     'photo_url' => $contact->photo ? Storage::url($contact->photo) : null,
                     'phones' => $contact->phones,
                     'messengers' => $contact->messengers,
@@ -250,7 +251,7 @@ class ContactController extends Controller
      */
     public function ajaxShow(Contact $contact): JsonResponse
     {
-        $contact->load('phones');
+        $contact->load(['phones', 'roles']);
 
         return response()->json([
             'success' => true,
@@ -264,6 +265,8 @@ class ContactController extends Controller
                 'email' => $contact->email,
                 'contact_type' => $contact->contact_type,
                 'contact_type_name' => $contact->contact_type_name,
+                'roles_names' => $contact->roles_names,
+                'roles' => $contact->roles->pluck('id')->toArray(),
                 'tags' => $contact->tags,
                 'tags_array' => $contact->tags_array,
                 'telegram' => $contact->telegram,
@@ -385,6 +388,7 @@ class ContactController extends Controller
                     'email' => $contact->email,
                     'contact_type' => $contact->contact_type,
                     'contact_type_name' => $contact->contact_type_name,
+                    'roles_names' => $contact->roles_names,
                     'photo_url' => $contact->photo ? Storage::url($contact->photo) : null,
                     'phones' => $contact->phones,
                     'messengers' => $contact->messengers,
