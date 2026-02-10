@@ -12,6 +12,12 @@ window.ContactModal.Form = {
     // Режим редактирования
     isEditMode: false,
 
+    // Данные контакта для заполнения после открытия модалки (редактирование)
+    pendingContactData: null,
+
+    // Флаг: компоненты модалки (intl-tel-input, маска) инициализированы
+    modalComponentsReady: false,
+
     /**
      * Заполнение формы данными контакта
      * @param {Object} contact - Данные контакта
@@ -45,15 +51,31 @@ window.ContactModal.Form = {
             var raw = (phoneObj && (phoneObj.phone || phoneObj.number)) ? (phoneObj.phone || phoneObj.number) : '';
             if (!raw || !phoneInputs[index]) return;
             var input = phoneInputs[index];
-            // E.164 для intl-tel-input: ожидается "+380502345332"
             var phoneE164 = (raw + '').trim().replace(/\s/g, '');
             if (phoneE164 && phoneE164.charAt(0) !== '+') {
                 phoneE164 = '+' + phoneE164;
             }
             if (input._iti) {
-                input._iti.setNumber(phoneE164);
-                // Обновляем маску под выбранную страну (код страны и маска номера)
-                $(input).trigger('countrychange');
+                var iti = input._iti;
+                iti.setNumber(phoneE164);
+                // Для маски нужен национальный номер (только цифры), иначе отображается "+380502345332" без форматирования
+                var countryData = iti.getSelectedCountryData();
+                var dialCode = (countryData && countryData.dialCode) ? String(countryData.dialCode).replace(/\D/g, '') : '';
+                var digits = phoneE164.replace(/\D/g, '');
+                var nationalDigits = dialCode.length && digits.indexOf(dialCode) === 0
+                    ? digits.slice(dialCode.length)
+                    : digits.slice(-9);
+                if (nationalDigits.length === 8 && countryData && countryData.iso2 === 'ua') {
+                    nationalDigits = '0' + nationalDigits;
+                }
+                input.value = nationalDigits;
+                if (typeof $ !== 'undefined') {
+                    $(input).trigger('countrychange');
+                    $(input).trigger('input');
+                } else {
+                    input.dispatchEvent(new Event('countrychange', { bubbles: true }));
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                }
             } else {
                 input.value = phoneE164 || raw;
             }
