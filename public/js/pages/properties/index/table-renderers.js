@@ -21,7 +21,7 @@ window.PropertyRenderers = {
         if (isVisible) {
             // Открытый замок (SVG от пользователя)
             lockIcon = '<div class="tbody-wrapper visibility" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Контакт клиента открыт">' +
-                '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" opacity="0.6">' +
+                '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" opacity="0.6">' +
                 '<path d="M12 17V15" stroke="#10B981" stroke-width="2" stroke-linecap="round"/>' +
                 '<rect x="5" y="11" width="14" height="10" rx="2" stroke="#10B981" stroke-width="2"/>' +
                 '<path d="M7 11V7C7 4.23858 9.23858 2 12 2C14.7614 2 17 4.23858 17 7" stroke="#10B981" stroke-width="2"/>' +
@@ -31,7 +31,7 @@ window.PropertyRenderers = {
         } else {
             // Закрытый замок (SVG от пользователя)
             lockIcon = '<div class="tbody-wrapper visibility" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Контакт клиента закрыт">' +
-                '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" opacity="0.5">' +
+                '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" opacity="0.5">' +
                 '<path d="M12 17V15" stroke="#4B5563" stroke-width="2" stroke-linecap="round"/>' +
                 '<rect x="5" y="11" width="14" height="10" rx="2" stroke="#4B5563" stroke-width="2"/>' +
                 '<path d="M7 11V7C7 4.23858 9.23858 2 12 2C14.7614 2 17 4.23858 17 7V11" stroke="#4B5563" stroke-width="2"/>' +
@@ -52,7 +52,7 @@ window.PropertyRenderers = {
                 // Оранжевый цвет, полупрозрачный, 20x20
                 var warningStyle = 'opacity: 0.6;';
                 warningIcon = '<div class="tbody-wrapper warning-icon pt-0" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Обновлено более 30 дней назад">' +
-                    '<svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" style="' + warningStyle + '">' +
+                    '<svg width="16" height="16" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" style="' + warningStyle + '">' +
                     '<path d="M6.43196 2.41226L1.13821 11.2498C1.02907 11.4388 0.971319 11.6531 0.970708 11.8713C0.970097 12.0896 1.02665 12.3042 1.13473 12.4938C1.24282 12.6835 1.39867 12.8415 1.58678 12.9522C1.7749 13.0629 1.98871 13.1224 2.20696 13.1248H12.7945C13.0127 13.1224 13.2265 13.0629 13.4146 12.9522C13.6028 12.8415 13.7586 12.6835 13.8667 12.4938C13.9748 12.3042 14.0313 12.0896 14.0307 11.8713C14.0301 11.6531 13.9724 11.4388 13.8632 11.2498L8.56947 2.41226C8.45805 2.22858 8.30117 2.07671 8.11396 1.97131C7.92676 1.86592 7.71555 1.81055 7.50072 1.81055C7.28588 1.81055 7.07467 1.86592 6.88747 1.97131C6.70026 2.07671 6.54338 2.22858 6.43196 2.41226Z" stroke="#fd7e14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />' +
                     '<path d="M7.5 5.625V8.125" stroke="#fd7e14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />' +
                     '<circle cx="7.5" cy="10.625" r="0.625" fill="#fd7e14" />' +
@@ -215,9 +215,7 @@ window.PropertyRenderers = {
             '                                     <img src="./img/icon/burger-blue.svg" alt="">\n' +
             '                                 </button>\n' +
             '                                 <ul class="dropdown-menu" style="">\n' +
-            '                                    <li><a class="dropdown-item" href="#">Обновить</a></li>\n' +
             '                                    <li><a class="dropdown-item" href="/properties/' + row.id + '/edit">Редактировать</a></li>\n' +
-            '                                    <li><a class="dropdown-item" href="#">Удалить</a></li>\n' +
             '                                 </ul>\n' +
             '                              </div>\n' +
             '                           </div>\n' +

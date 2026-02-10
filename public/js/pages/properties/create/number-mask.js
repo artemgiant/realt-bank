@@ -5,22 +5,22 @@
  * Формат: 125 000 (пробел как разделитель тысяч)
  */
 
-(function() {
-    document.addEventListener('DOMContentLoaded', function() {
+(function () {
+    document.addEventListener('DOMContentLoaded', function () {
 
         // Поля с целыми числами
         const integerFields = [
             '#floor',
-            '#floors_total'
-        ];
-
-        // Поля с десятичными числами (площади)
-        const decimalFields = [
+            '#floors_total',
             '#area_total',
             '#area_living',
             '#area_kitchen',
-            '#area_land'
+            '#area_land',
+            '#commission'
         ];
+
+        // Поля с десятичными числами (площади) - теперь пусты, так как заказчик хочет только целые числа
+        const decimalFields = [];
 
         // Поля с большими числами (цена)
         const moneyFields = [
@@ -28,21 +28,21 @@
         ];
 
         // Инициализация масок
-        integerFields.forEach(function(selector) {
+        integerFields.forEach(function (selector) {
             const input = document.querySelector(selector);
             if (input) {
                 initIntegerMask(input);
             }
         });
 
-        decimalFields.forEach(function(selector) {
+        decimalFields.forEach(function (selector) {
             const input = document.querySelector(selector);
             if (input) {
                 initDecimalMask(input);
             }
         });
 
-        moneyFields.forEach(function(selector) {
+        moneyFields.forEach(function (selector) {
             const input = document.querySelector(selector);
             if (input) {
                 initMoneyMask(input);
@@ -53,12 +53,12 @@
          * Маска для целых чисел (этажи)
          */
         function initIntegerMask(input) {
-            input.addEventListener('input', function(e) {
+            input.addEventListener('input', function (e) {
                 let value = this.value.replace(/[^\d]/g, '');
                 this.value = formatNumber(value);
             });
 
-            input.addEventListener('keypress', function(e) {
+            input.addEventListener('keypress', function (e) {
                 if (!/[\d]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
                     e.preventDefault();
                 }
@@ -76,7 +76,7 @@
          * Маска для десятичных чисел (площади)
          */
         function initDecimalMask(input) {
-            input.addEventListener('input', function(e) {
+            input.addEventListener('input', function (e) {
                 let value = this.value;
 
                 // Разрешаем только цифры, точку и запятую
@@ -109,7 +109,7 @@
                 }
             });
 
-            input.addEventListener('keypress', function(e) {
+            input.addEventListener('keypress', function (e) {
                 if (!/[\d.,]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
                     e.preventDefault();
                 }
@@ -128,12 +128,12 @@
          * Маска для денежных полей (цена, комиссия)
          */
         function initMoneyMask(input) {
-            input.addEventListener('input', function(e) {
+            input.addEventListener('input', function (e) {
                 let value = this.value.replace(/[^\d]/g, '');
                 this.value = formatNumber(value);
             });
 
-            input.addEventListener('keypress', function(e) {
+            input.addEventListener('keypress', function (e) {
                 if (!/[\d]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
                     e.preventDefault();
                 }
@@ -165,14 +165,14 @@
          * Получить чистое число из форматированного значения
          * Можно использовать перед отправкой формы
          */
-        window.getCleanNumber = function(value) {
+        window.getCleanNumber = function (value) {
             if (!value) return '';
             return value.replace(/\s/g, '');
         };
     });
 
     // Очистка значений перед отправкой формы
-    document.addEventListener('submit', function(e) {
+    document.addEventListener('submit', function (e) {
         if (e.target.id === 'property-form') {
             const fieldsToClean = [
                 '#price',
@@ -184,7 +184,7 @@
                 '#floors_total'
             ];
 
-            fieldsToClean.forEach(function(selector) {
+            fieldsToClean.forEach(function (selector) {
                 const input = document.querySelector(selector);
                 if (input && input.value) {
                     // Убираем пробелы перед отправкой

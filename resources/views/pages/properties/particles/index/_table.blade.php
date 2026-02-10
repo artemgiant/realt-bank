@@ -69,10 +69,6 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">Обновить</a></li>
-                                <li><a class="dropdown-item" href="#">Редактировать</a></li>
-                                <li><a class="dropdown-item" href="#">Удалить</a></li>
-                                <li><a class="dropdown-item" href="#">Отложить</a></li>
-                                <li><a class="dropdown-item" href="#">Передать</a></li>
                             </ul>
                         </div>
                     </div>
