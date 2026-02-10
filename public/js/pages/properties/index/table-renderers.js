@@ -146,7 +146,7 @@ window.PropertyRenderers = {
 
         // Главное фото — видимая ссылка
         html += '<a href="' + data.main + '" data-fancybox="' + galleryId + '" style="cursor:pointer;">' +
-            '<img src="' + data.main + '" alt="" class="table-photo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">' +
+            '<img src="' + data.main + '" alt="" class="table-photo">' +
             '</a>';
 
         // Превью при наведении

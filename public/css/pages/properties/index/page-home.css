@@ -654,16 +654,19 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   overflow: hidden;
   vertical-align: top;
 }
+
 #example tbody tr.dop-info-row td .tbody-dop-info {
   transition: max-height 0.35s ease, padding 0.35s ease;
   overflow: hidden;
   box-sizing: border-box;
 }
+
 #example tbody tr.dop-info-row.dop-info-row-closed td .tbody-dop-info {
   max-height: 0;
   padding-top: 0;
   padding-bottom: 0;
 }
+
 #example tbody tr.dop-info-row:not(.dop-info-row-closed) td .tbody-dop-info {
   max-height: 1200px;
 }
@@ -727,14 +730,16 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 
 #example tbody tr td .tbody-wrapper.photo {
   position: relative;
+  overflow: visible;
 }
 
-#example tbody tr td .tbody-wrapper.photo>picture img {
-  width: 60px;
-  height: 40px;
-  border-radius: 8px;
+#example tbody tr td .tbody-wrapper.photo img.table-photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
   -o-object-fit: cover;
   object-fit: cover;
+  transition: all 0.2s ease-in-out;
 }
 
 #example tbody tr td .tbody-wrapper.photo .photo-hover-preview {
@@ -743,17 +748,20 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   left: 60px;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 1000;
+  z-index: 9999;
   padding: 4px;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   pointer-events: none;
+  min-width: 150px;
 }
 
 #example tbody tr td .tbody-wrapper.photo .photo-hover-preview img {
   display: block;
-  width: 280px;
+  max-width: 300px;
+  max-height: 300px;
+  width: auto;
   height: auto;
   border-radius: 6px;
   object-fit: contain;
@@ -943,22 +951,27 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   border: 1px solid #e9ecef;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
+
 #example tbody tr td .tbody-dop-info .info-main-left .block-info .block-info-detail .info-title {
   color: #6c757d;
   font-size: 13px;
 }
+
 #example tbody tr td .tbody-dop-info .info-main-left .block-info .block-info-detail .info-contacts-name {
   font-weight: 600;
   color: #334553;
 }
+
 #example tbody tr td .tbody-dop-info .info-main-left .block-info .block-info-detail .info-contacts-tel {
   color: #3585f5;
   text-decoration: none;
   font-weight: 500;
 }
+
 #example tbody tr td .tbody-dop-info .info-main-left .block-info .block-info-detail .info-contacts-tel:hover {
   text-decoration: underline;
 }
+
 /* Прихований стан — плавне зникнення, visibility з затримкою щоб таблиця не стрибала */
 #example tbody tr td .tbody-dop-info .info-main-left .block-info .block-info-detail.block-info-detail-hidden {
   opacity: 0;
