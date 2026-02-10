@@ -38,6 +38,27 @@ window.ContactModal.Form = {
         Utils.setInputValue('#passport-contact-modal', contact.passport);
         Utils.setInputValue('#inn-contact-modal', contact.inn);
 
+        // Заполняем телефоны с учётом кода страны и маски (intl-tel-input + PhoneInputManager)
+        var phoneInputs = form.querySelectorAll(Config.selectors.phoneInput);
+        var phones = contact.phones && contact.phones.length ? contact.phones : (contact.primary_phone ? [{ phone: contact.primary_phone }] : []);
+        phones.forEach(function(phoneObj, index) {
+            var raw = (phoneObj && (phoneObj.phone || phoneObj.number)) ? (phoneObj.phone || phoneObj.number) : '';
+            if (!raw || !phoneInputs[index]) return;
+            var input = phoneInputs[index];
+            // E.164 для intl-tel-input: ожидается "+380502345332"
+            var phoneE164 = (raw + '').trim().replace(/\s/g, '');
+            if (phoneE164 && phoneE164.charAt(0) !== '+') {
+                phoneE164 = '+' + phoneE164;
+            }
+            if (input._iti) {
+                input._iti.setNumber(phoneE164);
+                // Обновляем маску под выбранную страну (код страны и маска номера)
+                $(input).trigger('countrychange');
+            } else {
+                input.value = phoneE164 || raw;
+            }
+        });
+
         // Заполняем select2
         if (contact.contact_type) {
             $('#type-contact-modal').val(contact.contact_type).trigger('change');
