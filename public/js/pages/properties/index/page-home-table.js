@@ -262,44 +262,25 @@ $(document).ready(function () {
     function buildBlockInfo(data) {
         var isVisibleToAgents = !!data.is_visible_to_agents;
         var contact = data.contact_for_display || null;
-        var agent = data.agent || null;
         var defaultAvatar = './img/icon/default-avatar-table.svg';
 
-        var showContactCard = isVisibleToAgents && contact;
-        var showAgentCard = !isVisibleToAgents && agent;
-        if (!showContactCard && !showAgentCard) {
+        if (!isVisibleToAgents || !contact) {
             return '<ul class="block-info"></ul>';
         }
 
-        var btnText = showContactCard ? 'Показать контакты' : 'Связаться с агентом';
+        var btnText = 'Показать контакты';
         var btnClass = 'btn btn-outline-primary btn-block-info-toggle';
-        var detailHtml = '';
-        if (showContactCard) {
-            detailHtml = '<li class="block-info-item block-info-detail block-info-detail-hidden">' +
-                '<div class="info-title-wrapper"><h2 class="info-title">Клиент</h2></div>' +
-                '<div class="info-avatar">' +
-                '<img src="' + escapeHtml(defaultAvatar) + '" alt="">' +
-                '</div>' +
-                '<div class="info-contacts">' +
-                '<p class="info-contacts-name">' + escapeHtml(contact.full_name) + '</p>' +
-                '<p class="info-description">' + escapeHtml(contact.contact_type_name) + '</p>' +
-                '<a href="tel:' + escapeHtml((contact.phone || '').replace(/\s/g, '')) + '" class="info-contacts-tel">' + escapeHtml(contact.phone || '-') + '</a>' +
-                '</div>' +
-                '</li>';
-        } else {
-            var agentPhoto = (agent.photo_url && agent.photo_url.length) ? escapeHtml(agent.photo_url) : defaultAvatar;
-            detailHtml = '<li class="block-info-item block-info-detail block-info-detail-hidden">' +
-                '<div class="info-title-wrapper"><h2 class="info-title">Агент</h2></div>' +
-                '<div class="info-avatar">' +
-                '<img src="' + escapeHtml(agentPhoto) + '" alt="">' +
-                '</div>' +
-                '<div class="info-contacts">' +
-                '<p class="info-contacts-name">' + escapeHtml(agent.full_name) + '</p>' +
-                '<p class="info-description">' + escapeHtml(agent.company_name || '') + '</p>' +
-                '<a href="tel:' + escapeHtml((agent.phone || '').replace(/\s/g, '')) + '" class="info-contacts-tel">' + escapeHtml(agent.phone || '-') + '</a>' +
-                '</div>' +
-                '</li>';
-        }
+        var detailHtml = '<li class="block-info-item block-info-detail block-info-detail-hidden">' +
+            '<div class="info-title-wrapper"><h2 class="info-title">Клиент</h2></div>' +
+            '<div class="info-avatar">' +
+            '<img src="' + escapeHtml(defaultAvatar) + '" alt="">' +
+            '</div>' +
+            '<div class="info-contacts">' +
+            '<p class="info-contacts-name">' + escapeHtml(contact.full_name) + '</p>' +
+            '<p class="info-description">' + escapeHtml(contact.contact_type_name) + '</p>' +
+            '<a href="tel:' + escapeHtml((contact.phone || '').replace(/\s/g, '')) + '" class="info-contacts-tel">' + escapeHtml(contact.phone || '-') + '</a>' +
+            '</div>' +
+            '</li>';
 
         return '<ul class="block-info">' +
             '<li class="block-info-item">' +
@@ -365,10 +346,10 @@ $(document).ready(function () {
             descriptionHtml +
             agentNotesHtml +
             (data.personal_notes ?
-            '<p class="description-note">' +
-            '<strong>Заметка: </strong>' +
-            '<span>' + nl2br(escapeHtml(data.personal_notes)) + '</span>' +
-            '</p>' : '') +
+                '<p class="description-note">' +
+                '<strong>Заметка: </strong>' +
+                '<span>' + nl2br(escapeHtml(data.personal_notes)) + '</span>' +
+                '</p>' : '') +
             '</div>' +
 
             buildBlockInfo(data) +

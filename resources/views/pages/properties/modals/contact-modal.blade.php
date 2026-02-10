@@ -110,7 +110,6 @@
                             </select>
                         </div>
 
-
                         <div class="modal-row">
 
                             <div class="item w75">
