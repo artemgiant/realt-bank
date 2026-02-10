@@ -234,6 +234,7 @@ class PropertyController extends Controller
                 'tiktok_url' => $property->tiktok_url,
                 'created_at_formatted' => $property->created_at->format('d.m.Y'),
                 'updated_at_formatted' => $property->updated_at->format('d.m.Y'),
+                'updated_at' => $property->updated_at->toIso8601String(),
                 // Block-info: contact vs agent visibility
                 'is_visible_to_agents' => (bool) $property->is_visible_to_agents,
                 'contact_for_display' => $this->formatContactForDisplay($property),
