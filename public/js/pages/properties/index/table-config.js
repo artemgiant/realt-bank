@@ -8,7 +8,7 @@ window.PropertyTableConfig = {
     ajaxUrl: '/properties/ajax-data',
 
     // Определение колонок
-    getColumns: function() {
+    getColumns: function () {
         var R = window.PropertyRenderers;
 
         return [
@@ -16,6 +16,11 @@ window.PropertyTableConfig = {
                 data: 'checkbox',
                 orderable: false,
                 render: R.checkbox
+            },
+            {
+                data: 'is_visible_to_agents',
+                orderable: false,
+                render: R.visibility
             },
 
             {
@@ -77,7 +82,7 @@ window.PropertyTableConfig = {
     },
 
     // Базовые настройки DataTables
-    getBaseSettings: function() {
+    getBaseSettings: function () {
         return {
             processing: true,
             serverSide: true,

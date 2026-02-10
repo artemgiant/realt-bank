@@ -13,6 +13,33 @@ window.PropertyRenderers = {
             '</label></div>';
     },
 
+    // Видимость для агентов (замок)
+    visibility: function (data, type, row) {
+        var isVisible = row.is_visible_to_agents;
+
+        if (isVisible) {
+            // Открытый замок (SVG от пользователя)
+            return '<div class="tbody-wrapper visibility" data-bs-toggle="tooltip" title="Виден агентам">' +
+                '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" opacity="0.6">' +
+                '<path d="M12 17V15" stroke="#10B981" stroke-width="2" stroke-linecap="round"/>' +
+                '<rect x="5" y="11" width="14" height="10" rx="2" stroke="#10B981" stroke-width="2"/>' +
+                '<path d="M7 11V7C7 4.23858 9.23858 2 12 2C14.7614 2 17 4.23858 17 7" stroke="#10B981" stroke-width="2"/>' +
+                '<circle cx="12" cy="16" r="1" fill="#10B981"/>' +
+                '</svg>' +
+                '</div>';
+        } else {
+            // Закрытый замок (SVG от пользователя)
+            return '<div class="tbody-wrapper visibility" data-bs-toggle="tooltip" title="Скрыт от агентов">' +
+                '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" opacity="0.5">' +
+                '<path d="M12 17V15" stroke="#4B5563" stroke-width="2" stroke-linecap="round"/>' +
+                '<rect x="5" y="11" width="14" height="10" rx="2" stroke="#4B5563" stroke-width="2"/>' +
+                '<path d="M7 11V7C7 4.23858 9.23858 2 12 2C14.7614 2 17 4.23858 17 7V11" stroke="#4B5563" stroke-width="2"/>' +
+                '<circle cx="12" cy="16" r="1" fill="#4B5563"/>' +
+                '</svg>' +
+                '</div>';
+        }
+    },
+
 
     // Локация (адрес)
     // Формат: 1) ЖК (жирный), 2) Дом, Улица, Зона, 3) Район, Город, Область, Страна
