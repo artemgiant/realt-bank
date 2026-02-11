@@ -101,7 +101,7 @@
                                     : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
-                                {{ Str::limit($propertyTypeText, 20) }}
+                                {{ $propertyTypeText }}
                             </button>
                             <div class="multiple-menu-wrapper">
                                 <ul class="multiple-menu-list">
@@ -131,7 +131,7 @@
                                     : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
-                                {{ Str::limit($conditionText, 20) }}
+                                {{ $conditionText }}
                             </button>
                             <div class="multiple-menu-wrapper">
                                 <ul class="multiple-menu-list">
@@ -161,7 +161,7 @@
                                     : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
-                                {{ Str::limit($buildingTypeText, 20) }}
+                                {{ $buildingTypeText }}
                             </button>
                             <div class="multiple-menu-wrapper">
                                 <ul class="multiple-menu-list">
@@ -191,7 +191,7 @@
                                     : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
-                                {{ Str::limit($yearText, 20) }}
+                                {{ $yearText }}
                             </button>
                             <div class="multiple-menu-wrapper">
                                 <ul class="multiple-menu-list" style="max-height: 200px; overflow-y: auto;">
@@ -221,7 +221,7 @@
                                     : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
-                                {{ Str::limit($wallTypeText, 20) }}
+                                {{ $wallTypeText }}
                             </button>
                             <div class="multiple-menu-wrapper">
                                 <ul class="multiple-menu-list">
@@ -251,7 +251,7 @@
                                     : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
-                                {{ Str::limit($roomCountText, 20) }}
+                                {{ $roomCountText }}
                             </button>
                             <div class="multiple-menu-wrapper">
                                 <ul class="multiple-menu-list">
@@ -347,7 +347,7 @@
                                     : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
-                                {{ Str::limit($heatingTypeText, 20) }}
+                                {{ $heatingTypeText }}
                             </button>
                             <div class="multiple-menu-wrapper">
                                 <ul class="multiple-menu-list">
@@ -377,7 +377,7 @@
                                     : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
-                                {{ Str::limit($bathroomCountText, 20) }}
+                                {{ $bathroomCountText }}
                             </button>
                             <div class="multiple-menu-wrapper">
                                 <ul class="multiple-menu-list">
@@ -407,7 +407,7 @@
                                     : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
-                                {{ Str::limit($ceilingHeightText, 20) }}
+                                {{ $ceilingHeightText }}
                             </button>
                             <div class="multiple-menu-wrapper">
                                 <ul class="multiple-menu-list">
@@ -450,7 +450,7 @@
                                     : '';
                             @endphp
                             <button class="multiple-menu-btn" data-open-menu="false" type="button">
-                                {{ Str::limit($featureText, 20) }}
+                                {{ $featureText }}
                             </button>
                             <div class="multiple-menu-wrapper">
                                 <label>

@@ -44,7 +44,7 @@ window.ContactModal.Form = {
         Utils.setInputValue('#passport-contact-modal', contact.passport);
         Utils.setInputValue('#inn-contact-modal', contact.inn);
 
-        // Заполняем телефоны с учётом кода страны и маски (intl-tel-input + PhoneInputManager)
+        // Заполняем телефоны: только setNumber (E.164) — страна и национальный номер подставит intl-tel-input, потом маска
         var phoneInputs = form.querySelectorAll(Config.selectors.phoneInput);
         var phones = contact.phones && contact.phones.length ? contact.phones : (contact.primary_phone ? [{ phone: contact.primary_phone }] : []);
         phones.forEach(function(phoneObj, index) {
@@ -58,16 +58,11 @@ window.ContactModal.Form = {
             if (input._iti) {
                 var iti = input._iti;
                 iti.setNumber(phoneE164);
-                // Для маски нужен национальный номер (только цифры), иначе отображается "+380502345332" без форматирования
                 var countryData = iti.getSelectedCountryData();
                 var dialCode = (countryData && countryData.dialCode) ? String(countryData.dialCode).replace(/\D/g, '') : '';
                 var digits = phoneE164.replace(/\D/g, '');
-                var nationalDigits = dialCode.length && digits.indexOf(dialCode) === 0
-                    ? digits.slice(dialCode.length)
-                    : digits.slice(-9);
-                if (nationalDigits.length === 8 && countryData && countryData.iso2 === 'ua') {
-                    nationalDigits = '0' + nationalDigits;
-                }
+                var nationalDigits = dialCode.length && digits.indexOf(dialCode) === 0 ? digits.slice(dialCode.length) : digits.slice(-9);
+                if (nationalDigits.length === 8 && countryData && countryData.iso2 === 'ua') nationalDigits = '0' + nationalDigits;
                 input.value = nationalDigits;
                 if (typeof $ !== 'undefined') {
                     $(input).trigger('countrychange');

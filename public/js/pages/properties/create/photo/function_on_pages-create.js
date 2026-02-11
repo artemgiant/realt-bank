@@ -2244,12 +2244,20 @@ class PhoneInputManager {
 		});
 
 		$input.on('blur', () => {
-			if ($input.val()) {
-				const number = iti.getNumber();
-				if (number) {
-					$input.val(number.replace(/[^\d]/g, ''));
-				}
+			if (!$input.val()) return;
+			const number = iti.getNumber();
+			if (!number) return;
+			const fullDigits = number.replace(/\D/g, '');
+			const countryData = iti.getSelectedCountryData();
+			const dialCode = (countryData && countryData.dialCode) ? String(countryData.dialCode).replace(/\D/g, '') : '';
+			let nationalDigits = dialCode.length && fullDigits.indexOf(dialCode) === 0
+				? fullDigits.slice(dialCode.length)
+				: fullDigits.slice(-9);
+			if (nationalDigits.length === 8 && countryData && countryData.iso2 === 'ua') {
+				nationalDigits = '0' + nationalDigits;
 			}
+			$input.val(nationalDigits);
+			$input.trigger('input');
 		});
 
 		// Застосовуємо маску відразу при ініціалізації

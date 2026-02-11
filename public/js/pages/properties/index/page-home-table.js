@@ -9,6 +9,9 @@ $(document).ready(function () {
     var Filters = window.PropertyFilters;
     var Tags = window.PropertyTags;
 
+    // Инициализация DatePicker
+    Filters.initDatePicker();
+
     // ========== Debounce функция ==========
     // Задержка перед выполнением запроса после окончания ввода
     function debounce(func, wait) {

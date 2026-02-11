@@ -87,4 +87,24 @@ $(document).ready(function () {
 			}
 		}
 	});
+
+	// Оновлення тексту кнопки при зміні чекбоксів
+	$(document).on('change', '.multiple-menu-list input[type="checkbox"]', function () {
+		var $menu = $(this).closest('.multiple-menu');
+		var $btn = $menu.find('.multiple-menu-btn');
+		var checkedTexts = [];
+
+		$menu.find('.multiple-menu-list input[type="checkbox"]:checked').each(function () {
+			// Ігноруємо чекбокс "Вибрати все", якщо він є
+			if ($(this).data('name') !== 'checkbox-all') {
+				var text = $(this).closest('label').find('.my-custom-text').text().trim();
+				if (text) checkedTexts.push(text);
+			}
+		});
+
+		// Якщо нічого не вибрано, очищаємо текст (або додаємо placeholder якщо треба)
+		$btn.text(checkedTexts.join(', '));
+		// Додаємо title для відображення повного тексту при наведенні
+		$btn.attr('title', checkedTexts.join(', '));
+	});
 });
