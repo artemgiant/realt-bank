@@ -729,6 +729,8 @@ class PropertyController extends Controller
             'full_name' => $employee->full_name,
             'contact_type_name' => $property->contactType?->name,
             'phone' => $employee->phone,
+            'company_name' => $employee->company?->name,
+            'position_name' => $employee->position?->name,
         ];
     }
 
