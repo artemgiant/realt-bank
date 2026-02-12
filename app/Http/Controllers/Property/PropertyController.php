@@ -735,21 +735,21 @@ class PropertyController extends Controller
     }
 
     /**
-     * Контакт объекта (клиент) для блока block-info в child row
-     * Первый контакт из property->contacts
+     * Контакты объекта (клиенты) для блока block-info в child row
+     * Все контакты из property->contacts
      */
     private function formatContactForDisplay(Property $property): ?array
     {
-        $contact = $property->contacts->first();
-        if (!$contact) {
+        $contacts = $property->contacts;
+        if ($contacts->isEmpty()) {
             return null;
         }
-        return [
+        return $contacts->map(fn($contact) => [
             'full_name' => $contact->full_name,
             'contact_type_name' => $contact->contact_type_name ?? '-',
             'roles_names' => $contact->roles_names ?? '-',
             'phone' => $contact->primary_phone ?? '-',
-        ];
+        ])->values()->all();
     }
 
     /**

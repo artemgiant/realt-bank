@@ -273,26 +273,31 @@ $(document).ready(function () {
 
     function buildBlockInfo(data) {
         var isVisibleToAgents = !!data.is_visible_to_agents;
-        var contact = data.contact_for_display || null;
+        var contacts = data.contact_for_display || null;
         var defaultAvatar = './img/icon/default-avatar-table.svg';
 
-        if (!isVisibleToAgents || !contact) {
+        if (!isVisibleToAgents || !contacts || !contacts.length) {
             return '<ul class="block-info"></ul>';
         }
 
         var btnText = 'Показать контакты';
         var btnClass = 'btn btn-outline-primary btn-block-info-toggle';
-        var detailHtml = '<li class="block-info-item block-info-detail block-info-detail-hidden">' +
-            '<div class="info-title-wrapper"><h2 class="info-title">Клиент</h2></div>' +
-            '<div class="info-avatar">' +
-            '<img src="' + escapeHtml(defaultAvatar) + '" alt="">' +
-            '</div>' +
-            '<div class="info-contacts">' +
-            '<p class="info-contacts-name">' + escapeHtml(contact.full_name) + '</p>' +
-            '<p class="info-description">' + escapeHtml(contact.roles_names || contact.contact_type_name || '-') + '</p>' +
-            '<a href="tel:' + escapeHtml((contact.phone || '').replace(/\s/g, '')) + '" class="info-contacts-tel">' + escapeHtml(contact.phone || '-') + '</a>' +
-            '</div>' +
-            '</li>';
+
+        var detailHtml = '';
+        for (var i = 0; i < contacts.length; i++) {
+            var contact = contacts[i];
+            detailHtml += '<li class="block-info-item block-info-detail block-info-detail-hidden">' +
+                '<div class="info-title-wrapper"><h2 class="info-title">Клиент</h2></div>' +
+                '<div class="info-avatar">' +
+                '<img src="' + escapeHtml(defaultAvatar) + '" alt="">' +
+                '</div>' +
+                '<div class="info-contacts">' +
+                '<p class="info-contacts-name">' + escapeHtml(contact.full_name) + '</p>' +
+                '<p class="info-description">' + escapeHtml(contact.roles_names || contact.contact_type_name || '-') + '</p>' +
+                '<a href="tel:' + escapeHtml((contact.phone || '').replace(/\s/g, '')) + '" class="info-contacts-tel">' + escapeHtml(contact.phone || '-') + '</a>' +
+                '</div>' +
+                '</li>';
+        }
 
         return '<ul class="block-info">' +
             '<li class="block-info-item">' +
