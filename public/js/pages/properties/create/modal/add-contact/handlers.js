@@ -99,6 +99,22 @@ window.ContactModal.Handlers = {
                 e.preventDefault();
 
                 var form = e.target;
+
+                // Валидация Select2 полей (HTML required не работает для Select2)
+                var validationErrors = [];
+                var rolesVal = $('#roles-contact-modal').val();
+                if (!rolesVal || rolesVal.length === 0) {
+                    validationErrors.push('Выберите роли контакта');
+                }
+                var tagsVal = $('#tags-client-modal').val();
+                if (!tagsVal || tagsVal === '') {
+                    validationErrors.push('Выберите тег');
+                }
+                if (validationErrors.length > 0) {
+                    Form.showValidationErrors({ _client: validationErrors });
+                    return;
+                }
+
                 Form.showLoading();
 
                 var formData = Api.prepareFormData(form);

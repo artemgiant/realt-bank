@@ -44,34 +44,53 @@ window.ContactModal.Form = {
         Utils.setInputValue('#passport-contact-modal', contact.passport);
         Utils.setInputValue('#inn-contact-modal', contact.inn);
 
-        // Заполняем телефоны: только setNumber (E.164) — страна и национальный номер подставит intl-tel-input, потом маска
+        // Заполняем телефоны: определяем страну по коду, ставим только национальные цифры
         var phoneInputs = form.querySelectorAll(Config.selectors.phoneInput);
         var phones = contact.phones && contact.phones.length ? contact.phones : (contact.primary_phone ? [{ phone: contact.primary_phone }] : []);
+        // Маппинг dial code → ISO2 (отсортирован от длинных кодов к коротким)
+        var dialCodeMap = [
+            ['380','ua'],['375','by'],['373','md'],['374','am'],['371','lv'],['370','lt'],['372','ee'],
+            ['995','ge'],['994','az'],['993','tm'],['992','tj'],['998','uz'],['996','kg'],['971','ae'],['972','il'],
+            ['49','de'],['48','pl'],['47','no'],['46','se'],['45','dk'],['44','gb'],
+            ['43','at'],['42','cz'],['41','ch'],['40','ro'],['39','it'],['38','ba'],
+            ['36','hu'],['35','pt'],['34','es'],['33','fr'],['32','be'],['31','nl'],['30','gr'],
+            ['90','tr'],['86','cn'],['82','kr'],['81','jp'],['61','au'],['55','br'],
+            ['1','us'],['7','ru']
+        ];
         phones.forEach(function(phoneObj, index) {
             var raw = (phoneObj && (phoneObj.phone || phoneObj.number)) ? (phoneObj.phone || phoneObj.number) : '';
             if (!raw || !phoneInputs[index]) return;
             var input = phoneInputs[index];
-            var phoneE164 = (raw + '').trim().replace(/\s/g, '');
-            if (phoneE164 && phoneE164.charAt(0) !== '+') {
-                phoneE164 = '+' + phoneE164;
-            }
+            var phoneClean = (raw + '').trim().replace(/\s/g, '');
+            var digits = phoneClean.replace(/\D/g, '');
             if (input._iti) {
                 var iti = input._iti;
-                iti.setNumber(phoneE164);
-                var countryData = iti.getSelectedCountryData();
-                var dialCode = (countryData && countryData.dialCode) ? String(countryData.dialCode).replace(/\D/g, '') : '';
-                var digits = phoneE164.replace(/\D/g, '');
-                var nationalDigits = dialCode.length && digits.indexOf(dialCode) === 0 ? digits.slice(dialCode.length) : digits.slice(-9);
-                if (nationalDigits.length === 8 && countryData && countryData.iso2 === 'ua') nationalDigits = '0' + nationalDigits;
-                input.value = nationalDigits;
-                if (typeof $ !== 'undefined') {
-                    $(input).trigger('countrychange');
-                    $(input).trigger('input');
-                } else {
-                    input.dispatchEvent(new Event('countrychange', { bubbles: true }));
-                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                // Определяем страну по dial code без setNumber (setNumber дублирует код в input.value)
+                var countryIso2 = 'ua';
+                var dcLen = 0;
+                for (var i = 0; i < dialCodeMap.length; i++) {
+                    if (digits.indexOf(dialCodeMap[i][0]) === 0) {
+                        countryIso2 = dialCodeMap[i][1];
+                        dcLen = dialCodeMap[i][0].length;
+                        break;
+                    }
                 }
+                // Извлекаем национальные цифры (без кода страны)
+                var nationalDigits = dcLen ? digits.slice(dcLen) : digits;
+                if (nationalDigits.length === 8 && countryIso2 === 'ua') nationalDigits = '0' + nationalDigits;
+                console.log('[ContactModal] fill phone:', {raw: raw, digits: digits, countryIso2: countryIso2, dcLen: dcLen, nationalDigits: nationalDigits});
+                // Ставим страну (флаг + dial code отображение) — setCountry НЕ трогает input.value
+                iti.setCountry(countryIso2);
+                // Снимаем маску, ставим национальные цифры, применяем маску заново
+                $(input).unmask();
+                input.value = '';
+                input.value = nationalDigits;
+                console.log('[ContactModal] after set value:', input.value);
+                $(input).trigger('countrychange');
+                console.log('[ContactModal] after countrychange:', input.value);
             } else {
+                var phoneE164 = phoneClean;
+                if (phoneE164 && phoneE164.charAt(0) !== '+') phoneE164 = '+' + phoneE164;
                 input.value = phoneE164 || raw;
             }
         });

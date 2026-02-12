@@ -192,7 +192,7 @@ window.PropertyRenderers = {
         if (data.position_name) tooltipTitle.push(data.position_name);
         if (data.company_name) tooltipTitle.push(data.company_name);
 
-        var titleAttr = tooltipTitle.length > 0 ? tooltipTitle.join(' / ') : (data.contact_type_name || '');
+        var titleAttr = tooltipTitle.length > 0 ? tooltipTitle.join(' ') : (data.contact_type_name || '');
 
         return '<div class="tbody-wrapper contact">' +
             '<p class="link-name">' + (data.full_name || '-') + '</p>' +

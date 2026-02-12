@@ -38,17 +38,19 @@
                                 </div>
                             </div>
                             <div class="item">
-                                <label for="last-name-contact-modal">Фамилия</label>
+                                <label for="last-name-contact-modal" class="green">Фамилия <span
+                                        class="text-danger">*</span></label>
                                 <div class="item-inputText-wrapper">
                                     <input class="item-inputText" id="last-name-contact-modal" name="last_name"
-                                        type="text" autocomplete="off" placeholder="Фамилия">
+                                        type="text" autocomplete="off" placeholder="Фамилия" required>
                                 </div>
                             </div>
                             <div class="item">
-                                <label for="middle-name-contact-modal">Отчество</label>
+                                <label for="middle-name-contact-modal" class="green">Отчество <span
+                                        class="text-danger">*</span></label>
                                 <div class="item-inputText-wrapper">
                                     <input class="item-inputText" id="middle-name-contact-modal" name="middle_name"
-                                        type="text" autocomplete="off" placeholder="Отчество">
+                                        type="text" autocomplete="off" placeholder="Отчество" required>
                                 </div>
                             </div>
                         </div>
@@ -78,16 +80,18 @@
                                 </div>
                             </div>
                             <div class="item">
-                                <label for="email-contact-modal">Email</label>
+                                <label for="email-contact-modal" class="green">Email <span
+                                        class="text-danger">*</span></label>
                                 <div class="item-inputText-wrapper">
                                     <input class="item-inputText" id="email-contact-modal" name="email" type="email"
-                                        autocomplete="off" placeholder="email@gmail.com">
+                                        autocomplete="off" placeholder="email@gmail.com" required>
                                 </div>
                             </div>
                             <div class="item selects">
-                                <label class="item-label green" for="roles-contact-modal">Роли контакта</label>
+                                <label class="item-label green" for="roles-contact-modal">Роли контакта <span
+                                        class="text-danger">*</span></label>
                                 <select id="roles-contact-modal" name="roles[]"
-                                    class="js-example-responsive2 my-select2" autocomplete="off" multiple>
+                                    class="js-example-responsive2 my-select2" autocomplete="off" multiple required>
                                     @if(isset($contactRoles))
                                         @foreach($contactRoles as $role)
                                             <option value="{{ $role->id }}">{{ $role->name }}</option>
@@ -99,9 +103,10 @@
 
 
                         <div class=" item w25 selects mb-3">
-                            <label class="item-label green" for="tags-client-modal">Теги</label>
+                            <label class="item-label green" for="tags-client-modal">Теги <span
+                                    class="text-danger">*</span></label>
                             <select id="tags-client-modal" name="tags" class="js-example-responsive2 my-select2"
-                                    autocomplete="off">
+                                    autocomplete="off" required>
                                 @if(isset($contactTags))
                                     @foreach($contactTags as $tag)
                                         <option value="{{ $tag->name }}">{{ $tag->name }}</option>

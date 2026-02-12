@@ -127,11 +127,11 @@ class ContactController extends Controller
         // Валидация
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
-            'last_name' => 'nullable|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'last_name' => 'required|string|max:255',
+            'middle_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
             'contact_type' => 'nullable|in:owner,agent,developer,developer_representative',
-            'tags' => 'nullable|string|max:500',
+            'tags' => 'required|string|max:500',
             'telegram' => 'nullable|string|max:255',
             'viber' => 'nullable|string|max:255',
             'whatsapp' => 'nullable|string|max:255',
@@ -144,16 +144,23 @@ class ContactController extends Controller
             'phones.*.phone' => 'required|string|max:50',
             'phones.*.is_primary' => 'nullable|boolean',
             // Роли контакта (множественный выбор)
-            'roles' => 'nullable|array',
+            'roles' => 'required|array|min:1',
             'roles.*' => 'exists:dictionaries,id',
             // Property ID для привязки (опционально)
             'property_id' => 'nullable|exists:properties,id',
         ], [
             'first_name.required' => 'Введите имя контакта',
+            'last_name.required' => 'Введите фамилию контакта',
+            'middle_name.required' => 'Введите отчество контакта',
+            'email.required' => 'Введите email контакта',
+            'email.email' => 'Введите корректный email',
+            'tags.required' => 'Выберите тег',
+
+            'roles.required' => 'Выберите роли контакта',
+            'roles.min' => 'Выберите хотя бы одну роль',
             'phones.required' => 'Добавьте хотя бы один телефон',
             'phones.min' => 'Добавьте хотя бы один телефон',
             'phones.*.phone.required' => 'Введите номер телефона',
-            'email.email' => 'Введите корректный email',
             'photo.image' => 'Файл должен быть изображением',
             'photo.max' => 'Максимальный размер фото 2MB',
         ]);
@@ -297,11 +304,11 @@ class ContactController extends Controller
         // Валидация
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
-            'last_name' => 'nullable|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'last_name' => 'required|string|max:255',
+            'middle_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
             'contact_type' => 'nullable|in:owner,agent,developer,developer_representative',
-            'tags' => 'nullable|string|max:500',
+            'tags' => 'required|string|max:500',
             'telegram' => 'nullable|string|max:255',
             'viber' => 'nullable|string|max:255',
             'whatsapp' => 'nullable|string|max:255',
@@ -313,8 +320,18 @@ class ContactController extends Controller
             'phones' => 'required|array|min:1',
             'phones.*.phone' => 'required|string|max:50',
             'phones.*.is_primary' => 'nullable|boolean',
+            'roles' => 'required|array|min:1',
+            'roles.*' => 'exists:dictionaries,id',
         ], [
             'first_name.required' => 'Введите имя контакта',
+            'last_name.required' => 'Введите фамилию контакта',
+            'middle_name.required' => 'Введите отчество контакта',
+            'email.required' => 'Введите email контакта',
+            'email.email' => 'Введите корректный email',
+            'tags.required' => 'Выберите тег',
+
+            'roles.required' => 'Выберите роли контакта',
+            'roles.min' => 'Выберите хотя бы одну роль',
             'phones.required' => 'Добавьте хотя бы один телефон',
             'phones.min' => 'Добавьте хотя бы один телефон',
             'phones.*.phone.required' => 'Введите номер телефона',
