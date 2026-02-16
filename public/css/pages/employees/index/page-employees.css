@@ -1564,8 +1564,8 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 }
 
 .filter-header .header-btn .btn-primary svg {
-  width: 24px;
-  height: 24px;
+  width: 10px;
+  height: 10px;
 }
 
 .filter-header .header-btn .btn-primary:disabled path {
