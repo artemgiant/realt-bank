@@ -86,9 +86,7 @@
                             <picture><source srcset="{{ asset('img/icon/burger.svg') }}" type="image/webp"><img src="{{ asset('img/icon/burger.svg') }}" alt=""></picture>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Обновить</a></li>
-                            <li><a class="dropdown-item" href="#">Редактировать</a></li>
-                            <li><a class="dropdown-item" href="#">Удалить</a></li>
+
                         </ul>
                     </div>
                 </div>

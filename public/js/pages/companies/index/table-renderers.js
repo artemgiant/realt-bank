@@ -119,7 +119,6 @@ window.CompanyRenderers = {
             '</button>' +
             '<ul class="dropdown-menu">' +
             '<li><a class="dropdown-item" href="' + editUrl + '">Редактировать</a></li>' +
-            '<li><a class="dropdown-item delete-company" href="#" data-id="' + data + '">Удалить</a></li>' +
             '</ul>' +
             '</div>' +
             '</div>' +
