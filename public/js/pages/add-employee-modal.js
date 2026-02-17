@@ -1,11 +1,13 @@
 /**
- * Модуль модалки добавления сотрудника
+ * Модуль модалки добавления/редактирования сотрудника
  */
 (function ($) {
     'use strict';
 
     let select2Initialized = false;
     let phoneInputManager = null;
+    let isEditMode = false;
+    let currentEmployeeId = null;
 
     /**
      * Инициализация PhoneInputManager для телефонов
@@ -19,7 +21,7 @@
         if (typeof PhoneInputManager !== 'undefined') {
             phoneInputManager = new PhoneInputManager({
                 btnSelector: '.btn-new-tel',
-                wrapperSelector: '#add-employee-modal .item.phone',
+                wrapperSelector: '#employee-modal .item.phone',
                 inputClass: 'tel-contact',
                 maxPhones: 5,
                 initialCountry: 'ua',
@@ -44,7 +46,7 @@
      * Простая инициализация intl-tel-input (fallback)
      */
     function initSimplePhoneInput() {
-        const phoneInput = document.querySelector('#add-employee-modal #phone');
+        const phoneInput = document.querySelector('#employee-modal #phone');
         if (phoneInput && typeof intlTelInput !== 'undefined') {
             const iti = intlTelInput(phoneInput, {
                 initialCountry: 'ua',
@@ -68,7 +70,7 @@
             {
                 selector: '#tag_ids',
                 options: {
-                    dropdownParent: $('#add-employee-modal'),
+                    dropdownParent: $('#employee-modal'),
                     width: '100%',
                     placeholder: 'Выберите теги',
                     allowClear: true,
@@ -79,7 +81,7 @@
             {
                 selector: '#position_id',
                 options: {
-                    dropdownParent: $('#add-employee-modal'),
+                    dropdownParent: $('#employee-modal'),
                     width: '100%',
                     placeholder: 'Выберите должность',
                     allowClear: true,
@@ -89,7 +91,7 @@
             {
                 selector: '#office_id',
                 options: {
-                    dropdownParent: $('#add-employee-modal'),
+                    dropdownParent: $('#employee-modal'),
                     width: '100%',
                     placeholder: 'Выберите офис',
                     allowClear: true,
@@ -99,7 +101,7 @@
             {
                 selector: '#company_id',
                 options: {
-                    dropdownParent: $('#add-employee-modal'),
+                    dropdownParent: $('#employee-modal'),
                     width: '100%',
                     placeholder: 'Выберите компанию',
                     allowClear: true,
@@ -109,7 +111,7 @@
             {
                 selector: '#status_id',
                 options: {
-                    dropdownParent: $('#add-employee-modal'),
+                    dropdownParent: $('#employee-modal'),
                     width: '100%',
                     placeholder: 'Выберите статус',
                     allowClear: true,
@@ -203,8 +205,13 @@
      * Очистка формы
      */
     function resetForm() {
-        const $form = $('#add-employee-form');
+        const $form = $('#employee-form');
         $form[0].reset();
+
+        // Сброс режима редактирования
+        isEditMode = false;
+        currentEmployeeId = null;
+        $('#employee-id').val('');
 
         // Сброс Select2
         $('#tag_ids, #position_id, #office_id, #company_id, #status_id').val(null).trigger('change');
@@ -216,6 +223,12 @@
         // Сброс ошибок валидации
         $form.find('.is-invalid').removeClass('is-invalid');
         $form.find('.invalid-feedback').text('');
+
+        // Восстановить UI для режима создания
+        $('#modal-title').text('Новый сотрудник');
+        $('#save-btn-text').text('Сохранить');
+        $('#password-field-wrapper').show();
+        $('#password').prop('required', true);
     }
 
     /**
@@ -223,8 +236,8 @@
      */
     function showValidationErrors(errors) {
         // Сброс предыдущих ошибок
-        $('#add-employee-form').find('.is-invalid').removeClass('is-invalid');
-        $('#add-employee-form').find('.invalid-feedback').text('');
+        $('#employee-form').find('.is-invalid').removeClass('is-invalid');
+        $('#employee-form').find('.invalid-feedback').text('');
 
         // Показать новые ошибки
         Object.keys(errors).forEach(field => {
@@ -239,10 +252,135 @@
     }
 
     /**
+     * Загрузка данных сотрудника для редактирования
+     */
+    function loadEmployeeData(employeeId) {
+        $.ajax({
+            url: `/employees/${employeeId}`,
+            type: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                if (response.success) {
+                    populateForm(response.employee);
+                }
+            },
+            error: function (xhr) {
+                console.error('Error loading employee:', xhr);
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('Ошибка загрузки данных сотрудника');
+                } else {
+                    alert('Ошибка загрузки данных сотрудника');
+                }
+            }
+        });
+    }
+
+    /**
+     * Заполнение формы данными сотрудника
+     */
+    function populateForm(employee) {
+        $('#employee-id').val(employee.id);
+        $('#first_name').val(employee.first_name || '');
+        $('#last_name').val(employee.last_name || '');
+        $('#middle_name').val(employee.middle_name || '');
+        $('#email').val(employee.email || '');
+        $('#phone').val(employee.phone || '');
+        $('#passport').val(employee.passport || '');
+        $('#inn').val(employee.inn || '');
+        $('#comment').val(employee.comment || '');
+
+        // Даты (конвертация Y-m-d в DD.MM.YYYY)
+        if (employee.birthday) {
+            const parts = employee.birthday.split('-');
+            if (parts.length === 3) {
+                $('#birthday').val(`${parts[2]}.${parts[1]}.${parts[0]}`);
+            }
+        }
+        if (employee.active_until) {
+            const datePart = employee.active_until.split(' ')[0];
+            const parts = datePart.split('-');
+            if (parts.length === 3) {
+                $('#active_until').val(`${parts[2]}.${parts[1]}.${parts[0]}`);
+            }
+        }
+
+        // Select2 поля (нужно подождать пока Select2 инициализируется)
+        setTimeout(function() {
+            if (employee.company_id) {
+                $('#company_id').val(employee.company_id).trigger('change');
+            }
+            if (employee.office_id) {
+                $('#office_id').val(employee.office_id).trigger('change');
+            }
+            if (employee.position_id) {
+                $('#position_id').val(employee.position_id).trigger('change');
+            }
+            if (employee.status_id) {
+                $('#status_id').val(employee.status_id).trigger('change');
+            }
+            if (employee.tag_ids && employee.tag_ids.length > 0) {
+                $('#tag_ids').val(employee.tag_ids).trigger('change');
+            }
+        }, 200);
+
+        // Фото превью
+        if (employee.photo_url) {
+            $('#photo-preview img').attr('src', employee.photo_url);
+            $('#photo-preview').show();
+        }
+    }
+
+    /**
+     * Открытие модалки в режиме создания
+     */
+    function openCreateModal() {
+        isEditMode = false;
+        currentEmployeeId = null;
+
+        // Установить UI для создания
+        $('#modal-title').text('Новый сотрудник');
+        $('#save-btn-text').text('Сохранить');
+        $('#password-field-wrapper').show();
+        $('#password').prop('required', true);
+        $('#employee-id').val('');
+
+        // Сброс формы
+        resetForm();
+
+        // Открыть модалку
+        $('#employee-modal').modal('show');
+    }
+
+    /**
+     * Открытие модалки в режиме редактирования
+     */
+    function openEditModal(employeeId) {
+        isEditMode = true;
+        currentEmployeeId = employeeId;
+
+        // Установить UI для редактирования
+        $('#modal-title').text('Редактировать сотрудника');
+        $('#save-btn-text').text('Сохранить изменения');
+        $('#password-field-wrapper').hide();
+        $('#password').prop('required', false).val('');
+        $('#employee-id').val(employeeId);
+
+        // Открыть модалку (данные загрузятся после shown.bs.modal)
+        $('#employee-modal').modal('show');
+
+        // Загрузить данные сотрудника с небольшой задержкой чтобы Select2 успел инициализироваться
+        setTimeout(function() {
+            loadEmployeeData(employeeId);
+        }, 200);
+    }
+
+    /**
      * Отправка формы
      */
     function submitForm() {
-        const $form = $('#add-employee-form');
+        const $form = $('#employee-form');
         const $submitBtn = $('#save-employee-btn');
         const $btnText = $submitBtn.find('.btn-text');
         const $btnLoader = $submitBtn.find('.btn-loader');
@@ -259,17 +397,28 @@
         const birthday = $('#birthday').val();
         if (birthday) {
             const parts = birthday.split('.');
-            formData.set('birthday', `${parts[2]}-${parts[1]}-${parts[0]}`);
+            if (parts.length === 3) {
+                formData.set('birthday', `${parts[2]}-${parts[1]}-${parts[0]}`);
+            }
         }
 
         const activeUntil = $('#active_until').val();
         if (activeUntil) {
             const parts = activeUntil.split('.');
-            formData.set('active_until', `${parts[2]}-${parts[1]}-${parts[0]}`);
+            if (parts.length === 3) {
+                formData.set('active_until', `${parts[2]}-${parts[1]}-${parts[0]}`);
+            }
+        }
+
+        // Определить URL и метод
+        let url = '/employees';
+        if (isEditMode && currentEmployeeId) {
+            url = `/employees/${currentEmployeeId}`;
+            formData.append('_method', 'PUT');
         }
 
         $.ajax({
-            url: '/employees',
+            url: url,
             type: 'POST',
             data: formData,
             processData: false,
@@ -280,7 +429,7 @@
             success: function (response) {
                 if (response.success) {
                     // Закрыть модалку
-                    $('#add-employee-modal').modal('hide');
+                    $('#employee-modal').modal('hide');
 
                     // Обновить таблицу
                     if (window.employeesTable) {
@@ -294,10 +443,11 @@
                     }
 
                     // Показать уведомление
+                    const message = response.message || (isEditMode ? 'Сотрудник обновлен' : 'Сотрудник создан');
                     if (typeof toastr !== 'undefined') {
-                        toastr.success(response.message || 'Сотрудник создан');
+                        toastr.success(message);
                     } else {
-                        alert(response.message || 'Сотрудник создан');
+                        alert(message);
                     }
                 }
             },
@@ -307,8 +457,13 @@
                     const errors = xhr.responseJSON.errors;
                     showValidationErrors(errors);
                 } else {
-                    console.error('Error creating employee:', xhr);
-                    alert('Ошибка при создании сотрудника');
+                    console.error('Error saving employee:', xhr);
+                    const errorMessage = isEditMode ? 'Ошибка при обновлении сотрудника' : 'Ошибка при создании сотрудника';
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error(errorMessage);
+                    } else {
+                        alert(errorMessage);
+                    }
                 }
             },
             complete: function () {
@@ -334,7 +489,7 @@
      * Инициализация обработчиков событий
      */
     function initEventHandlers() {
-        const $modal = $('#add-employee-modal');
+        const $modal = $('#employee-modal');
 
         // При открытии модалки
         $modal.on('shown.bs.modal', function () {
@@ -360,29 +515,42 @@
             }
 
             // Destroy simple intl-tel-input fallback
-            const $phoneInput = $('#add-employee-modal #phone');
+            const $phoneInput = $('#employee-modal #phone');
             if ($phoneInput.data('iti')) {
                 $phoneInput.data('iti').destroy();
                 $phoneInput.removeData('iti');
             }
 
             // Удаляем дополнительные поля телефона (если были добавлены)
-            $('#add-employee-modal .item.phone [data-phone-item]').not(':first').remove();
+            $('#employee-modal .item.phone [data-phone-item]').not(':first').remove();
 
             select2Initialized = false;
         });
 
         // Отправка формы
-        $('#add-employee-form').on('submit', function (e) {
+        $('#employee-form').on('submit', function (e) {
             e.preventDefault();
             submitForm();
         });
+
+        // Обработчик клика на кнопку редактирования в таблице
+        $(document).on('click', '.btn-edit', function (e) {
+            e.preventDefault();
+            const employeeId = $(this).data('employee-id');
+            if (employeeId) {
+                openEditModal(employeeId);
+            }
+        });
     }
+
+    // Экспорт функций глобально
+    window.openCreateModal = openCreateModal;
+    window.openEditModal = openEditModal;
 
     // Инициализация при готовности DOM
     $(document).ready(function () {
         initEventHandlers();
-        console.log('Add employee modal initialized');
+        console.log('Employee modal initialized');
     });
 
     // CSS для Select2 в модалке
@@ -397,10 +565,10 @@
         .select2-search__field {
             width: 100% !important;
         }
-        #add-employee-form .is-invalid {
+        #employee-form .is-invalid {
             border-color: #dc3545 !important;
         }
-        #add-employee-form .invalid-feedback {
+        #employee-form .invalid-feedback {
             display: block;
             color: #dc3545;
             font-size: 0.875em;

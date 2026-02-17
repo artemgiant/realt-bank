@@ -1,14 +1,15 @@
-<div class="modal fade" id="add-employee-modal" tabindex="-1" aria-labelledby="addEmployeeModalLabel"
+<div class="modal fade" id="employee-modal" tabindex="-1" aria-labelledby="employeeModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
-            <form id="add-employee-form" enctype="multipart/form-data">
+            <form id="employee-form" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="employee_id" id="employee-id" value="">
                 <div class="modal-body">
                     {{-- Заголовок модалки --}}
                     <div class="modal-body-l d-flex align-items-center mb-0 justify-content-between">
-                        <h2 class="modal-title" id="addEmployeeModalLabel">
-                            <span>Новый сотрудник</span>
+                        <h2 class="modal-title" id="employeeModalLabel">
+                            <span id="modal-title">Новый сотрудник</span>
                         </h2>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -77,7 +78,7 @@
                                 </div>
                                 <div class="invalid-feedback" data-field="email"></div>
                             </div>
-                            <div class="item">
+                            <div class="item" id="password-field-wrapper">
                                 <label for="password" class="green">Пароль <span class="text-danger">*</span></label>
                                 <div class="item-inputText-wrapper">
                                     <input class="item-inputText" id="password" name="password" type="password"
@@ -242,7 +243,7 @@
                             Отменить
                         </button>
                         <button class="btn btn-primary" type="submit" id="save-employee-btn">
-                            <span class="btn-text">Сохранить</span>
+                            <span class="btn-text" id="save-btn-text">Сохранить</span>
                             <span class="btn-loader d-none">
                                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                             </span>

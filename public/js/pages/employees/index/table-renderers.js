@@ -172,8 +172,6 @@ window.EmployeeRenderers = {
      * Рендер действий (меню)
      */
     actions: function(data, type, row) {
-        const editUrl = `/employees/${row.id}/edit`;
-
         return `
             <div class="tbody-wrapper block-actions">
                 <div class="block-actions-wrapper">
@@ -186,10 +184,7 @@ window.EmployeeRenderers = {
                                 </picture>
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="${editUrl}">Редактировать</a></li>
-                                <li><a class="dropdown-item btn-delete" href="#" data-id="${row.id}">Удалить</a></li>
-                                <li><a class="dropdown-item" href="#">Отложить</a></li>
-                                <li><a class="dropdown-item" href="#">Передать</a></li>
+                                <li><a class="dropdown-item btn-edit" href="#" data-employee-id="${row.id}">Редактировать</a></li>
                             </ul>
                         </div>
                     </div>
