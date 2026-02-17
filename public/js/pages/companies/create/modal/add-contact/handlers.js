@@ -26,8 +26,15 @@ window.ContactModal.Handlers = {
             setTimeout(function() {
                 Components.initAll();
 
-                // Если не режим редактирования - очищаем форму
-                if (!Form.isEditMode) {
+                Form.modalComponentsReady = true;
+                if (Form.isEditMode && Form.pendingContactData) {
+                    // Заполняем форму только после инициализации компонентов (intl-tel-input, маска)
+                    setTimeout(function() {
+                        Form.fill(Form.pendingContactData);
+                        Form.showFoundIndicator();
+                        Form.pendingContactData = null;
+                    }, 150);
+                } else if (!Form.isEditMode) {
                     Form.clear();
                 }
             }, 300);
@@ -37,6 +44,8 @@ window.ContactModal.Handlers = {
         modal.addEventListener('hidden.bs.modal', function() {
             Components.destroyAll();
             Form.isEditMode = false;
+            Form.pendingContactData = null;
+            Form.modalComponentsReady = false;
         });
     },
 
@@ -69,7 +78,7 @@ window.ContactModal.Handlers = {
             if (e.target.matches(Config.selectors.modal + ' ' + Config.selectors.phoneInput)) {
                 // Только для первого телефона делаем поиск
                 var firstPhoneInput = document.querySelector(Config.selectors.modal + ' ' + Config.selectors.phoneInput);
-                if (e.target === firstPhoneInput) {
+                if (e.target === firstPhoneInput && !Form.isEditMode) {
                     self._debouncedSearch(e.target.value);
                 }
             }
@@ -77,9 +86,138 @@ window.ContactModal.Handlers = {
     },
 
     /**
+     * Валидация одного телефона
+     * @param {HTMLElement} input - элемент input
+     * @returns {Object} - { isValid: boolean, message: string }
+     */
+    validateSinglePhone: function(input) {
+        var value = input.value || '';
+        var digits = value.replace(/\D/g, '');
+
+        if (!digits) {
+            return { isValid: true, message: '' };
+        }
+
+        var iti = input._iti;
+        var countryData = iti ? iti.getSelectedCountryData() : null;
+        var countryCode = countryData ? countryData.iso2 : 'ua';
+
+        // Для Украины: 9 цифр без начального 0 (формат маски: XX XXX XX XX)
+        var phoneLengths = {
+            'ua': { min: 9, max: 9 },
+            'us': { min: 10, max: 10 },
+            'gb': { min: 10, max: 11 },
+            'de': { min: 10, max: 12 },
+            'pl': { min: 9, max: 9 },
+            'default': { min: 7, max: 15 }
+        };
+
+        var lengths = phoneLengths[countryCode] || phoneLengths['default'];
+
+        if (digits.length < lengths.min) {
+            return { isValid: false, message: 'Минимум ' + lengths.min + ' цифр' };
+        }
+
+        if (digits.length > lengths.max) {
+            return { isValid: false, message: 'Максимум ' + lengths.max + ' цифр' };
+        }
+
+        return { isValid: true, message: '' };
+    },
+
+    /**
+     * Показать иконку ошибки на поле телефона
+     * @param {HTMLElement} input - элемент input
+     * @param {string} message - сообщение об ошибке
+     */
+    showPhoneError: function(input, message) {
+        var $input = $(input);
+        var $wrapper = $input.closest('.iti');
+
+        // Удаляем предыдущие состояния
+        $wrapper.removeClass('is-invalid is-valid');
+        $wrapper.find('.phone-validation-icon').remove();
+
+        $wrapper.addClass('is-invalid');
+
+        // Добавляем иконку ошибки с tooltip
+        var $icon = $('<span class="phone-validation-icon phone-validation-icon--error" title="' + message + '">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+            '<circle cx="12" cy="12" r="10"></circle>' +
+            '<line x1="12" y1="8" x2="12" y2="12"></line>' +
+            '<line x1="12" y1="16" x2="12.01" y2="16"></line>' +
+            '</svg></span>');
+        $wrapper.append($icon);
+
+        // Инициализируем Bootstrap tooltip
+        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+            new bootstrap.Tooltip($icon[0], { placement: 'top' });
+        }
+    },
+
+    /**
+     * Очистить ошибку на поле телефона
+     * @param {HTMLElement} input - элемент input
+     */
+    clearPhoneError: function(input) {
+        var $input = $(input);
+        var $wrapper = $input.closest('.iti');
+
+        $wrapper.removeClass('is-invalid is-valid');
+        $wrapper.find('.phone-validation-icon').remove();
+    },
+
+    /**
+     * Валидация телефонов в форме с показом иконок
+     * @returns {Array} - Массив ошибок валидации
+     */
+    validatePhones: function() {
+        var self = this;
+        var Config = window.ContactModal.Config;
+        var errors = [];
+        var phoneInputs = document.querySelectorAll(Config.selectors.modal + ' ' + Config.selectors.phoneInput);
+        var hasValidPhone = false;
+
+        phoneInputs.forEach(function(input, index) {
+            var value = input.value || '';
+            var digits = value.replace(/\D/g, '');
+
+            // Сначала очищаем предыдущие ошибки
+            self.clearPhoneError(input);
+
+            if (!digits) {
+                if (index === 0) {
+                    errors.push('Введите номер телефона');
+                    self.showPhoneError(input, 'Введите номер телефона');
+                }
+                return;
+            }
+
+            // Валидируем телефон
+            var validation = self.validateSinglePhone(input);
+
+            if (!validation.isValid) {
+                errors.push('Телефон ' + (index + 1) + ': ' + validation.message);
+                self.showPhoneError(input, validation.message);
+                return;
+            }
+
+            hasValidPhone = true;
+        });
+
+        // Если нет ни одного валидного телефона
+        if (!hasValidPhone && errors.length === 0) {
+            errors.push('Введите хотя бы один номер телефона');
+        }
+
+        return errors;
+    },
+
+    /**
      * Инициализация отправки формы
      */
     initFormSubmit: function() {
+        var self = this;
         var Config = window.ContactModal.Config;
         var Api = window.ContactModal.Api;
         var Form = window.ContactModal.Form;
@@ -90,29 +228,56 @@ window.ContactModal.Handlers = {
                 e.preventDefault();
 
                 var form = e.target;
+
+                // Валидация телефонов
+                var validationErrors = [];
+                var phoneErrors = self.validatePhones();
+                if (phoneErrors.length > 0) {
+                    validationErrors = validationErrors.concat(phoneErrors);
+                }
+
+                // Валидация ролей
+                var rolesVal = $('#contact-role-modal').val();
+                if (!rolesVal || rolesVal.length === 0) {
+                    validationErrors.push('Выберите роль контакта');
+                }
+
+                if (validationErrors.length > 0) {
+                    Form.showValidationErrors({ _client: validationErrors });
+                    return;
+                }
+
                 Form.showLoading();
 
-                // Если контакт уже существует - возвращаем его данные
+                var formData = Api.prepareFormData(form);
+
+                // Редактирование: обновляем контакт на сервере и в списке
                 if (Form.currentContactId) {
-                    var contactData = Form.getExistingContactData();
-
-                    var added = ContactList.add(contactData);
-                    if (added !== false) {
-                        // Закрываем модалку
-                        var modalEl = document.querySelector(Config.selectors.modal);
-                        var modal = bootstrap.Modal.getInstance(modalEl);
-                        if (modal) modal.hide();
-
-                        Form.clear();
-                    }
-
-                    Form.hideLoading();
+                    Api.update(Form.currentContactId, formData)
+                        .then(function(data) {
+                            if (data.success && data.contact) {
+                                ContactList.update(data.contact);
+                                var modalEl = document.querySelector(Config.selectors.modal);
+                                var modal = bootstrap.Modal.getInstance(modalEl);
+                                if (modal) modal.hide();
+                                Form.clear();
+                            }
+                        })
+                        .catch(function(error) {
+                            console.error('Ошибка:', error);
+                            if (error.response && error.response.errors) {
+                                Form.showValidationErrors(error.response.errors);
+                            } else {
+                                alert(error.response ? error.response.message : 'Произошла ошибка при сохранении');
+                            }
+                        })
+                        .finally(function() {
+                            Form.hideLoading();
+                        });
                     return;
                 }
 
                 // Создаем нового контакта
-                var formData = Api.prepareFormData(form);
-
                 Api.store(formData)
                     .then(function(data) {
                         if (data.success) {
@@ -183,11 +348,16 @@ window.ContactModal.Handlers = {
                     // Загружаем данные контакта
                     Api.show(contactId).then(function(data) {
                         if (data.success) {
-                            // Заполняем форму после открытия модалки
-                            setTimeout(function() {
+                            // Сохраняем данные для заполнения после открытия модалки
+                            Form.pendingContactData = data.contact;
+
+                            // Если модалка уже открыта и компоненты инициализированы - заполняем сразу
+                            if (Form.modalComponentsReady) {
                                 Form.fill(data.contact);
                                 Form.showFoundIndicator();
-                            }, 400);
+                                Form.pendingContactData = null;
+                            }
+                            // Иначе данные будут заполнены в обработчике shown.bs.modal
                         }
                     });
                 }

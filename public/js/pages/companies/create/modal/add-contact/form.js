@@ -12,6 +12,12 @@ window.ContactModal.Form = {
     // Режим редактирования
     isEditMode: false,
 
+    // Данные контакта для заполнения после открытия модалки (редактирование)
+    pendingContactData: null,
+
+    // Флаг: компоненты модалки (intl-tel-input, маска) инициализированы
+    modalComponentsReady: false,
+
     /**
      * Заполнение формы данными контакта
      * @param {Object} contact - Данные контакта
@@ -38,9 +44,74 @@ window.ContactModal.Form = {
         Utils.setInputValue('#passport-contact-modal', contact.passport);
         Utils.setInputValue('#inn-contact-modal', contact.inn);
 
-        // Заполняем select2 для ролей
-        if (contact.contact_role && contact.contact_role.length) {
-            $('#contact-role-modal').val(contact.contact_role).trigger('change');
+        // Заполняем телефоны: определяем страну по коду, ставим только национальные цифры
+        var phoneInputs = form.querySelectorAll(Config.selectors.phoneInput);
+        var phones = contact.phones && contact.phones.length ? contact.phones : (contact.primary_phone ? [{ phone: contact.primary_phone }] : []);
+        // Маппинг dial code → ISO2 (отсортирован от длинных кодов к коротким)
+        var dialCodeMap = [
+            ['380','ua'],['375','by'],['373','md'],['374','am'],['371','lv'],['370','lt'],['372','ee'],
+            ['995','ge'],['994','az'],['993','tm'],['992','tj'],['998','uz'],['996','kg'],['971','ae'],['972','il'],
+            ['49','de'],['48','pl'],['47','no'],['46','se'],['45','dk'],['44','gb'],
+            ['43','at'],['42','cz'],['41','ch'],['40','ro'],['39','it'],['38','ba'],
+            ['36','hu'],['35','pt'],['34','es'],['33','fr'],['32','be'],['31','nl'],['30','gr'],
+            ['90','tr'],['86','cn'],['82','kr'],['81','jp'],['61','au'],['55','br'],
+            ['1','us'],['7','ru']
+        ];
+        phones.forEach(function(phoneObj, index) {
+            var raw = (phoneObj && (phoneObj.phone || phoneObj.number)) ? (phoneObj.phone || phoneObj.number) : '';
+            if (!raw || !phoneInputs[index]) return;
+            var input = phoneInputs[index];
+            var $input = $(input);
+            var phoneClean = (raw + '').trim().replace(/\s/g, '');
+            var digits = phoneClean.replace(/\D/g, '');
+
+            // Определяем страну и национальные цифры
+            var countryIso2 = 'ua';
+            var dcLen = 0;
+            for (var i = 0; i < dialCodeMap.length; i++) {
+                if (digits.indexOf(dialCodeMap[i][0]) === 0) {
+                    countryIso2 = dialCodeMap[i][1];
+                    dcLen = dialCodeMap[i][0].length;
+                    break;
+                }
+            }
+            // Извлекаем национальные цифры (без кода страны)
+            var nationalDigits = dcLen ? digits.slice(dcLen) : digits;
+
+            if (input._iti) {
+                var iti = input._iti;
+                // Сначала снимаем маску полностью
+                $input.unmask();
+                // Устанавливаем страну (это изменит флаг и dial code)
+                iti.setCountry(countryIso2);
+                // Устанавливаем национальные цифры напрямую
+                input.value = nationalDigits;
+                // Применяем маску для выбранной страны без очистки значения
+                var countryMasks = {
+                    'ua': '(99) 999-99-99',
+                    'us': '(999) 999-9999',
+                    'gb': '9999 999999',
+                    'de': '999 99999999',
+                    'fr': '9 99-99-99-99',
+                    'pl': '999 999-999',
+                    'it': '999 999-9999',
+                    'es': '999 99-99-99',
+                    'default': '(999) 999-99-99'
+                };
+                var mask = countryMasks[countryIso2] || countryMasks['default'];
+                $input.mask(mask, { clearIfNotMatch: false });
+            } else {
+                // Fallback: просто ставим номер как есть
+                var phoneE164 = phoneClean;
+                if (phoneE164 && phoneE164.charAt(0) !== '+') phoneE164 = '+' + phoneE164;
+                input.value = phoneE164 || raw;
+            }
+        });
+
+        // Заполняем select2 для ролей (используем roles - массив ID, или contact_role)
+        var roles = contact.roles && contact.roles.length ? contact.roles : contact.contact_role;
+        if (roles && roles.length) {
+            $('#contact-role-modal').val(roles).trigger('change');
         } else {
             $('#contact-role-modal').val(null).trigger('change');
         }
@@ -76,6 +147,7 @@ window.ContactModal.Form = {
         // Сбрасываем состояние
         this.currentContactId = null;
         this.isEditMode = false;
+        this.pendingContactData = null;
     },
 
     /**

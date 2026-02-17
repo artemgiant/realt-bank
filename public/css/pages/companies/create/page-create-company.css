@@ -3332,3 +3332,36 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 }
 
 /* Стили для ошибок вынесены в /css/components/alerts.css */
+
+/* Phone validation icons */
+.phone-validation-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.phone-validation-icon--error {
+  color: #dc3545;
+}
+
+.phone-validation-icon--error:hover {
+  color: #b02a37;
+}
+
+/* Adjust input padding for icon */
+.iti.is-invalid input {
+  padding-right: 35px !important;
+}
+
+.phone-validation-error {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
