@@ -931,7 +931,7 @@ class ComplexController extends Controller
             }
         }
 
-        // Детальные фильтры локации (районы, улицы, и т.д.)
+        // Детальные фильтры локации (районы, улицы, зоны, комплексы, девелоперы)
         if ($detailIds = $request->get('detail_ids')) {
             $details = json_decode($detailIds, true);
             if (is_array($details) && count($details) > 0) {
@@ -940,6 +940,17 @@ class ComplexController extends Controller
                         switch ($detail['type']) {
                             case 'district':
                                 $q->orWhere('district_id', $detail['id']);
+                                break;
+                            case 'street':
+                                $q->orWhereHas('blocks', function ($bq) use ($detail) {
+                                    $bq->where('street_id', $detail['id']);
+                                });
+                                break;
+                            case 'landmark':
+                                $q->orWhere('zone_id', $detail['id']);
+                                break;
+                            case 'complex':
+                                $q->orWhere('id', $detail['id']);
                                 break;
                             case 'developer':
                                 $q->orWhere('developer_id', $detail['id']);

@@ -31,6 +31,7 @@
                 <button data-cat="streets">Улицы</button>
                 <button data-cat="landmarks">Микрорайоны</button>
                 <button data-cat="developers">Девелоперы</button>
+                <button data-cat="complexes">Комплексы</button>
             </div>
 
             <div class="lf-breadcrumbs" id="lfBreadcrumbs"></div>
@@ -43,6 +44,7 @@
                 <div class="lf-section lf-hidden" id="lf-streets"><div class="lf-section-title">Улицы</div><ul></ul></div>
                 <div class="lf-section lf-hidden" id="lf-landmarks"><div class="lf-section-title">Зоны/Микрорайоны</div><ul></ul></div>
                 <div class="lf-section lf-hidden" id="lf-developers"><div class="lf-section-title">Девелоперы</div><ul></ul></div>
+                <div class="lf-section lf-hidden" id="lf-complexes"><div class="lf-section-title">Комплексы</div><ul></ul></div>
                 <div class="lf-empty" id="lfEmpty">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>

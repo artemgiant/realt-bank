@@ -9,7 +9,8 @@
         districts: [],
         streets: [],
         landmarks: [],
-        developers: []
+        developers: [],
+        complexes: []
     };
 
     // API URL
@@ -22,7 +23,8 @@
         districts: 'district',
         streets: 'street',
         landmarks: 'landmark',
-        developers: 'developer'
+        developers: 'developer',
+        complexes: 'complex'
     };
     const TYPE_NAMES = {
         country: 'Страна',
@@ -31,11 +33,12 @@
         district: 'Район',
         street: 'Улица',
         landmark: 'Зона',
-        developer: 'Дев.'
+        developer: 'Дев.',
+        complex: 'ЖК'
     };
     const LOCATION_TYPES = ['country', 'region', 'city'];
-    const DETAIL_TYPES = ['district', 'street', 'landmark', 'developer'];
-    const DETAIL_KEYS = ['districts', 'streets', 'landmarks', 'developers'];
+    const DETAIL_TYPES = ['district', 'street', 'landmark', 'developer', 'complex'];
+    const DETAIL_KEYS = ['districts', 'streets', 'landmarks', 'developers', 'complexes'];
 
     const state = {
         isOpen: false,
