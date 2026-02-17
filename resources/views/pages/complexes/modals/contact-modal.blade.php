@@ -19,6 +19,8 @@
 
                     {{-- Hidden field для ID существующего контакта --}}
                     <input type="hidden" id="contact-id-modal" name="contact_id" value="">
+                    {{-- Hidden field для контекста валидации --}}
+                    <input type="hidden" name="context" value="complexes">
 
                     <div class="modal-body-l">
                         <h3 class="modal-body-title">

@@ -2154,7 +2154,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   font-weight: 700;
   font-size: 14px;
   line-height: 100%;
-
+  color: #111;
   -webkit-text-decoration: underline dashed;
           text-decoration: underline dashed;
 }

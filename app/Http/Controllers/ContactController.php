@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreContactRequest;
 use App\Models\Contact\Contact;
 use App\Models\Contact\ContactPhone;
 use App\Models\Property\Property;
+use App\Models\Reference\Dictionary;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -122,58 +124,17 @@ class ContactController extends Controller
      * Создание контакта через AJAX (модальное окно)
      * POST /contacts/ajax-store
      */
-    public function ajaxStore(Request $request): JsonResponse
+    public function ajaxStore(StoreContactRequest $request): JsonResponse
     {
-        // Валидация
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'middle_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'contact_type' => 'nullable|in:owner,agent,developer,developer_representative',
-            'tags' => 'required|string|max:500',
-            'telegram' => 'nullable|string|max:255',
-            'viber' => 'nullable|string|max:255',
-            'whatsapp' => 'nullable|string|max:255',
-            'passport' => 'nullable|string|max:50',
-            'inn' => 'nullable|string|max:20',
-            'comment' => 'nullable|string|max:2000',
-            'photo' => 'nullable|image|max:2048',
-            // Телефоны - массив
-            'phones' => 'required|array|min:1',
-            'phones.*.phone' => 'required|string|max:50',
-            'phones.*.is_primary' => 'nullable|boolean',
-            // Роли контакта (множественный выбор)
-            'roles' => 'required|array|min:1',
-            'roles.*' => 'exists:dictionaries,id',
-            // Property ID для привязки (опционально)
-            'property_id' => 'nullable|exists:properties,id',
-        ], [
-            'first_name.required' => 'Введите имя контакта',
-            'last_name.required' => 'Введите фамилию контакта',
-            'middle_name.required' => 'Введите отчество контакта',
-            'email.required' => 'Введите email контакта',
-            'email.email' => 'Введите корректный email',
-            'tags.required' => 'Выберите тег',
-
-            'roles.required' => 'Выберите роли контакта',
-            'roles.min' => 'Выберите хотя бы одну роль',
-            'phones.required' => 'Добавьте хотя бы один телефон',
-            'phones.min' => 'Добавьте хотя бы один телефон',
-            'phones.*.phone.required' => 'Введите номер телефона',
-            'photo.image' => 'Файл должен быть изображением',
-            'photo.max' => 'Максимальный размер фото 2MB',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
         try {
             DB::beginTransaction();
+
+            // Нормализация tags (companies отправляет массив ID, остальные - строку)
+            $tags = $request->tags;
+            if (is_array($tags)) {
+                $tagNames = Dictionary::whereIn('id', $tags)->pluck('name');
+                $tags = $tagNames->implode(',');
+            }
 
             // Загрузка фото
             $photoPath = null;
@@ -188,7 +149,7 @@ class ContactController extends Controller
                 'middle_name' => $request->middle_name,
                 'email' => $request->email,
                 'contact_type' => $request->contact_type,
-                'tags' => $request->tags,
+                'tags' => $tags,
                 'telegram' => $request->telegram,
                 'viber' => $request->viber,
                 'whatsapp' => $request->whatsapp,

@@ -26,15 +26,8 @@ window.ContactModal.Handlers = {
             setTimeout(function() {
                 Components.initAll();
 
-                Form.modalComponentsReady = true;
-                if (Form.isEditMode && Form.pendingContactData) {
-                    // Заполняем форму только после инициализации компонентов (intl-tel-input, маска)
-                    setTimeout(function() {
-                        Form.fill(Form.pendingContactData);
-                        Form.showFoundIndicator();
-                        Form.pendingContactData = null;
-                    }, 150);
-                } else if (!Form.isEditMode) {
+                // Если не режим редактирования - очищаем форму
+                if (!Form.isEditMode) {
                     Form.clear();
                 }
             }, 300);
@@ -44,8 +37,6 @@ window.ContactModal.Handlers = {
         modal.addEventListener('hidden.bs.modal', function() {
             Components.destroyAll();
             Form.isEditMode = false;
-            Form.pendingContactData = null;
-            Form.modalComponentsReady = false;
         });
     },
 
@@ -59,9 +50,8 @@ window.ContactModal.Handlers = {
         var Api = window.ContactModal.Api;
         var Form = window.ContactModal.Form;
 
-        // Создаем debounced функцию поиска (только при создании контакта, не при редактировании)
+        // Создаем debounced функцию поиска
         this._debouncedSearch = Utils.debounce(function(phone) {
-            if (Form.isEditMode) return; // при редактировании не меняем контакт по поиску телефона
             Api.searchByPhone(phone).then(function(data) {
                 if (data.success && data.found) {
                     Form.fill(data.contact);
@@ -77,8 +67,9 @@ window.ContactModal.Handlers = {
         // Обработчик ввода телефона
         document.addEventListener('input', function(e) {
             if (e.target.matches(Config.selectors.modal + ' ' + Config.selectors.phoneInput)) {
+                // Только для первого телефона делаем поиск
                 var firstPhoneInput = document.querySelector(Config.selectors.modal + ' ' + Config.selectors.phoneInput);
-                if (e.target === firstPhoneInput && !Form.isEditMode) {
+                if (e.target === firstPhoneInput) {
                     self._debouncedSearch(e.target.value);
                 }
             }
@@ -99,59 +90,29 @@ window.ContactModal.Handlers = {
                 e.preventDefault();
 
                 var form = e.target;
-
-                // Валидация Select2 полей (HTML required не работает для Select2)
-                // Валидация зависит от контекста - только для properties требуем roles и tags
-                var validationErrors = [];
-                var context = $('input[name="context"]', form).val() || 'properties';
-
-                if (context === 'properties') {
-                    var rolesVal = $('#roles-contact-modal').val();
-                    if (!rolesVal || rolesVal.length === 0) {
-                        validationErrors.push('Выберите роли контакта');
-                    }
-                    var tagsVal = $('#tags-client-modal').val();
-                    if (!tagsVal || tagsVal === '') {
-                        validationErrors.push('Выберите тег');
-                    }
-                }
-
-                if (validationErrors.length > 0) {
-                    Form.showValidationErrors({ _client: validationErrors });
-                    return;
-                }
-
                 Form.showLoading();
 
-                var formData = Api.prepareFormData(form);
-
-                // Редактирование: обновляем контакт на сервере и в списке
+                // Если контакт уже существует - возвращаем его данные
                 if (Form.currentContactId) {
-                    Api.update(Form.currentContactId, formData)
-                        .then(function(data) {
-                            if (data.success && data.contact) {
-                                ContactList.update(data.contact);
-                                var modalEl = document.querySelector(Config.selectors.modal);
-                                var modal = bootstrap.Modal.getInstance(modalEl);
-                                if (modal) modal.hide();
-                                Form.clear();
-                            }
-                        })
-                        .catch(function(error) {
-                            console.error('Ошибка:', error);
-                            if (error.response && error.response.errors) {
-                                Form.showValidationErrors(error.response.errors);
-                            } else {
-                                alert(error.response ? error.response.message : 'Произошла ошибка при сохранении');
-                            }
-                        })
-                        .finally(function() {
-                            Form.hideLoading();
-                        });
+                    var contactData = Form.getExistingContactData();
+
+                    var added = ContactList.add(contactData);
+                    if (added !== false) {
+                        // Закрываем модалку
+                        var modalEl = document.querySelector(Config.selectors.modal);
+                        var modal = bootstrap.Modal.getInstance(modalEl);
+                        if (modal) modal.hide();
+
+                        Form.clear();
+                    }
+
+                    Form.hideLoading();
                     return;
                 }
 
-                // Создание: создаём нового контакта
+                // Создаем нового контакта
+                var formData = Api.prepareFormData(form);
+
                 Api.store(formData)
                     .then(function(data) {
                         if (data.success) {
@@ -219,17 +180,14 @@ window.ContactModal.Handlers = {
                     Form.isEditMode = true;
                     Form.currentContactId = contactId;
 
-                    // Загружаем данные контакта; форма заполнится после initAll() (в shown.bs.modal или здесь, если компоненты уже готовы)
+                    // Загружаем данные контакта
                     Api.show(contactId).then(function(data) {
                         if (data.success) {
-                            Form.pendingContactData = data.contact;
-                            if (Form.modalComponentsReady) {
-                                setTimeout(function() {
-                                    Form.fill(Form.pendingContactData);
-                                    Form.showFoundIndicator();
-                                    Form.pendingContactData = null;
-                                }, 100);
-                            }
+                            // Заполняем форму после открытия модалки
+                            setTimeout(function() {
+                                Form.fill(data.contact);
+                                Form.showFoundIndicator();
+                            }, 400);
                         }
                     });
                 }
