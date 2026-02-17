@@ -37,7 +37,7 @@ class StoreCompanyRequest extends FormRequest
             // ========== Основные поля ==========
             'website' => ['nullable', 'url', 'max:255'],
             'edrpou_code' => ['required', 'string', 'max:20'],
-            'company_type' => ['required', 'string', 'in:agency,franchise'],
+            'company_type' => ['required', 'string'],
             'logo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
 
             // ========== Контакты компании ==========

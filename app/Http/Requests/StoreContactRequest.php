@@ -46,12 +46,12 @@ class StoreContactRequest extends FormRequest
 
         return match ($context) {
             'properties' => array_merge($baseRules, [
-                'last_name' => 'required|string|max:255',
-                'middle_name' => 'required|string|max:255',
-                'email' => 'required|email|max:255',
+                'last_name' => 'nullable|string|max:255',
+                'middle_name' => 'nullable|string|max:255',
+                'email' => 'nullable|email|max:255',
                 'roles' => 'required|array|min:1',
                 'roles.*' => 'exists:dictionaries,id',
-                'tags' => 'required|string|max:500',
+                'tags' => 'nullable|string|max:500',
             ]),
             'companies' => array_merge($baseRules, [
                 'last_name' => 'nullable|string|max:255',

@@ -110,10 +110,7 @@ window.ContactModal.Handlers = {
                     if (!rolesVal || rolesVal.length === 0) {
                         validationErrors.push('Выберите роли контакта');
                     }
-                    var tagsVal = $('#tags-client-modal').val();
-                    if (!tagsVal || tagsVal === '') {
-                        validationErrors.push('Выберите тег');
-                    }
+                    // tags больше не обязательны
                 }
 
                 if (validationErrors.length > 0) {

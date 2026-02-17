@@ -40,19 +40,17 @@
                                 </div>
                             </div>
                             <div class="item">
-                                <label for="last-name-contact-modal" class="green">Фамилия <span
-                                        class="text-danger">*</span></label>
+                                <label for="last-name-contact-modal">Фамилия</label>
                                 <div class="item-inputText-wrapper">
                                     <input class="item-inputText" id="last-name-contact-modal" name="last_name"
-                                        type="text" autocomplete="off" placeholder="Фамилия" required>
+                                        type="text" autocomplete="off" placeholder="Фамилия">
                                 </div>
                             </div>
                             <div class="item">
-                                <label for="middle-name-contact-modal" class="green">Отчество <span
-                                        class="text-danger">*</span></label>
+                                <label for="middle-name-contact-modal">Отчество</label>
                                 <div class="item-inputText-wrapper">
                                     <input class="item-inputText" id="middle-name-contact-modal" name="middle_name"
-                                        type="text" autocomplete="off" placeholder="Отчество" required>
+                                        type="text" autocomplete="off" placeholder="Отчество">
                                 </div>
                             </div>
                         </div>
@@ -82,11 +80,10 @@
                                 </div>
                             </div>
                             <div class="item">
-                                <label for="email-contact-modal" class="green">Email <span
-                                        class="text-danger">*</span></label>
+                                <label for="email-contact-modal">Email</label>
                                 <div class="item-inputText-wrapper">
                                     <input class="item-inputText" id="email-contact-modal" name="email" type="email"
-                                        autocomplete="off" placeholder="email@gmail.com" required>
+                                        autocomplete="off" placeholder="email@gmail.com">
                                 </div>
                             </div>
                             <div class="item selects">
@@ -105,10 +102,9 @@
 
 
                         <div class=" item w25 selects mb-3">
-                            <label class="item-label green" for="tags-client-modal">Теги <span
-                                    class="text-danger">*</span></label>
+                            <label class="item-label" for="tags-client-modal">Теги</label>
                             <select id="tags-client-modal" name="tags" class="js-example-responsive2 my-select2"
-                                    autocomplete="off" required>
+                                    autocomplete="off">
                                 @if(isset($contactTags))
                                     @foreach($contactTags as $tag)
                                         <option value="{{ $tag->name }}">{{ $tag->name }}</option>
