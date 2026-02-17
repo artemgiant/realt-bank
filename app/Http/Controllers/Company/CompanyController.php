@@ -142,7 +142,7 @@ class CompanyController extends Controller
      */
     public function edit(Company $company): View
     {
-        $company->load(['contacts.phones', 'offices.contacts.phones']);
+        $company->load(['contacts.phones', 'offices.contacts.phones', 'state', 'city', 'street']);
 
         return view('pages.companies.edit', [
             'company' => $company,
@@ -151,6 +151,7 @@ class CompanyController extends Controller
                 ->orderBy('first_name')
                 ->limit(100)
                 ->get(),
+            'agencyTypes' => Dictionary::getAgencyTypes(),
         ]);
     }
 

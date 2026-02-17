@@ -30,6 +30,18 @@
             return;
         }
 
+        // Устанавливаем начальный индекс на основе существующих офисов (для режима редактирования)
+        const existingOffices = elements.container.querySelectorAll('.block-offices-item');
+        if (existingOffices.length > 0) {
+            officeIndex = existingOffices.length;
+            // Инициализируем поиск локации для существующих офисов
+            existingOffices.forEach(officeElement => {
+                if (typeof window.initLocationSearchForOffice === 'function') {
+                    window.initLocationSearchForOffice(officeElement);
+                }
+            });
+        }
+
         // Обработчики кнопок добавления
         if (elements.addBtn) {
             elements.addBtn.addEventListener('click', addOffice);
@@ -261,6 +273,7 @@
     // Экспорт для внешнего использования
     window.OfficeManager = {
         addOffice: addOffice,
-        getOfficeCount: () => elements.container ? elements.container.children.length : 0
+        getOfficeCount: () => elements.container ? elements.container.children.length : 0,
+        setStartIndex: (index) => { officeIndex = index; }
     };
 })();
