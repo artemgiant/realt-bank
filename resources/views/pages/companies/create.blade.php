@@ -95,19 +95,13 @@
                 </div>
 
                 {{-- Кнопка добавления еще одного контакта (показывается когда есть хотя бы один) --}}
-                <div id="add-more-contact-btn" class="d-none mb-3">
-                    <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="modal"
+                <div id="add-more-contact-btn" class="d-none mb-3 mt-2">
+                    <button class="btn btn-outline-primary btn-sm d-inline-flex align-items-center" type="button" data-bs-toggle="modal"
                             data-bs-target="#add-contact-modal">
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
-                             xmlns="http://www.w3.org/2000/svg" class="me-1">
-                            <path
-                                    d="M4.47186 9.47374C4.35814 9.36002 4.28775 9.20285 4.28775 9.0293C4.28775 8.68208 4.56908 8.40075 4.9163 8.40075L13.1385 8.40075C13.4856 8.4008 13.767 8.68213 13.767 9.0293C13.767 9.3764 13.4856 9.65779 13.1385 9.65779H4.91636C4.74275 9.65785 4.58558 9.58746 4.47186 9.47374Z"
-                                    fill="currentColor"></path>
-                            <path
-                                    d="M8.583 13.5848C8.46922 13.471 8.39889 13.3139 8.39889 13.1403L8.39889 4.91816C8.39883 4.571 8.68022 4.28961 9.02739 4.28967C9.37449 4.28967 9.65588 4.57106 9.65588 4.91816L9.65588 13.1403C9.65583 13.4875 9.37449 13.7688 9.02733 13.7689C8.85389 13.7689 8.69678 13.6985 8.583 13.5848Z"
-                                    fill="currentColor"></path>
+                        <svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" class="me-1">
+                            <path d="M7 0C7.55228 0 8 0.447715 8 1V6H13C13.5523 6 14 6.44772 14 7C14 7.55228 13.5523 8 13 8H8V13C8 13.5523 7.55228 14 7 14C6.44772 14 6 13.5523 6 13V8H1C0.447715 8 0 7.55228 0 7C0 6.44772 0.447715 6 1 6H6V1C6 0.447715 6.44772 0 7 0Z" fill="currentColor"></path>
                         </svg>
-                        Добавить контакт
+                        Контакт
                     </button>
                 </div>
 

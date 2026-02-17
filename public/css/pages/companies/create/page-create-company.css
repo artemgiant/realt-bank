@@ -2188,6 +2188,52 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   background-color: #d5dbe3;
 }
 
+/* Горизонтальное расположение контактов (4 в ряд) */
+#contacts-list-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  gap: 15px;
+}
+
+#contacts-list-container .contact-card {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 calc(25% - 12px);
+          flex: 0 0 calc(25% - 12px);
+  max-width: calc(25% - 12px);
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+@media (max-width: 1200px) {
+  #contacts-list-container .contact-card {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 calc(33.333% - 10px);
+            flex: 0 0 calc(33.333% - 10px);
+    max-width: calc(33.333% - 10px);
+  }
+}
+
+@media (max-width: 992px) {
+  #contacts-list-container .contact-card {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 calc(50% - 8px);
+            flex: 0 0 calc(50% - 8px);
+    max-width: calc(50% - 8px);
+  }
+}
+
+@media (max-width: 576px) {
+  #contacts-list-container .contact-card {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+            flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
 .data span:last-of-type {
   position: relative;
   background-color: #fff;
