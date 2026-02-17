@@ -149,7 +149,7 @@ window.ContactModal.Api = {
             var phone = input.value.trim();
             if (phone) {
                 phones.push({
-                    phone: Utils.formatPhoneWithCountryCode(phone),
+                    phone: Utils.formatPhoneWithCountryCode(phone, input),
                     is_primary: index === 0
                 });
             }

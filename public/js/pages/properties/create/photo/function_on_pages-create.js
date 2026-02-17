@@ -2221,15 +2221,20 @@ class PhoneInputManager {
 			}
 		});
 
+		// Зберігаємо екземпляр iti для доступу ззовні
+		inputElement._iti = iti;
+
 		const applyPhoneMask = (countryCode) => {
 			const mask = this.options.countryMasks[countryCode] || this.options.countryMasks['default'];
+			// Зберігаємо поточне значення перед застосуванням маски
+			const currentValue = $input.val();
 			$input.unmask().mask(mask, {
-				clearIfNotMatch: true
+				clearIfNotMatch: false // Не очищати якщо не відповідає масці
 			});
 
-			// Якщо в полі вже є значення, застосовуємо маску
-			if ($input.val()) {
-				$input.trigger('input');
+			// Якщо в полі вже є значення, відновлюємо його
+			if (currentValue) {
+				$input.val(currentValue);
 			}
 		};
 
@@ -2241,23 +2246,6 @@ class PhoneInputManager {
 			if ( !/[0-9]/.test(String.fromCharCode(e.which))) {
 				e.preventDefault();
 			}
-		});
-
-		$input.on('blur', () => {
-			if (!$input.val()) return;
-			const number = iti.getNumber();
-			if (!number) return;
-			const fullDigits = number.replace(/\D/g, '');
-			const countryData = iti.getSelectedCountryData();
-			const dialCode = (countryData && countryData.dialCode) ? String(countryData.dialCode).replace(/\D/g, '') : '';
-			let nationalDigits = dialCode.length && fullDigits.indexOf(dialCode) === 0
-				? fullDigits.slice(dialCode.length)
-				: fullDigits.slice(-9);
-			if (nationalDigits.length === 8 && countryData && countryData.iso2 === 'ua') {
-				nationalDigits = '0' + nationalDigits;
-			}
-			$input.val(nationalDigits);
-			$input.trigger('input');
 		});
 
 		// Застосовуємо маску відразу при ініціалізації

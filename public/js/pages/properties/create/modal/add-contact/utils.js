@@ -39,15 +39,34 @@ window.ContactModal.Utils = {
     /**
      * Форматирование телефона с кодом страны
      * @param {string} phone - Номер телефона
+     * @param {HTMLElement} [inputElement] - Элемент input с intl-tel-input (опционально)
      * @returns {string}
      */
-    formatPhoneWithCountryCode: function(phone) {
-        var cleaned = phone.trim();
-        if (!cleaned.startsWith('+')) {
-            // Убираем ведущий 0 если есть и добавляем +380
-            cleaned = '+380' + cleaned.replace(/^0/, '');
+    formatPhoneWithCountryCode: function(phone, inputElement) {
+        // Если есть intl-tel-input, используем его для получения полного номера
+        if (inputElement && inputElement._iti) {
+            var fullNumber = inputElement._iti.getNumber();
+            if (fullNumber) {
+                return fullNumber;
+            }
         }
-        return cleaned;
+
+        var cleaned = phone.trim();
+        // Убираем все не-цифры для анализа
+        var digits = cleaned.replace(/\D/g, '');
+
+        if (cleaned.startsWith('+')) {
+            // Уже есть код страны
+            return '+' + digits;
+        }
+
+        // Если номер начинается с 0 (локальный формат), убираем 0 и добавляем +380
+        if (digits.startsWith('0')) {
+            return '+380' + digits.substring(1);
+        }
+
+        // Иначе предполагаем, что это украинский номер без 0
+        return '+380' + digits;
     },
 
     /**

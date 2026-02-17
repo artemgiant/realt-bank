@@ -2109,15 +2109,20 @@ class PhoneInputManager {
 			}
 		});
 
+		// Зберігаємо екземпляр iti для доступу ззовні
+		inputElement._iti = iti;
+
 		const applyPhoneMask = (countryCode) => {
 			const mask = this.options.countryMasks[countryCode] || this.options.countryMasks['default'];
+			// Зберігаємо поточне значення перед застосуванням маски
+			const currentValue = $input.val();
 			$input.unmask().mask(mask, {
-				clearIfNotMatch: true
+				clearIfNotMatch: false // Не очищати якщо не відповідає масці
 			});
 
-			// Якщо в полі вже є значення, застосовуємо маску
-			if ($input.val()) {
-				$input.trigger('input');
+			// Якщо в полі вже є значення, відновлюємо його
+			if (currentValue) {
+				$input.val(currentValue);
 			}
 		};
 
@@ -2128,15 +2133,6 @@ class PhoneInputManager {
 		$input.on('keypress', (e) => {
 			if ( !/[0-9]/.test(String.fromCharCode(e.which))) {
 				e.preventDefault();
-			}
-		});
-
-		$input.on('blur', () => {
-			if ($input.val()) {
-				const number = iti.getNumber();
-				if (number) {
-					$input.val(number.replace(/[^\d]/g, ''));
-				}
 			}
 		});
 
