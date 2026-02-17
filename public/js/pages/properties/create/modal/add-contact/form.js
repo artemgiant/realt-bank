@@ -108,11 +108,11 @@ window.ContactModal.Form = {
             }
         });
 
-        // Заполняем select2 для ролей
-        if (contact.contact_role && contact.contact_role.length) {
-            $('#contact-role-modal').val(contact.contact_role).trigger('change');
+        // Заполняем select2 для ролей (используем roles - массив ID, возвращаемый API)
+        if (contact.roles && contact.roles.length) {
+            $('#roles-contact-modal').val(contact.roles).trigger('change');
         } else {
-            $('#contact-role-modal').val(null).trigger('change');
+            $('#roles-contact-modal').val(null).trigger('change');
         }
         if (contact.tags) {
             $('#tags-client-modal').val(contact.tags).trigger('change');
@@ -137,7 +137,7 @@ window.ContactModal.Form = {
         }
 
         // Сбрасываем select2
-        $('#contact-role-modal').val(null).trigger('change');
+        $('#roles-contact-modal').val(null).trigger('change');
         $('#tags-client-modal').val('').trigger('change');
 
         // Скрываем индикатор
@@ -180,7 +180,7 @@ window.ContactModal.Form = {
         var Api = window.ContactModal.Api;
 
         var phones = Api.collectPhones();
-        var contactRoles = $('#contact-role-modal').val() || [];
+        var contactRoles = $('#roles-contact-modal').val() || [];
 
         return {
             id: this.currentContactId,
@@ -188,7 +188,7 @@ window.ContactModal.Form = {
                        Utils.getInputValue('#first-name-contact-modal')).trim(),
             primary_phone: phones[0] ? phones[0].phone : '',
             contact_role: contactRoles,
-            contact_role_names: $('#contact-role-modal option:selected').map(function() {
+            contact_role_names: $('#roles-contact-modal option:selected').map(function() {
                 return $(this).text();
             }).get().join(', ') || '-',
             messengers: this.getMessengersFromForm(),

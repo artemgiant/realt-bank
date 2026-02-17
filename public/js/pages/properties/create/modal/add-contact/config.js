@@ -34,7 +34,7 @@ window.ContactModal.Config = {
         foundIndicator: '#contact-found-indicator',
         phoneInput: '.tel-contact',
         contactIdInput: '#contact-id-modal',
-        contactRoleSelect: '#contact-role-modal'
+        contactRoleSelect: '#roles-contact-modal'
     },
 
     // Пути к иконкам
