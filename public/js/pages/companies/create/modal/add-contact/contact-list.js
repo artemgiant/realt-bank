@@ -137,7 +137,7 @@ window.ContactModal.ContactList = {
 
         // Тип контакта
         var typeEl = card.querySelector('.contact-type');
-        if (typeEl) typeEl.textContent = contact.contact_type_name || '-';
+        if (typeEl) typeEl.textContent = contact.contact_role_names || '-';
 
         // Телефон
         var phoneLink = card.querySelector('.contact-phone');

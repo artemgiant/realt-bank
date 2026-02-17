@@ -501,7 +501,7 @@
             window.ContactModal.ContactList.add({
                 id: {{ $contact->id }},
                 full_name: '{{ $contact->full_name }}',
-                contact_type_name: '{{ $contact->contact_type_name }}',
+                contact_role_names: '{{ $contact->contact_role_names }}',
                 primary_phone: '{{ $contact->primary_phone }}',
                 photo_url: '{{ $contact->photo_url }}',
                 whatsapp: '{{ $contact->whatsapp }}',

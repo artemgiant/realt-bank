@@ -28,7 +28,7 @@
                         </div>
                         <div class="info-contacts">
                             <p class="info-contacts-name contact-name">{{ $contact->full_name }}</p>
-                            <p class="info-description contact-type">{{ $contact->roles_names ?? $contact->contact_type_name ?? '-' }}</p>
+                            <p class="info-description contact-type">{{ $contact->roles_names ?? $contact->contact_role_names ?? '-' }}</p>
                             <a href="tel:{{ $contact->primary_phone }}" class="info-contacts-tel contact-phone">{{ $contact->primary_phone ?? '-' }}</a>
                         </div>
                         <div class="info-links contact-messengers">

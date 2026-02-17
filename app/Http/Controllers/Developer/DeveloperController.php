@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Contact\Contact;
 use App\Models\Reference\Developer;
 use App\Models\Reference\DeveloperLocation;
+use App\Models\Reference\Dictionary;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,6 +42,7 @@ class DeveloperController extends Controller
                 ->orderBy('first_name')
                 ->limit(100)
                 ->get(),
+            'contactRoles' => Dictionary::getContactRoles(),
         ]);
     }
 
@@ -180,6 +182,7 @@ class DeveloperController extends Controller
                 ->orderBy('first_name')
                 ->limit(100)
                 ->get(),
+            'contactRoles' => Dictionary::getContactRoles(),
         ]);
     }
 
@@ -436,7 +439,7 @@ class DeveloperController extends Controller
             $contactData = [
                 'has_contact' => (bool) $contact,
                 'full_name' => $contact?->full_name,
-                'contact_type_name' => $contact?->contact_type_name,
+                'contact_role_names' => $contact?->contact_role_names,
                 'phone' => $contact?->primary_phone,
                 'contacts_count' => $developer->contacts->count(),
             ];

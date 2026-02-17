@@ -727,7 +727,7 @@ class PropertyController extends Controller
         return [
             'has_contact' => true,
             'full_name' => $employee->full_name,
-            'contact_type_name' => $property->contactType?->name,
+            'contact_role_names' => $property->contactType?->name,
             'phone' => $employee->phone,
             'company_name' => $employee->company?->name,
             'position_name' => $employee->position?->name,
@@ -746,7 +746,7 @@ class PropertyController extends Controller
         }
         return $contacts->map(fn($contact) => [
             'full_name' => $contact->full_name,
-            'contact_type_name' => $contact->contact_type_name ?? '-',
+            'contact_role_names' => $contact->contact_role_names ?? '-',
             'roles_names' => $contact->roles_names ?? '-',
             'phone' => $contact->primary_phone ?? '-',
         ])->values()->all();

@@ -22,7 +22,7 @@ class Contact extends Model
         'last_name',
         'middle_name',
         'email',
-        'contact_type',
+        'contact_role',
         'tags',
         'telegram',
         'viber',
@@ -34,7 +34,7 @@ class Contact extends Model
     ];
 
     protected $casts = [
-        'contact_type' => 'string',
+        'contact_role' => 'array',
     ];
 
     // ========== Константы типов контактов ==========
@@ -155,14 +155,46 @@ class Contact extends Model
         return $name ?: '-';
     }
 
-    // ========== Accessors: Тип контакта ==========
+    // ========== Accessors: Роли контакта ==========
 
     /**
-     * Название типа контакта
+     * Названия ролей контакта (из JSON поля contact_role)
      */
-    public function getContactTypeNameAttribute(): string
+    public function getContactRoleNamesAttribute(): string
     {
-        return self::TYPES[$this->contact_type] ?? '-';
+        if (empty($this->contact_role)) {
+            return '-';
+        }
+
+        $roleNames = Dictionary::whereIn('id', $this->contact_role)
+            ->where('type', Dictionary::TYPE_CONTACT_ROLE)
+            ->pluck('name')
+            ->toArray();
+
+        return !empty($roleNames) ? implode(', ', $roleNames) : '-';
+    }
+
+    /**
+     * Проверить, есть ли у контакта определённая роль
+     */
+    public function hasRole(int $roleId): bool
+    {
+        return is_array($this->contact_role) && in_array($roleId, $this->contact_role);
+    }
+
+    /**
+     * Проверить, есть ли у контакта роль по slug
+     */
+    public function hasRoleBySlug(string $slug): bool
+    {
+        if (empty($this->contact_role)) {
+            return false;
+        }
+
+        return Dictionary::whereIn('id', $this->contact_role)
+            ->where('type', Dictionary::TYPE_CONTACT_ROLE)
+            ->where('slug', $slug)
+            ->exists();
     }
 
     /**
@@ -276,29 +308,48 @@ class Contact extends Model
 
     // ========== Scopes ==========
 
-    public function scopeByType($query, string $type)
+    /**
+     * Фильтр по ID роли (JSON contains)
+     */
+    public function scopeByRole($query, int $roleId)
     {
-        return $query->where('contact_type', $type);
+        return $query->whereJsonContains('contact_role', $roleId);
+    }
+
+    /**
+     * Фильтр по slug роли
+     */
+    public function scopeByRoleSlug($query, string $slug)
+    {
+        $roleId = Dictionary::where('type', Dictionary::TYPE_CONTACT_ROLE)
+            ->where('slug', $slug)
+            ->value('id');
+
+        if ($roleId) {
+            return $query->whereJsonContains('contact_role', $roleId);
+        }
+
+        return $query->whereRaw('1 = 0'); // Роль не найдена
     }
 
     public function scopeOwners($query)
     {
-        return $query->where('contact_type', self::TYPE_OWNER);
+        return $query->byRoleSlug(self::TYPE_OWNER);
     }
 
     public function scopeAgents($query)
     {
-        return $query->where('contact_type', self::TYPE_AGENT);
+        return $query->byRoleSlug(self::TYPE_AGENT);
     }
 
     public function scopeDevelopers($query)
     {
-        return $query->where('contact_type', self::TYPE_DEVELOPER);
+        return $query->byRoleSlug(self::TYPE_DEVELOPER);
     }
 
     public function scopeDeveloperRepresentatives($query)
     {
-        return $query->where('contact_type', self::TYPE_DEVELOPER_REPRESENTATIVE);
+        return $query->byRoleSlug(self::TYPE_DEVELOPER_REPRESENTATIVE);
     }
 
     public function scopeSearch($query, string $search)
@@ -332,10 +383,10 @@ class Contact extends Model
     }
 
     /**
-     * Получить типы контактов для select
+     * Получить роли контактов для select (из dictionaries)
      */
-    public static function getTypeOptions(): array
+    public static function getRoleOptions(): array
     {
-        return self::TYPES;
+        return Dictionary::getContactRoles()->pluck('name', 'id')->toArray();
     }
 }

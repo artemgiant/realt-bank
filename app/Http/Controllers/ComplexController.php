@@ -55,6 +55,7 @@ class ComplexController extends Controller
             'conditions' => Dictionary::getConditions(),
             'complexCategories' => Dictionary::getComplexCategories(),
             'objectTypes' => Dictionary::getPropertyTypes(),
+            'contactRoles' => Dictionary::getContactRoles(),
         ]);
     }
 
@@ -297,6 +298,7 @@ class ComplexController extends Controller
             'conditions' => Dictionary::getConditions(),
             'complexCategories' => Dictionary::getComplexCategories(),
             'objectTypes' => Dictionary::getPropertyTypes(),
+            'contactRoles' => Dictionary::getContactRoles(),
         ]);
     }
 
@@ -1071,7 +1073,7 @@ class ComplexController extends Controller
                 'contact' => [
                     'has_contact' => $contact !== null,
                     'full_name' => $contact ? $contact->full_name : null,
-                    'contact_type_name' => $contact ? $contact->contact_type_name : null,
+                    'contact_role_names' => $contact ? $contact->contact_role_names : null,
                     'phone' => $contactPhone,
                 ],
 

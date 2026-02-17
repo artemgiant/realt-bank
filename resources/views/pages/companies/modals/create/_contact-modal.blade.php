@@ -71,12 +71,13 @@
                                 </div>
                             </div>
                             <div class="item selects">
-                                <label class="item-label green" for="type-contact-modal">Тип контакта</label>
-                                <select id="type-contact-modal" name="contact_type" class="js-example-responsive2 my-select2" autocomplete="off">
-                                    <option value="">Выберите тип</option>
-                                    <option value="developer_representative" selected>Представитель девелопера</option>
-                                    <option value="owner">Владелец</option>
-                                    <option value="agent">Агент</option>
+                                <label class="item-label green" for="contact-role-modal">Роль контакта <span class="text-danger">*</span></label>
+                                <select id="contact-role-modal" name="contact_role[]" class="js-example-responsive2 my-select2" autocomplete="off" multiple required>
+                                    @if(isset($contactRoles))
+                                        @foreach($contactRoles as $role)
+                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                         </div>

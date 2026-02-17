@@ -65,10 +65,12 @@ window.DeveloperRenderers = {
             phoneHtml = '<a href="tel:' + phoneClean + '">' + data.phone + '</a>';
         }
 
+        var roleNames = data.contact_role_names || '-';
+
         return '<div class="tbody-wrapper contact">' +
             '<div>' +
             '<p class="link-name" data-hover-contact="">' + (data.full_name || '-') + '</p>' +
-            '<p data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="' + (data.contact_type_name || '') + '">' + (data.contact_type_name || '-') + '</p>' +
+            (roleNames !== '-' ? '<p data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="' + roleNames + '">' + roleNames + '</p>' : '<p>-</p>') +
             phoneHtml +
             '</div>' +
             '</div>';

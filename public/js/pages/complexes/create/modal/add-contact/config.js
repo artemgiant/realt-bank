@@ -22,14 +22,6 @@ window.ContactModal.Config = {
     // Максимальное количество телефонов
     maxPhones: 5,
 
-    // Типы контактов
-    contactTypes: {
-        owner: 'Владелец',
-        agent: 'Агент',
-        developer: 'Девелопер',
-        developer_representative: 'Представитель девелопера'
-    },
-
     // Селекторы элементов
     selectors: {
         modal: '#add-contact-modal',
@@ -41,7 +33,8 @@ window.ContactModal.Config = {
         cardTemplate: '#contact-card-template',
         foundIndicator: '#contact-found-indicator',
         phoneInput: '.tel-contact',
-        contactIdInput: '#contact-id-modal'
+        contactIdInput: '#contact-id-modal',
+        contactRoleSelect: '#contact-role-modal'
     },
 
     // Пути к иконкам

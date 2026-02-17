@@ -40,6 +40,7 @@ class CompanyController extends Controller
                 ->limit(100)
                 ->get(),
             'agencyTypes' => Dictionary::getAgencyTypes(),
+            'contactRoles' => Dictionary::getContactRoles(),
         ]);
     }
 
@@ -152,6 +153,7 @@ class CompanyController extends Controller
                 ->limit(100)
                 ->get(),
             'agencyTypes' => Dictionary::getAgencyTypes(),
+            'contactRoles' => Dictionary::getContactRoles(),
         ]);
     }
 

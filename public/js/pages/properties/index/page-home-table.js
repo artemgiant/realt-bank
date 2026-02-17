@@ -293,7 +293,7 @@ $(document).ready(function () {
                 '</div>' +
                 '<div class="info-contacts">' +
                 '<p class="info-contacts-name">' + escapeHtml(contact.full_name) + '</p>' +
-                '<p class="info-description">' + escapeHtml(contact.roles_names || contact.contact_type_name || '-') + '</p>' +
+                '<p class="info-description">' + escapeHtml(contact.roles_names || contact.contact_role_names || '-') + '</p>' +
                 '<a href="tel:' + escapeHtml((contact.phone || '').replace(/\s/g, '')) + '" class="info-contacts-tel">' + escapeHtml(contact.phone || '-') + '</a>' +
                 '</div>' +
                 '</li>';

@@ -239,7 +239,7 @@
                                         </div>
                                         <div class="info-contacts">
                                             <p class="info-contacts-name contact-name">{{ $contact->full_name }}</p>
-                                            <p class="info-description contact-type">{{ $contact->contact_type_name ?? '-' }}</p>
+                                            <p class="info-description contact-type">{{ $contact->contact_role_names ?? '-' }}</p>
                                             <a href="tel:{{ $contact->phones->first()->phone ?? '' }}" class="contact-phone">{{ $contact->phones->first()->phone ?? '-' }}</a>
                                         </div>
                                     </li>

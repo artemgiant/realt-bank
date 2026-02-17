@@ -95,14 +95,11 @@ window.ContactModal.Form = {
             }
         });
 
-        // Заполняем select2
-        if (contact.contact_type) {
-            $('#type-contact-modal').val(contact.contact_type).trigger('change');
-        }
-        if (contact.roles && contact.roles.length) {
-            $('#roles-contact-modal').val(contact.roles).trigger('change');
+        // Заполняем select2 для ролей
+        if (contact.contact_role && contact.contact_role.length) {
+            $('#contact-role-modal').val(contact.contact_role).trigger('change');
         } else {
-            $('#roles-contact-modal').val(null).trigger('change');
+            $('#contact-role-modal').val(null).trigger('change');
         }
         if (contact.tags) {
             $('#tags-client-modal').val(contact.tags).trigger('change');
@@ -127,8 +124,7 @@ window.ContactModal.Form = {
         }
 
         // Сбрасываем select2
-        $('#type-contact-modal').val('').trigger('change');
-        $('#roles-contact-modal').val(null).trigger('change');
+        $('#contact-role-modal').val(null).trigger('change');
         $('#tags-client-modal').val('').trigger('change');
 
         // Скрываем индикатор
@@ -171,15 +167,17 @@ window.ContactModal.Form = {
         var Api = window.ContactModal.Api;
 
         var phones = Api.collectPhones();
-        var contactType = Utils.getInputValue('#type-contact-modal');
+        var contactRoles = $('#contact-role-modal').val() || [];
 
         return {
             id: this.currentContactId,
             full_name: (Utils.getInputValue('#last-name-contact-modal') + ' ' +
                        Utils.getInputValue('#first-name-contact-modal')).trim(),
             primary_phone: phones[0] ? phones[0].phone : '',
-            contact_type: contactType,
-            contact_type_name: Config.contactTypes[contactType] || '-',
+            contact_role: contactRoles,
+            contact_role_names: $('#contact-role-modal option:selected').map(function() {
+                return $(this).text();
+            }).get().join(', ') || '-',
             messengers: this.getMessengersFromForm(),
             telegram: Utils.getInputValue('#telegram-contact-modal'),
             viber: Utils.getInputValue('#viber-contact-modal'),
