@@ -77,10 +77,6 @@ window.ContactModal.Form = {
             }
             // Извлекаем национальные цифры (без кода страны)
             var nationalDigits = dcLen ? digits.slice(dcLen) : digits;
-            // Для Украины добавляем 0 в начало, если номер из 9 цифр
-            if (nationalDigits.length === 9 && countryIso2 === 'ua') {
-                nationalDigits = '0' + nationalDigits;
-            }
 
             if (input._iti) {
                 var iti = input._iti;

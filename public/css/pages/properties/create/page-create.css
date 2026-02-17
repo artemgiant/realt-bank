@@ -2883,6 +2883,54 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   width: 100%;
 }
 
+/* Phone validation styles */
+.iti {
+  position: relative;
+}
+
+.iti.is-invalid .iti__selected-flag,
+.iti.is-invalid input {
+  border-color: #dc3545 !important;
+}
+
+.iti.is-valid .iti__selected-flag,
+.iti.is-valid input {
+  border-color: #198754 !important;
+}
+
+/* Error icon positioning */
+.phone-validation-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.phone-validation-icon--error {
+  color: #dc3545;
+}
+
+.phone-validation-icon--error:hover {
+  color: #b02a37;
+}
+
+/* Adjust input padding for icon */
+.iti.is-invalid input {
+  padding-right: 35px !important;
+}
+
+.phone-validation-error {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
 body.lock {
   overflow: hidden !important;
 }

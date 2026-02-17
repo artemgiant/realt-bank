@@ -2112,17 +2112,23 @@ class PhoneInputManager {
 		// Зберігаємо екземпляр iti для доступу ззовні
 		inputElement._iti = iti;
 
-		const applyPhoneMask = (countryCode) => {
-			const mask = this.options.countryMasks[countryCode] || this.options.countryMasks['default'];
+		// Зберігаємо посилання на options для використання в замиканнях
+		const countryMasks = this.options.countryMasks;
+
+		const applyPhoneMask = (countryCode, preserveValue = true) => {
+			const mask = countryMasks[countryCode] || countryMasks['default'];
 			// Зберігаємо поточне значення перед застосуванням маски
-			const currentValue = $input.val();
+			const currentValue = preserveValue ? $input.val() : '';
 			$input.unmask().mask(mask, {
-				clearIfNotMatch: false // Не очищати якщо не відповідає масці
+				clearIfNotMatch: false,
+				placeholder: '_'
 			});
 
 			// Якщо в полі вже є значення, відновлюємо його
 			if (currentValue) {
-				$input.val(currentValue);
+				// Залишаємо тільки цифри
+				const digits = currentValue.replace(/\D/g, '');
+				$input.val(digits);
 			}
 		};
 
@@ -2131,18 +2137,131 @@ class PhoneInputManager {
 		});
 
 		$input.on('keypress', (e) => {
-			if ( !/[0-9]/.test(String.fromCharCode(e.which))) {
+			if (!/[0-9]/.test(String.fromCharCode(e.which))) {
 				e.preventDefault();
 			}
 		});
 
-		// Застосовуємо маску відразу при ініціалізації
-		applyPhoneMask(iti.getSelectedCountryData().iso2);
+		// Обробник для коректного сбросу маски при очищенні поля
+		$input.on('input', () => {
+			const value = $input.val();
+			const digits = value.replace(/\D/g, '');
 
-		// Додатковий тригер для гарантії застосування маски
-		setTimeout(() => {
-			$input.trigger('countrychange');
-		}, 100);
+			// Якщо поле порожнє або містить тільки символи маски - очищаємо повністю
+			if (!digits) {
+				$input.val('');
+			}
+
+			// Очищаємо стан валідації при введенні (помилки показуються тільки при submit)
+			this.clearValidationState(inputElement);
+		});
+
+		// Застосовуємо маску відразу при ініціалізації
+		applyPhoneMask(iti.getSelectedCountryData().iso2, false);
+	}
+
+	/**
+	 * Перевірка валідності номера телефону
+	 * @param {HTMLElement} inputElement - Елемент input
+	 * @returns {Object} - { isValid: boolean, message: string }
+	 */
+	validatePhone (inputElement) {
+		const value = inputElement.value || '';
+		const digits = value.replace(/\D/g, '');
+		const iti = inputElement._iti;
+
+		if (!digits) {
+			return { isValid: true, message: '' }; // Порожнє поле - OK (якщо не required)
+		}
+
+		// Отримуємо дані про країну
+		const countryData = iti ? iti.getSelectedCountryData() : null;
+		const countryCode = countryData ? countryData.iso2 : 'ua';
+
+		// Мінімальна/максимальна довжина для різних країн
+		// Для України: 9 цифр без початкового 0 (формат маски: XX XXX XX XX)
+		const phoneLengths = {
+			'ua': { min: 9, max: 9 },   // Україна: 9 цифр (XX XXX XX XX)
+			'us': { min: 10, max: 10 }, // США: 10 цифр
+			'gb': { min: 10, max: 11 }, // Великобританія: 10-11 цифр
+			'de': { min: 10, max: 12 }, // Німеччина: 10-12 цифр
+			'pl': { min: 9, max: 9 },   // Польща: 9 цифр
+			'default': { min: 7, max: 15 }
+		};
+
+		const lengths = phoneLengths[countryCode] || phoneLengths['default'];
+
+		if (digits.length < lengths.min) {
+			return {
+				isValid: false,
+				message: `Мінімум ${lengths.min} цифр`
+			};
+		}
+
+		if (digits.length > lengths.max) {
+			return {
+				isValid: false,
+				message: `Максимум ${lengths.max} цифр`
+			};
+		}
+
+		return { isValid: true, message: '' };
+	}
+
+	/**
+	 * Очищення стану валідації
+	 * @param {HTMLElement} inputElement - Елемент input
+	 */
+	clearValidationState (inputElement) {
+		const $input = $(inputElement);
+		const $wrapper = $input.closest('.iti');
+
+		$wrapper.removeClass('is-invalid is-valid');
+		$wrapper.find('.phone-validation-icon').remove();
+		$wrapper.nextAll('.phone-validation-error').remove();
+	}
+
+	/**
+	 * Оновлення візуального стану валідації (викликається при submit)
+	 * @param {HTMLElement} inputElement - Елемент input
+	 * @returns {boolean} - true якщо валідно
+	 */
+	updateValidationState (inputElement) {
+		const validation = this.validatePhone(inputElement);
+		const $input = $(inputElement);
+		const $wrapper = $input.closest('.iti');
+
+		// Видаляємо попередні стани
+		this.clearValidationState(inputElement);
+
+		const digits = (inputElement.value || '').replace(/\D/g, '');
+
+		if (!digits) {
+			// Порожнє поле - без стану
+			return true;
+		}
+
+		if (!validation.isValid) {
+			$wrapper.addClass('is-invalid');
+			// Додаємо іконку помилки з tooltip
+			const $icon = $(`<span class="phone-validation-icon phone-validation-icon--error" title="${validation.message}">
+				<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="12" cy="12" r="10"></circle>
+					<line x1="12" y1="8" x2="12" y2="12"></line>
+					<line x1="12" y1="16" x2="12.01" y2="16"></line>
+				</svg>
+			</span>`);
+			$wrapper.append($icon);
+
+			// Ініціалізуємо Bootstrap tooltip якщо доступний
+			if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+				new bootstrap.Tooltip($icon[0], { placement: 'top' });
+			}
+			return false;
+		} else {
+			$wrapper.addClass('is-valid');
+			return true;
+		}
 	}
 }
 
