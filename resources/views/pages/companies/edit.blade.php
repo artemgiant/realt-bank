@@ -423,7 +423,7 @@
                                                     <div class="text_advertising-wrapper">
                                                         <label class="green" for="name-office-ru-{{ $index }}">Название офиса</label>
                                                         <div class="item-inputText-wrapper">
-                                                            <input class="item-inputText office-name-input" type="text" data-input-lang="ru" id="name-office-ru-{{ $index }}" autocomplete="off" name="offices[{{ $index }}][name_ru]" placeholder="Название" value="{{ old("offices.{$index}.name_ru", $office->name_translations['ru'] ?? '') }}">
+                                                            <input class="item-inputText office-name-input" type="text" data-input-lang="ru" id="name-office-ru-{{ $index }}" autocomplete="off" name="offices[{{ $index }}][name_ru]" placeholder="Название" value="{{ old("offices.{$index}.name_ru", $office->name_translations['ru'] ?? $office->name ?? '') }}">
                                                         </div>
                                                     </div>
                                                 </div>

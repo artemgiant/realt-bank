@@ -29,6 +29,7 @@ class CompanyOffice extends Model
     protected $fillable = [
         'company_id',
         'name',
+        'name_translations',
         'country_id',
         'state_id',
         'city_id',
@@ -44,6 +45,7 @@ class CompanyOffice extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'name_translations' => 'array',
     ];
 
     // ========== Relationships ==========
