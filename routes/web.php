@@ -124,6 +124,8 @@ Route::middleware('auth')->group(function () {
     });
 
 
+     Route::get('test', function () {
+        return 'ok'; })->name('settings.index');
 
     // ========== Companies ==========
     Route::get('/companies/ajax-search', [CompanyController::class, 'ajaxSearch'])

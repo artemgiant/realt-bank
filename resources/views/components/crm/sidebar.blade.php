@@ -1,85 +1,50 @@
 <aside class="sidebar">
-    <nav class="nav">
-        <ul class="nav-list">
-            <li class="nav-list-item">
-                <a href="{{ route('properties.index') }}" class="nav-list-link sidebar-logo">
-                    <picture>
-                        <source srcset="{{ asset('img/icon/side-bar/logo-F.svg') }}" type="image/webp">
-                        <img src="{{ asset('img/icon/side-bar/logo-F.svg') }}" alt="Realt Bank">
-                    </picture>
-                </a>
-            </li>
-            @foreach($sidebarMenu as $menuItem)
-                @php
-                    $routePrefix = explode('.', $menuItem['route'])[0] ?? '';
-                    $isActive = str_starts_with($currentRoute ?? '', $routePrefix);
-                    $url = \Illuminate\Support\Facades\Route::has($menuItem['route'])
-                        ? route($menuItem['route'])
-                        : '#';
-                @endphp
-                <li class="nav-list-item">
-                    <a class="nav-list-link {{ $isActive ? 'active' : '' }}" href="{{ $url }}">
-                        <span class="nav-list-icon">
-                            <picture>
-                                <source srcset="{{ asset($menuItem['icon']) }}" type="image/webp">
-                                <img src="{{ asset($menuItem['icon']) }}" alt="">
-                            </picture>
-                        </span>
-                        <span class="nav-list-text">
-                            {{ $menuItem['name'] }}
-                        </span>
-                    </a>
-                </li>
-            @endforeach
-        </ul>
-        <ul class="nav-info">
-            <li class="nav-info-item">
-                <div class="dropdown">
-                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {{ strtoupper(app()->getLocale()) }}
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">UA</a></li>
-                        <li><a class="dropdown-item" href="#">RU</a></li>
-                        <li><a class="dropdown-item" href="#">EN</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li class="nav-info-item">
-                <a class="nav-info-link position-relative" href="#">
-                    <picture>
-                        <source srcset="{{ asset('img/icon/side-bar/mail-white.svg') }}" type="image/webp">
-                        <img src="{{ asset('img/icon/side-bar/mail-white.svg') }}" alt="">
-                    </picture>
-                </a>
-            </li>
-            <li class="nav-info-item">
-                <a class="nav-info-link" href="#">
-                    <picture>
-                        <source srcset="{{ asset('img/icon/side-bar/settings-white.svg') }}" type="image/webp">
-                        <img src="{{ asset('img/icon/side-bar/settings-white.svg') }}" alt="">
-                    </picture>
-                </a>
-            </li>
-            {{-- Аватар с dropdown меню --}}
-            <li class="nav-info-item">
-                <div class="dropdown">
-                    <button class="btn dropdown-toggle nav-info-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <picture>
-                            <source srcset="{{ asset('img/icon/side-bar/default-avatar.svg') }}" type="image/webp">
-                            <img src="{{ asset('img/icon/side-bar/default-avatar.svg') }}" alt="">
-                        </picture>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="dropdown-item">Logout</button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-        </ul>
+    <a href="{{ route('properties.index') }}" class="sidebar-logo">
+        <picture>
+            <img src="{{ asset('img/icon/side-bar/logo-F.svg') }}" alt="Faktor">
+        </picture>
+    </a>
+    <nav class="sidebar-nav">
+        @foreach($sidebarMenu as $menuItem)
+            @php
+                $routePrefix = explode('.', $menuItem['route'])[0] ?? '';
+                $isActive = str_starts_with($currentRoute ?? '', $routePrefix);
+                $url = \Illuminate\Support\Facades\Route::has($menuItem['route'])
+                    ? route($menuItem['route'])
+                    : '#';
+            @endphp
+            <a class="sidebar-item {{ $isActive ? 'active' : '' }}" href="{{ $url }}">
+                <picture>
+                    <img src="{{ asset($menuItem['icon']) }}" alt="">
+                </picture>
+                <span>{{ $menuItem['name'] }}</span>
+            </a>
+        @endforeach
     </nav>
+    <div class="sidebar-bottom">
+        <a class="sidebar-item" href="{{ route('settings.index') ?? '#' }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+            </svg>
+            <span>Настройки</span>
+        </a>
+        <div class="dropdown">
+            <button class="sidebar-avatar dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                @auth
+                    {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}{{ strtoupper(substr(explode(' ', auth()->user()->name ?? '')[1] ?? '', 0, 1)) }}
+                @else
+                    ВВ
+                @endauth
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="dropdown-item">Выход</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
 </aside>

@@ -17,7 +17,7 @@ return [
 
     'sidebar' => [
         [
-            'name' => 'Недвижимость',
+            'name' => 'Объекты',
             'route' => 'properties.index',
             'icon' => 'img/icon/side-bar/Finanse.svg',
             'tabs' => [
