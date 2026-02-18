@@ -48,7 +48,7 @@
             <div class="drawer-section-title">Роль и доступ</div>
             <div class="form-group">
                 <label class="form-label">Роль <span class="required">*</span></label>
-                <select class="form-input form-select" required>
+                <select id="user-role-select" class="drawer-select2" required>
                     <option value="" selected>Выберите роль...</option>
                     <option value="super_admin">Super Admin</option>
                     <option value="system_admin">System Admin</option>
@@ -69,7 +69,7 @@
             <div class="drawer-section-title">Привязка к сотруднику</div>
             <div class="form-group">
                 <label class="form-label">Сотрудник</label>
-                <select class="form-input form-select">
+                <select id="user-employee-select" class="drawer-select2">
                     <option value="" selected>Выберите сотрудника...</option>
                     <option value="1">Волков Владимир Александрович</option>
                     <option value="2">Коваленко Анна Игоревна</option>

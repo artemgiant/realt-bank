@@ -23,6 +23,9 @@ function openDrawer() {
     document.getElementById('drawerOverlay').classList.add('open');
     document.getElementById('drawerAddRole').classList.add('open');
     document.body.style.overflow = 'hidden';
+
+    // Initialize Select2 after drawer opens
+    initRoleDrawerSelect2();
 }
 
 function closeDrawer() {
@@ -31,17 +34,64 @@ function closeDrawer() {
     document.body.style.overflow = '';
 }
 
+// ========== SELECT2: ROLE DRAWER ==========
+function initRoleDrawerSelect2() {
+    // Destroy existing instance first
+    if ($('#role-copy-from-select').hasClass('select2-hidden-accessible')) {
+        $('#role-copy-from-select').select2('destroy');
+    }
+
+    // Initialize Select2 for copy from role select (with search)
+    $('#role-copy-from-select').select2({
+        width: '100%',
+        placeholder: 'Не копировать',
+        allowClear: true,
+        dropdownParent: $('#drawerAddRole')
+    });
+}
+
 // ========== DRAWER: USER ==========
 function openUserDrawer() {
     document.getElementById('drawerUserOverlay').classList.add('open');
     document.getElementById('drawerAddUser').classList.add('open');
     document.body.style.overflow = 'hidden';
+
+    // Initialize Select2 after drawer opens
+    initDrawerSelect2();
 }
 
 function closeUserDrawer() {
     document.getElementById('drawerUserOverlay').classList.remove('open');
     document.getElementById('drawerAddUser').classList.remove('open');
     document.body.style.overflow = '';
+}
+
+// ========== SELECT2 INITIALIZATION ==========
+function initDrawerSelect2() {
+    // Destroy existing instances first
+    if ($('#user-role-select').hasClass('select2-hidden-accessible')) {
+        $('#user-role-select').select2('destroy');
+    }
+    if ($('#user-employee-select').hasClass('select2-hidden-accessible')) {
+        $('#user-employee-select').select2('destroy');
+    }
+
+    // Initialize Select2 for role select (no search)
+    $('#user-role-select').select2({
+        width: '100%',
+        minimumResultsForSearch: -1,
+        placeholder: 'Выберите роль...',
+        allowClear: false,
+        dropdownParent: $('#drawerAddUser')
+    });
+
+    // Initialize Select2 for employee select (with search)
+    $('#user-employee-select').select2({
+        width: '100%',
+        placeholder: 'Выберите сотрудника...',
+        allowClear: true,
+        dropdownParent: $('#drawerAddUser')
+    });
 }
 
 // ========== INITIALIZATION ==========

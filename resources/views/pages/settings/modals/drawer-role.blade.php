@@ -81,7 +81,7 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Скопировать права из</label>
-                <select class="form-input form-select">
+                <select id="role-copy-from-select" class="drawer-select2">
                     <option value="" selected>Не копировать</option>
                     <option value="agent">Agent</option>
                     <option value="team_manager">Team Manager</option>
