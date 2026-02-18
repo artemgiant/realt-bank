@@ -22,11 +22,12 @@ php artisan view:clear
 php artisan migrate
 
 
-#php artisan currency:update-rates
+php artisan currency:update-rates
 #php artisan db:seed --class=CountrySeeder
 
 
 php artisan db:seed --class=DictionarySeeder --force
+
 
 
 
@@ -51,10 +52,9 @@ php artisan db:seed --class=DictionarySeeder --force
 
 
 
-php artisan db:seed --class=DictionarySeeder
 
 #Удалить и  Создать сотрудников
- php artisan tinker --execute="App\Models\Employee\Employee::query()->forceDelete(); App\Models\Employee\Employee::factory()->count(100)->create();"
+# php artisan tinker --execute="App\Models\Employee\Employee::query()->forceDelete(); App\Models\Employee\Employee::factory()->count(100)->create();"
 
 #php artisan storage:link
 

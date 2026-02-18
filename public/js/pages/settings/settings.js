@@ -18,7 +18,7 @@ function showSection(name) {
     }
 }
 
-// ========== DRAWER ==========
+// ========== DRAWER: ROLE ==========
 function openDrawer() {
     document.getElementById('drawerOverlay').classList.add('open');
     document.getElementById('drawerAddRole').classList.add('open');
@@ -31,32 +31,62 @@ function closeDrawer() {
     document.body.style.overflow = '';
 }
 
+// ========== DRAWER: USER ==========
+function openUserDrawer() {
+    document.getElementById('drawerUserOverlay').classList.add('open');
+    document.getElementById('drawerAddUser').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeUserDrawer() {
+    document.getElementById('drawerUserOverlay').classList.remove('open');
+    document.getElementById('drawerAddUser').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
 // ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', function() {
-    // Drawer overlay click
+    // ===== DRAWER: ROLE =====
     const drawerOverlay = document.getElementById('drawerOverlay');
     if (drawerOverlay) {
         drawerOverlay.addEventListener('click', closeDrawer);
     }
 
-    // Drawer close button
     const drawerClose = document.getElementById('drawerClose');
     if (drawerClose) {
         drawerClose.addEventListener('click', closeDrawer);
     }
 
-    // Drawer cancel button
     const drawerCancel = document.getElementById('drawerCancel');
     if (drawerCancel) {
         drawerCancel.addEventListener('click', closeDrawer);
     }
 
-    // Close drawer on Escape key
+    // ===== DRAWER: USER =====
+    const drawerUserOverlay = document.getElementById('drawerUserOverlay');
+    if (drawerUserOverlay) {
+        drawerUserOverlay.addEventListener('click', closeUserDrawer);
+    }
+
+    const drawerUserClose = document.getElementById('drawerUserClose');
+    if (drawerUserClose) {
+        drawerUserClose.addEventListener('click', closeUserDrawer);
+    }
+
+    const drawerUserCancel = document.getElementById('drawerUserCancel');
+    if (drawerUserCancel) {
+        drawerUserCancel.addEventListener('click', closeUserDrawer);
+    }
+
+    // ===== CLOSE ALL DRAWERS ON ESCAPE =====
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') closeDrawer();
+        if (e.key === 'Escape') {
+            closeDrawer();
+            closeUserDrawer();
+        }
     });
 
-    // Tab switching inside content
+    // ===== TAB SWITCHING =====
     document.querySelectorAll('.content-tab').forEach(tab => {
         tab.addEventListener('click', () => {
             // Update active tab
@@ -73,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Tree item expand/collapse
+    // ===== TREE EXPAND/COLLAPSE =====
     document.querySelectorAll('.tree-item.level-1').forEach(item => {
         item.addEventListener('click', function() {
             const expand = this.querySelector('.tree-expand');

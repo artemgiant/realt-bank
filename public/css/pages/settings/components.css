@@ -380,6 +380,7 @@ textarea.form-input {
   top: 0;
   right: 0;
   width: 440px;
+  max-width: 100%;
   height: 100vh;
   background: var(--bg);
   z-index: 201;
@@ -388,6 +389,7 @@ textarea.form-input {
   box-shadow: -12px 0 40px rgba(4, 37, 78, 0.25);
   transform: translateX(100%);
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
 }
 .drawer.open {
   transform: translateX(0);
@@ -462,6 +464,7 @@ textarea.form-input {
 .drawer-body {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -482,6 +485,8 @@ textarea.form-input {
 }
 .drawer-divider {
   height: 1px;
+  min-height: 1px;
+  flex-shrink: 0;
   background: linear-gradient(90deg, rgba(53, 133, 245, 0.49) 0%, rgb(247, 247, 247) 100%);
   margin: 20px 0;
 }

@@ -31,6 +31,7 @@
 
     {{-- Modals / Drawers --}}
     @include('pages.settings.modals.drawer-role')
+    @include('pages.settings.modals.drawer-user')
 @endsection
 
 @push('scripts')
