@@ -1494,11 +1494,19 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 
 .full-filter {
   border-bottom: 1px solid #d5dbe3;
-  display: none;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.4s ease;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .full-filter.active {
-  display: block;
+  max-height: 1000px;
+  opacity: 1;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 .full-filter-title {
