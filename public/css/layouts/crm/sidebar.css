@@ -157,4 +157,6 @@
 /* Отступ для основного контента, чтобы не перекрывался sidebar */
 .wrapper > .container-fluid {
     margin-left: var(--sidebar-w);
+    width: calc(100% - var(--sidebar-w));
+    max-width: calc(100% - var(--sidebar-w));
 }
