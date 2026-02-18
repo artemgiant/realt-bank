@@ -9,7 +9,9 @@
 
 /* ========== SIDEBAR ========== */
 .sidebar {
-    width: var(--sidebar-w);
+    width: 70px;
+    min-width: 70px;
+    max-width: 70px;
     min-height: 100vh;
     background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
     display: flex;
@@ -21,6 +23,7 @@
     top: 0;
     z-index: 100;
     box-shadow: 4px 0 20px rgba(4, 37, 78, 0.15);
+    box-sizing: border-box;
 }
 
 /* ========== SIDEBAR LOGO ========== */
@@ -36,10 +39,7 @@
     border-radius: 8px;
 }
 
-.sidebar-logo:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    cursor: pointer;
-}
+
 
 .sidebar-logo picture {
     display: flex;
@@ -111,6 +111,7 @@
     font-weight: 700;
     text-align: center;
     line-height: 1.1;
+    margin-top: 4px;
 }
 
 /* ========== SIDEBAR BOTTOM ========== */
@@ -150,4 +151,10 @@
 
 .sidebar-bottom .dropdown-menu {
     min-width: 120px;
+}
+
+/* ========== LAYOUT: MAIN CONTENT OFFSET ========== */
+/* Отступ для основного контента, чтобы не перекрывался sidebar */
+.wrapper > .container-fluid {
+    margin-left: var(--sidebar-w);
 }
