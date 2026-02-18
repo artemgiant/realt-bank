@@ -101,6 +101,17 @@
   text-align: center;
 }
 
+.nav-item-soon {
+  margin-left: auto;
+  background: var(--hover-light);
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: lowercase;
+}
+
 /* ========== SETTINGS CONTENT ========== */
 .settings-content {
   flex: 1;

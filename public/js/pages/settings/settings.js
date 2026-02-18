@@ -66,6 +66,64 @@ function closeUserDrawer() {
     document.body.style.overflow = '';
 }
 
+// ========== CONFIRM DELETE MODAL ==========
+let deleteCallback = null;
+
+function openConfirmDelete(options) {
+    // options: { type: 'role'|'user', name: string, warning: string|null, onConfirm: function }
+    const modal = document.getElementById('confirmDeleteModal');
+    const overlay = document.getElementById('confirmDeleteOverlay');
+    const title = document.getElementById('confirmDeleteTitle');
+    const name = document.getElementById('confirmDeleteName');
+    const warning = document.getElementById('confirmDeleteWarning');
+    const warningText = document.getElementById('confirmDeleteWarningText');
+
+    // Set content based on type
+    if (options.type === 'role') {
+        title.textContent = 'Удалить роль?';
+    } else if (options.type === 'user') {
+        title.textContent = 'Удалить пользователя?';
+    } else {
+        title.textContent = 'Подтвердите удаление';
+    }
+
+    // Set name
+    name.textContent = options.name || '';
+
+    // Set warning if provided
+    if (options.warning) {
+        warningText.textContent = options.warning;
+        warning.classList.add('show');
+    } else {
+        warning.classList.remove('show');
+    }
+
+    // Store callback
+    deleteCallback = options.onConfirm || null;
+
+    // Open modal
+    overlay.classList.add('open');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeConfirmDelete() {
+    const modal = document.getElementById('confirmDeleteModal');
+    const overlay = document.getElementById('confirmDeleteOverlay');
+
+    overlay.classList.remove('open');
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    deleteCallback = null;
+}
+
+function confirmDelete() {
+    if (typeof deleteCallback === 'function') {
+        deleteCallback();
+    }
+    closeConfirmDelete();
+}
+
 // ========== SELECT2 INITIALIZATION ==========
 function initDrawerSelect2() {
     // Destroy existing instances first
@@ -128,11 +186,58 @@ document.addEventListener('DOMContentLoaded', function() {
         drawerUserCancel.addEventListener('click', closeUserDrawer);
     }
 
-    // ===== CLOSE ALL DRAWERS ON ESCAPE =====
+    // ===== CONFIRM DELETE MODAL =====
+    const confirmDeleteOverlay = document.getElementById('confirmDeleteOverlay');
+    if (confirmDeleteOverlay) {
+        confirmDeleteOverlay.addEventListener('click', closeConfirmDelete);
+    }
+
+    const confirmDeleteCancel = document.getElementById('confirmDeleteCancel');
+    if (confirmDeleteCancel) {
+        confirmDeleteCancel.addEventListener('click', closeConfirmDelete);
+    }
+
+    const confirmDeleteSubmit = document.getElementById('confirmDeleteSubmit');
+    if (confirmDeleteSubmit) {
+        confirmDeleteSubmit.addEventListener('click', confirmDelete);
+    }
+
+    // ===== DELETE BUTTONS =====
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const type = this.dataset.type;
+            const name = this.dataset.name;
+            const users = this.dataset.users;
+
+            let warning = null;
+            if (type === 'role' && users && parseInt(users) > 0) {
+                const userCount = parseInt(users);
+                const userWord = userCount === 1 ? 'пользователь' :
+                                 (userCount >= 2 && userCount <= 4) ? 'пользователя' : 'пользователей';
+                warning = `У этой роли есть ${userCount} ${userWord}. Они потеряют свои права доступа.`;
+            }
+
+            openConfirmDelete({
+                type: type,
+                name: name,
+                warning: warning,
+                onConfirm: function() {
+                    // Здесь будет логика удаления
+                    console.log('Удаляем:', type, name);
+                }
+            });
+        });
+    });
+
+    // ===== CLOSE ALL MODALS ON ESCAPE =====
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeDrawer();
             closeUserDrawer();
+            closeConfirmDelete();
         }
     });
 

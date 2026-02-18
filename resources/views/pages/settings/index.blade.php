@@ -32,6 +32,7 @@
     {{-- Modals / Drawers --}}
     @include('pages.settings.modals.drawer-role')
     @include('pages.settings.modals.drawer-user')
+    @include('pages.settings.modals.confirm-delete')
 @endsection
 
 @push('scripts')

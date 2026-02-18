@@ -25,6 +25,7 @@
                 <path d="M7 11V7a5 5 0 0110 0v4"/>
             </svg>
             Разрешения
+            <span class="nav-item-soon">(скоро)</span>
         </div>
     </div>
 </div>

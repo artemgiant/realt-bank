@@ -39,13 +39,13 @@
                     <td style="color:var(--text-muted);font-size:13px">Абсолютный контроль над всеми разделами, правами, офисами, статистикой</td>
                     <td>
                         <div class="actions-cell">
-                            <button class="btn-icon">
+                            <button class="btn-icon" title="Редактировать">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
                                     <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>
                                 </svg>
                             </button>
-                            <button class="btn-icon">
+                            <button class="btn-icon btn-delete" title="Удалить" data-type="role" data-name="Super Admin" data-users="1">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <polyline points="3 6 5 6 21 6"/>
                                     <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
@@ -61,13 +61,13 @@
                     <td style="color:var(--text-muted);font-size:13px">Техническая часть CRM: роли, настройка полей, API, интеграции</td>
                     <td>
                         <div class="actions-cell">
-                            <button class="btn-icon">
+                            <button class="btn-icon" title="Редактировать">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
                                     <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>
                                 </svg>
                             </button>
-                            <button class="btn-icon">
+                            <button class="btn-icon btn-delete" title="Удалить" data-type="role" data-name="System Admin" data-users="2">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <polyline points="3 6 5 6 21 6"/>
                                     <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
@@ -83,13 +83,13 @@
                     <td style="color:var(--text-muted);font-size:13px">Стратегия, финансы, структура офисов. Полный обзор всех офисов и отчётов</td>
                     <td>
                         <div class="actions-cell">
-                            <button class="btn-icon">
+                            <button class="btn-icon" title="Редактировать">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
                                     <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>
                                 </svg>
                             </button>
-                            <button class="btn-icon">
+                            <button class="btn-icon btn-delete" title="Удалить" data-type="role" data-name="Agency Director" data-users="1">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <polyline points="3 6 5 6 21 6"/>
                                     <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
@@ -105,13 +105,13 @@
                     <td style="color:var(--text-muted);font-size:13px">Управляет CRM-базой: объекты, сделки, распределение лидов, проверка качества</td>
                     <td>
                         <div class="actions-cell">
-                            <button class="btn-icon">
+                            <button class="btn-icon" title="Редактировать">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
                                     <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>
                                 </svg>
                             </button>
-                            <button class="btn-icon">
+                            <button class="btn-icon btn-delete" title="Удалить" data-type="role" data-name="Agency Admin" data-users="3">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <polyline points="3 6 5 6 21 6"/>
                                     <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
@@ -127,13 +127,13 @@
                     <td style="color:var(--text-muted);font-size:13px">Управляет офисом: агенты, отделы, планы, аналитика в рамках офиса</td>
                     <td>
                         <div class="actions-cell">
-                            <button class="btn-icon">
+                            <button class="btn-icon" title="Редактировать">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
                                     <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>
                                 </svg>
                             </button>
-                            <button class="btn-icon">
+                            <button class="btn-icon btn-delete" title="Удалить" data-type="role" data-name="Office Director" data-users="4">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <polyline points="3 6 5 6 21 6"/>
                                     <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
@@ -149,13 +149,13 @@
                     <td style="color:var(--text-muted);font-size:13px">Операционная поддержка: звонки, документы, корректность CRM</td>
                     <td>
                         <div class="actions-cell">
-                            <button class="btn-icon">
+                            <button class="btn-icon" title="Редактировать">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
                                     <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>
                                 </svg>
                             </button>
-                            <button class="btn-icon">
+                            <button class="btn-icon btn-delete" title="Удалить" data-type="role" data-name="Office Admin" data-users="8">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <polyline points="3 6 5 6 21 6"/>
                                     <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
@@ -171,13 +171,13 @@
                     <td style="color:var(--text-muted);font-size:13px">Управляет группой агентов, контролирует планы, перераспределяет лиды</td>
                     <td>
                         <div class="actions-cell">
-                            <button class="btn-icon">
+                            <button class="btn-icon" title="Редактировать">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
                                     <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>
                                 </svg>
                             </button>
-                            <button class="btn-icon">
+                            <button class="btn-icon btn-delete" title="Удалить" data-type="role" data-name="Team Manager" data-users="12">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <polyline points="3 6 5 6 21 6"/>
                                     <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
@@ -193,13 +193,13 @@
                     <td style="color:var(--text-muted);font-size:13px">Риелтор: работа с клиентами, объектами, сделками и лидами</td>
                     <td>
                         <div class="actions-cell">
-                            <button class="btn-icon">
+                            <button class="btn-icon" title="Редактировать">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
                                     <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>
                                 </svg>
                             </button>
-                            <button class="btn-icon">
+                            <button class="btn-icon btn-delete" title="Удалить" data-type="role" data-name="Agent" data-users="72">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                     <polyline points="3 6 5 6 21 6"/>
                                     <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
