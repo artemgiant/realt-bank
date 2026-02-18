@@ -1,0 +1,67 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #3585F5;
+  --primary-dark: #04254e;
+  --primary-light: #5ba0ff;
+  --gradient: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  --gradient-light: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  --text-dark: #111;
+  --text-body: #334553;
+  --text-muted: #AAAAAA;
+  --text-secondary: #51677B;
+  --bg: #f7f7f7;
+  --white: #FFFFFF;
+  --hover-light: #F6F8FB;
+  --selection: #0062FF33;
+  --scrollbar: #C2CDD8;
+  --border: #E8ECF0;
+  --danger: #E74C3C;
+  --success: #27AE60;
+  --warning: #F39C12;
+  --sidebar-w: 70px;
+  --settings-nav-w: 260px;
+  --radius: 6px;
+  --shadow: 0 2px 12px 0 rgba(145,158,171,0.12);
+  --shadow-lg: 0 16px 32px 0 rgba(145,158,171,0.15);
+}
+
+
+
+@font-face {
+  font-family: "PTSans";
+  font-display: swap;
+  src: url("../../../fonts/PTSans-Bold.woff") format("woff"), url("../../../fonts/PTSans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "PTSans";
+  font-display: swap;
+  src: url("../../../fonts/PTSans-BoldItalic.woff") format("woff"), url("../../../fonts/PTSans-BoldItalic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "PTSans";
+  font-display: swap;
+  src: url("../../../fonts/PTSans-Italick.woff") format("woff"), url("../../../fonts/PTSans-Italick.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "PTSans";
+  font-display: swap;
+  src: url("../../../fonts/PTSans-Regular.woff") format("woff"), url("../../../fonts/PTSans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+/* ========== SCROLLBAR ========== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }

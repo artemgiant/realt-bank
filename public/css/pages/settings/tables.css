@@ -1,0 +1,189 @@
+/* ========== ROLES TABLE ========== */
+.roles-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.roles-table thead {
+  background: linear-gradient(180deg, rgba(4, 37, 78, 0.08) 0%, rgba(53, 133, 245, 0.04) 100%);
+  position: relative;
+}
+.roles-table thead::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient);
+  box-shadow: 0 2px 8px rgba(53, 133, 245, 0.25);
+}
+.roles-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 14px 14px;
+  border-bottom: none;
+  position: relative;
+}
+.roles-table th:first-child {
+  border-left: 3px solid var(--primary);
+}
+.roles-table td {
+  padding: 14px 14px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.roles-table tr:last-child td { border-bottom: none; }
+.roles-table tbody tr:hover td { background: var(--hover-light); }
+
+.role-name {
+  font-weight: 700;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.role-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.role-badge.admin { background: var(--gradient); color: #fff; }
+.role-badge.manager { background: linear-gradient(135deg, #d35400 0%, var(--warning) 100%); color: #fff; }
+.role-badge.agent { background: linear-gradient(135deg, #1a8a4a 0%, var(--success) 100%); color: #fff; }
+.role-badge.viewer { background: linear-gradient(135deg, #6c757d 0%, #adb5bd 100%); color: #fff; }
+
+.perm-check {
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.perm-check:checked {
+  background: var(--gradient-light);
+  border-color: var(--primary);
+}
+.perm-check:checked::after {
+  content: '';
+  width: 10px; height: 6px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translateY(-1px);
+  position: absolute;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* ========== TABS inside content ========== */
+.content-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 20px;
+}
+.content-tab {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+
+}
+.content-tab:hover { color: var(--text-dark); }
+.content-tab.active {
+  color: var(--primary-dark);
+  border-bottom: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              var(--gradient) border-box;
+  border-image: var(--gradient) 1;
+  border-image-slice: 0 0 1 0;
+}
+
+/* ========== PERMISSION MATRIX ========== */
+.perm-matrix {
+  width: 100%;
+  border-collapse: collapse;
+}
+.perm-matrix thead {
+  background: linear-gradient(180deg, rgba(4, 37, 78, 0.08) 0%, rgba(53, 133, 245, 0.04) 100%);
+  position: relative;
+}
+.perm-matrix thead::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient);
+  box-shadow: 0 2px 8px rgba(53, 133, 245, 0.25);
+}
+.perm-matrix th {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 12px 10px;
+  text-align: center;
+  border-bottom: none;
+}
+.perm-matrix th:first-child {
+  text-align: left;
+  border-left: 3px solid var(--primary);
+}
+.perm-matrix td {
+  padding: 10px 12px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.perm-matrix td:first-child {
+  text-align: left;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.perm-matrix tbody tr:hover td { background: var(--hover-light); }
+.perm-matrix .perm-section-divider td {
+  background: linear-gradient(90deg, rgba(53, 133, 245, 0.08) 0%, transparent 100%);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--primary);
+  padding: 12px 12px;
+  border-bottom: 1px solid rgba(53, 133, 245, 0.15);
+  border-top: 8px solid var(--white);
+}
+.perm-matrix .perm-section-divider:hover td { background: linear-gradient(90deg, rgba(53, 133, 245, 0.12) 0%, transparent 100%); }
+
+/* ========== PERMISSIONS TAB CONTENT ========== */
+.perm-tab-content {
+  display: none;
+}
+.perm-tab-content.active {
+  display: block;
+}

@@ -24,7 +24,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
 
     <!-- Компоненти CSS -->
-    <link rel="stylesheet" href="{{ asset('css/components/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/layouts/crm/header.css') }}">
     <link rel="stylesheet" href="{{ asset('css/layouts/crm/sidebar.css') }}">
     <link rel="stylesheet" href="{{ asset('css/layouts/crm/crm-common.css') }}">

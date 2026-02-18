@@ -8,6 +8,7 @@ use App\Http\Controllers\Import\ComplexImportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\PropertyDocumentController;
+use App\Http\Controllers\Settings\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -124,8 +125,8 @@ Route::middleware('auth')->group(function () {
     });
 
 
-     Route::get('test', function () {
-        return 'ok'; })->name('settings.index');
+    // ========== Settings ==========
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
 
     // ========== Companies ==========
     Route::get('/companies/ajax-search', [CompanyController::class, 'ajaxSearch'])
