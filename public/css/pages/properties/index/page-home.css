@@ -938,11 +938,12 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   margin-bottom: 0;
 }
 
-/* Блок контакта/агента в таблиці — плавна поява + картка */
+/* Блок контакта/агента в таблиці — плавне розкриття + картка */
 #example tbody tr td .tbody-dop-info .info-main-left .block-info .block-info-detail {
+  max-height: 200px;
   opacity: 1;
-  visibility: visible;
-  transition: opacity 0.28s ease, visibility 0s linear;
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.25s ease, margin-top 0.35s ease, padding 0.35s ease;
   margin-top: 10px;
   padding: 12px 14px;
   background: #f8f9fa;
@@ -971,11 +972,15 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   text-decoration: underline;
 }
 
-/* Прихований стан — плавне зникнення, visibility з затримкою щоб таблиця не стрибала */
+/* Прихований стан — плавне згортання, елемент не займає місце */
 #example tbody tr td .tbody-dop-info .info-main-left .block-info .block-info-detail.block-info-detail-hidden {
+  max-height: 0;
   opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.28s ease, visibility 0s linear 0.28s;
+  margin-top: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border: none;
+  transition: max-height 0.35s ease, opacity 0.25s ease, margin-top 0.35s ease, padding 0.35s ease, border 0s linear 0.35s;
 }
 
 #example tbody tr td .tbody-dop-info .info-main-left .filter-tags {

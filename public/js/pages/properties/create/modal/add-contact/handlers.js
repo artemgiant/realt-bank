@@ -44,6 +44,7 @@ window.ContactModal.Handlers = {
         modal.addEventListener('hidden.bs.modal', function() {
             Components.destroyAll();
             Form.isEditMode = false;
+            Form.currentContactId = null;
             Form.pendingContactData = null;
             Form.modalComponentsReady = false;
         });
@@ -262,7 +263,13 @@ window.ContactModal.Handlers = {
                     Api.update(Form.currentContactId, formData)
                         .then(function(data) {
                             if (data.success && data.contact) {
-                                ContactList.update(data.contact);
+                                // Если карточка контакта уже есть в списке — обновляем
+                                // Если нет (контакт найден по телефону, но не привязан) — добавляем
+                                if (ContactList.hasContact(data.contact.id)) {
+                                    ContactList.update(data.contact);
+                                } else {
+                                    ContactList.add(data.contact);
+                                }
                                 var modalEl = document.querySelector(Config.selectors.modal);
                                 var modal = bootstrap.Modal.getInstance(modalEl);
                                 if (modal) modal.hide();
