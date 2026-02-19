@@ -817,3 +817,156 @@ textarea.form-input {
   width: 16px;
   height: 16px;
 }
+
+/* ========== FORM STYLES FOR CREATE/EDIT ========== */
+.role-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.form-divider {
+  height: 1px;
+  min-height: 1px;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, rgba(53, 133, 245, 0.3) 0%, transparent 100%);
+  margin: 24px 0;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+  margin-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.form-error {
+  font-size: 12px;
+  color: var(--danger);
+  margin-top: 4px;
+}
+
+.form-input.is-invalid {
+  border-color: var(--danger);
+}
+
+.form-input.is-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+/* Role type cards for forms */
+.role-type-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.role-type-card input { display: none; }
+
+.role-type-card-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 12px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--white);
+}
+
+.role-type-card-inner svg {
+  width: 28px;
+  height: 28px;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+
+.role-type-card-inner span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+
+.role-type-card-inner:hover {
+  border-color: var(--primary);
+  background: var(--hover-light);
+}
+
+.role-type-card input:checked + .role-type-card-inner.admin {
+  border-color: var(--primary);
+  background: #EBF2FF;
+}
+.role-type-card input:checked + .role-type-card-inner.admin svg { color: var(--primary); }
+.role-type-card input:checked + .role-type-card-inner.admin span { color: var(--primary); }
+
+.role-type-card input:checked + .role-type-card-inner.manager {
+  border-color: var(--warning);
+  background: #FFF8EC;
+}
+.role-type-card input:checked + .role-type-card-inner.manager svg { color: var(--warning); }
+.role-type-card input:checked + .role-type-card-inner.manager span { color: #b87900; }
+
+.role-type-card input:checked + .role-type-card-inner.agent {
+  border-color: var(--success);
+  background: #EDFFF4;
+}
+.role-type-card input:checked + .role-type-card-inner.agent svg { color: var(--success); }
+.role-type-card input:checked + .role-type-card-inner.agent span { color: #1a8a4a; }
+
+/* Select2 in forms */
+.form-select-role {
+  width: 100%;
+}
+
+/* Alert messages */
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.alert-success {
+  background: #EDFFF4;
+  border: 1px solid #86EFAC;
+  color: #166534;
+}
+
+.alert-error {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #991B1B;
+}
+
+/* Nav item disabled state */
+.nav-item.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Nav item as link */
+a.nav-item {
+  text-decoration: none;
+}

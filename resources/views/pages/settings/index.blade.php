@@ -22,16 +22,16 @@
 
             {{-- Right Content --}}
             <div class="settings-content">
-                @include('pages.settings.partials.section-users')
+                @include('pages.settings.users.section-users')
                 @include('pages.settings.partials.section-roles')
-                @include('pages.settings.partials.section-permissions')
+                @include('pages.settings.permissions.section-permissions')
             </div>
         </div>
     </div>
 
     {{-- Modals / Drawers --}}
-    @include('pages.settings.modals.drawer-role')
-    @include('pages.settings.modals.drawer-user')
+    @include('pages.settings.roles.modals.drawer-role')
+    @include('pages.settings.users.modals.drawer-user')
     @include('pages.settings.modals.confirm-delete')
 @endsection
 

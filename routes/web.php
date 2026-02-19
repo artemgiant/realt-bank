@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\PropertyDocumentController;
 use App\Http\Controllers\Settings\SettingsController;
+use App\Http\Controllers\Settings\RoleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -126,7 +127,18 @@ Route::middleware('auth')->group(function () {
 
 
     // ========== Settings ==========
-    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', [SettingsController::class, 'index'])->name('index');
+
+        // Roles
+        Route::get('/roles/ajax-data', [RoleController::class, 'ajaxData'])->name('roles.ajax-data');
+        Route::resource('roles', RoleController::class);
+
+        // Users (placeholder - redirect to roles for now)
+        Route::get('/users', function () {
+            return redirect()->route('settings.roles.index');
+        })->name('users.index');
+    });
 
     // ========== Companies ==========
     Route::get('/companies/ajax-search', [CompanyController::class, 'ajaxSearch'])
