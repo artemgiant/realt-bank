@@ -36,5 +36,10 @@
 @endsection
 
 @push('scripts')
+    <script>
+        // Data for editing
+        rolesData = @json($roles->keyBy('id'));
+        usersData = @json($users->keyBy('id'));
+    </script>
     <script src="{{ asset('js/pages/settings/settings.js') }}"></script>
 @endpush

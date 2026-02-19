@@ -12,7 +12,7 @@ class SettingsController extends Controller
     /**
      * Get common data for all settings pages.
      */
-    private function getSettingsData(string $activeSection = 'users'): array
+    private function getSettingsData(?string $activeSection = null): array
     {
         $users = User::with(['roles', 'employee.office'])->get();
         $roles = Role::withCount('users')->get();
@@ -27,11 +27,11 @@ class SettingsController extends Controller
     }
 
     /**
-     * Display settings page (default: users section).
+     * Display settings page (no section selected - only nav).
      */
     public function index(): View
     {
-        return view('pages.settings.index', $this->getSettingsData('users'));
+        return view('pages.settings.index', $this->getSettingsData(null));
     }
 
     /**

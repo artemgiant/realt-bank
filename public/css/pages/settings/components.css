@@ -395,6 +395,15 @@ textarea.form-input {
   transform: translateX(0);
 }
 
+/* Form inside drawer needs flex to allow drawer-body to scroll */
+.drawer > form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .drawer-header {
   display: flex;
   align-items: center;

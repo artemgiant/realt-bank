@@ -1,5 +1,5 @@
 {{-- Section: Users --}}
-<div class="settings-section {{ ($activeSection ?? 'users') === 'users' ? 'active' : '' }}" id="section-users">
+<div class="settings-section {{ $activeSection === 'users' ? 'active' : '' }}" id="section-users">
     <div class="settings-breadcrumb">
         <a href="#">Настройки</a>
         <span>›</span>

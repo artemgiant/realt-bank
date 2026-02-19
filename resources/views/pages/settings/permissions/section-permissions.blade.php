@@ -1,5 +1,5 @@
 {{-- Section: Permissions --}}
-<div class="settings-section {{ ($activeSection ?? '') === 'permissions' ? 'active' : '' }}" id="section-permissions">
+<div class="settings-section {{ $activeSection === 'permissions' ? 'active' : '' }}" id="section-permissions">
     <div class="settings-breadcrumb">
         <a href="#">Настройки</a>
         <span>›</span>
