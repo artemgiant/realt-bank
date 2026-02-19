@@ -3,8 +3,8 @@
  */
 
 // ========== GLOBAL DATA ==========
-let rolesData = {};
-let usersData = {};
+// These are populated from the Blade template BEFORE this script loads
+// Do NOT redeclare them here - they already exist as global variables
 
 // ========== SECTION NAVIGATION ==========
 function showSection(name) {
@@ -45,8 +45,11 @@ function openRoleDrawer(roleId = null) {
         $('#role-copy-from-select').val('').trigger('change');
     }
 
-    if (roleId && rolesData[roleId]) {
-        const role = rolesData[roleId];
+    // Convert to string for JSON key lookup
+    const roleKey = roleId ? String(roleId) : null;
+
+    if (roleKey && rolesData[roleKey]) {
+        const role = rolesData[roleKey];
         title.textContent = 'Редактирование роли';
         subtitle.textContent = 'Измените параметры роли';
         submitBtn.innerHTML = `
@@ -141,8 +144,11 @@ function openUserDrawer(userId = null) {
         $('#user-employee-select').val('').trigger('change');
     }
 
-    if (userId && usersData[userId]) {
-        const user = usersData[userId];
+    // Convert to string for JSON key lookup
+    const userKey = userId ? String(userId) : null;
+
+    if (userKey && usersData && usersData[userKey]) {
+        const user = usersData[userKey];
         title.textContent = 'Редактирование пользователя';
         subtitle.textContent = 'Измените данные учётной записи';
         submitBtn.innerHTML = `
@@ -158,7 +164,8 @@ function openUserDrawer(userId = null) {
         document.getElementById('userName').value = user.name || '';
         document.getElementById('userEmail').value = user.email || '';
 
-        // Password not required for edit
+        // Password: leave empty, not required for edit
+        passwordInput.value = '';
         passwordInput.removeAttribute('required');
         if (passwordGroup.querySelector('.form-label .required')) {
             passwordGroup.querySelector('.form-label .required').style.display = 'none';
@@ -170,9 +177,9 @@ function openUserDrawer(userId = null) {
             $('#user-role-select').val(user.roles[0].id).trigger('change');
         }
 
-        // Set employee
-        if (user.employee_id) {
-            $('#user-employee-select').val(user.employee_id).trigger('change');
+        // Set employee (employee has user_id, so we get it from user.employee)
+        if (user.employee && user.employee.id) {
+            $('#user-employee-select').val(user.employee.id).trigger('change');
         }
 
         // Set active status

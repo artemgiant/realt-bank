@@ -52,6 +52,13 @@ class Employee extends Model
         'active_until' => 'datetime',
     ];
 
+    /**
+     * Accessors to append to model's array form.
+     */
+    protected $appends = [
+        'full_name',
+    ];
+
     // ========== Relationships ==========
 
     public function user(): BelongsTo

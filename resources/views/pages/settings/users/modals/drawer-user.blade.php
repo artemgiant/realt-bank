@@ -44,7 +44,7 @@
                 <div class="form-group" id="passwordGroup">
                     <label class="form-label">Пароль <span class="required">*</span></label>
                     <input class="form-input" type="password" name="password" id="userPassword"
-                           placeholder="Минимум 8 символов" required>
+                           placeholder="Минимум 8 символов" required autocomplete="new-password">
                 </div>
             </div>
 

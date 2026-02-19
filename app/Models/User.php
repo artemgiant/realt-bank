@@ -5,7 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Employee\Employee;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -24,16 +24,16 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'employee_id',
         'is_active',
     ];
 
     /**
-     * Get the employee associated with this user.
+     * Get the employee linked to this user.
+     * Employee has user_id foreign key pointing to this user.
      */
-    public function employee(): BelongsTo
+    public function employee(): HasOne
     {
-        return $this->belongsTo(Employee::class);
+        return $this->hasOne(Employee::class);
     }
 
     /**

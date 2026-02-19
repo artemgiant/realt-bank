@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee\Employee;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -35,7 +36,7 @@ class UserController extends Controller
             'email' => 'required|email|max:255|unique:users,email',
             'password' => ['required', Password::min(8)],
             'role_id' => 'required|exists:roles,id',
-            'employee_id' => 'nullable|exists:employees,id',
+            'employee_id' => 'nullable|exists:employees,id|unique:employees,user_id',
             'is_active' => 'nullable|boolean',
         ]);
 
@@ -43,13 +44,17 @@ class UserController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'employee_id' => $validated['employee_id'] ?? null,
             'is_active' => $request->has('is_active'),
         ]);
 
         // Assign role
         $role = Role::findById($validated['role_id']);
         $user->assignRole($role);
+
+        // Link employee to user (set user_id in employees table)
+        if (!empty($validated['employee_id'])) {
+            Employee::where('id', $validated['employee_id'])->update(['user_id' => $user->id]);
+        }
 
         return redirect()
             ->route('settings.users.index')
@@ -61,19 +66,34 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user): RedirectResponse
     {
+        // Get current employee_id from employees table
+        $oldEmployeeId = $user->employee?->id;
+        $newEmployeeId = $request->input('employee_id');
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'password' => ['nullable', Password::min(8)],
             'role_id' => 'required|exists:roles,id',
-            'employee_id' => 'nullable|exists:employees,id',
+            'employee_id' => [
+                'nullable',
+                'exists:employees,id',
+                // Employee must not be linked to another user (except current)
+                function ($attribute, $value, $fail) use ($user) {
+                    if ($value) {
+                        $employee = Employee::find($value);
+                        if ($employee && $employee->user_id && $employee->user_id !== $user->id) {
+                            $fail('Этот сотрудник уже привязан к другому пользователю.');
+                        }
+                    }
+                },
+            ],
             'is_active' => 'nullable|boolean',
         ]);
 
         $user->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'employee_id' => $validated['employee_id'] ?? null,
             'is_active' => $request->has('is_active'),
         ]);
 
@@ -85,6 +105,16 @@ class UserController extends Controller
         // Sync role
         $role = Role::findById($validated['role_id']);
         $user->syncRoles([$role]);
+
+        // Sync employee link
+        // Remove link from old employee if changed
+        if ($oldEmployeeId && $oldEmployeeId != $newEmployeeId) {
+            Employee::where('id', $oldEmployeeId)->update(['user_id' => null]);
+        }
+        // Add link to new employee
+        if ($newEmployeeId) {
+            Employee::where('id', $newEmployeeId)->update(['user_id' => $user->id]);
+        }
 
         return redirect()
             ->route('settings.users.index')
@@ -109,6 +139,9 @@ class UserController extends Controller
                 ->route('settings.users.index')
                 ->with('error', 'Нельзя удалить самого себя');
         }
+
+        // Remove user_id from linked employee
+        Employee::where('user_id', $user->id)->update(['user_id' => null]);
 
         $user->delete();
 

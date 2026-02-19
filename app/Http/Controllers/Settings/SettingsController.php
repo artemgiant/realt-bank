@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee\Employee;
 use App\Models\User;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
@@ -16,10 +17,12 @@ class SettingsController extends Controller
     {
         $users = User::with(['roles', 'employee.office'])->get();
         $roles = Role::withCount('users')->get();
+        $employees = Employee::active()->orderBy('last_name')->get();
 
         return [
             'users' => $users,
             'roles' => $roles,
+            'employees' => $employees,
             'usersCount' => $users->count(),
             'rolesCount' => $roles->count(),
             'activeSection' => $activeSection,

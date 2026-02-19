@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="{{ asset('css/pages/settings/layout.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pages/settings/components.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pages/settings/tables.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pages/settings/settings.css') }}">
 @endpush
 
 @section('content')
@@ -37,9 +36,9 @@
 
 @push('scripts')
     <script>
-        // Data for editing
-        rolesData = @json($roles->keyBy('id'));
-        usersData = @json($users->keyBy('id'));
+        // Data for editing - must be declared before settings.js loads
+        var rolesData = @json($roles->keyBy('id'));
+        var usersData = @json($users->keyBy('id'));
     </script>
     <script src="{{ asset('js/pages/settings/settings.js') }}"></script>
 @endpush
