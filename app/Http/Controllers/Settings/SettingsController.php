@@ -3,16 +3,58 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
+use App\Models\User;
+use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class SettingsController extends Controller
 {
     /**
-     * Display the settings page.
-     * Redirects to the first available settings section (roles).
+     * Get common data for all settings pages.
      */
-    public function index(): RedirectResponse
+    private function getSettingsData(string $activeSection = 'users'): array
     {
-        return redirect()->route('settings.roles.index');
+        $users = User::with(['roles', 'employee.office'])->get();
+        $roles = Role::withCount('users')->get();
+
+        return [
+            'users' => $users,
+            'roles' => $roles,
+            'usersCount' => $users->count(),
+            'rolesCount' => $roles->count(),
+            'activeSection' => $activeSection,
+        ];
+    }
+
+    /**
+     * Display settings page (default: users section).
+     */
+    public function index(): View
+    {
+        return view('pages.settings.index', $this->getSettingsData('users'));
+    }
+
+    /**
+     * Display settings page with users section active.
+     */
+    public function users(): View
+    {
+        return view('pages.settings.index', $this->getSettingsData('users'));
+    }
+
+    /**
+     * Display settings page with roles section active.
+     */
+    public function roles(): View
+    {
+        return view('pages.settings.index', $this->getSettingsData('roles'));
+    }
+
+    /**
+     * Display settings page with permissions section active.
+     */
+    public function permissions(): View
+    {
+        return view('pages.settings.index', $this->getSettingsData('permissions'));
     }
 }

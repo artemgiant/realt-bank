@@ -1,15 +1,14 @@
 {{-- Section: Users --}}
-<div class="settings-section active" id="section-users">
+<div class="settings-section {{ ($activeSection ?? 'users') === 'users' ? 'active' : '' }}" id="section-users">
     <div class="settings-breadcrumb">
         <a href="#">Настройки</a>
         <span>›</span>
         <span class="current">Пользователи</span>
     </div>
-
     <div class="section-header">
         <div>
             <h2>Пользователи</h2>
-            <p>Управление пользователями системы</p>
+            <p>Управление учётными записями системы</p>
         </div>
         <div style="display:flex;gap:12px;align-items:center;">
             <div class="section-search">
@@ -17,7 +16,7 @@
                     <circle cx="11" cy="11" r="8"/>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
-                <input placeholder="Поиск пользователя...">
+                <input id="searchUsersInput" placeholder="Поиск пользователя...">
             </div>
             <button class="btn btn-primary" onclick="openUserDrawer()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -31,7 +30,7 @@
 
     <div class="card">
         <div class="card-body" style="padding:0;">
-            <table class="roles-table">
+            <table class="roles-table" id="usersTable">
                 <thead>
                 <tr>
                     <th>Пользователь</th>
@@ -44,126 +43,62 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td><span class="role-name">Владимир Волков</span></td>
-                    <td style="font-size:13px">Волков Владимир Александрович</td>
-                    <td style="color:var(--text-muted);font-size:13px">v.volkov@realtbank.com.ua</td>
-                    <td><span class="role-badge admin">Super Admin</span></td>
-                    <td style="font-size:13px">Главный офис</td>
-                    <td><span class="tag tag-primary">Активен</span></td>
-                    <td>
-                        <div class="actions-cell">
-                            <button class="btn-icon" title="Редактировать">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-                                    <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>
-                                </svg>
-                            </button>
-                            <button class="btn-icon btn-delete" title="Удалить" data-type="user" data-name="Владимир Волков">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                                    <polyline points="3 6 5 6 21 6"/>
-                                    <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="role-name">Анна Коваленко</span></td>
-                    <td style="font-size:13px">Коваленко Анна Игоревна</td>
-                    <td style="color:var(--text-muted);font-size:13px">a.kovalenko@realtbank.com.ua</td>
-                    <td><span class="role-badge manager">Директор</span></td>
-                    <td style="font-size:13px">Главный офис</td>
-                    <td><span class="tag tag-primary">Активен</span></td>
-                    <td>
-                        <div class="actions-cell">
-                            <button class="btn-icon" title="Редактировать">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-                                    <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>
-                                </svg>
-                            </button>
-                            <button class="btn-icon btn-delete" title="Удалить" data-type="user" data-name="Анна Коваленко">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                                    <polyline points="3 6 5 6 21 6"/>
-                                    <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="role-name">Дмитрий Петренко</span></td>
-                    <td style="font-size:13px">Петренко Дмитрий Олегович</td>
-                    <td style="color:var(--text-muted);font-size:13px">d.petrenko@realtbank.com.ua</td>
-                    <td><span class="role-badge manager">Руководитель офиса</span></td>
-                    <td style="font-size:13px">Офис Центр</td>
-                    <td><span class="tag tag-primary">Активен</span></td>
-                    <td>
-                        <div class="actions-cell">
-                            <button class="btn-icon" title="Редактировать">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-                                    <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>
-                                </svg>
-                            </button>
-                            <button class="btn-icon btn-delete" title="Удалить" data-type="user" data-name="Дмитрий Петренко">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                                    <polyline points="3 6 5 6 21 6"/>
-                                    <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="role-name">Елена Шевченко</span></td>
-                    <td style="font-size:13px">Шевченко Елена Викторовна</td>
-                    <td style="color:var(--text-muted);font-size:13px">e.shevchenko@realtbank.com.ua</td>
-                    <td><span class="role-badge agent">Агент</span></td>
-                    <td style="font-size:13px">Офис Центр</td>
-                    <td><span class="tag tag-primary">Активен</span></td>
-                    <td>
-                        <div class="actions-cell">
-                            <button class="btn-icon" title="Редактировать">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-                                    <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>
-                                </svg>
-                            </button>
-                            <button class="btn-icon btn-delete" title="Удалить" data-type="user" data-name="Елена Шевченко">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                                    <polyline points="3 6 5 6 21 6"/>
-                                    <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="role-name">Игорь Бондаренко</span></td>
-                    <td style="font-size:13px">Бондаренко Игорь Сергеевич</td>
-                    <td style="color:var(--text-muted);font-size:13px">i.bondarenko@realtbank.com.ua</td>
-                    <td><span class="role-badge agent">Агент</span></td>
-                    <td style="font-size:13px">Офис Приморский</td>
-                    <td><span class="tag">Неактивен</span></td>
-                    <td>
-                        <div class="actions-cell">
-                            <button class="btn-icon" title="Редактировать">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-                                    <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>
-                                </svg>
-                            </button>
-                            <button class="btn-icon btn-delete" title="Удалить" data-type="user" data-name="Игорь Бондаренко">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                                    <polyline points="3 6 5 6 21 6"/>
-                                    <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
+                @forelse($users as $user)
+                    <tr data-search="{{ mb_strtolower($user->name . ' ' . $user->email . ' ' . ($user->employee->full_name ?? '')) }}">
+                        <td><span class="role-name">{{ $user->name }}</span></td>
+                        <td style="font-size:13px">{{ $user->employee->full_name ?? '—' }}</td>
+                        <td style="color:var(--text-muted);font-size:13px">{{ $user->email }}</td>
+                        <td>
+                            @if($user->roles->first())
+                                @php
+                                    $role = $user->roles->first();
+                                    $badgeClass = match($role->type ?? 'agent') {
+                                        'admin' => 'admin',
+                                        'manager' => 'manager',
+                                        default => 'agent'
+                                    };
+                                @endphp
+                                <span class="role-badge {{ $badgeClass }}">{{ $role->display_name ?? $role->name }}</span>
+                            @else
+                                <span style="color:var(--text-muted)">—</span>
+                            @endif
+                        </td>
+                        <td style="font-size:13px">{{ $user->employee->office->name ?? '—' }}</td>
+                        <td>
+                            @if($user->is_active ?? true)
+                                <span class="tag tag-primary">Активен</span>
+                            @else
+                                <span class="tag">Неактивен</span>
+                            @endif
+                        </td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="btn-icon" title="Редактировать" onclick="openUserDrawer({{ $user->id }})">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                        <path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/>
+                                    </svg>
+                                </button>
+                                <button class="btn-icon btn-delete" title="Удалить"
+                                        data-id="{{ $user->id }}"
+                                        data-type="user"
+                                        data-name="{{ $user->name }}"
+                                        onclick="openDeleteModal(this)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                        <polyline points="3 6 5 6 21 6"/>
+                                        <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="text-center" style="padding: 40px; color: var(--text-muted);">
+                            Нет пользователей
+                        </td>
+                    </tr>
+                @endforelse
                 </tbody>
             </table>
         </div>

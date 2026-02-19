@@ -23,7 +23,7 @@
             {{-- Right Content --}}
             <div class="settings-content">
                 @include('pages.settings.users.section-users')
-                @include('pages.settings.partials.section-roles')
+                @include('pages.settings.roles.section-roles')
                 @include('pages.settings.permissions.section-permissions')
             </div>
         </div>

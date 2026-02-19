@@ -10,6 +10,7 @@ use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\PropertyDocumentController;
 use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\Settings\RoleController;
+use App\Http\Controllers\Settings\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -128,16 +129,25 @@ Route::middleware('auth')->group(function () {
 
     // ========== Settings ==========
     Route::prefix('settings')->name('settings.')->group(function () {
+        // Главная страница настроек (по умолчанию — Пользователи)
         Route::get('/', [SettingsController::class, 'index'])->name('index');
 
-        // Roles
-        Route::get('/roles/ajax-data', [RoleController::class, 'ajaxData'])->name('roles.ajax-data');
-        Route::resource('roles', RoleController::class);
+        // Секции — та же страница, но с активной секцией
+        Route::get('/users', [SettingsController::class, 'users'])->name('users.index');
+        Route::get('/roles', [SettingsController::class, 'roles'])->name('roles.index');
+        Route::get('/permissions', [SettingsController::class, 'permissions'])->name('permissions.index');
 
-        // Users (placeholder - redirect to roles for now)
-        Route::get('/users', function () {
-            return redirect()->route('settings.roles.index');
-        })->name('users.index');
+        // Roles CRUD
+        Route::get('/roles/ajax-data', [RoleController::class, 'ajaxData'])->name('roles.ajax-data');
+        Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
+        Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
+        Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+
+        // Users CRUD
+        Route::get('/users/ajax-data', [UserController::class, 'ajaxData'])->name('users.ajax-data');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 
     // ========== Companies ==========
