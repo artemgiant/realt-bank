@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee\Employee;
 use App\Models\User;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class SettingsController extends Controller
@@ -16,13 +17,26 @@ class SettingsController extends Controller
     private function getSettingsData(?string $activeSection = null): array
     {
         $users = User::with(['roles', 'employee.office'])->get();
-        $roles = Role::withCount('users')->get();
+        $roles = Role::withCount('users')->with('permissions')->get();
         $employees = Employee::active()->orderBy('last_name')->get();
+        $permissions = Permission::orderBy('group')->orderBy('id')->get();
+
+        // Build permissions matrix
+        $permissionsMatrix = [];
+        foreach ($permissions as $permission) {
+            $permissionsMatrix[$permission->name] = [];
+            foreach ($roles as $role) {
+                $permissionsMatrix[$permission->name][$role->id] = $role->hasPermissionTo($permission->name);
+            }
+        }
 
         return [
             'users' => $users,
             'roles' => $roles,
             'employees' => $employees,
+            'permissions' => $permissions,
+            'permissionsMatrix' => $permissionsMatrix,
+            'permissionGroups' => $permissions->groupBy('group'),
             'usersCount' => $users->count(),
             'rolesCount' => $roles->count(),
             'activeSection' => $activeSection,

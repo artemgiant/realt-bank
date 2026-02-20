@@ -19,13 +19,13 @@
             Роли
             <span class="nav-item-badge">{{ $rolesCount ?? 0 }}</span>
         </a>
-        <div class="nav-item disabled">
+        <a href="{{ route('settings.permissions.index') }}" class="nav-item {{ $activeSection === 'permissions' ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                 <path d="M7 11V7a5 5 0 0110 0v4"/>
             </svg>
             Разрешения
-            <span class="nav-item-soon">(скоро)</span>
-        </div>
+            <span class="nav-item-badge">{{ $permissions->count() ?? 0 }}</span>
+        </a>
     </div>
 </div>

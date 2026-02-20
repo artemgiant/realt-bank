@@ -11,6 +11,7 @@ use App\Http\Controllers\Property\PropertyDocumentController;
 use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\UserController;
+use App\Http\Controllers\Settings\PermissionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -156,6 +157,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+        // Permissions Matrix
+        Route::get('/permissions/matrix', [PermissionController::class, 'matrix'])->name('permissions.matrix');
+        Route::post('/permissions/toggle', [PermissionController::class, 'toggle'])->name('permissions.toggle');
+        Route::put('/permissions/role/{role}', [PermissionController::class, 'updateRole'])->name('permissions.update-role');
+        Route::post('/permissions/bulk-update', [PermissionController::class, 'bulkUpdate'])->name('permissions.bulk-update');
     });
 
     // ========== Companies ==========

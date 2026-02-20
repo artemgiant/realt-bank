@@ -446,4 +446,155 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // ===== PERMISSIONS MATRIX =====
+    initPermissionsMatrix();
 });
+
+// ========== PERMISSIONS MATRIX ==========
+let permissionsChanged = false;
+let originalPermissions = {};
+let currentPermissions = {};
+
+function initPermissionsMatrix() {
+    const checkboxes = document.querySelectorAll('.perm-check');
+    if (checkboxes.length === 0) return;
+
+    // Store original state
+    checkboxes.forEach(cb => {
+        const key = cb.dataset.permission + '_' + cb.dataset.role;
+        originalPermissions[key] = cb.checked;
+        currentPermissions[key] = cb.checked;
+    });
+
+    // Add change listeners
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', function() {
+            const key = this.dataset.permission + '_' + this.dataset.role;
+            currentPermissions[key] = this.checked;
+            checkPermissionsChanged();
+        });
+    });
+
+    // Save button
+    const saveBtn = document.getElementById('permSaveBtn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', savePermissions);
+    }
+
+    // Reset button
+    const resetBtn = document.getElementById('permResetBtn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', resetPermissions);
+    }
+}
+
+function checkPermissionsChanged() {
+    const saveBtn = document.getElementById('permSaveBtn');
+    const resetBtn = document.getElementById('permResetBtn');
+
+    permissionsChanged = false;
+    for (const key in currentPermissions) {
+        if (currentPermissions[key] !== originalPermissions[key]) {
+            permissionsChanged = true;
+            break;
+        }
+    }
+
+    if (saveBtn) saveBtn.style.display = permissionsChanged ? '' : 'none';
+    if (resetBtn) resetBtn.style.display = permissionsChanged ? '' : 'none';
+}
+
+function resetPermissions() {
+    const checkboxes = document.querySelectorAll('.perm-check');
+    checkboxes.forEach(cb => {
+        const key = cb.dataset.permission + '_' + cb.dataset.role;
+        cb.checked = originalPermissions[key];
+        currentPermissions[key] = originalPermissions[key];
+    });
+    checkPermissionsChanged();
+}
+
+function savePermissions() {
+    const saveBtn = document.getElementById('permSaveBtn');
+    const indicator = document.getElementById('permSaveIndicator');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // Build matrix object
+    const matrix = {};
+    for (const key in currentPermissions) {
+        const [permission, roleId] = key.split('_');
+        if (!matrix[permission]) matrix[permission] = {};
+        matrix[permission][roleId] = currentPermissions[key];
+    }
+
+    // Show loading
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = `
+            <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/>
+                <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/>
+            </svg>
+            Сохранение...
+        `;
+    }
+
+    fetch('/settings/permissions/bulk-update', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ matrix: matrix })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update original state
+            for (const key in currentPermissions) {
+                originalPermissions[key] = currentPermissions[key];
+            }
+            checkPermissionsChanged();
+            showToast('Права успешно сохранены', 'success');
+        } else {
+            showToast(data.message || 'Ошибка сохранения', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error saving permissions:', error);
+        showToast('Ошибка сохранения прав', 'error');
+    })
+    .finally(() => {
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Сохранить изменения
+            `;
+        }
+    });
+}
+
+// Simple toast notification
+function showToast(message, type = 'info') {
+    // Remove existing toast
+    const existing = document.querySelector('.toast-notification');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification toast-' + type;
+    toast.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()">&times;</button>
+    `;
+    document.body.appendChild(toast);
+
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+        if (toast.parentElement) toast.remove();
+    }, 3000);
+}
