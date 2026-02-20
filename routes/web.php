@@ -17,6 +17,14 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Language switcher
+Route::get('/locale/{locale}', function (string $locale) {
+    if (in_array($locale, ['uk', 'ru', 'en'])) {
+        session(['locale' => $locale]);
+    }
+    return redirect()->back();
+})->name('locale.switch');
+
 
 Route::middleware('auth')->group(function () {
 

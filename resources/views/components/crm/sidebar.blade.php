@@ -32,22 +32,97 @@
             </svg>
             <span>Настройки</span>
         </a>
-        <div class="dropdown">
-            <button class="sidebar-avatar dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="sidebar-user-menu">
+            <button class="sidebar-avatar" type="button" id="sidebarUserToggle">
                 @auth
                     {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}{{ strtoupper(substr(explode(' ', auth()->user()->name ?? '')[1] ?? '', 0, 1)) }}
                 @else
                     ВВ
                 @endauth
             </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="dropdown-item">Выход</button>
-                    </form>
-                </li>
-            </ul>
+            <div class="sidebar-popup" id="sidebarUserPopup">
+                <div class="sidebar-popup-header">
+                    <div class="sidebar-popup-avatar">
+                        @auth
+                            {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}{{ strtoupper(substr(explode(' ', auth()->user()->name ?? '')[1] ?? '', 0, 1)) }}
+                        @else
+                            ВВ
+                        @endauth
+                    </div>
+                    <div class="sidebar-popup-user">
+                        <span class="sidebar-popup-name">{{ auth()->user()->name ?? 'User' }}</span>
+                        <span class="sidebar-popup-email">{{ auth()->user()->email ?? '' }}</span>
+                    </div>
+                </div>
+                <div class="sidebar-popup-divider"></div>
+                <a href="#" class="sidebar-popup-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    Мой профиль
+                </a>
+                <div class="sidebar-popup-divider"></div>
+                <div class="sidebar-popup-section">
+                    <span class="sidebar-popup-label">Язык / Language</span>
+                    <div class="sidebar-popup-langs">
+                        <button class="sidebar-lang-btn {{ app()->getLocale() === 'uk' ? 'active' : '' }}" data-lang="uk">UA</button>
+                        <button class="sidebar-lang-btn {{ app()->getLocale() === 'ru' ? 'active' : '' }}" data-lang="ru">RU</button>
+                        <button class="sidebar-lang-btn {{ app()->getLocale() === 'en' ? 'active' : '' }}" data-lang="en">EN</button>
+                    </div>
+                </div>
+                <div class="sidebar-popup-divider"></div>
+                <form method="POST" action="{{ route('logout') }}" class="sidebar-popup-logout">
+                    @csrf
+                    <button type="submit" class="sidebar-logout-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        Выход
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </aside>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggle = document.getElementById('sidebarUserToggle');
+    const popup = document.getElementById('sidebarUserPopup');
+
+    if (toggle && popup) {
+        // Toggle popup on avatar click
+        toggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            popup.classList.toggle('open');
+        });
+
+        // Close popup when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!popup.contains(e.target) && e.target !== toggle) {
+                popup.classList.remove('open');
+            }
+        });
+
+        // Close on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                popup.classList.remove('open');
+            }
+        });
+
+        // Language switch
+        document.querySelectorAll('.sidebar-lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.dataset.lang;
+                // Set cookie and reload
+                document.cookie = `locale=${lang};path=/;max-age=31536000`;
+                window.location.href = `/locale/${lang}`;
+            });
+        });
+    }
+});
+</script>
