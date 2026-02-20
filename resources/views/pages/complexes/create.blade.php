@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-color-picker/2.2.6/tui-color-picker.min.css">
 
     {{---- Плагин по автосохранению форм ----}}
-
+    <link rel="stylesheet" href="{{ asset('css/pages/properties/create/field-widths.css') }}">
 @endpush
 
 @section('header')
@@ -387,7 +387,7 @@
                     @include('pages.complexes.particles.create._location_block')
 
 
-                    <div class="item w10">
+                    <div class="item w15">
                         <span class="item-label">Класс жилья</span>
                         <div class="multiple-menu" id="housing-classes-menu">
                             <button class="multiple-menu-btn" type="button" data-open-menu="false">
@@ -409,8 +409,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="create-filter-row">
+
+
+
                     <div class="item w15">
                         <span class="item-label">Категория</span>
                         <div class="multiple-menu" id="categories-menu">
@@ -423,7 +424,7 @@
                                         <li class="multiple-menu-item">
                                             <label class="my-custom-input">
                                                 <input type="checkbox" name="categories[]" value="{{ $category->id }}"
-                                                    {{ in_array($category->id, old('categories', [])) ? 'checked' : '' }}>
+                                                        {{ in_array($category->id, old('categories', [])) ? 'checked' : '' }}>
                                                 <span class="my-custom-box"></span>
                                                 <span class="my-custom-text">{{ $category->name }}</span>
                                             </label>
@@ -433,6 +434,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="item w15">
                         <span class="item-label">Типы объектов</span>
                         <div class="multiple-menu" id="object-types-menu">
@@ -445,7 +447,7 @@
                                         <li class="multiple-menu-item">
                                             <label class="my-custom-input">
                                                 <input type="checkbox" name="object_types[]" value="{{ $objectType->id }}"
-                                                    {{ in_array($objectType->id, old('object_types', [])) ? 'checked' : '' }}>
+                                                        {{ in_array($objectType->id, old('object_types', [])) ? 'checked' : '' }}>
                                                 <span class="my-custom-box"></span>
                                                 <span class="my-custom-text">{{ $objectType->name }}</span>
                                             </label>
@@ -455,7 +457,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="item w10">
+
+                </div>
+                <div class="create-filter-row">
+
+
+
+                    <div class="item w15">
                         <label class="item-label" for="objects_count">Количество объектов</label>
                         <div class="item-inputText-wrapper">
                             <input class="item-inputText" type="number" id="objects_count" name="objects_count"
@@ -463,7 +471,8 @@
                                    autocomplete="off" placeholder="0" min="0">
                         </div>
                     </div>
-                    <div class="item w10">
+
+                    <div class="item w15">
                         <span class="item-label">Состояние</span>
                         <div class="multiple-menu" id="conditions-menu">
                             <button class="multiple-menu-btn" type="button" data-open-menu="false">
@@ -485,7 +494,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="item w10">
+
+                    <div class="item w15">
                         <label class="item-label" for="area_from">Площадь общая</label>
                         <div class="item-inputText-wrapper shtrih">
                             <input class="item-inputText" id="area_from" name="area_from" type="number" step="0.01"

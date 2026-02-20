@@ -1,5 +1,5 @@
 {{-- Особенности (features) - мульти-селект с тегами --}}
-<div class="item  w15">
+<div class="item  ">
     <span class="item-label">Особенности</span>
     <div class="multiple-menu" id="features-menu">
         <button type="button" class="multiple-menu-btn" data-open-menu="false">

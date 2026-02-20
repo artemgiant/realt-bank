@@ -1,5 +1,5 @@
 {{-- ========== ЛОКАЦИЯ (Область + Улица) ========== --}}
-<div class="item selects w16">
+<div class="item selects w15">
     <label class="item-label">Регион <span class="text-danger">*</span></label>
     <div class="state-search-wrapper">
         <input type="text"
@@ -38,7 +38,7 @@
     </div>
 </div>
 
-<div class="item w33">
+<div class="item ">
     <label class="item-label">Локация (улица) <span class="text-danger">*</span></label>
     <div class="location-search-wrapper">
         <input type="text"
