@@ -28,6 +28,10 @@ php artisan currency:update-rates
 
 php artisan db:seed --class=DictionarySeeder --force
 
+php artisan db:seed --class=RoleSeeder
+
+php artisan db:seed --class=PermissionSeeder
+
 
 
 

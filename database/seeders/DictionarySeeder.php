@@ -222,7 +222,9 @@ class DictionarySeeder extends Seeder
                 ['name' => '2001', 'value' => '2001'],
                 ['name' => '2000', 'value' => '2000'],
                 ['name' => '1990-1999', 'value' => '1990'],
-                ['name' => '1950-1989', 'value' => '1950'],
+                ['name' => '1980-1989', 'value' => '1990'],
+                ['name' => '1970-1979', 'value' => '1990'],
+                ['name' => '1950-1969', 'value' => '1950'],
                 ['name' => 'До 1949', 'value' => '1949'],
             ],
 

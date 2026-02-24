@@ -12,6 +12,7 @@ use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\Settings\PermissionController;
+use App\Http\Controllers\XmlFeedController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,6 +27,8 @@ Route::get('/locale/{locale}', function (string $locale) {
     return redirect()->back();
 })->name('locale.switch');
 
+// XML feed (public, no auth)
+Route::get('/xml-feed/{adapter}', [XmlFeedController::class, 'show'])->name('xml-feed.show');
 
 Route::middleware('auth')->group(function () {
 
