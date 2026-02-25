@@ -2,35 +2,37 @@
 
 
 # Скинути локальні зміни
-git reset --hard && git clean -df
+#git reset --hard && git clean -df
 
 # Завантажити інформацію про віддалену гілку
-git fetch origin
+#git fetch origin
 
 # Синхронізувати з віддаленою гілкою
-git reset --hard origin/master
+#git reset --hard origin/master
 
 
 
 # Очистити кеш
-php artisan cache:clear
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
+#php artisan cache:clear
+#php artisan config:clear
+#php artisan route:clear
+#php artisan view:clear
+#
+#
+#php artisan migrate
 
 
-php artisan migrate
-
-
-php artisan currency:update-rates
+#php artisan currency:update-rates
 #php artisan db:seed --class=CountrySeeder
 
+php artisan xml:generate dim_ria
 
-php artisan db:seed --class=DictionarySeeder --force
 
-php artisan db:seed --class=RoleSeeder
-
-php artisan db:seed --class=PermissionSeeder
+#php artisan db:seed --class=DictionarySeeder --force
+#
+#php artisan db:seed --class=RoleSeeder
+#
+#php artisan db:seed --class=PermissionSeeder
 
 
 
@@ -66,11 +68,11 @@ php artisan db:seed --class=PermissionSeeder
 #TRUNCATE TABLE states;
 
 # Оновити Composer залежності
-composer install --optimize-autoloader
+#composer install --optimize-autoloader
 
 
 # Очистити всі кеші
-php artisan optimize:clear
+#php artisan optimize:clear
 
 
 
