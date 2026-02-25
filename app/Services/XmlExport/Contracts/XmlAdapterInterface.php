@@ -12,6 +12,14 @@ interface XmlAdapterInterface
 
     public function toArray(PropertyExportData $dto): array;
 
+    /**
+     * Validate DTO has all required fields.
+     * Returns array of missing field names, empty if valid.
+     *
+     * @return string[]
+     */
+    public function validate(PropertyExportData $dto): array;
+
     public function generateXml(PropertyExportData $dto): string;
 
     /**

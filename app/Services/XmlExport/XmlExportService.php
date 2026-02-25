@@ -29,9 +29,9 @@ class XmlExportService
 
     /**
      * Generate full XML feed for an adapter and save to file.
-     * Returns the number of exported properties.
+     * Returns ['exported' => int, 'skipped' => int].
      */
-    public function generateFeed(string $adapterName): int
+    public function generateFeed(string $adapterName): array
     {
         $adapter = $this->adapter($adapterName);
 
@@ -62,7 +62,27 @@ class XmlExportService
             ->map(fn (Property $property) => PropertyExportData::fromModel($property))
             ->all();
 
-        $xml = $adapter->generateBatchXml($dtos);
+        // Validate and filter
+        $validDtos = [];
+        $skipped = [];
+
+        foreach ($dtos as $dto) {
+            $missingFields = $adapter->validate($dto);
+
+            if (empty($missingFields)) {
+                $validDtos[] = $dto;
+            } else {
+                $skipped[] = [
+                    'id' => $dto->id,
+                    'missing' => $missingFields,
+                ];
+            }
+        }
+
+        // Write skipped properties log (overwrite each run)
+        $this->writeSkippedLog($adapterName, $skipped);
+
+        $xml = $adapter->generateBatchXml($validDtos);
 
         $path = $this->getFeedPath($adapterName);
         $directory = dirname($path);
@@ -74,11 +94,15 @@ class XmlExportService
         file_put_contents($path, $xml);
 
         Log::info("XML feed [{$adapterName}] generated", [
-            'properties_count' => count($dtos),
-            'path' => $path,
+            'exported' => count($validDtos),
+            'skipped'  => count($skipped),
+            'path'     => $path,
         ]);
 
-        return count($dtos);
+        return [
+            'exported' => count($validDtos),
+            'skipped'  => count($skipped),
+        ];
     }
 
     public function getFeedPath(string $adapterName): string
@@ -95,6 +119,40 @@ class XmlExportService
         }
 
         return file_get_contents($path);
+    }
+
+    /**
+     * Write log of skipped properties to a separate file (overwritten each run).
+     */
+    private function writeSkippedLog(string $adapterName, array $skipped): void
+    {
+        $logPath = storage_path("app/xml-feeds/{$adapterName}_skipped.log");
+        $directory = dirname($logPath);
+
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        $timestamp = now()->format('Y-m-d H:i:s');
+        $lines = [];
+        $lines[] = "=== XML Feed [{$adapterName}] — {$timestamp} ===";
+        $lines[] = "";
+
+        if (empty($skipped)) {
+            $lines[] = "Все объекты прошли валидацию. Пропущенных нет.";
+        } else {
+            $lines[] = "Пропущено объектов: " . count($skipped);
+            $lines[] = "";
+
+            foreach ($skipped as $item) {
+                $fields = implode(', ', $item['missing']);
+                $lines[] = "Объект #{$item['id']} — отсутствуют обязательные поля: {$fields}";
+            }
+        }
+
+        $lines[] = "";
+
+        file_put_contents($logPath, implode(PHP_EOL, $lines));
     }
 
     /**

@@ -9,6 +9,8 @@ class GenerateXmlFeedCommand extends Command
 {
     protected $signature = 'xml:generate {adapter : Adapter name (e.g. dim_ria)}';
 
+//php artisan xml:generate dim_ria
+
     protected $description = 'Generate XML feed for a platform';
 
     public function handle(XmlExportService $service): int
@@ -26,10 +28,17 @@ class GenerateXmlFeedCommand extends Command
         $this->info("Generating XML feed [{$adapterName}]...");
 
         try {
-            $count = $service->generateFeed($adapterName);
+            $result = $service->generateFeed($adapterName);
             $path = $service->getFeedPath($adapterName);
 
-            $this->info("Done! Exported {$count} properties.");
+            $this->info("Done! Exported {$result['exported']} properties.");
+
+            if ($result['skipped'] > 0) {
+                $logPath = storage_path("app/xml-feeds/{$adapterName}_skipped.log");
+                $this->warn("Skipped {$result['skipped']} properties (missing required fields).");
+                $this->warn("Details: {$logPath}");
+            }
+
             $this->info("File: {$path}");
 
             return self::SUCCESS;

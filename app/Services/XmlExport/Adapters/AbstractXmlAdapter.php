@@ -8,6 +8,11 @@ use Spatie\ArrayToXml\ArrayToXml;
 
 abstract class AbstractXmlAdapter implements XmlAdapterInterface
 {
+    public function validate(PropertyExportData $dto): array
+    {
+        return [];
+    }
+
     public function generateXml(PropertyExportData $dto): string
     {
         $data = $this->filterEmpty($this->toArray($dto));
