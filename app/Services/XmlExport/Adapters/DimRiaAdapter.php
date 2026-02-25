@@ -4,6 +4,7 @@ namespace App\Services\XmlExport\Adapters;
 
 use App\Services\XmlExport\Dto\PropertyExportData;
 use App\Services\XmlExport\Mappings\DimRiaMappings;
+use Spatie\ArrayToXml\ArrayToXml;
 
 class DimRiaAdapter extends AbstractXmlAdapter
 {
@@ -15,6 +16,35 @@ class DimRiaAdapter extends AbstractXmlAdapter
     public function getRootElement(): string
     {
         return 'realty';
+    }
+
+    /**
+     * @param PropertyExportData[] $items
+     */
+    public function generateBatchXml(array $items): string
+    {
+        $batchData = [];
+
+        foreach ($items as $dto) {
+            $batchData[] = $this->filterEmpty($this->toArray($dto));
+        }
+
+        return ArrayToXml::convert(
+            [
+                'generation_date' => now()->format('Y-m-d\TH:i:sP'),
+                'lang_id'         => 2,
+                'realty'           => $batchData,
+            ],
+            [
+                'rootElementName' => 'realties',
+                '_attributes' => [
+                    'xmlns'              => 'https://dom.ria.com/xml/xsd/',
+                    'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
+                    'xsi:schemaLocation' => 'https://dom.ria.com/xml/xsd/ https://dom.ria.com/xml/xsd/dom.xsd',
+                ],
+            ],
+            xmlEncoding: 'UTF-8',
+        );
     }
 
     public function toArray(PropertyExportData $dto): array
