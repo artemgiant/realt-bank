@@ -63,6 +63,7 @@ class DimRiaAdapter extends AbstractXmlAdapter
         if (empty($dto->floor)) $missing[] = 'floor';
         if (empty($dto->price)) $missing[] = 'price';
         if (empty($dto->currencySymbol)) $missing[] = 'currency';
+        if (count($dto->photoUrls) < 5) $missing[] = 'photos_urls (минимум 5, есть: ' . count($dto->photoUrls) . ')';
 
         return $missing;
     }
