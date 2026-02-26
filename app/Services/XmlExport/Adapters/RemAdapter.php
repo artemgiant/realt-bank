@@ -20,6 +20,49 @@ class RemAdapter extends AbstractXmlAdapter
         return 'offer';
     }
 
+    public function validate(PropertyExportData $dto): array
+    {
+        $missing = [];
+
+        // Тип сделки / категория
+        if (empty($dto->dealTypeName)) $missing[] = 'type';
+        if (empty($dto->propertyTypeName)) $missing[] = 'category';
+        if (empty($dto->description)) $missing[] = 'description';
+        if (empty($dto->createdAt)) $missing[] = 'creation-date';
+        if (empty($dto->updatedAt)) $missing[] = 'update-time';
+
+        // Локация
+        if (empty($dto->countryName)) $missing[] = 'location.country';
+        if (empty($dto->stateName)) $missing[] = 'location.region';
+        if (empty($dto->cityName)) $missing[] = 'location.locality-name';
+        if (empty($dto->districtName)) $missing[] = 'location.district';
+        if (empty($dto->zoneName)) $missing[] = 'location.sub-locality-name';
+        if (empty($dto->streetName) && empty($dto->buildingNumber)) $missing[] = 'location.address';
+        if (empty($dto->apartmentNumber)) $missing[] = 'location.apartment';
+
+        // Агент
+        if (empty($dto->employeeName)) $missing[] = 'sales-agent.name';
+        if (empty($dto->phone)) $missing[] = 'sales-agent.phone';
+        if (empty($dto->employeeId)) $missing[] = 'sales-agent.id';
+
+        // Цена
+        if (empty($dto->price)) $missing[] = 'price.value';
+        if (empty($dto->currencyCode)) $missing[] = 'price.currency';
+
+        // Площадь
+        if (empty($dto->areaTotal)) $missing[] = 'area.value';
+
+        // Параметры
+        if (empty($dto->roomCountValue)) $missing[] = 'rooms';
+        if (empty($dto->floor)) $missing[] = 'floor';
+        if (empty($dto->floorsTotal)) $missing[] = 'floor_count';
+
+        // Фото (минимум 1)
+        if (empty($dto->photoUrls)) $missing[] = 'image (минимум 1 фото)';
+
+        return $missing;
+    }
+
     public function toArray(PropertyExportData $dto): array
     {
         $address = $this->buildAddress($dto->streetName, $dto->buildingNumber);
