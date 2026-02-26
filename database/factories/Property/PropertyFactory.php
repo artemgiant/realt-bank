@@ -9,7 +9,9 @@ use App\Models\Location\District;
 use App\Models\Location\State;
 use App\Models\Location\Street;
 use App\Models\Location\Zone;
+use App\Models\Employee\Employee;
 use App\Models\Property\Property;
+use App\Models\Property\PropertyPhoto;
 use App\Models\Reference\Block;
 use App\Models\Reference\Complex;
 use App\Models\Reference\Currency;
@@ -18,6 +20,7 @@ use App\Models\Reference\Source;
 use App\Models\User;
 use Database\Factories\Contact\ContactFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Фабрика для создания тестовых объектов недвижимости
@@ -39,7 +42,8 @@ class PropertyFactory extends Factory
     public function definition(): array
     {
         // Получаем существующие данные из БД
-        $user = User::inRandomOrder()->first();
+        $employee = Employee::whereNotNull('user_id')->inRandomOrder()->first();
+        $user = $employee ? User::find($employee->user_id) : User::inRandomOrder()->first();
         $currency = Currency::where('is_active', true)->inRandomOrder()->first();
 
         // Начинаем с улицы и идём вверх по иерархии (так гарантируем валидные связи)
@@ -96,6 +100,7 @@ class PropertyFactory extends Factory
         return [
             // Связи
             'user_id' => $user?->id ?? 1,
+            'employee_id' => $employee?->id,
             'source_id' => Source::where('is_active', true)->inRandomOrder()->first()?->id,
             'currency_id' => $currency?->id,
 
@@ -110,7 +115,7 @@ class PropertyFactory extends Factory
             'district_id' => $district?->id,
             'zone_id' => $zone?->id,
             'street_id' => $street?->id,
-            'building_number' => $this->faker->boolean(90) ? $this->generateBuildingNumber() : null,
+            'building_number' => $this->generateBuildingNumber(),
             'apartment_number' => $this->faker->boolean(50) ? (string) $this->faker->numberBetween(1, 200) : null,
             'location_name' => null,
             'latitude' => $city ? $this->faker->latitude(48.0, 52.0) : null,
@@ -279,7 +284,44 @@ class PropertyFactory extends Factory
                     )
                     ->create(['property_id' => $property->id]);
             }
+
+            // Создаём фотографии из заготовленных картинок
+            $this->createPhotosForProperty($property);
         });
+    }
+
+    /**
+     * Создать фотографии для объекта из заготовленных картинок
+     */
+    private function createPhotosForProperty(Property $property): void
+    {
+        $sourceDir = public_path('img/factories/property');
+        $sourceFiles = glob($sourceDir . '/*.jpeg');
+
+        if (empty($sourceFiles)) {
+            return;
+        }
+
+        $photoCount = $this->faker->numberBetween(5, 8);
+        $disk = Storage::disk('public');
+        $originalsPath = "properties/{$property->id}/photos/originals";
+        $disk->makeDirectory($originalsPath);
+
+        for ($i = 0; $i < $photoCount; $i++) {
+            $sourceFile = $this->faker->randomElement($sourceFiles);
+            $filename = ($i + 1) . '_' . time() . '_' . $this->faker->randomNumber(5) . '.jpeg';
+            $storagePath = "{$originalsPath}/{$filename}";
+
+            $disk->put($storagePath, file_get_contents($sourceFile));
+
+            PropertyPhoto::create([
+                'property_id' => $property->id,
+                'path' => $storagePath,
+                'filename' => $filename,
+                'sort_order' => $i,
+                'is_main' => $i === 0,
+            ]);
+        }
     }
 
     /**

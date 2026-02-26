@@ -50,12 +50,7 @@ class ContactFactory extends Factory
             'last_name' => $this->faker->randomElement($this->lastNames[$gender]),
             'middle_name' => $this->faker->boolean(70) ? $this->faker->randomElement($this->middleNames[$gender]) : null,
             'email' => $this->faker->boolean(60) ? $this->faker->unique()->safeEmail() : null,
-            'contact_type' => $this->faker->randomElement([
-                Contact::TYPE_OWNER,
-                Contact::TYPE_AGENT,
-                Contact::TYPE_DEVELOPER,
-                Contact::TYPE_DEVELOPER_REPRESENTATIVE
-            ]),
+            'contact_role' => null,
             'tags' => $this->faker->boolean(30) ? $this->faker->randomElement(['VIP', 'Срочно', 'Постоянный клиент', 'Новый']) : null,
             'telegram' => $this->faker->boolean(40) ? 'https://t.me/' . $this->faker->userName() : null,
             'viber' => $this->faker->boolean(30) ? 'viber://chat?number=' . $this->generatePhone() : null,
@@ -78,43 +73,59 @@ class ContactFactory extends Factory
     }
 
     /**
-     * Контакт типа "Владелец"
+     * Контакт с ролью "Владелец"
      */
     public function owner(): static
     {
-        return $this->state(fn(array $attributes) => [
-            'contact_type' => Contact::TYPE_OWNER,
-        ]);
+        return $this->afterCreating(function (Contact $contact) {
+            $this->attachRoleBySlug($contact, Contact::TYPE_OWNER);
+        });
     }
 
     /**
-     * Контакт типа "Агент"
+     * Контакт с ролью "Агент"
      */
     public function agent(): static
     {
-        return $this->state(fn(array $attributes) => [
-            'contact_type' => Contact::TYPE_AGENT,
-        ]);
+        return $this->afterCreating(function (Contact $contact) {
+            $this->attachRoleBySlug($contact, Contact::TYPE_AGENT);
+        });
     }
 
     /**
-     * Контакт типа "Девелопер"
+     * Контакт с ролью "Девелопер"
      */
     public function developer(): static
     {
-        return $this->state(fn(array $attributes) => [
-            'contact_type' => Contact::TYPE_DEVELOPER,
-        ]);
+        return $this->afterCreating(function (Contact $contact) {
+            $this->attachRoleBySlug($contact, Contact::TYPE_DEVELOPER);
+        });
     }
 
     /**
-     * Контакт типа "Представитель девелопера"
+     * Контакт с ролью "Представитель девелопера"
      */
     public function developerRepresentative(): static
     {
-        return $this->state(fn(array $attributes) => [
-            'contact_type' => Contact::TYPE_DEVELOPER_REPRESENTATIVE,
-        ]);
+        return $this->afterCreating(function (Contact $contact) {
+            $this->attachRoleBySlug($contact, Contact::TYPE_DEVELOPER_REPRESENTATIVE);
+        });
+    }
+
+    /**
+     * Привязать роль контакту по slug
+     */
+    private function attachRoleBySlug(Contact $contact, string $slug): void
+    {
+        $role = \App\Models\Reference\Dictionary::where('type', \App\Models\Reference\Dictionary::TYPE_CONTACT_ROLE)
+            ->where('slug', $slug)
+            ->first();
+
+        if ($role) {
+            $roles = $contact->contact_role ?? [];
+            $roles[] = $role->id;
+            $contact->update(['contact_role' => array_unique($roles)]);
+        }
     }
 
     /**
