@@ -38,7 +38,6 @@ class RemAdapter extends AbstractXmlAdapter
         if (empty($dto->districtName)) $missing[] = 'location.district';
         if (empty($dto->zoneName)) $missing[] = 'location.sub-locality-name';
         if (empty($dto->streetName) && empty($dto->buildingNumber)) $missing[] = 'location.address';
-        if (empty($dto->apartmentNumber)) $missing[] = 'location.apartment';
 
         // Агент
         if (empty($dto->employeeName)) $missing[] = 'sales-agent.name';
@@ -84,10 +83,8 @@ class RemAdapter extends AbstractXmlAdapter
                 'locality-name'      => $dto->cityName,
                 'district'           => $dto->districtName,
                 'address'            => $address,
-                'apartment'          => $dto->apartmentNumber,
+                'apartment'          => $dto->apartmentNumber ?: '0',
                 'sub-locality-name'  => $dto->zoneName,
-                'longitude'          => $dto->longitude,
-                'latitude'           => $dto->latitude,
             ],
 
             'sales-agent' => [

@@ -97,6 +97,13 @@ class PropertyFactory extends Factory
         $price = $this->faker->randomFloat(2, 15000, 500000);
         $pricePerM2 = $areaTotal > 0 ? round($price / $areaTotal, 2) : null;
 
+        // Для квартир/комнат/домов — building_number и apartment_number обязательны
+        $dealTypesWithApartment = [
+            'Продажа квартир', 'Продажа комнат', 'Продажа домов',
+            'Аренда квартир', 'Аренда комнат', 'Аренда домов',
+        ];
+        $requiresApartment = $dealType && in_array($dealType->name, $dealTypesWithApartment);
+
         return [
             // Связи
             'user_id' => $user?->id ?? 1,
@@ -116,7 +123,9 @@ class PropertyFactory extends Factory
             'zone_id' => $zone?->id,
             'street_id' => $street?->id,
             'building_number' => $this->generateBuildingNumber(),
-            'apartment_number' => $this->faker->boolean(50) ? (string) $this->faker->numberBetween(1, 200) : null,
+            'apartment_number' => $requiresApartment
+                ? (string) $this->faker->numberBetween(1, 200)
+                : ($this->faker->boolean(50) ? (string) $this->faker->numberBetween(1, 200) : null),
             'location_name' => null,
             'latitude' => $city ? $this->faker->latitude(48.0, 52.0) : null,
             'longitude' => $city ? $this->faker->longitude(22.0, 40.0) : null,

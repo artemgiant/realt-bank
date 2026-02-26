@@ -33,6 +33,9 @@ class DictionarySeeder extends Seeder
                 'Аренда паркинг/гараж',
             ],
 
+
+
+
                 // Вид сделки
             Dictionary::TYPE_DEAL_KIND => [
                 'Нотариальная',
