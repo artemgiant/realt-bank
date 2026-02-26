@@ -6,6 +6,7 @@ use App\Models\Employee\Employee;
 use App\Models\Reference\Company;
 use App\Models\Reference\CompanyOffice;
 use App\Models\Reference\Dictionary;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -62,7 +63,7 @@ class EmployeeFactory extends Factory
             'last_name' => $lastName,
             'middle_name' => $middleName,
             'email' => fake()->unique()->safeEmail(),
-            'phone' => fake()->numerify('+380#########'),
+            'phone' =>  $this->generatePhone(),
             'birthday' => fake()->dateTimeBetween('-60 years', '-20 years'),
             'passport' => fake()->boolean(50) ? fake()->numerify('##########') : null,
             'inn' => fake()->boolean(50) ? fake()->numerify('##########') : null,
@@ -71,6 +72,29 @@ class EmployeeFactory extends Factory
             'active_until' => fake()->boolean(20) ? fake()->dateTimeBetween('now', '+1 year') : null,
             'is_active' => fake()->boolean(90),
         ];
+    }
+
+
+    /**
+     * Конфигурация фабрики — назначаем свободного пользователя после создания
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Employee $employee) {
+            if ($employee->user_id === null) {
+                $freeUser = User::whereDoesntHave('employee')->inRandomOrder()->first();
+                if ($freeUser) {
+                    $employee->update(['user_id' => $freeUser->id]);
+                }
+            }
+        });
+    }
+
+    private function generatePhone(): string
+    {
+        $operators = ['50', '63', '66', '67', '68', '73', '93', '95', '96', '97', '98', '99'];
+        $operator = $this->faker->randomElement($operators);
+        return '+380' . $operator . $this->faker->numerify('#####');
     }
 
     /**
