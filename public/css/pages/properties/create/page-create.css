@@ -1853,8 +1853,8 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   font-size: 14px;
   line-height: 100%;
   color: #111;
-  -webkit-text-decoration: underline dashed;
-  text-decoration: underline dashed;
+  -webkit-text-decoration: none;
+  text-decoration: none;
 }
 
 .block-info .info-contacts-mail {
