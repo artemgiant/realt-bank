@@ -24,9 +24,13 @@ class RemAdapter extends AbstractXmlAdapter
     {
         $missing = [];
 
-        // Тип сделки / категория
-        if (empty($dto->dealTypeName)) $missing[] = 'type';
-        if (empty($dto->propertyTypeName)) $missing[] = 'category';
+        // Тип сделки — проверяем замапленное значение, а не сырое
+        if (!RemMappings::mapDealType($dto->dealTypeName)) $missing[] = 'type';
+        // Категория — проверяем замапленное значение
+        if (!RemMappings::mapCategory($dto->propertyTypeName)) $missing[] = 'category';
+        // Title: сначала из translations, потом fallback на buildTitle()
+        if (!$dto->title && !RemMappings::buildTitle($dto->dealTypeName, $dto->propertyTypeName)) $missing[] = 'title';
+
         if (empty($dto->createdAt)) $missing[] = 'creation-date';
         if (empty($dto->updatedAt)) $missing[] = 'update-time';
 
@@ -69,7 +73,7 @@ class RemAdapter extends AbstractXmlAdapter
             '_attributes' => ['internal-id' => $dto->id],
             'url'           => self::BASE_URL . $dto->id,
             'type'          => RemMappings::mapDealType($dto->dealTypeName),
-            'title'         => RemMappings::buildTitle($dto->dealTypeName, $dto->propertyTypeName),
+            'title'         => $dto->title ?: RemMappings::buildTitle($dto->dealTypeName, $dto->propertyTypeName),
             'description'   => $dto->description ?: 'Выгодное предложение',
             'property-type' => 'жилая',
             'category'      => RemMappings::mapCategory($dto->propertyTypeName),

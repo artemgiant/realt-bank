@@ -54,6 +54,7 @@ class PropertyExportData
         public readonly ?string $currencyCode,
 
         // Content
+        public readonly ?string $title,
         public readonly ?string $description,
 
         // Media
@@ -112,6 +113,7 @@ class PropertyExportData
             currencySymbol: $property->currency?->symbol,
             currencyCode: $property->currency?->code,
 
+            title: $property->getTranslation('ru')?->title,
             description: $property->notes,
 
             youtubeUrl: $property->youtube_url,

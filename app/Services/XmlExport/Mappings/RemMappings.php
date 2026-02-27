@@ -5,34 +5,43 @@ namespace App\Services\XmlExport\Mappings;
 class RemMappings
 {
     /**
-     * Dictionary deal_type name → rem.ua <type> value
-     */
-    public const DEAL_TYPE_MAP = [
-        'Продажа' => 'продажа',
-        'Аренда'  => 'аренда',
-    ];
-
-    /**
-     * Dictionary deal_type name → verb for title generation
-     */
-    public const TITLE_VERB_MAP = [
-        'Продажа' => 'Продам',
-        'Аренда'  => 'Сдам',
-    ];
-
-    /**
      * Dictionary property_type name → rem.ua <category> value
      * Допускаются: квартира, торговые помещения, коммерция, дом, участок
      */
     public const CATEGORY_MAP = [
+        // Квартиры
         'Квартира'              => 'квартира',
+        'Пентхаус'              => 'квартира',
+        'Квартира на земле'     => 'квартира',
+        'Студия'                => 'квартира',
+        'Комната'               => 'квартира',
+
+        // Дома
         'Дом'                   => 'дом',
-        'Участок'               => 'участок',
+        'Таунхаус'              => 'дом',
+        'Дуплекс'               => 'дом',
+        'Часть дома'            => 'дом',
+        'Коттедж'               => 'дом',
+
+        // Участки
+        'Земля под жилую застройку'              => 'участок',
+        'Земля коммерческого назначения'          => 'участок',
+        'Земля сельскохозяйственного назначения'  => 'участок',
+
+        // Торговые помещения
         'Торговое помещение'    => 'торговые помещения',
-        'Торговые помещения'    => 'торговые помещения',
-        'Коммерция'             => 'коммерция',
-        'Коммерческая'          => 'коммерция',
-        'Офис'                  => 'коммерция',
+
+        // Коммерция
+        'Офисное помещение'                => 'коммерция',
+        'Складские помещения'              => 'коммерция',
+        'Производственные помещения'       => 'коммерция',
+        'Помещение свободного назначения'  => 'коммерция',
+        'Здание'                           => 'коммерция',
+        'Готовый бизнес'                   => 'коммерция',
+        'Паркинг'                          => 'коммерция',
+        'Машино-место'                     => 'коммерция',
+        'Гараж'                            => 'коммерция',
+        'Бокс'                             => 'коммерция',
     ];
 
     /**
@@ -50,7 +59,15 @@ class RemMappings
             return null;
         }
 
-        return self::DEAL_TYPE_MAP[$name] ?? null;
+        if (str_starts_with($name, 'Продажа')) {
+            return 'продажа';
+        }
+
+        if (str_starts_with($name, 'Аренда')) {
+            return 'аренда';
+        }
+
+        return null;
     }
 
     public static function mapCategory(?string $name): ?string
@@ -77,9 +94,15 @@ class RemMappings
      */
     public static function buildTitle(?string $dealTypeName, ?string $propertyTypeName): ?string
     {
-        $verb = self::TITLE_VERB_MAP[$dealTypeName] ?? null;
+        if ($dealTypeName === null) {
+            return null;
+        }
 
-        if ($verb === null) {
+        if (str_starts_with($dealTypeName, 'Продажа')) {
+            $verb = 'Продам';
+        } elseif (str_starts_with($dealTypeName, 'Аренда')) {
+            $verb = 'Сдам';
+        } else {
             return null;
         }
 
