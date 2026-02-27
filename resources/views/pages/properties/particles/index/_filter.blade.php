@@ -532,6 +532,22 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+            // Формат числа с пробелами (125000 -> 125 000)
+            function formatPrice(value) {
+                value = value.replace(/[^\d]/g, '').replace(/^0+/, '') || '';
+                return value.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            }
+
+            $('#price_from, #price_to').on('input', function() {
+                var pos = this.selectionStart;
+                var oldLen = this.value.length;
+                this.value = formatPrice(this.value);
+                var newLen = this.value.length;
+                this.setSelectionRange(pos + (newLen - oldLen), pos + (newLen - oldLen));
+            }).each(function() {
+                if (this.value) this.value = formatPrice(this.value);
+            });
+
             // Синхронизация daterangepicker с hidden полями
             $('#datapiker1').on('apply.daterangepicker', function(ev, picker) {
                 $(this).val(picker.startDate.format('DD-MM-YYYY') + ' - ' + picker.endDate.format('DD-MM-YYYY'));

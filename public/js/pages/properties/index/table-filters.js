@@ -30,8 +30,8 @@ window.PropertyFilters = {
 
         // Основные фильтры из хедера
         d.deal_type_id = $form.find('#deal_type_id').val();
-        d.price_from = $form.find('#price_from').val();
-        d.price_to = $form.find('#price_to').val();
+        d.price_from = ($form.find('#price_from').val() || '').replace(/\s/g, '');
+        d.price_to = ($form.find('#price_to').val() || '').replace(/\s/g, '');
         d.currency_id = $form.find('#currency_id').val();
 
         // Расширенные фильтры
