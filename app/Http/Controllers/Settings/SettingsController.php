@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee\Employee;
 use App\Models\Location\City;
 use App\Models\Location\Country;
+use App\Models\Location\District;
 use App\Models\Location\State;
 use App\Models\Location\Street;
 use App\Models\Location\Zone;
@@ -46,6 +47,13 @@ class SettingsController extends Controller
             'usersCount' => $users->count(),
             'rolesCount' => $roles->count(),
             'activeSection' => $activeSection,
+            // Location counts (always available for nav badges)
+            'countriesCount' => Country::count(),
+            'statesCount' => State::count(),
+            'citiesCount' => City::count(),
+            'districtsCount' => District::count(),
+            'zonesCount' => Zone::count(),
+            'streetsCount' => Street::count(),
         ];
     }
 
@@ -124,7 +132,7 @@ class SettingsController extends Controller
         $perPage = $this->getPerPage($request);
 
         $query = State::withCount(['cities', 'districts'])
-            ->with(['cities' => function ($q) {
+            ->with(['country', 'cities' => function ($q) {
                 $q->withCount('districts')->orderBy('name');
             }, 'cities.districts' => function ($q) {
                 $q->withCount('streets')->orderBy('name');
@@ -196,6 +204,7 @@ class SettingsController extends Controller
 
         $data['zonesList'] = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
         $data['statesList'] = State::active()->orderBy('name')->get();
+        $data['zoneCities'] = City::with('state.country')->orderBy('name')->get();
         $data['search'] = $search;
         $data['perPage'] = $perPage;
 
@@ -211,7 +220,7 @@ class SettingsController extends Controller
         $search = $request->input('search', '');
         $perPage = $this->getPerPage($request);
 
-        $query = Street::with(['city.state', 'district', 'zone'])
+        $query = Street::with(['city.state.country', 'district', 'zone'])
             ->orderBy('name');
 
         if ($search) {
@@ -225,6 +234,7 @@ class SettingsController extends Controller
 
         $data['streetsList'] = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
         $data['statesList'] = State::active()->orderBy('name')->get();
+        $data['streetCities'] = City::with('state.country')->orderBy('name')->get();
         $data['search'] = $search;
         $data['perPage'] = $perPage;
 

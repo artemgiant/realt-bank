@@ -252,6 +252,10 @@ function openZoneDrawer(zoneId = null) {
 
     const zoneKey = zoneId ? String(zoneId) : null;
 
+    // Clear country display
+    var countryDisplay = document.getElementById('zone-country-display');
+    if (countryDisplay) countryDisplay.value = '';
+
     if (zoneKey && zonesData[zoneKey]) {
         const zone = zonesData[zoneKey];
         title.textContent = 'Редактирование микрорайона';
@@ -262,19 +266,14 @@ function openZoneDrawer(zoneId = null) {
         document.getElementById('zoneMethod').value = 'PUT';
         document.getElementById('zoneName').value = zone.name || '';
 
-        // Set state filter first, then load cities
-        if (zone.city && zone.city.state_id) {
-            $('#zone-state-filter').val(zone.city.state_id).trigger('change');
-            // After cities load, set city
+        // Set city (already in dropdown), then load districts
+        if (zone.city_id) {
+            $('#zone-city-select').val(zone.city_id).trigger('change');
             setTimeout(function() {
-                $('#zone-city-select').val(zone.city_id).trigger('change');
-                // After districts load, set district
-                setTimeout(function() {
-                    if (zone.district_id) {
-                        $('#zone-district-select').val(zone.district_id).trigger('change');
-                    }
-                }, 300);
-            }, 300);
+                if (zone.district_id) {
+                    $('#zone-district-select').val(zone.district_id).trigger('change');
+                }
+            }, 500);
         }
     } else {
         title.textContent = 'Новый микрорайон';
@@ -294,17 +293,10 @@ function closeZoneDrawer() {
 }
 
 function initZoneDrawerSelect2() {
-    ['#zone-state-filter', '#zone-city-select', '#zone-district-select'].forEach(function(sel) {
+    ['#zone-city-select', '#zone-district-select'].forEach(function(sel) {
         if ($(sel).hasClass('select2-hidden-accessible')) {
             $(sel).select2('destroy');
         }
-    });
-
-    $('#zone-state-filter').select2({
-        width: '100%',
-        placeholder: 'Все области...',
-        allowClear: true,
-        dropdownParent: $('#drawerAddZone')
     });
 
     $('#zone-city-select').select2({
@@ -316,7 +308,7 @@ function initZoneDrawerSelect2() {
 
     $('#zone-district-select').select2({
         width: '100%',
-        placeholder: 'Без района',
+        placeholder: 'Без региона',
         allowClear: true,
         dropdownParent: $('#drawerAddZone')
     });
@@ -340,6 +332,10 @@ function openStreetDrawer(streetId = null) {
 
     const streetKey = streetId ? String(streetId) : null;
 
+    // Clear country display
+    var countryDisplay = document.getElementById('street-country-display');
+    if (countryDisplay) countryDisplay.value = '';
+
     if (streetKey && streetsData[streetKey]) {
         const street = streetsData[streetKey];
         title.textContent = 'Редактирование улицы';
@@ -350,22 +346,17 @@ function openStreetDrawer(streetId = null) {
         document.getElementById('streetMethod').value = 'PUT';
         document.getElementById('streetName').value = street.name || '';
 
-        // Set state filter first, then cascade
-        if (street.city && street.city.state_id) {
-            $('#street-state-filter').val(street.city.state_id).trigger('change');
+        // Set city (already in dropdown), then load districts/zones
+        if (street.city_id) {
+            $('#street-city-select').val(street.city_id).trigger('change');
             setTimeout(function() {
-                $('#street-city-select').val(street.city_id).trigger('change');
-                setTimeout(function() {
-                    if (street.district_id) {
-                        $('#street-district-select').val(street.district_id).trigger('change');
-                    }
-                    if (street.zone_id) {
-                        setTimeout(function() {
-                            $('#street-zone-select').val(street.zone_id).trigger('change');
-                        }, 300);
-                    }
-                }, 300);
-            }, 300);
+                if (street.district_id) {
+                    $('#street-district-select').val(street.district_id).trigger('change');
+                }
+                if (street.zone_id) {
+                    $('#street-zone-select').val(street.zone_id).trigger('change');
+                }
+            }, 500);
         }
     } else {
         title.textContent = 'Новая улица';
@@ -385,17 +376,10 @@ function closeStreetDrawer() {
 }
 
 function initStreetDrawerSelect2() {
-    ['#street-state-filter', '#street-city-select', '#street-district-select', '#street-zone-select'].forEach(function(sel) {
+    ['#street-city-select', '#street-district-select', '#street-zone-select'].forEach(function(sel) {
         if ($(sel).hasClass('select2-hidden-accessible')) {
             $(sel).select2('destroy');
         }
-    });
-
-    $('#street-state-filter').select2({
-        width: '100%',
-        placeholder: 'Все области...',
-        allowClear: true,
-        dropdownParent: $('#drawerAddStreet')
     });
 
     $('#street-city-select').select2({
@@ -407,7 +391,7 @@ function initStreetDrawerSelect2() {
 
     $('#street-district-select').select2({
         width: '100%',
-        placeholder: 'Без района',
+        placeholder: 'Выберите регион...',
         allowClear: true,
         dropdownParent: $('#drawerAddStreet')
     });
@@ -524,19 +508,23 @@ function initLocationSearch(inputId, listSelector, itemSelector) {
 
 // ========== TREE EXPAND/COLLAPSE ==========
 function initTreeToggle() {
-    document.querySelectorAll('#regionsTreeList .tree-item.level-1').forEach(function(item) {
+    document.querySelectorAll('#regionsTreeList .region-parent').forEach(function(item) {
         item.addEventListener('click', function(e) {
             // Don't toggle on button clicks
             if (e.target.closest('.btn-icon') || e.target.closest('.actions-cell')) return;
 
             var expand = this.querySelector('.tree-expand');
-            if (expand && !expand.classList.contains('empty')) {
+            if (expand) {
                 expand.classList.toggle('open');
 
                 var stateId = this.dataset.stateId;
-                var children = document.querySelectorAll('.tree-item.level-2[data-parent-state="' + stateId + '"]');
+                var children = document.querySelectorAll('.region-child[data-parent-state="' + stateId + '"]');
                 children.forEach(function(child) {
-                    child.classList.toggle('visible');
+                    if (child.style.display === 'none') {
+                        child.style.display = '';
+                    } else {
+                        child.style.display = 'none';
+                    }
                 });
             }
         });
@@ -557,7 +545,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initTreeToggle();
 
     // Search inputs
-    initLocationSearch('searchRegionsInput', '#regionsTreeList', '.tree-item.level-1');
+    initLocationSearch('searchRegionsInput', '#regionsTreeList', '.region-parent');
     initLocationSearch('searchCitiesInput', '#citiesAddressList', '.address-item');
     initLocationSearch('searchZonesInput', '#zonesAddressList', '.address-item');
     initLocationSearch('searchStreetsInput', '#streetsTable tbody', 'tr');
@@ -611,25 +599,32 @@ document.addEventListener('DOMContentLoaded', function() {
     if (streetCancel) streetCancel.addEventListener('click', closeStreetDrawer);
 
     // ===== Cascading: Zone drawer =====
-    $(document).on('change', '#zone-state-filter', function() {
-        loadCitiesByState($(this).val(), '#zone-city-select');
-        // Reset district when state changes
-        $('#zone-district-select').empty().append('<option value="">Без района</option>').trigger('change');
-    });
     $(document).on('change', '#zone-city-select', function() {
-        loadDistrictsByCity($(this).val(), '#zone-district-select');
+        var cityId = $(this).val();
+        loadDistrictsByCity(cityId, '#zone-district-select');
+
+        // Auto-fill country from selected city option
+        var countryDisplay = document.getElementById('zone-country-display');
+        if (countryDisplay) {
+            var selectedOption = $(this).find('option:selected');
+            var countryName = selectedOption.data('country-name') || '';
+            countryDisplay.value = countryName || '';
+        }
     });
 
     // ===== Cascading: Street drawer =====
-    $(document).on('change', '#street-state-filter', function() {
-        loadCitiesByState($(this).val(), '#street-city-select');
-        // Reset dependent selects
-        $('#street-district-select').empty().append('<option value="">Без района</option>').trigger('change');
-        $('#street-zone-select').empty().append('<option value="">Без микрорайона</option>').trigger('change');
-    });
     $(document).on('change', '#street-city-select', function() {
-        loadDistrictsByCity($(this).val(), '#street-district-select');
-        loadZonesByCity($(this).val(), '#street-zone-select');
+        var cityId = $(this).val();
+        loadDistrictsByCity(cityId, '#street-district-select');
+        loadZonesByCity(cityId, '#street-zone-select');
+
+        // Auto-fill country from selected city option
+        var countryDisplay = document.getElementById('street-country-display');
+        if (countryDisplay) {
+            var selectedOption = $(this).find('option:selected');
+            var countryName = selectedOption.data('country-name') || '';
+            countryDisplay.value = countryName || '';
+        }
     });
 
     // ===== Escape key closes location drawers =====

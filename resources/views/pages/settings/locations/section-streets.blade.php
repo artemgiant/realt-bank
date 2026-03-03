@@ -33,7 +33,7 @@
                         <th>Город</th>
                         <th>Микрорайон</th>
                         <th>Регион</th>
-                        <th>Область</th>
+                        <th>Страна</th>
                         <th style="width:100px">Действия</th>
                     </tr>
                     </thead>
@@ -44,7 +44,7 @@
                             <td>{{ $street->city->name ?? '—' }}</td>
                             <td>{{ $street->zone->name ?? '—' }}</td>
                             <td>{{ $street->district->name ?? '—' }}</td>
-                            <td>{{ $street->city->state->name ?? '—' }}</td>
+                            <td>{{ $street->city->state->country->name ?? '—' }}</td>
                             <td>
                                 <div class="actions-cell">
                                     <button class="btn-icon" onclick="openStreetDrawer({{ $street->id }})" title="Редактировать">

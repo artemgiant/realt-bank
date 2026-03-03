@@ -30,6 +30,13 @@
     </div>
 
     <div class="nav-section-label">Локализация</div>
+    @php
+        $fmtCount = function(int $n): string {
+            if ($n >= 1000000) return rtrim(rtrim(number_format($n / 1000000, 1, '.', ''), '0'), '.') . 'M';
+            if ($n >= 1000) return rtrim(rtrim(number_format($n / 1000, 1, '.', ''), '0'), '.') . 'K';
+            return (string) $n;
+        };
+    @endphp
     <div class="nav-group">
         <a href="{{ route('settings.countries.index') }}" class="nav-item {{ $activeSection === 'countries' ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -38,9 +45,7 @@
                 <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
             </svg>
             Страны
-            @if(isset($countriesList))
-                <span class="nav-item-badge">{{ $countriesList->total() }}</span>
-            @endif
+            <span class="nav-item-badge" title="{{ number_format($countriesCount ?? 0, 0, '', ' ') }}">{{ $fmtCount($countriesCount ?? 0) }}</span>
         </a>
         <a href="{{ route('settings.regions.index') }}" class="nav-item {{ $activeSection === 'regions' ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -49,9 +54,7 @@
                 <line x1="16" y1="6" x2="16" y2="22"/>
             </svg>
             Регионы
-            @if(isset($states))
-                <span class="nav-item-badge">{{ $states->count() }}</span>
-            @endif
+            <span class="nav-item-badge" title="{{ number_format($statesCount ?? 0, 0, '', ' ') }}">{{ $fmtCount($statesCount ?? 0) }}</span>
         </a>
         <a href="{{ route('settings.cities.index') }}" class="nav-item {{ $activeSection === 'cities' ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -59,9 +62,7 @@
                 <path d="M9 9h1"/><path d="M9 13h1"/><path d="M9 17h1"/>
             </svg>
             Города
-            @if(isset($citiesList))
-                <span class="nav-item-badge">{{ $citiesList->count() }}</span>
-            @endif
+            <span class="nav-item-badge" title="{{ number_format($citiesCount ?? 0, 0, '', ' ') }}">{{ $fmtCount($citiesCount ?? 0) }}</span>
         </a>
         <a href="{{ route('settings.zones.index') }}" class="nav-item {{ $activeSection === 'zones' ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -69,9 +70,7 @@
                 <path d="M3 9h18"/><path d="M9 3v18"/>
             </svg>
             Микрорайоны
-            @if(isset($zonesList))
-                <span class="nav-item-badge">{{ $zonesList->count() }}</span>
-            @endif
+            <span class="nav-item-badge" title="{{ number_format($zonesCount ?? 0, 0, '', ' ') }}">{{ $fmtCount($zonesCount ?? 0) }}</span>
         </a>
         <a href="{{ route('settings.streets.index') }}" class="nav-item {{ $activeSection === 'streets' ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -79,9 +78,7 @@
                 <rect x="3" y="3" width="18" height="18" rx="2"/>
             </svg>
             Улицы
-            @if(isset($streetsList))
-                <span class="nav-item-badge">{{ $streetsList->count() }}</span>
-            @endif
+            <span class="nav-item-badge" title="{{ number_format($streetsCount ?? 0, 0, '', ' ') }}">{{ $fmtCount($streetsCount ?? 0) }}</span>
         </a>
     </div>
 </div>

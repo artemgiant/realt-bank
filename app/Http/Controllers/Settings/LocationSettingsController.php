@@ -252,7 +252,7 @@ class LocationSettingsController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'city_id' => 'required|exists:cities,id',
-            'district_id' => 'nullable|exists:districts,id',
+            'district_id' => 'required|exists:districts,id',
             'zone_id' => 'nullable|exists:zones,id',
         ]);
 
@@ -266,7 +266,7 @@ class LocationSettingsController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'city_id' => 'required|exists:cities,id',
-            'district_id' => 'nullable|exists:districts,id',
+            'district_id' => 'required|exists:districts,id',
             'zone_id' => 'nullable|exists:zones,id',
         ]);
 

@@ -38,29 +38,26 @@
             <div class="drawer-section">
                 <div class="drawer-section-title">Привязка</div>
                 <div class="form-group">
-                    <label class="form-label">Область</label>
-                    <select id="zone-state-filter" class="form-input">
-                        <option value="">Все области...</option>
-                        @if(isset($statesList))
-                            @foreach($statesList as $state)
-                                <option value="{{ $state->id }}">{{ $state->name }}</option>
-                            @endforeach
-                        @endif
-                    </select>
-                    <span class="form-hint">Фильтр для выбора города</span>
-                </div>
-                <div class="form-group">
                     <label class="form-label">Город <span class="required">*</span></label>
                     <select name="city_id" id="zone-city-select" class="form-input" required>
                         <option value="">Выберите город...</option>
+                        @if(isset($zoneCities))
+                            @foreach($zoneCities as $city)
+                                <option value="{{ $city->id }}" data-country-name="{{ $city->state->country->name ?? '' }}">{{ $city->name }} ({{ $city->state->name ?? '' }})</option>
+                            @endforeach
+                        @endif
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Район</label>
+                    <label class="form-label">Регион</label>
                     <select name="district_id" id="zone-district-select" class="form-input">
-                        <option value="">Без района</option>
+                        <option value="">Без региона</option>
                     </select>
-                    <span class="form-hint">Необязательно — микрорайон может не принадлежать району</span>
+                    <span class="form-hint">Необязательно — микрорайон может не принадлежать региону</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Страна <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="zone-country-display" readonly placeholder="Определится автоматически" style="background:#f9fafb;color:var(--text-muted);">
                 </div>
             </div>
         </div>

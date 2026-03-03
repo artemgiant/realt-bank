@@ -139,6 +139,22 @@
   color: #8b5cf6;
 }
 
+.address-icon.region-icon {
+  background: linear-gradient(135deg, rgba(234, 88, 12, 0.1) 0%, rgba(234, 88, 12, 0.05) 100%);
+}
+
+.address-icon.region-icon svg {
+  color: #ea580c;
+}
+
+.region-parent {
+  cursor: pointer;
+}
+
+.region-child {
+  background: rgba(53, 133, 245, 0.02);
+}
+
 .address-icon.zone-icon {
   background: linear-gradient(135deg, rgba(26, 138, 74, 0.1) 0%, rgba(26, 138, 74, 0.05) 100%);
 }
