@@ -61,7 +61,7 @@
                 <path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>
                 <path d="M9 9h1"/><path d="M9 13h1"/><path d="M9 17h1"/>
             </svg>
-            Города
+            Города / Нас. пункты
             <span class="nav-item-badge" title="{{ number_format($citiesCount ?? 0, 0, '', ' ') }}">{{ $fmtCount($citiesCount ?? 0) }}</span>
         </a>
         <a href="{{ route('settings.zones.index') }}" class="nav-item {{ $activeSection === 'zones' ? 'active' : '' }}">

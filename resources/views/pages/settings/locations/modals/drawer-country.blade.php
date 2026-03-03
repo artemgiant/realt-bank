@@ -35,9 +35,9 @@
                            placeholder="Например: Украина" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Код страны</label>
+                    <label class="form-label">Код страны <span class="required">*</span></label>
                     <input class="form-input" type="text" name="code" id="countryCode"
-                           placeholder="Например: UA" maxlength="10">
+                           placeholder="Например: UA" maxlength="10" required>
                 </div>
             </div>
         </div>

@@ -225,7 +225,7 @@ var deleteTypeLabels = {
     role: 'Удалить роль?',
     user: 'Удалить пользователя?',
     country: 'Удалить страну?',
-    state: 'Удалить область?',
+    state: 'Удалить регион?',
     district: 'Удалить район?',
     city: 'Удалить город?',
     zone: 'Удалить микрорайон?',
@@ -257,9 +257,9 @@ function openDeleteModal(btn) {
                             (users >= 2 && users <= 4) ? 'пользователя' : 'пользователей';
             warningText.textContent = `У этой роли есть ${users} ${userWord}. Сначала переназначьте их на другую роль.`;
         } else if (type === 'country') {
-            warningText.textContent = `В этой стране есть ${users} область(ей). Сначала удалите или перенесите их.`;
+            warningText.textContent = `В этой стране есть ${users} регион(ов). Сначала удалите или перенесите их.`;
         } else if (type === 'state') {
-            warningText.textContent = `В этой области есть ${users} город(ов). Сначала удалите или перенесите их.`;
+            warningText.textContent = `В этом регионе есть ${users} город(ов). Сначала удалите или перенесите их.`;
         } else if (type === 'city') {
             warningText.textContent = `В этом городе есть ${users} улиц(а). Сначала удалите или перенесите их.`;
         } else if (type === 'district') {

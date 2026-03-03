@@ -54,7 +54,7 @@ class LocationSettingsController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'nullable|string|max:10',
+            'code' => 'required|string|max:10',
         ]);
 
         Country::create($validated);
@@ -66,7 +66,7 @@ class LocationSettingsController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'nullable|string|max:10',
+            'code' => 'required|string|max:10',
         ]);
 
         $country->update($validated);
@@ -79,7 +79,7 @@ class LocationSettingsController extends Controller
         $statesCount = $country->states()->count();
         if ($statesCount > 0) {
             return redirect()->route('settings.countries.index')
-                ->with('error', "Невозможно удалить: в стране есть {$statesCount} область(ей)");
+                ->with('error', "Невозможно удалить: в стране есть {$statesCount} регион(ов)");
         }
 
         $country->delete();
@@ -93,22 +93,24 @@ class LocationSettingsController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'country_id' => 'required|exists:countries,id',
         ]);
 
         State::create($validated);
 
-        return redirect()->route('settings.regions.index')->with('success', 'Область добавлена');
+        return redirect()->route('settings.regions.index')->with('success', 'Регион добавлен');
     }
 
     public function updateState(Request $request, State $state): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'country_id' => 'required|exists:countries,id',
         ]);
 
         $state->update($validated);
 
-        return redirect()->route('settings.regions.index')->with('success', 'Область обновлена');
+        return redirect()->route('settings.regions.index')->with('success', 'Регион обновлён');
     }
 
     public function destroyState(State $state): RedirectResponse
@@ -116,12 +118,12 @@ class LocationSettingsController extends Controller
         $citiesCount = $state->cities()->count();
         if ($citiesCount > 0) {
             return redirect()->route('settings.regions.index')
-                ->with('error', "Невозможно удалить: в области есть {$citiesCount} город(ов)");
+                ->with('error', "Невозможно удалить: в регионе есть {$citiesCount} город(ов)");
         }
 
         $state->delete();
 
-        return redirect()->route('settings.regions.index')->with('success', 'Область удалена');
+        return redirect()->route('settings.regions.index')->with('success', 'Регион удалён');
     }
 
     // ========== Districts CRUD ==========
@@ -169,9 +171,10 @@ class LocationSettingsController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|in:city,town,village,settlement',
             'state_id' => 'required|exists:states,id',
         ]);
+
+        $validated['type'] = 'city';
 
         City::create($validated);
 
@@ -182,7 +185,6 @@ class LocationSettingsController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|in:city,town,village,settlement',
             'state_id' => 'required|exists:states,id',
         ]);
 

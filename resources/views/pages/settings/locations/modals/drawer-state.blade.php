@@ -3,15 +3,14 @@
 <div class="drawer" id="drawerAddState">
     <div class="drawer-header">
         <div class="drawer-header-content">
-            <div class="drawer-header-icon">
+            <div class="drawer-header-icon icon-orange">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="10" r="3"/>
-                    <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 10-16 0c0 3 2.7 7 8 11.7z"/>
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>
                 </svg>
             </div>
             <div>
-                <h3 id="stateDrawerTitle">Новая область</h3>
-                <p class="drawer-subtitle" id="stateDrawerSubtitle">Добавьте область для географической структуры</p>
+                <h3 id="stateDrawerTitle">Новый регион</h3>
+                <p class="drawer-subtitle" id="stateDrawerSubtitle">Добавьте регион для географической структуры</p>
             </div>
         </div>
         <button class="drawer-close" id="drawerStateClose">
@@ -29,9 +28,24 @@
             <div class="drawer-section">
                 <div class="drawer-section-title">Основная информация</div>
                 <div class="form-group">
-                    <label class="form-label">Название области <span class="required">*</span></label>
+                    <label class="form-label">Название региона <span class="required">*</span></label>
                     <input class="form-input" type="text" name="name" id="stateName"
                            placeholder="Например: Одесская область" required>
+                </div>
+            </div>
+            <div class="drawer-divider"></div>
+            <div class="drawer-section">
+                <div class="drawer-section-title">Привязка</div>
+                <div class="form-group">
+                    <label class="form-label">Страна <span class="required">*</span></label>
+                    <select name="country_id" id="state-country-select" class="form-input" required>
+                        <option value="">Выберите страну...</option>
+                        @if(isset($countriesForState))
+                            @foreach($countriesForState as $country)
+                                <option value="{{ $country->id }}">{{ $country->name }}</option>
+                            @endforeach
+                        @endif
+                    </select>
                 </div>
             </div>
         </div>

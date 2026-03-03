@@ -150,6 +150,9 @@ class SettingsController extends Controller
         // Needed for district drawer (city selector) — named differently to avoid collision with paginated $citiesList
         $data['allCities'] = City::with('state')->orderBy('name')->get();
 
+        // Needed for state drawer (country selector)
+        $data['countriesForState'] = Country::orderBy('name')->get();
+
         return view('pages.settings.index', $data);
     }
 
@@ -174,7 +177,7 @@ class SettingsController extends Controller
         }
 
         $data['citiesList'] = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
-        $data['statesList'] = State::active()->orderBy('name')->get();
+        $data['statesList'] = State::active()->with('country')->orderBy('name')->get();
         $data['search'] = $search;
         $data['perPage'] = $perPage;
 

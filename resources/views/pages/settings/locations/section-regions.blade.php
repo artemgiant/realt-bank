@@ -11,7 +11,7 @@
         <div style="display:flex;gap:12px;align-items:center;">
             <form class="section-search" method="GET" action="{{ route('settings.regions.index') }}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input name="search" id="searchRegionsInput" placeholder="Поиск области..." value="{{ $search ?? '' }}" autocomplete="off">
+                <input name="search" id="searchRegionsInput" placeholder="Поиск региона..." value="{{ $search ?? '' }}" autocomplete="off">
                 @if(isset($perPage) && $perPage != 25)
                     <input type="hidden" name="per_page" value="{{ $perPage }}">
                 @endif
@@ -85,8 +85,8 @@
             @else
                 <div class="empty-state">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 10-16 0c0 3 2.7 7 8 11.7z"/></svg>
-                    <h4>{{ ($search ?? '') ? 'Ничего не найдено' : 'Нет областей' }}</h4>
-                    <p>{{ ($search ?? '') ? 'Попробуйте изменить поисковый запрос' : 'Добавьте первую область для начала работы с географией' }}</p>
+                    <h4>{{ ($search ?? '') ? 'Ничего не найдено' : 'Нет регионов' }}</h4>
+                    <p>{{ ($search ?? '') ? 'Попробуйте изменить поисковый запрос' : 'Добавьте первый регион для начала работы с географией' }}</p>
                 </div>
             @endif
         </div>

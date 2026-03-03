@@ -32,29 +32,24 @@
                     <input class="form-input" type="text" name="name" id="cityName"
                            placeholder="Например: Одесса" required>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Тип населённого пункта <span class="required">*</span></label>
-                    <select name="type" id="city-type-select" class="form-input" required>
-                        <option value="city">Город</option>
-                        <option value="town">Посёлок городского типа</option>
-                        <option value="village">Село</option>
-                        <option value="settlement">Посёлок</option>
-                    </select>
-                </div>
             </div>
             <div class="drawer-divider"></div>
             <div class="drawer-section">
                 <div class="drawer-section-title">Привязка</div>
                 <div class="form-group">
-                    <label class="form-label">Область <span class="required">*</span></label>
+                    <label class="form-label">Регион <span class="required">*</span></label>
                     <select name="state_id" id="city-state-select" class="form-input" required>
-                        <option value="">Выберите область...</option>
+                        <option value="">Выберите регион...</option>
                         @if(isset($statesList))
                             @foreach($statesList as $state)
-                                <option value="{{ $state->id }}">{{ $state->name }}</option>
+                                <option value="{{ $state->id }}" data-country-name="{{ $state->country->name ?? '' }}">{{ $state->name }}</option>
                             @endforeach
                         @endif
                     </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Страна <span class="required">*</span></label>
+                    <input class="form-input" type="text" id="city-country-display" readonly placeholder="Выберите регион...">
                 </div>
             </div>
         </div>

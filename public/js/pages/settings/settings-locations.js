@@ -58,20 +58,28 @@ function openStateDrawer(stateId = null) {
     form.action = '/settings/states';
     document.getElementById('stateMethod').value = 'POST';
 
+    // Initialize Select2
+    initStateDrawerSelect2();
+
     const stateKey = stateId ? String(stateId) : null;
 
     if (stateKey && statesData[stateKey]) {
         const state = statesData[stateKey];
-        title.textContent = 'Редактирование области';
-        subtitle.textContent = 'Измените параметры области';
+        title.textContent = 'Редактирование региона';
+        subtitle.textContent = 'Измените параметры региона';
         submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Сохранить';
 
         form.action = '/settings/states/' + stateId;
         document.getElementById('stateMethod').value = 'PUT';
         document.getElementById('stateName').value = state.name || '';
+
+        // Set country
+        if (state.country_id) {
+            $('#state-country-select').val(state.country_id).trigger('change');
+        }
     } else {
-        title.textContent = 'Новая область';
-        subtitle.textContent = 'Добавьте область для географической структуры';
+        title.textContent = 'Новый регион';
+        subtitle.textContent = 'Добавьте регион для географической структуры';
         submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Создать';
     }
 
@@ -84,6 +92,18 @@ function closeStateDrawer() {
     document.getElementById('drawerStateOverlay').classList.remove('open');
     document.getElementById('drawerAddState').classList.remove('open');
     document.body.style.overflow = '';
+}
+
+function initStateDrawerSelect2() {
+    if ($('#state-country-select').hasClass('select2-hidden-accessible')) {
+        $('#state-country-select').select2('destroy');
+    }
+    $('#state-country-select').select2({
+        width: '100%',
+        placeholder: 'Выберите страну...',
+        allowClear: true,
+        dropdownParent: $('#drawerAddState')
+    });
 }
 
 // ========== DRAWER: DISTRICT ==========
@@ -178,6 +198,10 @@ function openCityDrawer(cityId = null) {
     // Initialize Select2
     initCityDrawerSelect2();
 
+    // Clear country display
+    var countryDisplay = document.getElementById('city-country-display');
+    if (countryDisplay) countryDisplay.value = '';
+
     const cityKey = cityId ? String(cityId) : null;
 
     if (cityKey && citiesData[cityKey]) {
@@ -189,9 +213,6 @@ function openCityDrawer(cityId = null) {
         form.action = '/settings/cities/' + cityId;
         document.getElementById('cityMethod').value = 'PUT';
         document.getElementById('cityName').value = city.name || '';
-
-        // Set type
-        $('#city-type-select').val(city.type || 'city').trigger('change');
 
         // Set state
         $('#city-state-select').val(city.state_id).trigger('change');
@@ -213,22 +234,13 @@ function closeCityDrawer() {
 }
 
 function initCityDrawerSelect2() {
-    if ($('#city-type-select').hasClass('select2-hidden-accessible')) {
-        $('#city-type-select').select2('destroy');
-    }
     if ($('#city-state-select').hasClass('select2-hidden-accessible')) {
         $('#city-state-select').select2('destroy');
     }
 
-    $('#city-type-select').select2({
-        width: '100%',
-        minimumResultsForSearch: -1,
-        dropdownParent: $('#drawerAddCity')
-    });
-
     $('#city-state-select').select2({
         width: '100%',
-        placeholder: 'Выберите область...',
+        placeholder: 'Выберите регион...',
         allowClear: true,
         dropdownParent: $('#drawerAddCity')
     });
@@ -597,6 +609,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (streetClose) streetClose.addEventListener('click', closeStreetDrawer);
     var streetCancel = document.getElementById('drawerStreetCancel');
     if (streetCancel) streetCancel.addEventListener('click', closeStreetDrawer);
+
+    // ===== Cascading: City drawer =====
+    $(document).on('change', '#city-state-select', function() {
+        var countryDisplay = document.getElementById('city-country-display');
+        if (countryDisplay) {
+            var selectedOption = $(this).find('option:selected');
+            var countryName = selectedOption.data('country-name') || '';
+            countryDisplay.value = countryName || '';
+        }
+    });
 
     // ===== Cascading: Zone drawer =====
     $(document).on('change', '#zone-city-select', function() {

@@ -36,7 +36,7 @@
                                 <h4>{{ $country->name }}</h4>
                                 <p>{{ $country->code ?? '—' }}</p>
                             </div>
-                            <span class="address-count">{{ $country->states_count }} {{ trans_choice('область|области|областей', $country->states_count) }}</span>
+                            <span class="address-count">{{ $country->states_count }} {{ trans_choice('регион|региона|регионов', $country->states_count) }}</span>
                             <div class="actions-cell">
                                 <button class="btn-icon" onclick="openCountryDrawer({{ $country->id }})" title="Редактировать">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/></svg>

@@ -1,11 +1,11 @@
 {{-- Section: Cities --}}
 <div class="settings-section {{ $activeSection === 'cities' ? 'active' : '' }}" id="section-cities">
     <div class="settings-breadcrumb">
-        <a href="{{ route('settings.index') }}">Настройки</a> <span>›</span> <span class="current">Города</span>
+        <a href="{{ route('settings.index') }}">Настройки</a> <span>›</span> <span class="current">Города / Нас. пункты</span>
     </div>
     <div class="section-header">
         <div>
-            <h2>Города и населённые пункты</h2>
+            <h2>Города / Нас. пункты</h2>
             <p>Список городов для привязки адресов объектов</p>
         </div>
         <div style="display:flex;gap:12px;align-items:center;">
@@ -36,7 +36,6 @@
                                 <h4>{{ $city->name }}</h4>
                                 <p>{{ $city->state->name ?? '—' }}</p>
                             </div>
-                            <span class="address-type-badge {{ $city->type }}">{{ $city->type_name }}</span>
                             <span class="address-count">{{ $city->streets_count }} {{ trans_choice('улица|улицы|улиц', $city->streets_count) }}</span>
                             <div class="actions-cell">
                                 <button class="btn-icon" onclick="openCityDrawer({{ $city->id }})" title="Редактировать">
