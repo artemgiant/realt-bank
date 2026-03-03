@@ -5,6 +5,7 @@ namespace App\Models\Location;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class State extends Model
@@ -35,6 +36,11 @@ class State extends Model
     public function cities(): HasMany
     {
         return $this->hasMany(City::class);
+    }
+
+    public function districts(): HasManyThrough
+    {
+        return $this->hasManyThrough(District::class, City::class);
     }
 
     // ========== Scopes ==========

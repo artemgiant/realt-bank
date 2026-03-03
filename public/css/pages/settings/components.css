@@ -421,7 +421,6 @@ textarea.form-input {
   z-index: 201;
   display: flex;
   flex-direction: column;
-  box-shadow: -12px 0 40px rgba(4, 37, 78, 0.25);
   transform: translateX(100%);
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;

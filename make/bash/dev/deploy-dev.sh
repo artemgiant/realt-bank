@@ -2,13 +2,13 @@
 
 
 # Скинути локальні зміни
-#git reset --hard && git clean -df
+git reset --hard && git clean -df
 
 # Завантажити інформацію про віддалену гілку
-#git fetch origin
+git fetch origin
 
 # Синхронізувати з віддаленою гілкою
-#git reset --hard origin/master
+git reset --hard origin/master
 
 
 
@@ -25,7 +25,7 @@
 #php artisan currency:update-rates
 #php artisan db:seed --class=CountrySeeder
 
-php artisan xml:generate dim_ria
+
 
 
 #php artisan db:seed --class=DictionarySeeder --force
@@ -35,19 +35,35 @@ php artisan xml:generate dim_ria
 #php artisan db:seed --class=PermissionSeeder
 
 
-
+#Удалить и  Создать сотрудников
+php artisan tinker --execute="App\Models\Employee\Employee::query()->forceDelete(); App\Models\Employee\Employee::factory()->count(100)->create();"
 
 #ОЧИСТИТИ ДАНЫЕ
-#php artisan tinker  tinker --execute="DB::table('property_translations')->truncate(); DB::table('property_features')->truncate(); DB::table('property_contact')->truncate(); App\Models\Property\Property::query()->forceDelete(); App\Models\Contact\Contact::query()->delete();"
-#СГЕНЕРИРОВАТЬ ДАННЫЕ
-#php artisan  tinker --execute="App\Models\Property\Property::factory()->count(100)->withContacts(1)->create();"
+ php artisan tinker --execute="
+DB::statement('SET FOREIGN_KEY_CHECKS=0');
+DB::table('property_translations')->truncate();
+DB::table('property_features')->truncate();
+DB::table('property_photos')->truncate();
+DB::table('property_documents')->truncate();
+DB::table('contactables')->truncate();
+DB::table('contact_phones')->truncate();
+DB::table('contacts')->truncate();
+App\Models\Property\Property::query()->forceDelete();
+DB::statement('SET FOREIGN_KEY_CHECKS=1');
+\Illuminate\Support\Facades\Storage::disk('public')->deleteDirectory('properties');
+echo 'Очищено!';
+"
 
 
-#php artisan  tinker --execute=" use App\Models\Reference\Developer; Developer::query()->update(['source' => 'import']); "
+#СГЕНЕРИРОВАТЬ ДАННЫЕ ОБЕКТКОВ НЕДВИЖИМОСТИ С КОНТАКТАМИ
+ php artisan tinker --execute="App\Models\Property\Property::factory()->count(100)->withContacts(1)->create();"
+
+php artisan xml:generate dim_ria
+
+php artisan xml:generate rem
 
 #Очистить и создать  девелопера
 #php artisan tinker --execute="\App\Models\Reference\Developer::factory()->cleanAndCreate(100);"
-
 
 
 #Очистить и создать  комплексы и блоки
@@ -59,8 +75,7 @@ php artisan xml:generate dim_ria
 
 
 
-#Удалить и  Создать сотрудников
-# php artisan tinker --execute="App\Models\Employee\Employee::query()->forceDelete(); App\Models\Employee\Employee::factory()->count(100)->create();"
+
 
 #php artisan storage:link
 

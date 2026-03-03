@@ -28,4 +28,60 @@
             <span class="nav-item-badge">{{ $permissions->count() ?? 0 }}</span>
         </a>
     </div>
+
+    <div class="nav-section-label">Локализация</div>
+    <div class="nav-group">
+        <a href="{{ route('settings.countries.index') }}" class="nav-item {{ $activeSection === 'countries' ? 'active' : '' }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+            </svg>
+            Страны
+            @if(isset($countriesList))
+                <span class="nav-item-badge">{{ $countriesList->total() }}</span>
+            @endif
+        </a>
+        <a href="{{ route('settings.regions.index') }}" class="nav-item {{ $activeSection === 'regions' ? 'active' : '' }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+                <line x1="8" y1="2" x2="8" y2="18"/>
+                <line x1="16" y1="6" x2="16" y2="22"/>
+            </svg>
+            Регионы
+            @if(isset($states))
+                <span class="nav-item-badge">{{ $states->count() }}</span>
+            @endif
+        </a>
+        <a href="{{ route('settings.cities.index') }}" class="nav-item {{ $activeSection === 'cities' ? 'active' : '' }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>
+                <path d="M9 9h1"/><path d="M9 13h1"/><path d="M9 17h1"/>
+            </svg>
+            Города
+            @if(isset($citiesList))
+                <span class="nav-item-badge">{{ $citiesList->count() }}</span>
+            @endif
+        </a>
+        <a href="{{ route('settings.zones.index') }}" class="nav-item {{ $activeSection === 'zones' ? 'active' : '' }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M3 9h18"/><path d="M9 3v18"/>
+            </svg>
+            Микрорайоны
+            @if(isset($zonesList))
+                <span class="nav-item-badge">{{ $zonesList->count() }}</span>
+            @endif
+        </a>
+        <a href="{{ route('settings.streets.index') }}" class="nav-item {{ $activeSection === 'streets' ? 'active' : '' }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18"/><path d="M6 6l12 12"/>
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+            </svg>
+            Улицы
+            @if(isset($streetsList))
+                <span class="nav-item-badge">{{ $streetsList->count() }}</span>
+            @endif
+        </a>
+    </div>
 </div>

@@ -220,6 +220,18 @@ function closeUserDrawer() {
 // ========== CONFIRM DELETE MODAL ==========
 let deleteTarget = null;
 
+// Delete type labels and warnings
+var deleteTypeLabels = {
+    role: 'Удалить роль?',
+    user: 'Удалить пользователя?',
+    country: 'Удалить страну?',
+    state: 'Удалить область?',
+    district: 'Удалить район?',
+    city: 'Удалить город?',
+    zone: 'Удалить микрорайон?',
+    street: 'Удалить улицу?'
+};
+
 function openDeleteModal(btn) {
     const type = btn.dataset.type;
     const name = btn.dataset.name;
@@ -235,21 +247,26 @@ function openDeleteModal(btn) {
     const warning = document.getElementById('confirmDeleteWarning');
     const warningText = document.getElementById('confirmDeleteWarningText');
 
-    if (type === 'role') {
-        title.textContent = 'Удалить роль?';
-    } else if (type === 'user') {
-        title.textContent = 'Удалить пользователя?';
-    } else {
-        title.textContent = 'Подтвердите удаление';
-    }
-
+    title.textContent = deleteTypeLabels[type] || 'Подтвердите удаление';
     nameSpan.textContent = name;
 
-    if (type === 'role' && users > 0) {
+    if (users > 0 && type !== 'street') {
         warning.classList.add('show');
-        const userWord = users === 1 ? 'пользователь' :
-                        (users >= 2 && users <= 4) ? 'пользователя' : 'пользователей';
-        warningText.textContent = `У этой роли есть ${users} ${userWord}. Сначала переназначьте их на другую роль.`;
+        if (type === 'role') {
+            const userWord = users === 1 ? 'пользователь' :
+                            (users >= 2 && users <= 4) ? 'пользователя' : 'пользователей';
+            warningText.textContent = `У этой роли есть ${users} ${userWord}. Сначала переназначьте их на другую роль.`;
+        } else if (type === 'country') {
+            warningText.textContent = `В этой стране есть ${users} область(ей). Сначала удалите или перенесите их.`;
+        } else if (type === 'state') {
+            warningText.textContent = `В этой области есть ${users} город(ов). Сначала удалите или перенесите их.`;
+        } else if (type === 'city') {
+            warningText.textContent = `В этом городе есть ${users} улиц(а). Сначала удалите или перенесите их.`;
+        } else if (type === 'district') {
+            warningText.textContent = `В этом районе есть ${users} улиц(а). Сначала удалите или перенесите их.`;
+        } else if (type === 'zone') {
+            warningText.textContent = `В этом микрорайоне есть ${users} улиц(а). Сначала удалите или перенесите их.`;
+        }
     } else {
         warning.classList.remove('show');
     }
@@ -272,16 +289,20 @@ function confirmDelete() {
         return;
     }
 
-    // Don't delete roles with users
-    if (deleteTarget.type === 'role' && deleteTarget.users > 0) {
+    // Don't delete items with dependencies
+    if (deleteTarget.users > 0 && deleteTarget.type !== 'street') {
         closeDeleteModal();
         return;
     }
 
+    // Build correct plural route path
+    var typePlurals = { role: 'roles', user: 'users', country: 'countries', state: 'states', district: 'districts', city: 'cities', zone: 'zones', street: 'streets' };
+    var typePlural = typePlurals[deleteTarget.type] || (deleteTarget.type + 's');
+
     // Create and submit delete form
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = '/settings/' + deleteTarget.type + 's/' + deleteTarget.id;
+    form.action = '/settings/' + typePlural + '/' + deleteTarget.id;
 
     const csrfInput = document.createElement('input');
     csrfInput.type = 'hidden';

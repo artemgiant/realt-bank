@@ -12,6 +12,7 @@ use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\UserController;
 use App\Http\Controllers\Settings\PermissionController;
+use App\Http\Controllers\Settings\LocationSettingsController;
 use App\Http\Controllers\XmlFeedController;
 use Illuminate\Support\Facades\Route;
 
@@ -166,6 +167,48 @@ Route::middleware('auth')->group(function () {
         Route::post('/permissions/toggle', [PermissionController::class, 'toggle'])->name('permissions.toggle');
         Route::put('/permissions/role/{role}', [PermissionController::class, 'updateRole'])->name('permissions.update-role');
         Route::post('/permissions/bulk-update', [PermissionController::class, 'bulkUpdate'])->name('permissions.bulk-update');
+
+        // Location sections
+        Route::get('/countries', [SettingsController::class, 'countries'])->name('countries.index');
+        Route::get('/regions', [SettingsController::class, 'regions'])->name('regions.index');
+        Route::get('/cities', [SettingsController::class, 'cities'])->name('cities.index');
+        Route::get('/zones', [SettingsController::class, 'zones'])->name('zones.index');
+        Route::get('/streets', [SettingsController::class, 'streets'])->name('streets.index');
+
+        // Location CRUD — AJAX helpers
+        Route::get('/locations/cities-by-state', [LocationSettingsController::class, 'getCities'])->name('locations.cities-by-state');
+        Route::get('/locations/districts-by-city', [LocationSettingsController::class, 'getDistricts'])->name('locations.districts-by-city');
+        Route::get('/locations/zones-by-city', [LocationSettingsController::class, 'getZones'])->name('locations.zones-by-city');
+
+        // Countries CRUD
+        Route::post('/countries', [LocationSettingsController::class, 'storeCountry'])->name('countries.store');
+        Route::put('/countries/{country}', [LocationSettingsController::class, 'updateCountry'])->name('countries.update');
+        Route::delete('/countries/{country}', [LocationSettingsController::class, 'destroyCountry'])->name('countries.destroy');
+
+        // States CRUD
+        Route::post('/states', [LocationSettingsController::class, 'storeState'])->name('states.store');
+        Route::put('/states/{state}', [LocationSettingsController::class, 'updateState'])->name('states.update');
+        Route::delete('/states/{state}', [LocationSettingsController::class, 'destroyState'])->name('states.destroy');
+
+        // Districts CRUD
+        Route::post('/districts', [LocationSettingsController::class, 'storeDistrict'])->name('districts.store');
+        Route::put('/districts/{district}', [LocationSettingsController::class, 'updateDistrict'])->name('districts.update');
+        Route::delete('/districts/{district}', [LocationSettingsController::class, 'destroyDistrict'])->name('districts.destroy');
+
+        // Cities CRUD
+        Route::post('/cities', [LocationSettingsController::class, 'storeCity'])->name('cities.store');
+        Route::put('/cities/{city}', [LocationSettingsController::class, 'updateCity'])->name('cities.update');
+        Route::delete('/cities/{city}', [LocationSettingsController::class, 'destroyCity'])->name('cities.destroy');
+
+        // Zones CRUD
+        Route::post('/zones', [LocationSettingsController::class, 'storeZone'])->name('zones.store');
+        Route::put('/zones/{zone}', [LocationSettingsController::class, 'updateZone'])->name('zones.update');
+        Route::delete('/zones/{zone}', [LocationSettingsController::class, 'destroyZone'])->name('zones.destroy');
+
+        // Streets CRUD
+        Route::post('/streets', [LocationSettingsController::class, 'storeStreet'])->name('streets.store');
+        Route::put('/streets/{street}', [LocationSettingsController::class, 'updateStreet'])->name('streets.update');
+        Route::delete('/streets/{street}', [LocationSettingsController::class, 'destroyStreet'])->name('streets.destroy');
     });
 
     // ========== Companies ==========
