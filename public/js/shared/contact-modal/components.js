@@ -6,10 +6,7 @@ window.ContactModal = window.ContactModal || {};
 
 window.ContactModal.Components = {
 
-    // Экземпляр PhoneInputManager
     phoneManager: null,
-
-    // Флаг инициализации Select2
     select2Initialized: false,
 
     /**
@@ -23,7 +20,6 @@ window.ContactModal.Components = {
 
         if (!document.querySelector(btnSelector)) return;
 
-        // Проверяем наличие класса PhoneInputManager
         if (typeof PhoneInputManager === 'undefined') {
             console.warn('PhoneInputManager не найден');
             return;
@@ -99,13 +95,11 @@ window.ContactModal.Components = {
             select2Configs.forEach(function(config) {
                 var $el = $(config.selector);
                 if ($el.length) {
-                    // Уничтожаем если уже инициализирован
                     if ($el.data('select2')) {
                         $el.select2('destroy');
                     }
                     $el.select2(config.options);
 
-                    // Фокус на поле поиска при открытии
                     $el.on('select2:open', function() {
                         setTimeout(function() {
                             var searchField = document.querySelector('.select2-search__field');
@@ -128,7 +122,6 @@ window.ContactModal.Components = {
         var modalElement = document.getElementById('add-contact-modal');
         if (!modalElement) return;
 
-        // Проверяем наличие класса PhotoLoaderMini
         if (typeof PhotoLoaderMini === 'undefined') {
             console.warn('PhotoLoaderMini не найден');
             return;
@@ -186,13 +179,11 @@ window.ContactModal.Components = {
      * Уничтожение компонентов при закрытии модалки
      */
     destroyAll: function() {
-        // Уничтожаем PhoneInputManager
         if (this.phoneManager && typeof this.phoneManager.destroy === 'function') {
             this.phoneManager.destroy();
             this.phoneManager = null;
         }
 
-        // Уничтожаем Select2
         ['#tags-client-modal', '#roles-contact-modal', '#type-contact-modal'].forEach(function(selector) {
             var $el = $(selector);
             if ($el.data('select2')) {

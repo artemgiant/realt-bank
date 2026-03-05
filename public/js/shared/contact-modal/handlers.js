@@ -1,19 +1,18 @@
 /**
- * Обработчики событий модуля контактов
+ * Обработчики событий модуля контактов (единые для всех сущностей)
+ * Поведение определяется Config.behavior
  * Объект доступен через window.ContactModal.Handlers
  */
 window.ContactModal = window.ContactModal || {};
 
 window.ContactModal.Handlers = {
 
-    // Debounced функция поиска
     _debouncedSearch: null,
 
     /**
      * Инициализация обработчиков модального окна
      */
     initModalHandlers: function() {
-        var self = this;
         var Config = window.ContactModal.Config;
         var Components = window.ContactModal.Components;
         var Form = window.ContactModal.Form;
@@ -26,16 +25,21 @@ window.ContactModal.Handlers = {
             setTimeout(function() {
                 Components.initAll();
 
-                Form.modalComponentsReady = true;
-                if (Form.isEditMode && Form.pendingContactData) {
-                    // Заполняем форму только после инициализации компонентов (intl-tel-input, маска)
-                    setTimeout(function() {
-                        Form.fill(Form.pendingContactData);
-                        Form.showFoundIndicator();
-                        Form.pendingContactData = null;
-                    }, 150);
-                } else if (!Form.isEditMode) {
-                    Form.clear();
+                if (Config.behavior.hasPendingContactData) {
+                    Form.modalComponentsReady = true;
+                    if (Form.isEditMode && Form.pendingContactData) {
+                        setTimeout(function() {
+                            Form.fill(Form.pendingContactData);
+                            Form.showFoundIndicator();
+                            Form.pendingContactData = null;
+                        }, 150);
+                    } else if (!Form.isEditMode) {
+                        Form.clear();
+                    }
+                } else {
+                    if (!Form.isEditMode) {
+                        Form.clear();
+                    }
                 }
             }, 300);
         });
@@ -60,9 +64,8 @@ window.ContactModal.Handlers = {
         var Api = window.ContactModal.Api;
         var Form = window.ContactModal.Form;
 
-        // Создаем debounced функцию поиска (только при создании контакта, не при редактировании)
         this._debouncedSearch = Utils.debounce(function(phone) {
-            if (Form.isEditMode) return; // при редактировании не меняем контакт по поиску телефона
+            if (Form.isEditMode) return;
             Api.searchByPhone(phone).then(function(data) {
                 if (data.success && data.found) {
                     Form.fill(data.contact);
@@ -75,7 +78,6 @@ window.ContactModal.Handlers = {
             });
         }, Config.debounceDelay);
 
-        // Обработчик ввода телефона
         document.addEventListener('input', function(e) {
             if (e.target.matches(Config.selectors.modal + ' ' + Config.selectors.phoneInput)) {
                 var firstPhoneInput = document.querySelector(Config.selectors.modal + ' ' + Config.selectors.phoneInput);
@@ -88,24 +90,20 @@ window.ContactModal.Handlers = {
 
     /**
      * Валидация одного телефона
-     * @param {HTMLElement} input - элемент input
-     * @returns {Object} - { isValid: boolean, message: string }
      */
     validateSinglePhone: function(input) {
         var value = input.value || '';
         var digits = value.replace(/\D/g, '');
 
-        if (!digits) {
-            return { isValid: true, message: '' };
-        }
+        if (!digits) return { isValid: true, message: '' };
 
         var iti = input._iti;
         var countryData = iti ? iti.getSelectedCountryData() : null;
         var countryCode = countryData ? countryData.iso2 : 'ua';
 
-        // Для Украины: 9 цифр без начального 0 (формат маски: XX XXX XX XX)
+        // UA маска (099) = 10 цифр
         var phoneLengths = {
-            'ua': { min: 9, max: 9 },
+            'ua': { min: 10, max: 10 },
             'us': { min: 10, max: 10 },
             'gb': { min: 10, max: 11 },
             'de': { min: 10, max: 12 },
@@ -128,20 +126,15 @@ window.ContactModal.Handlers = {
 
     /**
      * Показать иконку ошибки на поле телефона
-     * @param {HTMLElement} input - элемент input
-     * @param {string} message - сообщение об ошибке
      */
     showPhoneError: function(input, message) {
         var $input = $(input);
         var $wrapper = $input.closest('.iti');
 
-        // Удаляем предыдущие состояния
         $wrapper.removeClass('is-invalid is-valid');
         $wrapper.find('.phone-validation-icon').remove();
-
         $wrapper.addClass('is-invalid');
 
-        // Добавляем иконку ошибки с tooltip
         var $icon = $('<span class="phone-validation-icon phone-validation-icon--error" title="' + message + '">' +
             '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
             '<circle cx="12" cy="12" r="10"></circle>' +
@@ -150,7 +143,6 @@ window.ContactModal.Handlers = {
             '</svg></span>');
         $wrapper.append($icon);
 
-        // Инициализируем Bootstrap tooltip
         if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
             new bootstrap.Tooltip($icon[0], { placement: 'top' });
         }
@@ -158,7 +150,6 @@ window.ContactModal.Handlers = {
 
     /**
      * Очистить ошибку на поле телефона
-     * @param {HTMLElement} input - элемент input
      */
     clearPhoneError: function(input) {
         var $input = $(input);
@@ -169,8 +160,7 @@ window.ContactModal.Handlers = {
     },
 
     /**
-     * Валидация телефонов в форме с показом иконок
-     * @returns {Array} - Массив ошибок валидации
+     * Валидация телефонов в форме
      */
     validatePhones: function() {
         var self = this;
@@ -183,7 +173,6 @@ window.ContactModal.Handlers = {
             var value = input.value || '';
             var digits = value.replace(/\D/g, '');
 
-            // Сначала очищаем предыдущие ошибки
             self.clearPhoneError(input);
 
             if (!digits) {
@@ -194,7 +183,6 @@ window.ContactModal.Handlers = {
                 return;
             }
 
-            // Валидируем телефон
             var validation = self.validateSinglePhone(input);
 
             if (!validation.isValid) {
@@ -206,7 +194,6 @@ window.ContactModal.Handlers = {
             hasValidPhone = true;
         });
 
-        // Если нет ни одного валидного телефона
         if (!hasValidPhone && errors.length === 0) {
             errors.push('Введите хотя бы один номер телефона');
         }
@@ -229,11 +216,7 @@ window.ContactModal.Handlers = {
                 e.preventDefault();
 
                 var form = e.target;
-
-                // Валидация Select2 полей (HTML required не работает для Select2)
-                // Валидация зависит от контекста - только для properties требуем roles и tags
                 var validationErrors = [];
-                var context = $('input[name="context"]', form).val() || 'properties';
 
                 // Валидация телефонов
                 var phoneErrors = self.validatePhones();
@@ -241,12 +224,12 @@ window.ContactModal.Handlers = {
                     validationErrors = validationErrors.concat(phoneErrors);
                 }
 
-                if (context === 'properties') {
-                    var rolesVal = $('#roles-contact-modal').val();
+                // Валидация ролей (если requireRoles = true)
+                if (Config.behavior.requireRoles) {
+                    var rolesVal = $(Config.selectors.contactRoleSelect).val();
                     if (!rolesVal || rolesVal.length === 0) {
                         validationErrors.push('Выберите роли контакта');
                     }
-                    // tags больше не обязательны
                 }
 
                 if (validationErrors.length > 0) {
@@ -256,15 +239,27 @@ window.ContactModal.Handlers = {
 
                 Form.showLoading();
 
-                var formData = Api.prepareFormData(form);
-
-                // Редактирование: обновляем контакт на сервере и в списке
+                // Существующий контакт
                 if (Form.currentContactId) {
+                    // skipApiForExisting: просто берём данные из формы без API вызова
+                    if (Config.behavior.skipApiForExisting) {
+                        var contactData = Form.getExistingContactData();
+                        var added = ContactList.add(contactData);
+                        if (added !== false) {
+                            var modalEl = document.querySelector(Config.selectors.modal);
+                            var modal = bootstrap.Modal.getInstance(modalEl);
+                            if (modal) modal.hide();
+                            Form.clear();
+                        }
+                        Form.hideLoading();
+                        return;
+                    }
+
+                    // Обычное поведение: обновляем через API
+                    var formData = Api.prepareFormData(form);
                     Api.update(Form.currentContactId, formData)
                         .then(function(data) {
                             if (data.success && data.contact) {
-                                // Если карточка контакта уже есть в списке — обновляем
-                                // Если нет (контакт найден по телефону, но не привязан) — добавляем
                                 if (ContactList.hasContact(data.contact.id)) {
                                     ContactList.update(data.contact);
                                 } else {
@@ -290,24 +285,22 @@ window.ContactModal.Handlers = {
                     return;
                 }
 
-                // Создание: создаём нового контакта
+                // Создание нового контакта
+                var formData = Api.prepareFormData(form);
                 Api.store(formData)
                     .then(function(data) {
                         if (data.success) {
                             var added = ContactList.add(data.contact);
-
                             if (added !== false) {
                                 var modalEl = document.querySelector(Config.selectors.modal);
                                 var modal = bootstrap.Modal.getInstance(modalEl);
                                 if (modal) modal.hide();
-
                                 Form.clear();
                             }
                         }
                     })
                     .catch(function(error) {
                         console.error('Ошибка:', error);
-
                         if (error.response && error.response.errors) {
                             Form.showValidationErrors(error.response.errors);
                         } else {
@@ -358,16 +351,22 @@ window.ContactModal.Handlers = {
                     Form.isEditMode = true;
                     Form.currentContactId = contactId;
 
-                    // Загружаем данные контакта; форма заполнится после initAll() (в shown.bs.modal или здесь, если компоненты уже готовы)
                     Api.show(contactId).then(function(data) {
                         if (data.success) {
-                            Form.pendingContactData = data.contact;
-                            if (Form.modalComponentsReady) {
+                            if (Config.behavior.hasPendingContactData) {
+                                Form.pendingContactData = data.contact;
+                                if (Form.modalComponentsReady) {
+                                    setTimeout(function() {
+                                        Form.fill(Form.pendingContactData);
+                                        Form.showFoundIndicator();
+                                        Form.pendingContactData = null;
+                                    }, 100);
+                                }
+                            } else {
                                 setTimeout(function() {
-                                    Form.fill(Form.pendingContactData);
+                                    Form.fill(data.contact);
                                     Form.showFoundIndicator();
-                                    Form.pendingContactData = null;
-                                }, 100);
+                                }, 400);
                             }
                         }
                     });

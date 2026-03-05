@@ -647,7 +647,7 @@
         </div>
     </form>
     <!-- кінець main	-->
-    @include('pages/companies/modals/create/_contact-modal')
+    @include('components.contact-modal', ['context' => 'companies', 'contactRoles' => $contactRoles, 'contactTags' => \App\Models\Reference\Dictionary::getAgentTags(), 'showExtendedSocials' => true, 'showBirthday' => true, 'showHistory' => true, 'tagsMultiple' => true])
 
     {{-- Шаблон карточки контакта для JS (структура как в properties) --}}
     <template id="contact-card-template">
@@ -695,15 +695,8 @@
     <script src="{{ asset('js/pages/companies/create/location-search.js') }}"></script>
     <script src="{{ asset('js/pages/companies/create/office-manager.js') }}"></script>
 
-    {{-- Contact Modal JS Module --}}
-    <script src="{{ asset('js/pages/companies/create/modal/add-contact/config.js') }}"></script>
-    <script src="{{ asset('js/pages/companies/create/modal/add-contact/utils.js') }}"></script>
-    <script src="{{ asset('js/pages/companies/create/modal/add-contact/components.js') }}"></script>
-    <script src="{{ asset('js/pages/companies/create/modal/add-contact/api.js') }}"></script>
-    <script src="{{ asset('js/pages/companies/create/modal/add-contact/form.js') }}"></script>
-    <script src="{{ asset('js/pages/companies/create/modal/add-contact/contact-list.js') }}"></script>
-    <script src="{{ asset('js/pages/companies/create/modal/add-contact/handlers.js') }}"></script>
-    <script src="{{ asset('js/pages/companies/create/modal/add-contact/main.js') }}"></script>
+    {{-- Модуль контактов --}}
+    @include('components.contact-modal-scripts', ['context' => 'companies', 'maxContacts' => 0, 'behavior' => ['requireRoles' => true, 'skipApiForExisting' => false, 'phoneDialCodeMapping' => true, 'hasPendingContactData' => true]])
 
     {{-- Инициализация для редактирования - устанавливаем начальный индекс офисов --}}
     <script>

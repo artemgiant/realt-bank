@@ -596,7 +596,7 @@
     </div>
 
     {{-- Модальные окна --}}
-    @include('pages.properties.modals.contact-modal')
+    @include('components.contact-modal', ['context' => 'properties', 'contactRoles' => $contactRoles, 'contactTags' => $contactTags ?? [], 'showExtendedSocials' => false, 'showBirthday' => false, 'showHistory' => false])
     @include('pages.properties.modals.employee-modal')
     @include('pages.properties.modals.transfer-agent-modal')
 
@@ -622,15 +622,8 @@
     <script src="{{ asset('js/pages/properties/create/form-submit.js') }}"></script>
 
 
-    {{-- Модуль контактов (порядок важен!) --}}
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/config.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/utils.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/components.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/api.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/form.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/contact-list.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/handlers.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/main.js') }}"></script>
+    {{-- Модуль контактов --}}
+    @include('components.contact-modal-scripts', ['context' => 'properties', 'maxContacts' => 5, 'behavior' => ['requireRoles' => true, 'skipApiForExisting' => false, 'phoneDialCodeMapping' => true, 'hasPendingContactData' => true]])
 
     {{-- Модуль передачи агенту --}}
     <script src="{{ asset('js/pages/properties/create/modal/transfer-agent/main.js') }}"></script>

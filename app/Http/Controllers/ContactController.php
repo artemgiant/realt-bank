@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PhoneFormatter;
 use App\Http\Requests\StoreContactRequest;
 use App\Models\Contact\Contact;
 use App\Models\Contact\ContactPhone;
@@ -143,12 +144,14 @@ class ContactController extends Controller
             }
 
             // Создание контакта
+            $roles = $request->input('roles', $request->input('contact_role', []));
+
             $contact = Contact::create([
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'middle_name' => $request->middle_name,
                 'email' => $request->email,
-                'contact_role' => $request->contact_role,
+                'contact_role' => $roles,
                 'tags' => $tags,
                 'telegram' => $request->telegram,
                 'viber' => $request->viber,
@@ -168,9 +171,7 @@ class ContactController extends Controller
             }
 
             // Синхронизация ролей
-            if ($request->has('roles')) {
-                $contact->roles()->sync($request->input('roles', []));
-            }
+            $contact->roles()->sync($roles);
 
             DB::commit();
 
@@ -268,8 +269,6 @@ class ContactController extends Controller
             'last_name' => 'nullable|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
-            'contact_role' => 'nullable|array',
-            'contact_role.*' => 'exists:dictionaries,id',
             'tags' => 'nullable|string|max:500',
             'telegram' => 'nullable|string|max:255',
             'viber' => 'nullable|string|max:255',
@@ -328,12 +327,14 @@ class ContactController extends Controller
             }
 
             // Обновление контакта
+            $roles = $request->input('roles', $request->input('contact_role', []));
+
             $contact->update([
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'middle_name' => $request->middle_name,
                 'email' => $request->email,
-                'contact_role' => $request->contact_role,
+                'contact_role' => $roles,
                 'tags' => $request->tags,
                 'telegram' => $request->telegram,
                 'viber' => $request->viber,
@@ -348,9 +349,7 @@ class ContactController extends Controller
             $this->savePhones($contact, $request->phones);
 
             // Синхронизация ролей
-            if ($request->has('roles')) {
-                $contact->roles()->sync($request->input('roles', []));
-            }
+            $contact->roles()->sync($roles);
 
             DB::commit();
 
@@ -506,7 +505,7 @@ class ContactController extends Controller
         foreach ($phones as $index => $phoneData) {
             ContactPhone::create([
                 'contact_id' => $contact->id,
-                'phone' => $phoneData['phone'],
+                'phone' => PhoneFormatter::format($phoneData['phone']),
                 // Если основной не указан - первый телефон становится основным
                 'is_primary' => !empty($phoneData['is_primary']) || (!$hasPrimary && $index === 0),
             ]);

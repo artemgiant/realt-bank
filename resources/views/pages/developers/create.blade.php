@@ -356,7 +356,7 @@
     </div>
 
     {{-- Модальное окно добавления контакта --}}
-    @include('pages.developers.modals.contact-modal')
+    @include('components.contact-modal', ['context' => 'developers', 'contactRoles' => $contactRoles, 'contactTags' => [], 'showExtendedSocials' => true, 'showBirthday' => false, 'showHistory' => false, 'tagsMultiple' => false])
 
     {{-- Шаблон для карточки контакта (используется JS) --}}
     <template id="contact-card-template">
@@ -404,22 +404,14 @@
 @endsection
 
 @push('scripts')
-    {{-- Общие функции (PhoneInputManager, PhotoLoaderMini и т.д.) + Модуль контактов --}}
+    {{-- Общие функции (PhoneInputManager, PhotoLoaderMini и т.д.) --}}
     <script type="module">
         import { PhoneInputManager, PhotoLoaderMini } from '{{ asset('js/pages/function_on_pages-create.js') }}';
         window.PhoneInputManager = PhoneInputManager;
         window.PhotoLoaderMini = PhotoLoaderMini;
 
-        // Загружаем остальные скрипты после того как классы доступны
+        // Загружаем page-create-developers после того как классы доступны
         const scripts = [
-            '{{ asset('js/pages/properties/create/modal/add-contact/config.js') }}',
-            '{{ asset('js/pages/properties/create/modal/add-contact/utils.js') }}',
-            '{{ asset('js/pages/properties/create/modal/add-contact/api.js') }}',
-            '{{ asset('js/pages/properties/create/modal/add-contact/form.js') }}',
-            '{{ asset('js/pages/properties/create/modal/add-contact/contact-list.js') }}',
-            '{{ asset('js/pages/properties/create/modal/add-contact/components.js') }}',
-            '{{ asset('js/pages/properties/create/modal/add-contact/handlers.js') }}',
-            '{{ asset('js/pages/properties/create/modal/add-contact/main.js') }}',
             '{{ asset('js/pages/developers/page-create-developers.js') }}'
         ];
 
@@ -433,4 +425,7 @@
             });
         }
     </script>
+
+    {{-- Модуль контактов --}}
+    @include('components.contact-modal-scripts', ['context' => 'developers', 'maxContacts' => 0, 'behavior' => ['requireRoles' => false, 'skipApiForExisting' => false, 'phoneDialCodeMapping' => true, 'hasPendingContactData' => false]])
 @endpush

@@ -880,7 +880,7 @@
     </form>
 @endsection
 
-@include('pages.developers.modals.contact-modal')
+@include('components.contact-modal', ['context' => 'complexes', 'contactRoles' => $contactRoles, 'contactTags' => [], 'showExtendedSocials' => true, 'showBirthday' => false, 'showHistory' => false, 'tagsMultiple' => false])
 
 <template id="contact-card-template">
     <div class="contact-card mb-3" data-contact-id="">
@@ -926,14 +926,8 @@
     <script src="{{ asset('js/lib/tui-image-editor.min.js') }}"></script>
     <script src="{{ asset('js/lib/heic2any.min.js') }}"></script>
 
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/config.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/utils.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/components.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/api.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/form.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/contact-list.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/handlers.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/modal/add-contact/main.js') }}"></script>
+    {{-- Модуль контактов --}}
+    @include('components.contact-modal-scripts', ['context' => 'complexes', 'maxContacts' => 0, 'behavior' => ['requireRoles' => false, 'skipApiForExisting' => true, 'phoneDialCodeMapping' => true, 'hasPendingContactData' => false]])
 
     <script src="{{ asset('js/pages/complexes/create/function_on_pages-create.js') }}" type="module"></script>
     <script src="{{ asset('js/pages/complexes/create/page-create-complex.js') }}" type="module"></script>

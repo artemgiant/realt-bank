@@ -18,15 +18,13 @@ window.ContactModal = window.ContactModal || {};
  * Инициализация модуля контактов
  */
 window.ContactModal.init = function() {
-    // Инициализируем все обработчики
     if (window.ContactModal.Handlers) {
         window.ContactModal.Handlers.initAll();
     }
 
-    // Добавляем CSS для Select2 в модалке
     this._addStyles();
 
-    console.log('ContactModal модуль инициализирован');
+    console.log('ContactModal модуль инициализирован (context: ' + window.ContactModal.Config.context + ')');
 };
 
 /**
@@ -34,7 +32,6 @@ window.ContactModal.init = function() {
  * @private
  */
 window.ContactModal._addStyles = function() {
-    // Проверяем, не добавлены ли уже стили
     if (document.getElementById('contact-modal-styles')) return;
 
     var style = document.createElement('style');

@@ -419,7 +419,7 @@
     </div>
 
     {{-- Модальное окно добавления контакта --}}
-    @include('pages.developers.modals.contact-modal')
+    @include('components.contact-modal', ['context' => 'developers', 'contactRoles' => $contactRoles, 'contactTags' => [], 'showExtendedSocials' => true, 'showBirthday' => false, 'showHistory' => false, 'tagsMultiple' => false])
 
     {{-- Шаблон для карточки контакта (используется JS) --}}
     <template id="contact-card-template">
@@ -467,22 +467,14 @@
 @endsection
 
 @push('scripts')
-    {{-- Общие функции (PhoneInputManager, PhotoLoaderMini и т.д.) + Модуль контактов --}}
+    {{-- Общие функции (PhoneInputManager, PhotoLoaderMini и т.д.) --}}
     <script type="module">
         import { PhoneInputManager, PhotoLoaderMini } from '{{ asset('js/pages/function_on_pages-create.js') }}';
         window.PhoneInputManager = PhoneInputManager;
         window.PhotoLoaderMini = PhotoLoaderMini;
 
-        // Загружаем остальные скрипты после того как классы доступны
+        // Загружаем page-create-developers после того как классы доступны
         const scripts = [
-            '{{ asset('js/pages/properties/create/modal/add-contact/config.js') }}',
-            '{{ asset('js/pages/properties/create/modal/add-contact/utils.js') }}',
-            '{{ asset('js/pages/properties/create/modal/add-contact/api.js') }}',
-            '{{ asset('js/pages/properties/create/modal/add-contact/form.js') }}',
-            '{{ asset('js/pages/properties/create/modal/add-contact/contact-list.js') }}',
-            '{{ asset('js/pages/properties/create/modal/add-contact/components.js') }}',
-            '{{ asset('js/pages/properties/create/modal/add-contact/handlers.js') }}',
-            '{{ asset('js/pages/properties/create/modal/add-contact/main.js') }}',
             '{{ asset('js/pages/developers/page-create-developers.js') }}'
         ];
 
@@ -495,23 +487,30 @@
                 document.body.appendChild(script);
             });
         }
+    </script>
 
-        // Инициализация контактов девелопера
-        @foreach($developer->contacts as $contact)
-            window.ContactModal.ContactList.add({
-                id: {{ $contact->id }},
-                full_name: '{{ $contact->full_name }}',
-                contact_role_names: '{{ $contact->contact_role_names }}',
-                primary_phone: '{{ $contact->primary_phone }}',
-                photo_url: '{{ $contact->photo_url }}',
-                whatsapp: '{{ $contact->whatsapp }}',
-                viber: '{{ $contact->viber }}',
-                telegram: '{{ $contact->telegram }}',
-                whatsapp_link: '{{ $contact->whatsapp_link }}',
-                viber_link: '{{ $contact->viber_link }}',
-                telegram_link: '{{ $contact->telegram_link }}',
-                messengers: @json($contact->messengers)
-            });
-        @endforeach
+    {{-- Модуль контактов --}}
+    @include('components.contact-modal-scripts', ['context' => 'developers', 'maxContacts' => 0, 'behavior' => ['requireRoles' => false, 'skipApiForExisting' => false, 'phoneDialCodeMapping' => true, 'hasPendingContactData' => false]])
+
+    {{-- Инициализация контактов девелопера --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @foreach($developer->contacts as $contact)
+                window.ContactModal.ContactList.add({
+                    id: {{ $contact->id }},
+                    full_name: '{{ $contact->full_name }}',
+                    contact_role_names: '{{ $contact->contact_role_names }}',
+                    primary_phone: '{{ $contact->primary_phone }}',
+                    photo_url: '{{ $contact->photo_url }}',
+                    whatsapp: '{{ $contact->whatsapp }}',
+                    viber: '{{ $contact->viber }}',
+                    telegram: '{{ $contact->telegram }}',
+                    whatsapp_link: '{{ $contact->whatsapp_link }}',
+                    viber_link: '{{ $contact->viber_link }}',
+                    telegram_link: '{{ $contact->telegram_link }}',
+                    messengers: @json($contact->messengers)
+                });
+            @endforeach
+        });
     </script>
 @endpush

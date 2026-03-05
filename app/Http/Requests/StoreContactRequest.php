@@ -25,11 +25,12 @@ class StoreContactRequest extends FormRequest
 
         $baseRules = [
             'first_name' => 'required|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
             'phones' => 'required|array|min:1',
             'phones.*.phone' => 'required|string|max:50',
             'phones.*.is_primary' => 'nullable|boolean',
-            'contact_role' => 'nullable|array',
-            'contact_role.*' => 'exists:dictionaries,id',
             'telegram' => 'nullable|string|max:255',
             'viber' => 'nullable|string|max:255',
             'whatsapp' => 'nullable|string|max:255',
@@ -46,28 +47,15 @@ class StoreContactRequest extends FormRequest
         ];
 
         return match ($context) {
-            'properties' => array_merge($baseRules, [
-                'last_name' => 'nullable|string|max:255',
-                'middle_name' => 'nullable|string|max:255',
-                'email' => 'nullable|email|max:255',
+            'properties', 'companies' => array_merge($baseRules, [
                 'roles' => 'required|array|min:1',
                 'roles.*' => 'exists:dictionaries,id',
-                'tags' => 'nullable|string|max:500',
-            ]),
-            'companies' => array_merge($baseRules, [
-                'last_name' => 'nullable|string|max:255',
-                'middle_name' => 'nullable|string|max:255',
-                'email' => 'nullable|email|max:255',
-                'tags' => 'nullable|array',
-                'tags.*' => 'exists:dictionaries,id',
+                'tags' => 'nullable',
             ]),
             default => array_merge($baseRules, [
-                'last_name' => 'nullable|string|max:255',
-                'middle_name' => 'nullable|string|max:255',
-                'email' => 'nullable|email|max:255',
-                'tags' => 'nullable|string|max:500',
                 'roles' => 'nullable|array',
                 'roles.*' => 'exists:dictionaries,id',
+                'tags' => 'nullable|string|max:500',
             ]),
         };
     }

@@ -8,8 +8,6 @@ window.ContactModal.Api = {
 
     /**
      * Поиск контакта по номеру телефона
-     * @param {string} phone - Номер телефона
-     * @returns {Promise<Object>}
      */
     searchByPhone: function(phone) {
         var Config = window.ContactModal.Config;
@@ -49,8 +47,6 @@ window.ContactModal.Api = {
 
     /**
      * Создание нового контакта
-     * @param {FormData} formData - Данные формы
-     * @returns {Promise<Object>}
      */
     store: function(formData) {
         var Config = window.ContactModal.Config;
@@ -77,8 +73,6 @@ window.ContactModal.Api = {
 
     /**
      * Получение данных контакта по ID
-     * @param {number|string} contactId - ID контакта
-     * @returns {Promise<Object>}
      */
     show: function(contactId) {
         var Config = window.ContactModal.Config;
@@ -105,16 +99,12 @@ window.ContactModal.Api = {
 
     /**
      * Обновление контакта
-     * @param {number|string} contactId - ID контакта
-     * @param {FormData} formData - Данные формы
-     * @returns {Promise<Object>}
      */
     update: function(contactId, formData) {
         var Config = window.ContactModal.Config;
         var Utils = window.ContactModal.Utils;
         var url = Config.urls.update.replace('{id}', contactId);
 
-        // Добавляем _method для PUT запроса
         formData.append('_method', 'PUT');
 
         return fetch(url, {
@@ -138,7 +128,6 @@ window.ContactModal.Api = {
 
     /**
      * Сбор телефонов из формы
-     * @returns {Array<Object>}
      */
     collectPhones: function() {
         var Config = window.ContactModal.Config;
@@ -149,7 +138,7 @@ window.ContactModal.Api = {
             var phone = input.value.trim();
             if (phone) {
                 phones.push({
-                    phone: Utils.formatPhoneWithCountryCode(phone),
+                    phone: Utils.formatPhoneWithCountryCode(phone, input),
                     is_primary: index === 0
                 });
             }
@@ -159,9 +148,7 @@ window.ContactModal.Api = {
     },
 
     /**
-     * Подготовка FormData с телефонами
-     * @param {HTMLFormElement} form - Элемент формы
-     * @returns {FormData}
+     * Подготовка FormData с телефонами и ролями
      */
     prepareFormData: function(form) {
         var formData = new FormData(form);
@@ -183,6 +170,24 @@ window.ContactModal.Api = {
             formData.append('phones[' + index + '][phone]', phone.phone);
             formData.append('phones[' + index + '][is_primary]', phone.is_primary ? '1' : '0');
         });
+
+        // Роли: Select2 может не синхронизировать multi-select с FormData — добавляем явно
+        var rolesSelect = form.querySelector('#roles-contact-modal');
+        if (rolesSelect) {
+            var keysToDeleteRoles = [];
+            for (var p of formData.entries()) {
+                if (p[0] === 'roles[]' || p[0].indexOf('roles[') === 0) keysToDeleteRoles.push(p[0]);
+            }
+            keysToDeleteRoles.forEach(function(k) { formData.delete(k); });
+            var rolesVal = typeof $ !== 'undefined' && $(rolesSelect).data('select2')
+                ? $(rolesSelect).val()
+                : Array.from(rolesSelect.selectedOptions).map(function(opt) { return opt.value; });
+            if (Array.isArray(rolesVal)) {
+                rolesVal.forEach(function(roleId) {
+                    if (roleId) formData.append('roles[]', roleId);
+                });
+            }
+        }
 
         return formData;
     }

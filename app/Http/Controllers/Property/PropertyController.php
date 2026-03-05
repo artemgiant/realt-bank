@@ -191,8 +191,12 @@ class PropertyController extends Controller
         // Количество после фильтрации
         $recordsFiltered = $query->count();
 
-        // Сортировка
-        $query->orderBy($sortField, $sortDir);
+        // Сортировка (для price/price_per_m2 конвертируем в UAH через курс валюты)
+        if (in_array($sortField, ['price', 'price_per_m2'])) {
+            $query->orderByRaw("properties.{$sortField} * COALESCE(property_currency.rate, 1) {$sortDir}");
+        } else {
+            $query->orderBy("properties.{$sortField}", $sortDir);
+        }
 
         // Пагинация
         $properties = $query

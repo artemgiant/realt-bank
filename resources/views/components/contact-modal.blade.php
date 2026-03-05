@@ -1,3 +1,23 @@
+{{--
+    Единое модальное окно контакта для всех сущностей.
+
+    Параметры:
+    - $context (string, required): 'properties' | 'companies' | 'complexes' | 'developers'
+    - $contactRoles (Collection): роли контакта из Dictionary
+    - $contactTags (Collection|array): теги контакта
+    - $showExtendedSocials (bool, default true): TikTok, Instagram, Facebook
+    - $showBirthday (bool, default true): поле дня рождения
+    - $showHistory (bool, default true): секция истории изменений
+    - $tagsMultiple (bool, default false): множественный выбор тегов
+--}}
+
+@php
+    $showExtendedSocials = $showExtendedSocials ?? true;
+    $showBirthday = $showBirthday ?? true;
+    $showHistory = $showHistory ?? true;
+    $tagsMultiple = $tagsMultiple ?? false;
+@endphp
+
 <div class="modal fade" id="add-contact-modal" tabindex="-1" aria-labelledby="add-contact-modal-label" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
@@ -7,7 +27,6 @@
                         <h2 class="modal-title" id="add-contact-modal-label">
                             <span>Контакт</span>
                         </h2>
-                        {{-- Индикатор найденного контакта --}}
                         <div id="contact-found-indicator" class="badge bg-success d-none">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="me-1">
                                 <path d="M13.854 4.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.793l6.646-6.647a.5.5 0 0 1 .708 0z" fill="currentColor"/>
@@ -17,15 +36,14 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    {{-- Hidden field для ID существующего контакта --}}
                     <input type="hidden" id="contact-id-modal" name="contact_id" value="">
-                    {{-- Hidden field для контекста валидации --}}
-                    <input type="hidden" name="context" value="developers">
+                    <input type="hidden" name="context" value="{{ $context }}">
 
                     <div class="modal-body-l">
                         <h3 class="modal-body-title">
                             <span>Основное</span>
                         </h3>
+                        {{-- ФИО --}}
                         <div class="modal-row">
                             <div class="item">
                                 <label for="first-name-contact-modal" class="green">Имя <span class="text-danger">*</span></label>
@@ -46,6 +64,7 @@
                                 </div>
                             </div>
                         </div>
+                        {{-- Телефон, Email, Роли --}}
                         <div class="modal-row">
                             <div class="item phone">
                                 <div class="item" data-phone-item>
@@ -71,8 +90,8 @@
                                 </div>
                             </div>
                             <div class="item selects">
-                                <label class="item-label green" for="contact-role-modal">Роль контакта <span class="text-danger">*</span></label>
-                                <select id="contact-role-modal" name="contact_role[]" class="js-example-responsive2 my-select2" autocomplete="off" multiple required>
+                                <label class="item-label green" for="roles-contact-modal">Роли контакта <span class="text-danger">*</span></label>
+                                <select id="roles-contact-modal" name="roles[]" class="js-example-responsive2 my-select2" autocomplete="off" multiple required>
                                     @if(isset($contactRoles))
                                         @foreach($contactRoles as $role)
                                             <option value="{{ $role->id }}">{{ $role->name }}</option>
@@ -81,13 +100,16 @@
                                 </select>
                             </div>
                         </div>
+                        {{-- Теги и Комментарий --}}
                         <div class="modal-row">
                             <div class="item w25 selects">
                                 <label class="item-label green" for="tags-client-modal">Теги</label>
-                                <select id="tags-client-modal" name="tags" class="js-example-responsive2 my-select2" autocomplete="off">
-                                    <option value="">Выберите тег</option>
-                                    <option value="Посредник">Посредник</option>
-                                    <option value="VIP">VIP</option>
+                                <select id="tags-client-modal" name="tags{{ $tagsMultiple ? '[]' : '' }}" class="js-example-responsive2 my-select2" {{ $tagsMultiple ? 'multiple' : '' }} autocomplete="off">
+                                    @if(isset($contactTags))
+                                        @foreach($contactTags as $tag)
+                                            <option value="{{ $tag->id ?? $tag }}">{{ $tag->name ?? $tag }}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                             <div class="item w75">
@@ -97,6 +119,7 @@
                                 </div>
                             </div>
                         </div>
+                        {{-- Фото и Мессенджеры --}}
                         <div class="modal-row files">
                             <div class="item photo-loader">
                                 <span class="label">Фото</span>
@@ -128,6 +151,7 @@
                                     <span><label class="item-label" for="whatsapp-contact-modal">Whatsapp</label></span>
                                     <input class="item-inputText" id="whatsapp-contact-modal" name="whatsapp" type="text" autocomplete="off" placeholder="@profilename">
                                 </div>
+                                @if($showExtendedSocials)
                                 <div class="item w33">
                                     <span><label class="item-label" for="tiktok-contact-modal">TikTok</label></span>
                                     <input class="item-inputText" id="tiktok-contact-modal" name="tiktok" type="text" autocomplete="off" placeholder="@profilename">
@@ -140,6 +164,7 @@
                                     <span><label class="item-label" for="facebook-contact-modal">Facebook</label></span>
                                     <input class="item-inputText" id="facebook-contact-modal" name="facebook" type="text" autocomplete="off" placeholder="http://www.facebook.com/profilename">
                                 </div>
+                                @endif
                                 <div class="item w50">
                                     <label for="passport-contact-modal">Паспорт</label>
                                     <div class="item-inputText-wrapper">
@@ -152,6 +177,7 @@
                                         <input class="item-inputText" id="inn-contact-modal" name="inn" type="text" autocomplete="off" placeholder="1234567890">
                                     </div>
                                 </div>
+                                @if($showBirthday)
                                 <div class="item w25 data">
                                     <span><label for="birthday-contact-modal">День рождения</label></span>
                                     <span>
@@ -159,21 +185,23 @@
                                         <picture><source srcset="{{ asset('img/icon/calendar.svg') }}" type="image/webp"><img src="{{ asset('img/icon/calendar.svg') }}" alt=""></picture>
                                     </span>
                                 </div>
+                                @endif
                             </div>
                         </div>
+                        @if($showHistory)
                         <div class="modal-row">
                             <button class="modal-body-title btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContactHistory" aria-expanded="false" aria-controls="collapseContactHistory">
                                 <span>История изменений</span>
                             </button>
                             <div class="collapse" id="collapseContactHistory">
                                 <ul class="history-info" id="contact-history-list">
-                                    {{-- История будет загружаться динамически --}}
                                     <li class="history-info-item text-muted">
                                         <p>История изменений пуста</p>
                                     </li>
                                 </ul>
                             </div>
                         </div>
+                        @endif
                     </div>
                     <div class="modal-body-l mb-0">
                         <button class="btn btn-outline-primary" type="button" data-bs-dismiss="modal">
