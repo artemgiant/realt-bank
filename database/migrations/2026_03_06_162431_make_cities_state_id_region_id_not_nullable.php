@@ -17,10 +17,21 @@ return new class extends Migration
             DB::table('cities')->whereNull('region_id')->update(['region_id' => $fallbackRegionId]);
         }
 
-        Schema::table('cities', function (Blueprint $table) {
-            // Drop old FK with SET NULL, recreate with RESTRICT
-            $table->dropForeign(['region_id']);
-        });
+        // Drop existing FK on region_id (name may vary between environments)
+        $fk = DB::selectOne("
+            SELECT CONSTRAINT_NAME
+            FROM information_schema.KEY_COLUMN_USAGE
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'cities'
+              AND COLUMN_NAME = 'region_id'
+              AND REFERENCED_TABLE_NAME IS NOT NULL
+        ");
+
+        if ($fk) {
+            Schema::table('cities', function (Blueprint $table) use ($fk) {
+                $table->dropForeign($fk->CONSTRAINT_NAME);
+            });
+        }
 
         Schema::table('cities', function (Blueprint $table) {
             $table->unsignedBigInteger('state_id')->nullable(false)->change();
@@ -34,9 +45,20 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('cities', function (Blueprint $table) {
-            $table->dropForeign(['region_id']);
-        });
+        $fk = DB::selectOne("
+            SELECT CONSTRAINT_NAME
+            FROM information_schema.KEY_COLUMN_USAGE
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'cities'
+              AND COLUMN_NAME = 'region_id'
+              AND REFERENCED_TABLE_NAME IS NOT NULL
+        ");
+
+        if ($fk) {
+            Schema::table('cities', function (Blueprint $table) use ($fk) {
+                $table->dropForeign($fk->CONSTRAINT_NAME);
+            });
+        }
 
         Schema::table('cities', function (Blueprint $table) {
             $table->unsignedBigInteger('state_id')->nullable()->change();
