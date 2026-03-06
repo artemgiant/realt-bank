@@ -2,12 +2,21 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
+        // Fill NULL values before making NOT NULL
+        DB::table('cities')->whereNull('state_id')->update(['state_id' => 14]);
+
+        $fallbackRegionId = DB::table('regions')->where('state_id', 14)->value('id');
+        if ($fallbackRegionId) {
+            DB::table('cities')->whereNull('region_id')->update(['region_id' => $fallbackRegionId]);
+        }
+
         Schema::table('cities', function (Blueprint $table) {
             // Drop old FK with SET NULL, recreate with RESTRICT
             $table->dropForeign(['region_id']);
