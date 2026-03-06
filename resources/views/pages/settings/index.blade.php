@@ -44,6 +44,7 @@
     {{-- Location Drawers --}}
     @include('pages.settings.locations.modals.drawer-country')
     @include('pages.settings.locations.modals.drawer-state')
+    @include('pages.settings.locations.modals.drawer-region')
     @include('pages.settings.locations.modals.drawer-district')
     @include('pages.settings.locations.modals.drawer-city')
     @include('pages.settings.locations.modals.drawer-zone')

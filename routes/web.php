@@ -75,6 +75,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/states/default', [App\Http\Controllers\LocationController::class, 'getDefaultState'])->name('location.states.default');
         Route::get('/states/{id}', [App\Http\Controllers\LocationController::class, 'showState'])->name('location.states.show');
 
+        // Районы области по state_id
+        Route::get('/regions/by-state', [App\Http\Controllers\LocationController::class, 'getRegionsByState'])->name('location.regions.by-state');
+
         // Данные для фильтра локаций
         Route::get('/filter-data', [App\Http\Controllers\LocationController::class, 'getFilterData'])->name('location.filter-data');
 
@@ -176,6 +179,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/streets', [SettingsController::class, 'streets'])->name('streets.index');
 
         // Location CRUD — AJAX helpers
+        Route::get('/locations/regions-by-state', [LocationSettingsController::class, 'getRegions'])->name('locations.regions-by-state');
         Route::get('/locations/cities-by-state', [LocationSettingsController::class, 'getCities'])->name('locations.cities-by-state');
         Route::get('/locations/districts-by-city', [LocationSettingsController::class, 'getDistricts'])->name('locations.districts-by-city');
         Route::get('/locations/zones-by-city', [LocationSettingsController::class, 'getZones'])->name('locations.zones-by-city');
@@ -189,6 +193,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/states', [LocationSettingsController::class, 'storeState'])->name('states.store');
         Route::put('/states/{state}', [LocationSettingsController::class, 'updateState'])->name('states.update');
         Route::delete('/states/{state}', [LocationSettingsController::class, 'destroyState'])->name('states.destroy');
+
+        // Regions (Районы области) CRUD
+        Route::post('/regions', [LocationSettingsController::class, 'storeRegion'])->name('regions.store');
+        Route::put('/regions/{region}', [LocationSettingsController::class, 'updateRegion'])->name('regions.update');
+        Route::delete('/regions/{region}', [LocationSettingsController::class, 'destroyRegion'])->name('regions.destroy');
 
         // Districts CRUD
         Route::post('/districts', [LocationSettingsController::class, 'storeDistrict'])->name('districts.store');

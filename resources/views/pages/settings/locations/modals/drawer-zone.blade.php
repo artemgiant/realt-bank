@@ -38,22 +38,21 @@
             <div class="drawer-section">
                 <div class="drawer-section-title">Привязка</div>
                 <div class="form-group">
-                    <label class="form-label">Город <span class="required">*</span></label>
-                    <select name="city_id" id="zone-city-select" class="form-input" required>
-                        <option value="">Выберите город...</option>
-                        @if(isset($zoneCities))
-                            @foreach($zoneCities as $city)
-                                <option value="{{ $city->id }}" data-country-name="{{ $city->state->country->name ?? '' }}">{{ $city->name }} ({{ $city->state->name ?? '' }})</option>
+                    <label class="form-label">Регион <span class="required">*</span></label>
+                    <select name="state_id" id="zone-state-select" class="form-input" required>
+                        <option value="">Выберите регион...</option>
+                        @if(isset($statesList))
+                            @foreach($statesList as $state)
+                                <option value="{{ $state->id }}" data-country-name="{{ $state->country->name ?? '' }}">{{ $state->name }}</option>
                             @endforeach
                         @endif
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Регион</label>
-                    <select name="district_id" id="zone-district-select" class="form-input">
-                        <option value="">Без региона</option>
+                    <label class="form-label">Город <span class="required">*</span></label>
+                    <select name="city_id" id="zone-city-select" class="form-input" required>
+                        <option value="">Сначала выберите регион...</option>
                     </select>
-                    <span class="form-hint">Необязательно — микрорайон может не принадлежать региону</span>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Страна <span class="required">*</span></label>

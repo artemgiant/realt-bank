@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Location\City;
 use App\Models\Location\Country;
 use App\Models\Location\District;
+use App\Models\Location\Region;
 use App\Models\Location\State;
 use App\Models\Location\Street;
 use App\Models\Location\Zone;
@@ -17,12 +18,24 @@ class LocationSettingsController extends Controller
 {
     // ========== AJAX helpers (for cascading Select2) ==========
 
+    public function getRegions(Request $request): JsonResponse
+    {
+        $regions = Region::query()
+            ->when($request->state_id, fn ($q, $id) => $q->where('state_id', $id))
+            ->active()
+            ->orderBy('name')
+            ->get(['id', 'name', 'state_id']);
+
+        return response()->json(['results' => $regions]);
+    }
+
     public function getCities(Request $request): JsonResponse
     {
         $cities = City::query()
             ->when($request->state_id, fn ($q, $id) => $q->where('state_id', $id))
+            ->when($request->region_id, fn ($q, $id) => $q->where('region_id', $id))
             ->orderBy('name')
-            ->get(['id', 'name', 'type', 'state_id']);
+            ->get(['id', 'name', 'type', 'state_id', 'region_id']);
 
         return response()->json(['results' => $cities]);
     }
@@ -126,6 +139,45 @@ class LocationSettingsController extends Controller
         return redirect()->route('settings.regions.index')->with('success', 'Регион удалён');
     }
 
+    // ========== Regions (Районы области) CRUD ==========
+
+    public function storeRegion(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'state_id' => 'required|exists:states,id',
+        ]);
+
+        Region::create($validated);
+
+        return redirect()->route('settings.regions.index')->with('success', 'Район области добавлен');
+    }
+
+    public function updateRegion(Request $request, Region $region): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'state_id' => 'required|exists:states,id',
+        ]);
+
+        $region->update($validated);
+
+        return redirect()->route('settings.regions.index')->with('success', 'Район области обновлён');
+    }
+
+    public function destroyRegion(Region $region): RedirectResponse
+    {
+        $citiesCount = $region->cities()->count();
+        if ($citiesCount > 0) {
+            return redirect()->route('settings.regions.index')
+                ->with('error', "Невозможно удалить: в районе области есть {$citiesCount} город(ов)");
+        }
+
+        $region->delete();
+
+        return redirect()->route('settings.regions.index')->with('success', 'Район области удалён');
+    }
+
     // ========== Districts CRUD ==========
 
     public function storeDistrict(Request $request): RedirectResponse
@@ -172,6 +224,7 @@ class LocationSettingsController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'state_id' => 'required|exists:states,id',
+            'region_id' => 'nullable|exists:regions,id',
         ]);
 
         $validated['type'] = 'city';
@@ -186,6 +239,7 @@ class LocationSettingsController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'state_id' => 'required|exists:states,id',
+            'region_id' => 'nullable|exists:regions,id',
         ]);
 
         $city->update($validated);
@@ -212,8 +266,8 @@ class LocationSettingsController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'state_id' => 'required|exists:states,id',
             'city_id' => 'required|exists:cities,id',
-            'district_id' => 'nullable|exists:districts,id',
         ]);
 
         Zone::create($validated);
@@ -225,8 +279,8 @@ class LocationSettingsController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'state_id' => 'required|exists:states,id',
             'city_id' => 'required|exists:cities,id',
-            'district_id' => 'nullable|exists:districts,id',
         ]);
 
         $zone->update($validated);

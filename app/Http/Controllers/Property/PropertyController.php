@@ -864,6 +864,7 @@ class PropertyController extends Controller
             // Location
             'country_id' => 'nullable|exists:countries,id',
             'state_id' => 'nullable|exists:states,id',
+            'region_id' => 'nullable|exists:regions,id',
             'city_id' => 'nullable|exists:cities,id',
             'district_id' => 'nullable|exists:districts,id',
             'zone_id' => 'nullable|exists:zones,id',
@@ -994,6 +995,7 @@ class PropertyController extends Controller
                 // Location
                 'country_id' => $validated['country_id'] ?? null,
                 'state_id' => $validated['state_id'] ?? null,
+                'region_id' => $validated['region_id'] ?? null,
                 'city_id' => $validated['city_id'] ?? null,
                 'district_id' => $validated['district_id'] ?? null,
                 'zone_id' => $validated['zone_id'] ?? null,
@@ -1217,6 +1219,7 @@ class PropertyController extends Controller
             // Location
             'country_id' => 'nullable|exists:countries,id',
             'state_id' => 'nullable|exists:states,id',
+            'region_id' => 'nullable|exists:regions,id',
             'city_id' => 'nullable|exists:cities,id',
             'district_id' => 'nullable|exists:districts,id',
             'zone_id' => 'nullable|exists:zones,id',
@@ -1335,6 +1338,7 @@ class PropertyController extends Controller
                 // Location
                 'country_id' => $validated['country_id'] ?? null,
                 'state_id' => $validated['state_id'] ?? null,
+                'region_id' => $validated['region_id'] ?? null,
                 'city_id' => $validated['city_id'] ?? null,
                 'district_id' => $validated['district_id'] ?? null,
                 'zone_id' => $validated['zone_id'] ?? null,

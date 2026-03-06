@@ -226,6 +226,7 @@ var deleteTypeLabels = {
     user: 'Удалить пользователя?',
     country: 'Удалить страну?',
     state: 'Удалить регион?',
+    region: 'Удалить район области?',
     district: 'Удалить район?',
     city: 'Удалить город?',
     zone: 'Удалить микрорайон?',
@@ -260,6 +261,8 @@ function openDeleteModal(btn) {
             warningText.textContent = `В этой стране есть ${users} регион(ов). Сначала удалите или перенесите их.`;
         } else if (type === 'state') {
             warningText.textContent = `В этом регионе есть ${users} город(ов). Сначала удалите или перенесите их.`;
+        } else if (type === 'region') {
+            warningText.textContent = `В этом районе области есть ${users} город(ов). Сначала удалите или перенесите их.`;
         } else if (type === 'city') {
             warningText.textContent = `В этом городе есть ${users} улиц(а). Сначала удалите или перенесите их.`;
         } else if (type === 'district') {
@@ -296,7 +299,7 @@ function confirmDelete() {
     }
 
     // Build correct plural route path
-    var typePlurals = { role: 'roles', user: 'users', country: 'countries', state: 'states', district: 'districts', city: 'cities', zone: 'zones', street: 'streets' };
+    var typePlurals = { role: 'roles', user: 'users', country: 'countries', state: 'states', region: 'regions', district: 'districts', city: 'cities', zone: 'zones', street: 'streets' };
     var typePlural = typePlurals[deleteTarget.type] || (deleteTarget.type + 's');
 
     // Create and submit delete form

@@ -17,6 +17,7 @@ class City extends Model
         'name',
         'type',
         'state_id',
+        'region_id',
     ];
 
     // ========== Константы типов населённых пунктов ==========
@@ -38,6 +39,11 @@ class City extends Model
     public function state(): BelongsTo
     {
         return $this->belongsTo(State::class);
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class);
     }
 
     public function districts(): HasMany

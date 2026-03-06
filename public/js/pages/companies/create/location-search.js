@@ -242,6 +242,62 @@ class OfficeStateSearch {
     }
 }
 
+// ========== Класс управления районом области (для основного блока) ==========
+class MainRegionSelect {
+    constructor() {
+        this.select = document.querySelector('.block-all-info #region_id');
+        if (!this.select) return;
+
+        this.init();
+    }
+
+    init() {
+        document.addEventListener('mainStateSelected', (e) => {
+            this.loadRegions(e.detail.id);
+        });
+        document.addEventListener('mainStateCleared', () => {
+            this.clear();
+        });
+
+        const stateIdInput = document.querySelector('input[name="state_id"]');
+        if (stateIdInput && stateIdInput.value) {
+            this.loadRegions(stateIdInput.value);
+        }
+    }
+
+    async loadRegions(stateId) {
+        if (!stateId) { this.clear(); return; }
+
+        const url = `/location/regions/by-state?state_id=${stateId}`;
+        const data = await LocationUtils.fetchJson(url);
+        if (data.success) this.populateSelect(data.results);
+    }
+
+    populateSelect(regions) {
+        const currentValue = this.select.value;
+        if ($(this.select).hasClass('select2-hidden-accessible')) {
+            $(this.select).select2('destroy');
+        }
+        this.select.innerHTML = '<option value="">— Не выбрано —</option>';
+        regions.forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = r.id;
+            opt.textContent = r.name;
+            if (String(r.id) === String(currentValue)) opt.selected = true;
+            this.select.appendChild(opt);
+        });
+        $(this.select).select2({ minimumResultsForSearch: Infinity, width: '100%' });
+    }
+
+    clear() {
+        if ($(this.select).hasClass('select2-hidden-accessible')) {
+            $(this.select).select2('destroy');
+        }
+        this.select.innerHTML = '<option value="">— Не выбрано —</option>';
+        $(this.select).select2({ minimumResultsForSearch: Infinity, width: '100%' });
+    }
+}
+
 // ========== Класс поиска улицы (для офиса) ==========
 class OfficeStreetSearch {
     constructor(wrapper, officeIndex, stateSearch) {
@@ -850,11 +906,13 @@ class MainStreetSearch {
 document.addEventListener('DOMContentLoaded', () => {
     // Инициализация для основного блока компании
     const mainStateSearch = new MainStateSearch();
+    const mainRegionSelect = new MainRegionSelect();
     const mainStreetSearch = new MainStreetSearch(mainStateSearch);
 
     window.LocationSearch = {
         main: {
             state: mainStateSearch,
+            region: mainRegionSelect,
             street: mainStreetSearch
         },
         initForOffice: initLocationSearchForOffice

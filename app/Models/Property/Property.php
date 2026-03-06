@@ -6,6 +6,7 @@ use App\Models\Contact\Contact;
 use App\Models\Location\City;
 use App\Models\Location\Country;
 use App\Models\Location\District;
+use App\Models\Location\Region;
 use App\Models\Location\State;
 use App\Models\Location\Street;
 use App\Models\Location\Zone;
@@ -44,6 +45,7 @@ class Property extends Model
         // Локация
         'country_id',
         'state_id',
+        'region_id',
         'city_id',
         'district_id',
         'zone_id',
@@ -172,6 +174,11 @@ class Property extends Model
     public function state(): BelongsTo
     {
         return $this->belongsTo(State::class);
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class);
     }
 
     public function city(): BelongsTo

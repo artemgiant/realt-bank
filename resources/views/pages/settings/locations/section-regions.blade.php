@@ -16,9 +16,13 @@
                     <input type="hidden" name="per_page" value="{{ $perPage }}">
                 @endif
             </form>
+            <button class="btn btn-primary" onclick="openRegionDrawer()" style="margin-right:4px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Район области
+            </button>
             <button class="btn btn-primary" onclick="openStateDrawer()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Добавить
+                Область
             </button>
         </div>
     </div>
@@ -36,12 +40,15 @@
                                 <h4>{{ $state->name }}</h4>
                                 <p>{{ $state->country->name ?? '—' }}</p>
                             </div>
-                            @if($state->cities->flatMap->districts->count() > 0)
+                            @if($state->regions->count() > 0 || $state->cities->flatMap->districts->count() > 0)
                                 <span class="tree-expand" style="cursor:pointer;">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
                                 </span>
                             @endif
-                            <span class="address-count">{{ $state->cities_count }} {{ trans_choice('город|города|городов', $state->cities_count) }}</span>
+                            <span class="address-count">
+                                {{ $state->regions_count }} р-н,
+                                {{ $state->cities_count }} {{ trans_choice('город|города|городов', $state->cities_count) }}
+                            </span>
                             <div class="actions-cell">
                                 <button class="btn-icon" onclick="event.stopPropagation(); openStateDrawer({{ $state->id }})" title="Редактировать">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/></svg>
@@ -51,6 +58,27 @@
                                 </button>
                             </div>
                         </div>
+
+                        @foreach($state->regions as $region)
+                            <div class="address-item region-child" data-parent-state="{{ $state->id }}" data-search="{{ mb_strtolower($region->name) }}" style="display:none;">
+                                <div class="address-icon" style="width:28px;height:28px;margin-left:14px;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                                </div>
+                                <div class="address-info">
+                                    <h4 style="font-size:13px;font-weight:600;">{{ $region->name }}</h4>
+                                    <p>Район области</p>
+                                </div>
+                                <span class="address-count">{{ $region->cities_count }} {{ trans_choice('город|города|городов', $region->cities_count) }}</span>
+                                <div class="actions-cell">
+                                    <button class="btn-icon" onclick="event.stopPropagation(); openRegionDrawer({{ $region->id }})" title="Редактировать">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/></svg>
+                                    </button>
+                                    <button class="btn-icon" onclick="event.stopPropagation(); openDeleteModal(this)" data-type="region" data-name="{{ $region->name }}" data-id="{{ $region->id }}" data-users="{{ $region->cities_count }}" title="Удалить">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        @endforeach
 
                         @foreach($state->cities as $city)
                             @foreach($city->districts as $district)

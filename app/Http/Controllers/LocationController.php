@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Location\City;
 use App\Models\Location\Country;
 use App\Models\Location\District;
+use App\Models\Location\Region;
 use App\Models\Location\State;
 use App\Models\Location\Street;
 use App\Models\Location\Zone;
@@ -423,6 +424,29 @@ class LocationController extends Controller
         return response()->json([
             'success' => true,
             'data' => $data,
+        ]);
+    }
+
+    /**
+     * Получение районов области по state_id
+     * GET /location/regions/by-state?state_id=ID
+     */
+    public function getRegionsByState(Request $request): JsonResponse
+    {
+        $stateId = $request->input('state_id');
+
+        if (!$stateId) {
+            return response()->json(['success' => false, 'results' => []]);
+        }
+
+        $regions = Region::where('state_id', $stateId)
+            ->active()
+            ->orderBy('name')
+            ->get(['id', 'name', 'state_id']);
+
+        return response()->json([
+            'success' => true,
+            'results' => $regions,
         ]);
     }
 

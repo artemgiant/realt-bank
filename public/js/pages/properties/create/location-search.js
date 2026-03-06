@@ -316,6 +316,88 @@ class StateSearchManager {
     }
 }
 
+// ========== Класс управления районом области ==========
+class RegionSelectManager {
+    constructor() {
+        this.select = document.querySelector('#region_id');
+        if (!this.select) return;
+
+        this.init();
+    }
+
+    init() {
+        // Слушаем выбор области
+        document.addEventListener('stateSelected', (e) => {
+            this.loadRegions(e.detail.id);
+        });
+
+        document.addEventListener('stateCleared', () => {
+            this.clear();
+        });
+
+        // Если уже есть state_id при загрузке (edit mode) — загружаем районы
+        const stateIdInput = document.querySelector('input[name="state_id"]');
+        if (stateIdInput && stateIdInput.value) {
+            this.loadRegions(stateIdInput.value);
+        }
+    }
+
+    async loadRegions(stateId) {
+        if (!stateId) {
+            this.clear();
+            return;
+        }
+
+        const url = `/location/regions/by-state?state_id=${stateId}`;
+        const data = await LocationUtils.fetchJson(url);
+
+        if (data.success) {
+            this.populateSelect(data.results);
+        }
+    }
+
+    populateSelect(regions) {
+        const currentValue = this.select.value;
+
+        // Destroy Select2 if initialized
+        if ($(this.select).hasClass('select2-hidden-accessible')) {
+            $(this.select).select2('destroy');
+        }
+
+        // Clear and rebuild options
+        this.select.innerHTML = '<option value="">— Не выбрано —</option>';
+
+        regions.forEach(region => {
+            const option = document.createElement('option');
+            option.value = region.id;
+            option.textContent = region.name;
+            if (String(region.id) === String(currentValue)) {
+                option.selected = true;
+            }
+            this.select.appendChild(option);
+        });
+
+        // Reinitialize Select2
+        $(this.select).select2({
+            minimumResultsForSearch: Infinity,
+            width: '100%',
+        });
+    }
+
+    clear() {
+        if ($(this.select).hasClass('select2-hidden-accessible')) {
+            $(this.select).select2('destroy');
+        }
+
+        this.select.innerHTML = '<option value="">— Не выбрано —</option>';
+
+        $(this.select).select2({
+            minimumResultsForSearch: Infinity,
+            width: '100%',
+        });
+    }
+}
+
 // ========== Класс поиска улицы ==========
 class StreetSearchManager {
     constructor(stateSearchManager) {
@@ -589,8 +671,11 @@ class StreetSearchManager {
 
 // ========== Инициализация ==========
 document.addEventListener('DOMContentLoaded', () => {
-    // Инициализируем поиск региона
+    // Инициализируем поиск региона (области)
     const stateSearch = new StateSearchManager();
+
+    // Инициализируем выбор района области
+    const regionSelect = new RegionSelectManager();
 
     // Инициализируем поиск улицы с передачей менеджера региона
     const streetSearch = new StreetSearchManager(stateSearch);
@@ -598,6 +683,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Экспортируем для внешнего использования
     window.LocationSearch = {
         state: stateSearch,
+        region: regionSelect,
         street: streetSearch,
     };
 });

@@ -38,6 +38,17 @@
     </div>
 </div>
 
+{{-- Район области --}}
+<div class="item selects w16">
+    <label class="item-label">Район области</label>
+    <select name="region_id" id="region_id" class="js-example-responsive2">
+        <option value="">— Не выбрано —</option>
+        @if($company->region_id ?? false)
+            <option value="{{ $company->region_id }}" selected>{{ $company->region?->name }}</option>
+        @endif
+    </select>
+</div>
+
 <div class="item w33">
     <label class="item-label">Локация (улица) <span class="text-danger">*</span></label>
     <div class="location-search-wrapper">

@@ -28,13 +28,13 @@
             @if(isset($zonesList) && $zonesList->total() > 0)
                 <div class="address-list" id="zonesAddressList">
                     @foreach($zonesList as $zone)
-                        <div class="address-item" data-search="{{ mb_strtolower($zone->name . ' ' . ($zone->city->name ?? '') . ' ' . ($zone->district->name ?? '')) }}">
+                        <div class="address-item" data-search="{{ mb_strtolower($zone->name . ' ' . ($zone->city->name ?? '') . ' ' . ($zone->state->name ?? '')) }}">
                             <div class="address-icon zone-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
                             </div>
                             <div class="address-info">
                                 <h4>{{ $zone->name }}</h4>
-                                <p>{{ $zone->city->name ?? '—' }}@if($zone->district), {{ $zone->district->name }}@endif @if($zone->city && $zone->city->state) — {{ $zone->city->state->name }}@endif</p>
+                                <p>{{ $zone->city->name ?? '—' }}@if($zone->state) — {{ $zone->state->name }}@endif</p>
                             </div>
                             <span class="address-count">{{ $zone->streets_count }} {{ trans_choice('улица|улицы|улиц', $zone->streets_count) }}</span>
                             <div class="actions-cell">

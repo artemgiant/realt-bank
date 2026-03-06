@@ -106,6 +106,76 @@ function initStateDrawerSelect2() {
     });
 }
 
+// ========== DRAWER: REGION (Район области) ==========
+function openRegionDrawer(regionId = null) {
+    const drawer = document.getElementById('drawerAddRegion');
+    const overlay = document.getElementById('drawerRegionOverlay');
+    const form = document.getElementById('regionForm');
+    const title = document.getElementById('regionDrawerTitle');
+    const subtitle = document.getElementById('regionDrawerSubtitle');
+    const submitBtn = document.getElementById('regionSubmitBtn');
+
+    form.reset();
+    form.action = '/settings/regions';
+    document.getElementById('regionMethod').value = 'POST';
+
+    initRegionDrawerSelect2();
+
+    if (regionId) {
+        let region = null;
+        for (const sk in statesData) {
+            const state = statesData[sk];
+            if (state.regions) {
+                const found = state.regions.find(r => r.id === regionId);
+                if (found) {
+                    region = { ...found, state_id: parseInt(sk) };
+                    break;
+                }
+            }
+        }
+
+        if (region) {
+            title.textContent = 'Редактирование района области';
+            subtitle.textContent = 'Измените параметры района области';
+            submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Сохранить';
+
+            form.action = '/settings/regions/' + regionId;
+            document.getElementById('regionMethod').value = 'PUT';
+            document.getElementById('regionName').value = region.name || '';
+
+            if (region.state_id) {
+                $('#region-state-select').val(region.state_id).trigger('change');
+            }
+        }
+    } else {
+        title.textContent = 'Новый район области';
+        subtitle.textContent = 'Добавьте район внутри области';
+        submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Создать';
+    }
+
+    overlay.classList.add('open');
+    drawer.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeRegionDrawer() {
+    document.getElementById('drawerRegionOverlay').classList.remove('open');
+    document.getElementById('drawerAddRegion').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function initRegionDrawerSelect2() {
+    if ($('#region-state-select').hasClass('select2-hidden-accessible')) {
+        $('#region-state-select').select2('destroy');
+    }
+    $('#region-state-select').select2({
+        width: '100%',
+        placeholder: 'Выберите область...',
+        allowClear: true,
+        dropdownParent: $('#drawerAddRegion')
+    });
+}
+
 // ========== DRAWER: DISTRICT ==========
 function openDistrictDrawer(districtId = null) {
     const drawer = document.getElementById('drawerAddDistrict');
@@ -264,9 +334,10 @@ function openZoneDrawer(zoneId = null) {
 
     const zoneKey = zoneId ? String(zoneId) : null;
 
-    // Clear country display
+    // Clear country display and city select
     var countryDisplay = document.getElementById('zone-country-display');
     if (countryDisplay) countryDisplay.value = '';
+    $('#zone-city-select').empty().append('<option value="">Сначала выберите регион...</option>').trigger('change');
 
     if (zoneKey && zonesData[zoneKey]) {
         const zone = zonesData[zoneKey];
@@ -278,12 +349,12 @@ function openZoneDrawer(zoneId = null) {
         document.getElementById('zoneMethod').value = 'PUT';
         document.getElementById('zoneName').value = zone.name || '';
 
-        // Set city (already in dropdown), then load districts
-        if (zone.city_id) {
-            $('#zone-city-select').val(zone.city_id).trigger('change');
+        // Set state first, then load cities and select the right one
+        if (zone.state_id) {
+            $('#zone-state-select').val(zone.state_id).trigger('change');
             setTimeout(function() {
-                if (zone.district_id) {
-                    $('#zone-district-select').val(zone.district_id).trigger('change');
+                if (zone.city_id) {
+                    $('#zone-city-select').val(zone.city_id).trigger('change');
                 }
             }, 500);
         }
@@ -305,22 +376,22 @@ function closeZoneDrawer() {
 }
 
 function initZoneDrawerSelect2() {
-    ['#zone-city-select', '#zone-district-select'].forEach(function(sel) {
+    ['#zone-state-select', '#zone-city-select'].forEach(function(sel) {
         if ($(sel).hasClass('select2-hidden-accessible')) {
             $(sel).select2('destroy');
         }
     });
 
-    $('#zone-city-select').select2({
+    $('#zone-state-select').select2({
         width: '100%',
-        placeholder: 'Выберите город...',
-        allowClear: true,
+        placeholder: 'Выберите регион...',
+        allowClear: false,
         dropdownParent: $('#drawerAddZone')
     });
 
-    $('#zone-district-select').select2({
+    $('#zone-city-select').select2({
         width: '100%',
-        placeholder: 'Без региона',
+        placeholder: 'Выберите город...',
         allowClear: true,
         dropdownParent: $('#drawerAddZone')
     });
@@ -578,6 +649,14 @@ document.addEventListener('DOMContentLoaded', function() {
     var stateCancel = document.getElementById('drawerStateCancel');
     if (stateCancel) stateCancel.addEventListener('click', closeStateDrawer);
 
+    // ===== Region drawer events =====
+    var regionOverlay = document.getElementById('drawerRegionOverlay');
+    if (regionOverlay) regionOverlay.addEventListener('click', closeRegionDrawer);
+    var regionClose = document.getElementById('drawerRegionClose');
+    if (regionClose) regionClose.addEventListener('click', closeRegionDrawer);
+    var regionCancel = document.getElementById('drawerRegionCancel');
+    if (regionCancel) regionCancel.addEventListener('click', closeRegionDrawer);
+
     // ===== District drawer events =====
     var districtOverlay = document.getElementById('drawerDistrictOverlay');
     if (districtOverlay) districtOverlay.addEventListener('click', closeDistrictDrawer);
@@ -621,11 +700,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ===== Cascading: Zone drawer =====
-    $(document).on('change', '#zone-city-select', function() {
-        var cityId = $(this).val();
-        loadDistrictsByCity(cityId, '#zone-district-select');
+    $(document).on('change', '#zone-state-select', function() {
+        var stateId = $(this).val();
+        loadCitiesByState(stateId, '#zone-city-select', '#drawerAddZone');
 
-        // Auto-fill country from selected city option
+        // Auto-fill country from selected state option
         var countryDisplay = document.getElementById('zone-country-display');
         if (countryDisplay) {
             var selectedOption = $(this).find('option:selected');
@@ -654,6 +733,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Escape') {
             closeCountryDrawer();
             closeStateDrawer();
+            closeRegionDrawer();
             closeDistrictDrawer();
             closeCityDrawer();
             closeZoneDrawer();

@@ -16,7 +16,7 @@ class Zone extends Model
     protected $fillable = [
         'name',
         'city_id',
-        'district_id',
+        'state_id',
     ];
 
     // ========== Relationships ==========
@@ -26,9 +26,9 @@ class Zone extends Model
         return $this->belongsTo(City::class);
     }
 
-    public function district(): BelongsTo
+    public function state(): BelongsTo
     {
-        return $this->belongsTo(District::class);
+        return $this->belongsTo(State::class);
     }
 
     public function streets(): HasMany
@@ -48,8 +48,8 @@ class Zone extends Model
         return $query->where('city_id', $cityId);
     }
 
-    public function scopeByDistrict($query, int $districtId)
+    public function scopeByState($query, int $stateId)
     {
-        return $query->where('district_id', $districtId);
+        return $query->where('state_id', $stateId);
     }
 }

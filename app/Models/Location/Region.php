@@ -5,20 +5,17 @@ namespace App\Models\Location;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class State extends Model
+class Region extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'states';
+    protected $table = 'regions';
 
     protected $fillable = [
         'name',
-        'code',
-        'slug',
-        'country_id',
+        'state_id',
         'is_active',
     ];
 
@@ -28,14 +25,9 @@ class State extends Model
 
     // ========== Relationships ==========
 
-    public function country(): BelongsTo
+    public function state(): BelongsTo
     {
-        return $this->belongsTo(Country::class);
-    }
-
-    public function regions(): HasMany
-    {
-        return $this->hasMany(Region::class);
+        return $this->belongsTo(State::class);
     }
 
     public function cities(): HasMany
@@ -43,15 +35,15 @@ class State extends Model
         return $this->hasMany(City::class);
     }
 
-    public function districts(): HasManyThrough
-    {
-        return $this->hasManyThrough(District::class, City::class);
-    }
-
     // ========== Scopes ==========
 
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    public function scopeByState($query, int $stateId)
+    {
+        return $query->where('state_id', $stateId);
     }
 }
