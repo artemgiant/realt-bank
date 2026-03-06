@@ -12,10 +12,19 @@ return new class extends Migration
         // Fill NULL values before making NOT NULL
         DB::table('cities')->whereNull('state_id')->update(['state_id' => 14]);
 
+        // Ensure at least one region exists
         $fallbackRegionId = DB::table('regions')->where('state_id', 14)->value('id');
-        if ($fallbackRegionId) {
-            DB::table('cities')->whereNull('region_id')->update(['region_id' => $fallbackRegionId]);
+        if (!$fallbackRegionId) {
+            $fallbackRegionId = DB::table('regions')->insertGetId([
+                'name' => 'Одесський',
+                'state_id' => 14,
+                'is_active' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         }
+
+        DB::table('cities')->whereNull('region_id')->update(['region_id' => $fallbackRegionId]);
 
         // Drop existing FK on region_id (name may vary between environments)
         $fk = DB::selectOne("
