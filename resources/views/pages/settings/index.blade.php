@@ -29,7 +29,9 @@
                 {{-- Location sections --}}
                 @include('pages.settings.locations.section-countries')
                 @include('pages.settings.locations.section-regions')
+                @include('pages.settings.locations.section-oblast-regions')
                 @include('pages.settings.locations.section-cities')
+                @include('pages.settings.locations.section-districts')
                 @include('pages.settings.locations.section-zones')
                 @include('pages.settings.locations.section-streets')
             </div>
@@ -61,6 +63,8 @@
         var countriesData = @json(isset($countriesList) ? $countriesList->keyBy('id') : collect());
         var statesData = @json(isset($states) ? $states->keyBy('id') : collect());
         var citiesData = @json(isset($citiesList) ? $citiesList->keyBy('id') : collect());
+        var regionsListData = @json(isset($regionsList) ? $regionsList->keyBy('id') : collect());
+        var districtsData = @json(isset($districtsList) ? $districtsList->keyBy('id') : collect());
         var zonesData = @json(isset($zonesList) ? $zonesList->keyBy('id') : collect());
         var streetsData = @json(isset($streetsList) ? $streetsList->keyBy('id') : collect());
     </script>

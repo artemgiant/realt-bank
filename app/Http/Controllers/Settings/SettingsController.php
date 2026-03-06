@@ -164,6 +164,34 @@ class SettingsController extends Controller
     }
 
     /**
+     * Display settings page with oblast regions section active.
+     */
+    public function oblastRegions(Request $request): View
+    {
+        $data = $this->getSettingsData('oblast-regions');
+        $search = $request->input('search', '');
+        $perPage = $this->getPerPage($request);
+
+        $query = Region::with('state')
+            ->withCount('cities')
+            ->orderBy('name');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhereHas('state', fn ($sq) => $sq->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        $data['regionsList'] = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
+        $data['statesForRegion'] = State::active()->orderBy('name')->get();
+        $data['search'] = $search;
+        $data['perPage'] = $perPage;
+
+        return view('pages.settings.index', $data);
+    }
+
+    /**
      * Display settings page with cities section active.
      */
     public function cities(Request $request): View
@@ -185,6 +213,34 @@ class SettingsController extends Controller
 
         $data['citiesList'] = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
         $data['statesList'] = State::active()->with('country')->orderBy('name')->get();
+        $data['search'] = $search;
+        $data['perPage'] = $perPage;
+
+        return view('pages.settings.index', $data);
+    }
+
+    /**
+     * Display settings page with districts section active.
+     */
+    public function districts(Request $request): View
+    {
+        $data = $this->getSettingsData('districts');
+        $search = $request->input('search', '');
+        $perPage = $this->getPerPage($request);
+
+        $query = District::with('city')
+            ->withCount('streets')
+            ->orderBy('name');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhereHas('city', fn ($sq) => $sq->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        $data['districtsList'] = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
+        $data['allCities'] = City::with('state')->orderBy('name')->get();
         $data['search'] = $search;
         $data['perPage'] = $perPage;
 

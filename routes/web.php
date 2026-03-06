@@ -174,7 +174,9 @@ Route::middleware('auth')->group(function () {
         // Location sections
         Route::get('/countries', [SettingsController::class, 'countries'])->name('countries.index');
         Route::get('/regions', [SettingsController::class, 'regions'])->name('regions.index');
+        Route::get('/oblast-regions', [SettingsController::class, 'oblastRegions'])->name('oblast-regions.index');
         Route::get('/cities', [SettingsController::class, 'cities'])->name('cities.index');
+        Route::get('/districts', [SettingsController::class, 'districts'])->name('districts.index');
         Route::get('/zones', [SettingsController::class, 'zones'])->name('zones.index');
         Route::get('/streets', [SettingsController::class, 'streets'])->name('streets.index');
 

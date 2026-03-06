@@ -123,13 +123,25 @@ function openRegionDrawer(regionId = null) {
 
     if (regionId) {
         let region = null;
-        for (const sk in statesData) {
-            const state = statesData[sk];
-            if (state.regions) {
-                const found = state.regions.find(r => r.id === regionId);
-                if (found) {
-                    region = { ...found, state_id: parseInt(sk) };
-                    break;
+
+        // Try regionsListData first (oblast-regions section)
+        if (typeof regionsListData !== 'undefined') {
+            const regionKey = String(regionId);
+            if (regionsListData[regionKey]) {
+                region = regionsListData[regionKey];
+            }
+        }
+
+        // Fallback: search in statesData (regions tree section)
+        if (!region) {
+            for (const sk in statesData) {
+                const state = statesData[sk];
+                if (state.regions) {
+                    const found = state.regions.find(r => r.id === regionId);
+                    if (found) {
+                        region = { ...found, state_id: parseInt(sk) };
+                        break;
+                    }
                 }
             }
         }
@@ -193,22 +205,33 @@ function openDistrictDrawer(districtId = null) {
     initDistrictDrawerSelect2();
 
     if (districtId) {
-        // Find district data from statesData (districts are nested under states.cities)
         let district = null;
-        for (const sk in statesData) {
-            const state = statesData[sk];
-            if (state.cities) {
-                for (const city of state.cities) {
-                    if (city.districts) {
-                        const found = city.districts.find(d => d.id === districtId);
-                        if (found) {
-                            district = { ...found, city_id: city.id };
-                            break;
+
+        // Try districtsData first (districts section)
+        if (typeof districtsData !== 'undefined') {
+            const districtKey = String(districtId);
+            if (districtsData[districtKey]) {
+                district = districtsData[districtKey];
+            }
+        }
+
+        // Fallback: search in statesData (regions tree section)
+        if (!district) {
+            for (const sk in statesData) {
+                const state = statesData[sk];
+                if (state.cities) {
+                    for (const city of state.cities) {
+                        if (city.districts) {
+                            const found = city.districts.find(d => d.id === districtId);
+                            if (found) {
+                                district = { ...found, city_id: city.id };
+                                break;
+                            }
                         }
                     }
                 }
+                if (district) break;
             }
-            if (district) break;
         }
 
         if (district) {
@@ -629,7 +652,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Search inputs
     initLocationSearch('searchRegionsInput', '#regionsTreeList', '.region-parent');
+    initLocationSearch('searchOblastRegionsInput', '#oblastRegionsAddressList', '.address-item');
     initLocationSearch('searchCitiesInput', '#citiesAddressList', '.address-item');
+    initLocationSearch('searchDistrictsInput', '#districtsAddressList', '.address-item');
     initLocationSearch('searchZonesInput', '#zonesAddressList', '.address-item');
     initLocationSearch('searchStreetsInput', '#streetsTable tbody', 'tr');
 

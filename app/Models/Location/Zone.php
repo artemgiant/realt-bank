@@ -16,6 +16,7 @@ class Zone extends Model
     protected $fillable = [
         'name',
         'city_id',
+        'district_id',
         'state_id',
     ];
 
@@ -24,6 +25,11 @@ class Zone extends Model
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class);
     }
 
     public function state(): BelongsTo
