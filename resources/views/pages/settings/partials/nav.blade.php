@@ -60,7 +60,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
             </svg>
-            Районы обл.
+            Районы региона
             <span class="nav-item-badge" title="{{ number_format($regionsCount ?? 0, 0, '', ' ') }}">{{ $fmtCount($regionsCount ?? 0) }}</span>
         </a>
         <a href="{{ route('settings.cities.index') }}" class="nav-item {{ $activeSection === 'cities' ? 'active' : '' }}">
@@ -75,7 +75,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 10-16 0c0 3 2.7 7 8 11.7z"/>
             </svg>
-            Районы г.
+            Районы города
             <span class="nav-item-badge" title="{{ number_format($districtsCount ?? 0, 0, '', ' ') }}">{{ $fmtCount($districtsCount ?? 0) }}</span>
         </a>
         <a href="{{ route('settings.zones.index') }}" class="nav-item {{ $activeSection === 'zones' ? 'active' : '' }}">

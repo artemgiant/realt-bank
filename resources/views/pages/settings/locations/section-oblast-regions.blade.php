@@ -1,12 +1,12 @@
-{{-- Section: Oblast Regions (Районы области) --}}
+{{-- Section: Oblast Regions (Районы региона) --}}
 <div class="settings-section {{ $activeSection === 'oblast-regions' ? 'active' : '' }}" id="section-oblast-regions">
     <div class="settings-breadcrumb">
-        <a href="{{ route('settings.index') }}">Настройки</a> <span>›</span> <span class="current">Районы области</span>
+        <a href="{{ route('settings.index') }}">Настройки</a> <span>›</span> <span class="current">Районы региона</span>
     </div>
     <div class="section-header">
         <div>
-            <h2>Районы области</h2>
-            <p>Районы внутри областей (регионов)</p>
+            <h2>Районы региона</h2>
+            <p>Районы внутри регионов</p>
         </div>
         <div style="display:flex;gap:12px;align-items:center;">
             <form class="section-search" method="GET" action="{{ route('settings.oblast-regions.index') }}">
@@ -57,8 +57,8 @@
             @else
                 <div class="empty-state">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-                    <h4>{{ ($search ?? '') ? 'Ничего не найдено' : 'Нет районов области' }}</h4>
-                    <p>{{ ($search ?? '') ? 'Попробуйте изменить поисковый запрос' : 'Добавьте первый район области' }}</p>
+                    <h4>{{ ($search ?? '') ? 'Ничего не найдено' : 'Нет районов региона' }}</h4>
+                    <p>{{ ($search ?? '') ? 'Попробуйте изменить поисковый запрос' : 'Добавьте первый район региона' }}</p>
                 </div>
             @endif
         </div>

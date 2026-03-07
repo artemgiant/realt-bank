@@ -1,4 +1,4 @@
-{{-- Drawer: Add/Edit Region (Район области) --}}
+{{-- Drawer: Add/Edit Region (Район региона) --}}
 <div class="drawer-overlay" id="drawerRegionOverlay"></div>
 <div class="drawer" id="drawerAddRegion">
     <div class="drawer-header">
@@ -9,8 +9,8 @@
                 </svg>
             </div>
             <div>
-                <h3 id="regionDrawerTitle">Новый район области</h3>
-                <p class="drawer-subtitle" id="regionDrawerSubtitle">Добавьте район внутри области</p>
+                <h3 id="regionDrawerTitle">Новый район региона</h3>
+                <p class="drawer-subtitle" id="regionDrawerSubtitle">Добавьте район внутри региона</p>
             </div>
         </div>
         <button class="drawer-close" id="drawerRegionClose">
@@ -28,7 +28,7 @@
             <div class="drawer-section">
                 <div class="drawer-section-title">Основная информация</div>
                 <div class="form-group">
-                    <label class="form-label">Название района области <span class="required">*</span></label>
+                    <label class="form-label">Название района региона <span class="required">*</span></label>
                     <input class="form-input" type="text" name="name" id="regionName"
                            placeholder="Например: Беляевский район" required>
                 </div>
@@ -37,9 +37,9 @@
             <div class="drawer-section">
                 <div class="drawer-section-title">Привязка</div>
                 <div class="form-group">
-                    <label class="form-label">Область <span class="required">*</span></label>
+                    <label class="form-label">Регион <span class="required">*</span></label>
                     <select name="state_id" id="region-state-select" class="form-input" required>
-                        <option value="">Выберите область...</option>
+                        <option value="">Выберите регион...</option>
                         @if(isset($statesForRegion))
                             @foreach($statesForRegion as $state)
                                 <option value="{{ $state->id }}">{{ $state->name }}</option>

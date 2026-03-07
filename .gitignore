@@ -53,3 +53,6 @@ Thumbs.db
 /test_2.svg
 /CLAUDE.md
 /real-bank-page-settings/
+/location_dump.sql
+/location_truncate.sql
+/zones_export.csv

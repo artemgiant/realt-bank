@@ -106,7 +106,7 @@ function initStateDrawerSelect2() {
     });
 }
 
-// ========== DRAWER: REGION (Район области) ==========
+// ========== DRAWER: REGION (Район региона) ==========
 function openRegionDrawer(regionId = null) {
     const drawer = document.getElementById('drawerAddRegion');
     const overlay = document.getElementById('drawerRegionOverlay');
@@ -147,8 +147,8 @@ function openRegionDrawer(regionId = null) {
         }
 
         if (region) {
-            title.textContent = 'Редактирование района области';
-            subtitle.textContent = 'Измените параметры района области';
+            title.textContent = 'Редактирование района региона';
+            subtitle.textContent = 'Измените параметры района региона';
             submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Сохранить';
 
             form.action = '/settings/regions/' + regionId;
@@ -160,8 +160,8 @@ function openRegionDrawer(regionId = null) {
             }
         }
     } else {
-        title.textContent = 'Новый район области';
-        subtitle.textContent = 'Добавьте район внутри области';
+        title.textContent = 'Новый район региона';
+        subtitle.textContent = 'Добавьте район внутри региона';
         submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Создать';
     }
 
@@ -182,7 +182,7 @@ function initRegionDrawerSelect2() {
     }
     $('#region-state-select').select2({
         width: '100%',
-        placeholder: 'Выберите область...',
+        placeholder: 'Выберите регион...',
         allowClear: true,
         dropdownParent: $('#drawerAddRegion')
     });
