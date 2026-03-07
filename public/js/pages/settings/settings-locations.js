@@ -433,10 +433,6 @@ function openStreetDrawer(streetId = null) {
 
     const streetKey = streetId ? String(streetId) : null;
 
-    // Clear country display
-    var countryDisplay = document.getElementById('street-country-display');
-    if (countryDisplay) countryDisplay.value = '';
-
     if (streetKey && streetsData[streetKey]) {
         const street = streetsData[streetKey];
         title.textContent = 'Редактирование улицы';
@@ -492,7 +488,7 @@ function initStreetDrawerSelect2() {
 
     $('#street-district-select').select2({
         width: '100%',
-        placeholder: 'Выберите регион...',
+        placeholder: 'Без района',
         allowClear: true,
         dropdownParent: $('#drawerAddStreet')
     });
@@ -721,14 +717,6 @@ document.addEventListener('DOMContentLoaded', function() {
         var cityId = $(this).val();
         loadDistrictsByCity(cityId, '#street-district-select');
         loadZonesByCity(cityId, '#street-zone-select');
-
-        // Auto-fill country from selected city option
-        var countryDisplay = document.getElementById('street-country-display');
-        if (countryDisplay) {
-            var selectedOption = $(this).find('option:selected');
-            var countryName = selectedOption.data('country-name') || '';
-            countryDisplay.value = countryName || '';
-        }
     });
 
     // ===== Escape key closes location drawers =====

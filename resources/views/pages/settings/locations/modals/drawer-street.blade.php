@@ -38,31 +38,27 @@
             <div class="drawer-section">
                 <div class="drawer-section-title">Привязка</div>
                 <div class="form-group">
-                    <label class="form-label">Город <span class="required">*</span></label>
-                    <select name="city_id" id="street-city-select" class="form-input" required>
-                        <option value="">Выберите город...</option>
-                        @if(isset($streetCities))
-                            @foreach($streetCities as $city)
-                                <option value="{{ $city->id }}" data-country-name="{{ $city->state->country->name ?? '' }}">{{ $city->name }} ({{ $city->state->name ?? '' }})</option>
-                            @endforeach
-                        @endif
-                    </select>
-                </div>
-                <div class="form-group">
                     <label class="form-label">Микрорайон</label>
                     <select name="zone_id" id="street-zone-select" class="form-input">
                         <option value="">Без микрорайона</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Регион <span class="required">*</span></label>
-                    <select name="district_id" id="street-district-select" class="form-input" required>
-                        <option value="">Выберите регион...</option>
+                    <label class="form-label">Район города</label>
+                    <select name="district_id" id="street-district-select" class="form-input">
+                        <option value="">Без района</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Страна <span class="required">*</span></label>
-                    <input type="text" class="form-input" id="street-country-display" readonly placeholder="Определится автоматически" style="background:#f9fafb;color:var(--text-muted);">
+                    <label class="form-label">Город/Нас. пункт <span class="required">*</span></label>
+                    <select name="city_id" id="street-city-select" class="form-input" required>
+                        <option value="">Выберите город...</option>
+                        @if(isset($streetCities))
+                            @foreach($streetCities as $city)
+                                <option value="{{ $city->id }}">{{ $city->name }} ({{ $city->state->name ?? '' }})</option>
+                            @endforeach
+                        @endif
+                    </select>
                 </div>
             </div>
         </div>

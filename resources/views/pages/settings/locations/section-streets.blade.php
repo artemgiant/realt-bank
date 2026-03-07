@@ -30,10 +30,9 @@
                     <thead>
                     <tr>
                         <th>Улица</th>
-                        <th>Город</th>
                         <th>Микрорайон</th>
-                        <th>Регион</th>
-                        <th>Страна</th>
+                        <th>Район города</th>
+                        <th>Город/Нас. пункт</th>
                         <th style="width:100px">Действия</th>
                     </tr>
                     </thead>
@@ -41,10 +40,9 @@
                     @foreach($streetsList as $street)
                         <tr data-search="{{ mb_strtolower($street->name . ' ' . ($street->city->name ?? '') . ' ' . ($street->district->name ?? '') . ' ' . ($street->zone->name ?? '')) }}">
                             <td style="font-weight:700;color:var(--text-dark)">{{ $street->name }}</td>
-                            <td>{{ $street->city->name ?? '—' }}</td>
                             <td>{{ $street->zone->name ?? '—' }}</td>
                             <td>{{ $street->district->name ?? '—' }}</td>
-                            <td>{{ $street->city->state->country->name ?? '—' }}</td>
+                            <td>{{ $street->city->name ?? '—' }}</td>
                             <td>
                                 <div class="actions-cell">
                                     <button class="btn-icon" onclick="openStreetDrawer({{ $street->id }})" title="Редактировать">
