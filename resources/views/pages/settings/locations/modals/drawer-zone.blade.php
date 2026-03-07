@@ -38,25 +38,21 @@
             <div class="drawer-section">
                 <div class="drawer-section-title">Привязка</div>
                 <div class="form-group">
-                    <label class="form-label">Регион <span class="required">*</span></label>
-                    <select name="state_id" id="zone-state-select" class="form-input" required>
-                        <option value="">Выберите регион...</option>
-                        @if(isset($statesList))
-                            @foreach($statesList as $state)
-                                <option value="{{ $state->id }}" data-country-name="{{ $state->country->name ?? '' }}">{{ $state->name }}</option>
-                            @endforeach
-                        @endif
+                    <label class="form-label">Район города</label>
+                    <select name="district_id" id="zone-district-select" class="form-input">
+                        <option value="">Сначала выберите город...</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Город <span class="required">*</span></label>
                     <select name="city_id" id="zone-city-select" class="form-input" required>
-                        <option value="">Сначала выберите регион...</option>
+                        <option value="">Выберите город...</option>
+                        @if(isset($allCities))
+                            @foreach($allCities as $city)
+                                <option value="{{ $city->id }}" data-state-id="{{ $city->state_id }}">{{ $city->name }} ({{ $city->state->name ?? '' }})</option>
+                            @endforeach
+                        @endif
                     </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Страна <span class="required">*</span></label>
-                    <input type="text" class="form-input" id="zone-country-display" readonly placeholder="Определится автоматически" style="background:#f9fafb;color:var(--text-muted);">
                 </div>
             </div>
         </div>

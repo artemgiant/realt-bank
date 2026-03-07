@@ -291,9 +291,6 @@ function openCityDrawer(cityId = null) {
     // Initialize Select2
     initCityDrawerSelect2();
 
-    // Clear country display
-    var countryDisplay = document.getElementById('city-country-display');
-    if (countryDisplay) countryDisplay.value = '';
 
     const cityKey = cityId ? String(cityId) : null;
 
@@ -357,10 +354,8 @@ function openZoneDrawer(zoneId = null) {
 
     const zoneKey = zoneId ? String(zoneId) : null;
 
-    // Clear country display and city select
-    var countryDisplay = document.getElementById('zone-country-display');
-    if (countryDisplay) countryDisplay.value = '';
-    $('#zone-city-select').empty().append('<option value="">Сначала выберите регион...</option>').trigger('change');
+    // Clear district select
+    $('#zone-district-select').empty().append('<option value="">Сначала выберите город...</option>').trigger('change');
 
     if (zoneKey && zonesData[zoneKey]) {
         const zone = zonesData[zoneKey];
@@ -372,12 +367,12 @@ function openZoneDrawer(zoneId = null) {
         document.getElementById('zoneMethod').value = 'PUT';
         document.getElementById('zoneName').value = zone.name || '';
 
-        // Set state first, then load cities and select the right one
-        if (zone.state_id) {
-            $('#zone-state-select').val(zone.state_id).trigger('change');
+        // Set city first, then load districts and select the right one
+        if (zone.city_id) {
+            $('#zone-city-select').val(zone.city_id).trigger('change');
             setTimeout(function() {
-                if (zone.city_id) {
-                    $('#zone-city-select').val(zone.city_id).trigger('change');
+                if (zone.district_id) {
+                    $('#zone-district-select').val(zone.district_id).trigger('change');
                 }
             }, 500);
         }
@@ -399,22 +394,22 @@ function closeZoneDrawer() {
 }
 
 function initZoneDrawerSelect2() {
-    ['#zone-state-select', '#zone-city-select'].forEach(function(sel) {
+    ['#zone-city-select', '#zone-district-select'].forEach(function(sel) {
         if ($(sel).hasClass('select2-hidden-accessible')) {
             $(sel).select2('destroy');
         }
     });
 
-    $('#zone-state-select').select2({
+    $('#zone-city-select').select2({
         width: '100%',
-        placeholder: 'Выберите регион...',
+        placeholder: 'Выберите город...',
         allowClear: false,
         dropdownParent: $('#drawerAddZone')
     });
 
-    $('#zone-city-select').select2({
+    $('#zone-district-select').select2({
         width: '100%',
-        placeholder: 'Выберите город...',
+        placeholder: 'Выберите район города...',
         allowClear: true,
         dropdownParent: $('#drawerAddZone')
     });
@@ -714,28 +709,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var streetCancel = document.getElementById('drawerStreetCancel');
     if (streetCancel) streetCancel.addEventListener('click', closeStreetDrawer);
 
-    // ===== Cascading: City drawer =====
-    $(document).on('change', '#city-state-select', function() {
-        var countryDisplay = document.getElementById('city-country-display');
-        if (countryDisplay) {
-            var selectedOption = $(this).find('option:selected');
-            var countryName = selectedOption.data('country-name') || '';
-            countryDisplay.value = countryName || '';
-        }
-    });
 
     // ===== Cascading: Zone drawer =====
-    $(document).on('change', '#zone-state-select', function() {
-        var stateId = $(this).val();
-        loadCitiesByState(stateId, '#zone-city-select', '#drawerAddZone');
-
-        // Auto-fill country from selected state option
-        var countryDisplay = document.getElementById('zone-country-display');
-        if (countryDisplay) {
-            var selectedOption = $(this).find('option:selected');
-            var countryName = selectedOption.data('country-name') || '';
-            countryDisplay.value = countryName || '';
-        }
+    $(document).on('change', '#zone-city-select', function() {
+        var cityId = $(this).val();
+        loadDistrictsByCity(cityId, '#zone-district-select');
     });
 
     // ===== Cascading: Street drawer =====

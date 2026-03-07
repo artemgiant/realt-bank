@@ -47,10 +47,6 @@
                         @endif
                     </select>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Страна <span class="required">*</span></label>
-                    <input class="form-input" type="text" id="city-country-display" readonly placeholder="Выберите регион...">
-                </div>
             </div>
         </div>
 

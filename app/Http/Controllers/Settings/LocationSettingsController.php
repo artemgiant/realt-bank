@@ -266,9 +266,12 @@ class LocationSettingsController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'state_id' => 'required|exists:states,id',
             'city_id' => 'required|exists:cities,id',
+            'district_id' => 'nullable|exists:districts,id',
         ]);
+
+        $city = \App\Models\Location\City::findOrFail($validated['city_id']);
+        $validated['state_id'] = $city->state_id;
 
         Zone::create($validated);
 
@@ -279,9 +282,12 @@ class LocationSettingsController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'state_id' => 'required|exists:states,id',
             'city_id' => 'required|exists:cities,id',
+            'district_id' => 'nullable|exists:districts,id',
         ]);
+
+        $city = \App\Models\Location\City::findOrFail($validated['city_id']);
+        $validated['state_id'] = $city->state_id;
 
         $zone->update($validated);
 

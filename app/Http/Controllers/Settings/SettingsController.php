@@ -269,7 +269,7 @@ class SettingsController extends Controller
         }
 
         $data['zonesList'] = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
-        $data['statesList'] = State::with('country')->active()->orderBy('name')->get();
+        $data['allCities'] = City::with('state')->orderBy('name')->get();
         $data['search'] = $search;
         $data['perPage'] = $perPage;
 
