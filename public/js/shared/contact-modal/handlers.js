@@ -101,9 +101,9 @@ window.ContactModal.Handlers = {
         var countryData = iti ? iti.getSelectedCountryData() : null;
         var countryCode = countryData ? countryData.iso2 : 'ua';
 
-        // UA маска (099) = 10 цифр
+        // UA: 9 цифр без початкового 0 (формат маски: XX XXX XX XX)
         var phoneLengths = {
-            'ua': { min: 10, max: 10 },
+            'ua': { min: 9, max: 9 },
             'us': { min: 10, max: 10 },
             'gb': { min: 10, max: 11 },
             'de': { min: 10, max: 12 },

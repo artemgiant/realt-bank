@@ -44,14 +44,14 @@ window.EmployeeRenderers = {
         const name = row.full_name || 'Без имени';
         const company = row.company_name || '';
         const phone = row.phone || '';
-        const phoneFormatted = phone ? `+${phone.replace(/\D/g, '')}` : '';
+        const phoneTel = phone ? `+${phone.replace(/\D/g, '')}` : '';
 
         return `
             <div class="tbody-wrapper agent">
                 <div>
                     <p class="link-name" data-hover-agent data-employee-id="${row.id}">${name}</p>
                     ${company ? `<p data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="${company}">${company}</p>` : ''}
-                    ${phone ? `<a href="tel:${phoneFormatted}">${phoneFormatted}</a>` : ''}
+                    ${phone ? `<a href="tel:${phoneTel}">${phone}</a>` : ''}
                 </div>
             </div>
         `;

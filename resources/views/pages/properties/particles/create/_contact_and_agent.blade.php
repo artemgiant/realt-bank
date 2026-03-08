@@ -95,7 +95,7 @@
                         <p class="info-contacts-name" id="agent-name-display">{{ $agent->full_name }}</p>
                         <p class="info-description" id="agent-company-display">{{ $agent->company?->name ?? '' }}</p>
                         @if($agent->phone)
-                            <a href="tel:{{ $agent->phone }}" class="info-contacts-tel" id="agent-phone-display">{{ $agent->phone }}</a>
+                            <a href="tel:{{ $agent->phone }}" class="info-contacts-tel" id="agent-phone-display">{{ \App\Helpers\PhoneFormatter::format($agent->phone) }}</a>
                         @else
                             <a href="tel:" class="info-contacts-tel" id="agent-phone-display" style="display:none;"></a>
                         @endif

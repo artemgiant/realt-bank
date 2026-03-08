@@ -34,7 +34,7 @@ class ContactPhoneFactory extends Factory
     {
         $operators = ['50', '63', '66', '67', '68', '73', '93', '95', '96', '97', '98', '99'];
         $operator = $this->faker->randomElement($operators);
-        return '+380' . $operator . $this->faker->numerify('#####');
+        return '+380' . $operator . $this->faker->numerify('#######');
     }
 
     /**

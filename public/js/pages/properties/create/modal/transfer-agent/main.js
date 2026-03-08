@@ -417,6 +417,27 @@
     }
 
     /**
+     * Форматирование телефона: +38 (0XX) XXX-XX-XX для украинских номеров
+     */
+    function formatAgentPhone(phone) {
+        var digits = (phone || '').replace(/\D/g, '');
+
+        // 380XXXXXXXXX (12 цифр) → +38 (0XX) XXX-XX-XX
+        if (digits.length === 12 && digits.substring(0, 3) === '380') {
+            var sub = digits.substring(3);
+            return '+38 (0' + sub.substring(0, 2) + ') ' + sub.substring(2, 5) + '-' + sub.substring(5, 7) + '-' + sub.substring(7, 9);
+        }
+
+        // 0XXXXXXXXX (10 цифр, локальный) → +38 (0XX) XXX-XX-XX
+        if (digits.length === 10 && digits.charAt(0) === '0') {
+            var s = digits.substring(1);
+            return '+38 (0' + s.substring(0, 2) + ') ' + s.substring(2, 5) + '-' + s.substring(5, 7) + '-' + s.substring(7, 9);
+        }
+
+        return phone;
+    }
+
+    /**
      * Обновить блок агента на основной странице
      */
     function updatePageAgentBlock(employee) {
@@ -436,7 +457,8 @@
 
         if (phoneDisplay) {
             if (employee.phone) {
-                phoneDisplay.textContent = employee.phone;
+                var formattedPhone = formatAgentPhone(employee.phone);
+                phoneDisplay.textContent = formattedPhone;
                 phoneDisplay.href = 'tel:' + employee.phone;
                 phoneDisplay.style.display = '';
             } else {
