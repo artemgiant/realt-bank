@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Property;
 
+use App\Http\Controllers\Controller;
 use App\Models\Contact\Contact;
 use App\Models\Reference\Developer;
 use App\Models\Reference\Block;
