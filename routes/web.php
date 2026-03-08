@@ -3,7 +3,7 @@
 use App\Http\Controllers\Company\CompanyController;
 use App\Http\Controllers\ComplexController;
 use App\Http\Controllers\Developer\DeveloperController;
-use App\Http\Controllers\Employee\EmployeeController;
+use App\Http\Controllers\Company\EmployeeController;
 use App\Http\Controllers\Import\ComplexImportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Property\PropertyController;
