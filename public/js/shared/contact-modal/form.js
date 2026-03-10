@@ -107,9 +107,10 @@ window.ContactModal.Form = {
             }
             var nationalDigits = dcLen ? digits.slice(dcLen) : digits;
 
-            // Для Украины добавляем ведущий 0 к 9-значному абонентскому номеру
-            if (countryIso2 === 'ua' && nationalDigits.length === 9) {
-                nationalDigits = '0' + nationalDigits;
+            // Для Украины: маска (99) 999-99-99 ожидает 9 цифр без ведущего 0
+            // Если пришло 10 цифр с ведущим 0 — убираем его
+            if (countryIso2 === 'ua' && nationalDigits.length === 10 && nationalDigits.charAt(0) === '0') {
+                nationalDigits = nationalDigits.slice(1);
             }
 
             if (input._iti) {
@@ -152,9 +153,34 @@ window.ContactModal.Form = {
         var contactIdInput = document.querySelector(Config.selectors.contactIdInput);
         if (contactIdInput) contactIdInput.value = '';
 
-        // Сбрасываем select2
-        $(Config.selectors.contactRoleSelect).val(null).trigger('change');
-        $('#tags-client-modal').val('').trigger('change');
+        // Сбрасываем select2 (или нативный select, если Select2 ещё не инициализирован)
+        [Config.selectors.contactRoleSelect, '#tags-client-modal', '#type-contact-modal'].forEach(function(selector) {
+            var $el = $(selector);
+            if ($el.data('select2')) {
+                $el.val(null).trigger('change');
+            } else if ($el.length) {
+                $el.val(null);
+                // Снимаем selected у всех option
+                $el.find('option').prop('selected', false);
+            }
+        });
+
+        // Очищаем фото-превью
+        var modal = document.querySelector(Config.selectors.modal);
+        if (modal) {
+            var photoList = modal.querySelector('.photo-info-list');
+            if (photoList) {
+                // Удаляем все li кроме кнопки загрузки
+                var items = photoList.querySelectorAll('li:not(.photo-info-btn-wrapper)');
+                items.forEach(function(item) { item.remove(); });
+                // Возвращаем видимость кнопки загрузки (PhotoLoaderMini скрывает её после загрузки фото)
+                var btnWrapper = photoList.querySelector('.photo-info-btn-wrapper');
+                if (btnWrapper) btnWrapper.style.display = '';
+            }
+            // Сбрасываем file input
+            var fileInput = modal.querySelector('#loading-photo-contact-modal');
+            if (fileInput) fileInput.value = '';
+        }
 
         // Скрываем индикатор
         this.hideFoundIndicator();

@@ -20,7 +20,14 @@ window.ContactModal.Handlers = {
         var modal = document.querySelector(Config.selectors.modal);
         if (!modal) return;
 
-        // При открытии модалки
+        // Очищаем форму ДО начала анимации открытия (чтобы не было видно старых данных)
+        modal.addEventListener('show.bs.modal', function() {
+            if (!Form.isEditMode) {
+                Form.clear();
+            }
+        });
+
+        // После открытия — инициализируем компоненты и заполняем данные (если edit mode)
         modal.addEventListener('shown.bs.modal', function() {
             setTimeout(function() {
                 Components.initAll();
@@ -33,23 +40,15 @@ window.ContactModal.Handlers = {
                             Form.showFoundIndicator();
                             Form.pendingContactData = null;
                         }, 150);
-                    } else if (!Form.isEditMode) {
-                        Form.clear();
-                    }
-                } else {
-                    if (!Form.isEditMode) {
-                        Form.clear();
                     }
                 }
             }, 300);
         });
 
-        // При закрытии модалки
+        // При закрытии модалки — очищаем форму и уничтожаем компоненты
         modal.addEventListener('hidden.bs.modal', function() {
+            Form.clear();
             Components.destroyAll();
-            Form.isEditMode = false;
-            Form.currentContactId = null;
-            Form.pendingContactData = null;
             Form.modalComponentsReady = false;
         });
     },
@@ -249,7 +248,6 @@ window.ContactModal.Handlers = {
                             var modalEl = document.querySelector(Config.selectors.modal);
                             var modal = bootstrap.Modal.getInstance(modalEl);
                             if (modal) modal.hide();
-                            Form.clear();
                         }
                         Form.hideLoading();
                         return;
@@ -268,7 +266,6 @@ window.ContactModal.Handlers = {
                                 var modalEl = document.querySelector(Config.selectors.modal);
                                 var modal = bootstrap.Modal.getInstance(modalEl);
                                 if (modal) modal.hide();
-                                Form.clear();
                             }
                         })
                         .catch(function(error) {
@@ -295,7 +292,6 @@ window.ContactModal.Handlers = {
                                 var modalEl = document.querySelector(Config.selectors.modal);
                                 var modal = bootstrap.Modal.getInstance(modalEl);
                                 if (modal) modal.hide();
-                                Form.clear();
                             }
                         }
                     })
