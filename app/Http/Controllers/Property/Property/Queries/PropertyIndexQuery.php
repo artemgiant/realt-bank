@@ -80,7 +80,7 @@ class PropertyIndexQuery
     /**
      * Глобальный поиск DataTables — по ID, заголовку, улице, городу.
      */
-    public function applySearch(string $searchValue): self
+    public function applySearch(?string $searchValue): self
     {
         if (empty($searchValue)) {
             return $this;
