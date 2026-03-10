@@ -42,6 +42,7 @@ class StoreContactRequest extends FormRequest
             'comment' => 'nullable|string|max:2000',
             'photo' => 'nullable|image|max:2048',
             'birthday' => 'nullable|date',
+            'company_id' => 'required|exists:companies,id',
             'property_id' => 'nullable|exists:properties,id',
             'context' => 'nullable|string|in:properties,companies,complexes,developers',
         ];

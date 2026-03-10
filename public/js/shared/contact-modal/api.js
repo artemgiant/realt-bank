@@ -151,8 +151,14 @@ window.ContactModal.Api = {
      * Подготовка FormData с телефонами и ролями
      */
     prepareFormData: function(form) {
+        var Config = window.ContactModal.Config;
         var formData = new FormData(form);
         var phones = this.collectPhones();
+
+        // Добавляем company_id из конфигурации
+        if (Config.companyId) {
+            formData.set('company_id', Config.companyId);
+        }
 
         // Удаляем старые поля телефонов
         var keysToDelete = [];

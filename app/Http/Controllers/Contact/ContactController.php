@@ -8,6 +8,7 @@ use App\Http\Controllers\Contact\Actions\UpdateContact;
 use App\Http\Controllers\Contact\Presenters\ContactPresenter;
 use App\Http\Controllers\Contact\Requests\UpdateContactRequest;
 use App\Http\Controllers\Controller;
+use App\Helpers\PhoneFormatter;
 use App\Http\Requests\StoreContactRequest;
 use App\Models\Contact\Contact;
 use App\Models\Contact\ContactPhone;
@@ -72,10 +73,10 @@ class ContactController extends Controller
     {
         $phone = $request->input('phone', '');
 
-        // Очищаем номер от лишних символов для поиска
-        $phoneClean = preg_replace('/[^0-9+]/', '', $phone);
+        // Оставляем только цифры для поиска (БД хранит в формате +38 (0XX) XXX-XX-XX)
+        $digits = preg_replace('/\D/', '', $phone);
 
-        if (strlen($phoneClean) < 6) {
+        if (strlen($digits) < 9) {
             return response()->json([
                 'success' => false,
                 'found'   => false,
@@ -83,10 +84,16 @@ class ContactController extends Controller
             ]);
         }
 
-        // Ищем контакт по номеру телефона
-        $contactPhone = ContactPhone::where('phone', 'like', '%' . $phoneClean . '%')
-            ->orWhere('phone', 'like', '%' . $phone . '%')
-            ->first();
+        // Нормализуем до формата хранения через PhoneFormatter и ищем точное совпадение
+        $formatted = PhoneFormatter::format($phone);
+        $contactPhone = ContactPhone::where('phone', $formatted)->first();
+
+        // Fallback: поиск по последним 9 цифрам (абонентский номер без кода страны)
+        if (!$contactPhone) {
+            $last9 = substr($digits, -9);
+            $contactPhone = ContactPhone::whereRaw("REPLACE(REPLACE(REPLACE(REPLACE(phone, ' ', ''), '(', ''), ')', ''), '-', '') LIKE ?", ['%' . $last9])
+                ->first();
+        }
 
         if (!$contactPhone) {
             return response()->json([

@@ -18,6 +18,11 @@ window.ContactModal = window.ContactModal || {};
  * Инициализация модуля контактов
  */
 window.ContactModal.init = function() {
+    // Select2 инициализируем сразу при загрузке — модалка откроется уже с готовыми селектами
+    if (window.ContactModal.Components) {
+        window.ContactModal.Components.initSelect2();
+    }
+
     if (window.ContactModal.Handlers) {
         window.ContactModal.Handlers.initAll();
     }

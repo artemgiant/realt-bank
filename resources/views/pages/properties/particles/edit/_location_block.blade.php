@@ -40,7 +40,7 @@
 
 {{-- Район региона --}}
 <div class="item selects w16">
-    <label class="item-label">Район региона</label>
+    <label class="item-label">Район региона <span class="text-danger">*</span></label>
     <select name="region_id" id="region_id" class="js-example-responsive3 my-select2">
         <option value=""></option>
         @if($property->region_id)

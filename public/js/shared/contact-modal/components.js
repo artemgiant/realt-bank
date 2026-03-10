@@ -170,27 +170,19 @@ window.ContactModal.Components = {
      */
     initAll: function() {
         this.initPhoneInputManager();
-        this.initSelect2();
+        // Select2 уже инициализирован при загрузке страницы (в main.js)
         this.initPhotoLoader();
         this.initDatePicker();
     },
 
     /**
      * Уничтожение компонентов при закрытии модалки
+     * Select2 НЕ уничтожается — инициализируется один раз при загрузке страницы
      */
     destroyAll: function() {
         if (this.phoneManager && typeof this.phoneManager.destroy === 'function') {
             this.phoneManager.destroy();
             this.phoneManager = null;
         }
-
-        ['#tags-client-modal', '#roles-contact-modal', '#type-contact-modal'].forEach(function(selector) {
-            var $el = $(selector);
-            if ($el.data('select2')) {
-                $el.select2('destroy');
-            }
-        });
-
-        this.select2Initialized = false;
     }
 };

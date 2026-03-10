@@ -10,17 +10,20 @@
 @php
     $maxContacts = $maxContacts ?? 0;
     $behavior = $behavior ?? [];
+    $companyId = auth()->user()
+        ? \App\Models\Employee\Employee::where('user_id', auth()->id())->value('company_id')
+        : null;
 @endphp
 
+<script src="{{ asset('js/shared/contact-modal/config.js') }}"></script>
 <script>
-    window.ContactModal = window.ContactModal || {};
     window.ContactModal.configure({
         context: '{{ $context }}',
         maxContacts: {{ $maxContacts }},
+        companyId: {{ $companyId ?? 'null' }},
         behavior: {!! json_encode((object) $behavior) !!}
     });
 </script>
-<script src="{{ asset('js/shared/contact-modal/config.js') }}"></script>
 <script src="{{ asset('js/shared/contact-modal/utils.js') }}"></script>
 <script src="{{ asset('js/shared/contact-modal/components.js') }}"></script>
 <script src="{{ asset('js/shared/contact-modal/api.js') }}"></script>

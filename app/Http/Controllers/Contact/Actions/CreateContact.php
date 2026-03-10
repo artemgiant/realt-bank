@@ -30,6 +30,12 @@ class CreateContact
      */
     public function execute(array $data, Request $request): Contact
     {
+        // Проверка дубля по телефону — если контакт уже существует, возвращаем его
+        $existingContact = $this->findExistingByPhone($data['phones'] ?? []);
+        if ($existingContact) {
+            return $this->updateExisting($existingContact, $data, $request);
+        }
+
         $photoPath = null;
 
         try {
@@ -52,6 +58,7 @@ class CreateContact
 
             // Создание контакта
             $contact = Contact::create([
+                'company_id'   => $data['company_id'],
                 'first_name'   => $data['first_name'],
                 'last_name'    => $data['last_name'] ?? null,
                 'middle_name'  => $data['middle_name'] ?? null,
@@ -69,6 +76,9 @@ class CreateContact
 
             // Сохранение телефонов
             $this->savePhones($contact, $data['phones']);
+
+            // Генерация уникального хеша (id + телефоны)
+            $contact->refreshPhoneHash();
 
             // Привязка к объекту (если передан property_id)
             if (!empty($data['property_id'])) {
@@ -115,5 +125,50 @@ class CreateContact
                 'is_primary' => !empty($phoneData['is_primary']) || (!$hasPrimary && $index === 0),
             ]);
         }
+    }
+
+    /**
+     * Поиск существующего контакта по номеру телефона.
+     * Проверяет все переданные телефоны — если хотя бы один найден в БД, возвращает контакт.
+     */
+    private function findExistingByPhone(array $phones): ?Contact
+    {
+        foreach ($phones as $phoneData) {
+            $phone = $phoneData['phone'] ?? null;
+            if (!$phone) continue;
+
+            $formatted = PhoneFormatter::format($phone);
+            $existing = ContactPhone::where('phone', $formatted)->first();
+            if ($existing) {
+                return $existing->contact;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Обновление существующего контакта новыми данными (вместо создания дубля).
+     * Обновляет роли и привязку к объекту, возвращает контакт с загруженными связями.
+     */
+    private function updateExisting(Contact $contact, array $data, Request $request): Contact
+    {
+        $roles = $data['roles'] ?? $data['contact_role'] ?? [];
+
+        // Синхронизируем роли (добавляем новые, не удаляя старые)
+        if (!empty($roles)) {
+            $existingRoles = $contact->roles()->pluck('dictionaries.id')->toArray();
+            $mergedRoles = array_unique(array_merge($existingRoles, (array) $roles));
+            $contact->roles()->sync($mergedRoles);
+        }
+
+        // Привязка к объекту
+        if (!empty($data['property_id'])) {
+            $contact->properties()->syncWithoutDetaching([$data['property_id']]);
+        }
+
+        $contact->load(['phones', 'roles']);
+
+        return $contact;
     }
 }

@@ -30,10 +30,26 @@ window.ContactModal.ContactList = {
             return false;
         }
 
-        // Проверяем, не добавлен ли уже этот контакт
+        // Проверяем, не добавлен ли уже этот контакт (по ID)
         if (container.querySelector('[data-contact-id="' + contact.id + '"]')) {
             alert('Этот контакт уже добавлен');
             return false;
+        }
+
+        // Проверяем дубль по номеру телефона (среди уже добавленных карточек)
+        if (contact.primary_phone) {
+            var newPhone = contact.primary_phone.replace(/[^0-9]/g, '');
+            var existingCards = container.querySelectorAll('.contact-card');
+            for (var i = 0; i < existingCards.length; i++) {
+                var phoneEl = existingCards[i].querySelector('.contact-phone');
+                if (phoneEl) {
+                    var existingPhone = (phoneEl.textContent || '').replace(/[^0-9]/g, '');
+                    if (existingPhone && newPhone && existingPhone === newPhone) {
+                        alert('Контакт с таким номером телефона уже добавлен');
+                        return false;
+                    }
+                }
+            }
         }
 
         // Клонируем шаблон

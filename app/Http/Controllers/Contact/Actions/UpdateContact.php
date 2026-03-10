@@ -54,6 +54,7 @@ class UpdateContact
 
             // Обновление контакта
             $contact->update([
+                'company_id'   => $data['company_id'],
                 'first_name'   => $data['first_name'],
                 'last_name'    => $data['last_name'] ?? null,
                 'middle_name'  => $data['middle_name'] ?? null,
@@ -71,6 +72,9 @@ class UpdateContact
 
             // Обновление телефонов
             $this->savePhones($contact, $data['phones']);
+
+            // Обновление хеша телефонов
+            $contact->refreshPhoneHash();
 
             // Синхронизация ролей
             $contact->roles()->sync($roles);

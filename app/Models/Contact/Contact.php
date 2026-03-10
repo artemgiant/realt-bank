@@ -9,6 +9,7 @@ use App\Models\Reference\Developer;
 use App\Models\Reference\Dictionary;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -18,6 +19,7 @@ class Contact extends Model
     use HasFactory;
 
     protected $fillable = [
+        'company_id',
         'first_name',
         'last_name',
         'middle_name',
@@ -31,6 +33,7 @@ class Contact extends Model
         'inn',
         'photo',
         'comment',
+        'phone_hash',
     ];
 
     protected $casts = [
@@ -52,6 +55,14 @@ class Contact extends Model
     ];
 
     // ========== Relationships ==========
+
+    /**
+     * Компания контакта
+     */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
 
     /**
      * Телефоны контакта (один контакт - много телефонов)
@@ -364,6 +375,33 @@ class Contact extends Model
                     $pq->where('phone', 'like', "%{$search}%");
                 });
         });
+    }
+
+    // ========== Phone Hash ==========
+
+    /**
+     * Генерация уникального хеша: sha256(company_id + все телефоны отсортированные)
+     * Используется для защиты от дублей контактов внутри одной компании
+     */
+    public function generatePhoneHash(): string
+    {
+        $phones = $this->phones()
+            ->orderBy('phone')
+            ->pluck('phone')
+            ->map(fn($p) => preg_replace('/\D/', '', $p))
+            ->toArray();
+
+        $data = $this->company_id . ':' . implode(',', $phones);
+
+        return hash('sha256', $data);
+    }
+
+    /**
+     * Обновить phone_hash в БД
+     */
+    public function refreshPhoneHash(): void
+    {
+        $this->update(['phone_hash' => $this->generatePhoneHash()]);
     }
 
     // ========== Static Methods ==========

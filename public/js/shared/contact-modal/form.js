@@ -63,6 +63,9 @@ window.ContactModal.Form = {
         if (contact.tags) {
             $('#tags-client-modal').val(contact.tags).trigger('change');
         }
+
+        // Фото
+        this._fillPhoto(contact);
     },
 
     /**
@@ -138,6 +141,51 @@ window.ContactModal.Form = {
                 input.value = phoneE164 || raw;
             }
         });
+    },
+
+    /**
+     * Отображение фото контакта из URL сервера
+     * @private
+     */
+    _fillPhoto: function(contact) {
+        var Config = window.ContactModal.Config;
+        var modal = document.querySelector(Config.selectors.modal);
+        if (!modal || !contact.photo_url) return;
+
+        var photoList = modal.querySelector('.photo-info-list');
+        if (!photoList) return;
+
+        // Удаляем старое превью если есть
+        var oldItems = photoList.querySelectorAll('li:not(.photo-info-btn-wrapper)');
+        oldItems.forEach(function(item) { item.remove(); });
+
+        // Создаём элемент фото как в PhotoLoaderMini
+        var li = document.createElement('li');
+        li.classList.add('photo-info-item');
+
+        li.innerHTML =
+            '<div class="image-container">' +
+                '<img src="' + contact.photo_url + '" alt="Фото контакта">' +
+            '</div>' +
+            '<div class="photo-info-item-actions">' +
+                '<button type="button" class="btn-see" aria-label="eye" data-fancybox data-src="' + contact.photo_url + '">' +
+                    '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                        '<path d="M14.5 8C14.5 8 11.6 12 8 12C4.4 12 1.5 8 1.5 8C1.5 8 4.4 4 8 4C11.6 4 14.5 8 14.5 8Z" stroke="#3585F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linejoin="round" />' +
+                        '<path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z" stroke="#3585F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linejoin="round" />' +
+                    '</svg>' +
+                '</button>' +
+            '</div>';
+
+        // Скрываем кнопку загрузки (как делает PhotoLoaderMini)
+        var btnWrapper = photoList.querySelector('.photo-info-btn-wrapper');
+        if (btnWrapper) btnWrapper.style.display = 'none';
+
+        // Вставляем перед кнопкой загрузки
+        if (btnWrapper) {
+            photoList.insertBefore(li, btnWrapper);
+        } else {
+            photoList.appendChild(li);
+        }
     },
 
     /**

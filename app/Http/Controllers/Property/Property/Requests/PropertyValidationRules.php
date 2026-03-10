@@ -37,7 +37,7 @@ trait PropertyValidationRules
             // Локация (иерархия: страна → область → город → район → зона → улица)
             'country_id' => 'nullable|exists:countries,id',       // Страна
             'state_id' => 'nullable|exists:states,id',            // Область/регион
-            'region_id' => 'nullable|exists:regions,id',          // Регион
+            'region_id' => 'required|exists:regions,id',          // Район региона (обязательно)
             'city_id' => 'nullable|exists:cities,id',             // Город
             'district_id' => 'nullable|exists:districts,id',      // Район
             'zone_id' => 'nullable|exists:zones,id',              // Зона/ориентир

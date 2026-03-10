@@ -26,6 +26,7 @@ class UpdateContactRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'company_id'         => 'required|exists:companies,id',
             'first_name'         => 'required|string|max:255',
             'last_name'          => 'nullable|string|max:255',
             'middle_name'        => 'nullable|string|max:255',

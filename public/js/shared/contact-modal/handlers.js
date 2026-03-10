@@ -63,9 +63,12 @@ window.ContactModal.Handlers = {
         var Api = window.ContactModal.Api;
         var Form = window.ContactModal.Form;
 
-        this._debouncedSearch = Utils.debounce(function(phone) {
+        this._debouncedSearch = Utils.debounce(function(input) {
             if (Form.isEditMode) return;
-            Api.searchByPhone(phone).then(function(data) {
+
+            // Формируем полный номер с кодом страны для поиска
+            var fullPhone = Utils.formatPhoneWithCountryCode(input.value, input);
+            Api.searchByPhone(fullPhone).then(function(data) {
                 if (data.success && data.found) {
                     Form.fill(data.contact);
                     Form.showFoundIndicator();
@@ -81,7 +84,7 @@ window.ContactModal.Handlers = {
             if (e.target.matches(Config.selectors.modal + ' ' + Config.selectors.phoneInput)) {
                 var firstPhoneInput = document.querySelector(Config.selectors.modal + ' ' + Config.selectors.phoneInput);
                 if (e.target === firstPhoneInput && !Form.isEditMode) {
-                    self._debouncedSearch(e.target.value);
+                    self._debouncedSearch(e.target);
                 }
             }
         });
