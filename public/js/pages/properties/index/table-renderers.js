@@ -204,17 +204,7 @@ window.PropertyRenderers = {
     // Действия (пустая ячейка)
     actions: function (data, type, row) {
         return '<div class="tbody-wrapper block-actions">\n' +
-            '                        <a href="#" class="btn mail-link" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="top" data-bs-title="Написать">\n' +
-            '                              <img src="./img/icon/mail.svg" alt="">\n' +
-            '                        </a>\n' +
             '                        <div class="block-actions-wrapper">\n' +
-            '                           <label class="bookmark">\n' +
-            '                              <input type="checkbox">\n' +
-            '                              <span>\n' +
-            '                                  <img class="non-checked" src="./img/icon/bookmark.svg" alt="">\n' +
-            '                                  <img class="on-checked" src="./img/icon/bookmark-cheked.svg" alt="">\n' +
-            '                              </span>\n' +
-            '                           </label>\n' +
             '                           <div class="menu-burger">\n' +
             '                              <div class="dropdown">\n' +
             '                                 <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">\n' +
