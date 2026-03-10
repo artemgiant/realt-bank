@@ -1,0 +1,200 @@
+<?php
+
+namespace App\Http\Controllers\Property\Property;
+
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\Property\Property\Actions\CreateProperty;
+use App\Http\Controllers\Property\Property\Actions\UpdateProperty;
+use App\Http\Controllers\Property\Property\Presenters\PropertyTablePresenter;
+use App\Http\Controllers\Property\Property\Queries\PropertyIndexQuery;
+use App\Http\Controllers\Property\Property\Requests\StorePropertyRequest;
+use App\Http\Controllers\Property\Property\Requests\UpdatePropertyRequest;
+use App\Http\Controllers\Property\Property\ViewData\PropertyFormData;
+use App\Models\Employee\Employee;
+use App\Models\Property\Property;
+use App\Models\Property\PropertyPhoto;
+use App\Models\Reference\Currency;
+use App\Models\Reference\Developer;
+use App\Models\Reference\Dictionary;
+use App\Services\PhotoUploadService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+
+/**
+ * Контроллер объектов недвижимости — тонкий координатор.
+ *
+ * НЕ содержит бизнес-логику, НЕ строит запросы, НЕ форматирует данные.
+ * Делегирует работу: Requests, Actions, Queries, Presenters, ViewData.
+ */
+class PropertyController extends Controller
+{
+    /**
+     * Список объектов — страница с фильтрами.
+     * Сами объекты загружаются через AJAX (ajaxData).
+     */
+    public function index(Request $request): View
+    {
+        return view('pages.properties.index', [
+            'dealTypes' => Dictionary::getDealTypes(),
+            'dealKinds' => Dictionary::getDealKinds(),
+            'propertyTypes' => Dictionary::getPropertyTypes(),
+            'conditions' => Dictionary::getConditions(),
+            'buildingTypes' => Dictionary::getBuildingTypes(),
+            'wallTypes' => Dictionary::getWallTypes(),
+            'roomCounts' => Dictionary::getRoomCounts(),
+            'heatingTypes' => Dictionary::getHeatingTypes(),
+            'bathroomCounts' => Dictionary::getBathroomCounts(),
+            'ceilingHeights' => Dictionary::getCeilingHeights(),
+            'features' => Dictionary::getFeatures(),
+            'currencies' => Currency::active()->get(),
+            'developers' => Developer::active()->orderBy('name')->get(),
+            'yearsBuilt' => Dictionary::getYearsBuilt(),
+            'filters' => $request->only([
+                'deal_type_id', 'price_from', 'price_to', 'currency_id',
+                'area_from', 'area_to', 'area_living_from', 'area_living_to',
+                'area_kitchen_from', 'area_kitchen_to', 'area_land_from', 'area_land_to',
+                'floor_from', 'floor_to', 'floors_total_from', 'floors_total_to',
+                'price_per_m2_from', 'price_per_m2_to',
+                'room_count_id', 'property_type_id', 'condition_id', 'building_type_id',
+                'year_built', 'wall_type_id', 'heating_type_id', 'bathroom_count_id',
+                'ceiling_height_id', 'features', 'developer_id',
+                'status', 'search_id', 'contact_search', 'created_from', 'created_to',
+            ]),
+        ]);
+    }
+
+    /**
+     * AJAX endpoint для DataTables Server-Side.
+     * Делегирует фильтрацию → PropertyIndexQuery, форматирование → PropertyTablePresenter.
+     */
+    public function ajaxData(Request $request): JsonResponse
+    {
+        $draw = $request->input('draw', 1);
+        $start = $request->input('start', 0);
+        $length = $request->input('length', 20);
+        $searchValue = $request->input('search.value', '');
+        $sortField = $request->input('sort_field', 'created_at');
+        $sortDir = $request->input('sort_dir', 'desc');
+
+        $targetCurrency = $request->filled('currency_id')
+            ? Currency::find($request->currency_id)
+            : null;
+
+        $query = new PropertyIndexQuery();
+        $query->applyFilters($request, $targetCurrency)
+              ->applySearch($searchValue)
+              ->applySorting($sortField, $sortDir);
+
+        $presenter = new PropertyTablePresenter();
+
+        return response()->json([
+            'draw' => intval($draw),
+            'recordsTotal' => $query->getTotal(),
+            'recordsFiltered' => $query->getFiltered(),
+            'data' => $presenter->toCollection($query->paginate($start, $length), $targetCurrency),
+        ]);
+    }
+
+    /**
+     * Форма создания объекта. Справочники из PropertyFormData.
+     */
+    public function create(): View
+    {
+        $agent = Employee::where('user_id', auth()->id())->first();
+
+        return view('pages.properties.create', [
+            'agent' => $agent,
+            ...PropertyFormData::get(),
+        ]);
+    }
+
+    /**
+     * Создание объекта. Валидация → StorePropertyRequest, логика → CreateProperty.
+     */
+    public function store(StorePropertyRequest $request, CreateProperty $action): RedirectResponse
+    {
+        try {
+            $action->execute($request->validated(), $request);
+
+            return redirect()
+                ->route('properties.index')
+                ->with('success', 'Объект успешно создан!');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Ошибка при создании объекта: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Форма редактирования объекта. Подгружает связи + справочники из PropertyFormData.
+     */
+    public function edit(Property $property): View
+    {
+        $property->load([
+            'contacts.phones', 'contacts.roles', 'translations', 'features',
+            'photos', 'documents', 'employee.company',
+            'complex', 'block', 'country', 'state', 'city', 'district', 'zone', 'street',
+        ]);
+
+        $agent = Employee::where('user_id', auth()->id())->first();
+
+        return view('pages.properties.edit', [
+            'property' => $property,
+            'agent' => $agent,
+            ...PropertyFormData::get(),
+        ]);
+    }
+
+    /**
+     * Обновление объекта. Валидация → UpdatePropertyRequest, логика → UpdateProperty.
+     */
+    public function update(UpdatePropertyRequest $request, Property $property, UpdateProperty $action): RedirectResponse
+    {
+        try {
+            $action->execute($property, $request->validated(), $request);
+
+            return redirect()
+                ->route('properties.edit', $property)
+                ->with('success', 'Объект успешно обновлён!');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Ошибка при обновлении объекта: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * AJAX: Удалить фото объекта. Проверяет принадлежность фото к объекту.
+     */
+    public function deletePhoto(Property $property, PropertyPhoto $photo): JsonResponse
+    {
+        if ($photo->property_id !== $property->id) {
+            return response()->json(['success' => false, 'message' => 'Фото не принадлежит этому объекту'], 403);
+        }
+
+        $photoService = app(PhotoUploadService::class);
+        $result = $photoService->deletePhoto($photo);
+
+        return response()->json(['success' => $result]);
+    }
+
+    /**
+     * AJAX: Изменить порядок фотографий объекта (drag & drop).
+     */
+    public function reorderPhotos(Request $request, Property $property): JsonResponse
+    {
+        $photoIds = $request->input('photo_ids', []);
+
+        if (empty($photoIds)) {
+            return response()->json(['success' => false, 'message' => 'Нет фото для сортировки'], 400);
+        }
+
+        $photoService = app(PhotoUploadService::class);
+        $result = $photoService->updateOrder($property, $photoIds);
+
+        return response()->json(['success' => $result]);
+    }
+}

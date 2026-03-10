@@ -6,7 +6,7 @@ use App\Http\Controllers\Property\DeveloperController;
 use App\Http\Controllers\Company\EmployeeController;
 use App\Http\Controllers\Import\ComplexImportController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Property\PropertyController;
+use App\Http\Controllers\Property\Property\PropertyController;
 use App\Http\Controllers\Property\PropertyDocumentController;
 use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\Settings\RoleController;
