@@ -278,7 +278,7 @@ class MainRegionSelect {
         if ($(this.select).hasClass('select2-hidden-accessible')) {
             $(this.select).select2('destroy');
         }
-        this.select.innerHTML = '<option value="">— Не выбрано —</option>';
+        this.select.innerHTML = '<option value=""></option>';
         regions.forEach(r => {
             const opt = document.createElement('option');
             opt.value = r.id;
@@ -286,15 +286,15 @@ class MainRegionSelect {
             if (String(r.id) === String(currentValue)) opt.selected = true;
             this.select.appendChild(opt);
         });
-        $(this.select).select2({ minimumResultsForSearch: Infinity, width: '100%' });
+        $(this.select).select2({ placeholder: 'Район региона', allowClear: true, width: '100%' });
     }
 
     clear() {
         if ($(this.select).hasClass('select2-hidden-accessible')) {
             $(this.select).select2('destroy');
         }
-        this.select.innerHTML = '<option value="">— Не выбрано —</option>';
-        $(this.select).select2({ minimumResultsForSearch: Infinity, width: '100%' });
+        this.select.innerHTML = '<option value=""></option>';
+        $(this.select).select2({ placeholder: 'Район региона', allowClear: true, width: '100%' });
     }
 }
 

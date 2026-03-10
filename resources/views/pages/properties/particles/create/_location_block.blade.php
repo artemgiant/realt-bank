@@ -38,11 +38,11 @@
     </div>
 </div>
 
-{{-- Район области --}}
+{{-- Район региона --}}
 <div class="item selects w16">
-    <label class="item-label">Район области</label>
-    <select name="region_id" id="region_id" class="js-example-responsive2">
-        <option value="">— Не выбрано —</option>
+    <label class="item-label">Район региона</label>
+    <select name="region_id" id="region_id" class="js-example-responsive3 my-select2">
+        <option value=""></option>
     </select>
 </div>
 

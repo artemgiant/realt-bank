@@ -18,7 +18,7 @@
             </form>
             <button class="btn btn-primary" onclick="openRegionDrawer()" style="margin-right:4px;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Район области
+                Район региона
             </button>
             <button class="btn btn-primary" onclick="openStateDrawer()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -66,7 +66,7 @@
                                 </div>
                                 <div class="address-info">
                                     <h4 style="font-size:13px;font-weight:600;">{{ $region->name }}</h4>
-                                    <p>Район области</p>
+                                    <p>Район региона</p>
                                 </div>
                                 <span class="address-count">{{ $region->cities_count }} {{ trans_choice('город|города|городов', $region->cities_count) }}</span>
                                 <div class="actions-cell">

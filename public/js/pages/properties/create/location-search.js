@@ -365,7 +365,7 @@ class RegionSelectManager {
         }
 
         // Clear and rebuild options
-        this.select.innerHTML = '<option value="">— Не выбрано —</option>';
+        this.select.innerHTML = '<option value=""></option>';
 
         regions.forEach(region => {
             const option = document.createElement('option');
@@ -379,7 +379,8 @@ class RegionSelectManager {
 
         // Reinitialize Select2
         $(this.select).select2({
-            minimumResultsForSearch: Infinity,
+            placeholder: 'Район региона',
+            allowClear: true,
             width: '100%',
         });
     }
@@ -389,7 +390,7 @@ class RegionSelectManager {
             $(this.select).select2('destroy');
         }
 
-        this.select.innerHTML = '<option value="">— Не выбрано —</option>';
+        this.select.innerHTML = '<option value=""></option>';
 
         $(this.select).select2({
             minimumResultsForSearch: Infinity,
