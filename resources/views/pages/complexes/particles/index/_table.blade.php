@@ -64,19 +64,6 @@
                 <div class="menu-burger">
                     <div class="dropdown">
                         <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <picture><source srcset="{{ asset('img/icon/burger.svg') }}" type="image/webp"><img src="{{ asset('img/icon/burger.svg') }}" alt=""></picture>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Обновить</a></li>
-                            <li><a class="dropdown-item" href="#">Отложить</a></li>
-                            <li><a class="dropdown-item" href="#">Передать</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="menu-burger">
-                    <div class="dropdown">
-                        <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <picture><source srcset="{{ asset('img/icon/sorting.svg') }}" type="image/webp"><img src="{{ asset('img/icon/sorting.svg') }}" alt=""></picture>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-sort">

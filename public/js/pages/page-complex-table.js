@@ -39,24 +39,13 @@ $(document).ready(function () {
 					return `
                      <div class="tbody-wrapper block-actions">
                         <div class="block-actions-wrapper">
-                           <label class="bookmark">
-                              <input type="checkbox">
-                              <span>
-                                  <img class="non-checked" src="./img/icon/bookmark.svg" alt="">
-                                  <img class="on-checked" src="./img/icon/bookmark-cheked.svg" alt="">
-                              </span>
-                           </label>
                            <div class="menu-burger">
                               <div class="dropdown">
                                  <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                      <img src="./img/icon/burger-blue.svg" alt="">
                                  </button>
                                  <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Обновить</a></li>
                                     <li><a class="dropdown-item" href="#">Редактировать</a></li>
-                                    <li><a class="dropdown-item" href="#">Удалить</a></li>
-                                    <li><a class="dropdown-item" href="#">Отложить</a></li>
-                                    <li><a class="dropdown-item" href="#">Передати</a></li>
                                  </ul>
                               </div>
                            </div>

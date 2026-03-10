@@ -166,11 +166,7 @@ window.ComplexRenderers = {
             '<picture><source srcset="./img/icon/burger-blue.svg" type="image/webp"><img src="./img/icon/burger-blue.svg" alt=""></picture>' +
             '</button>' +
             '<ul class="dropdown-menu">' +
-            '<li><a class="dropdown-item" href="#">Обновить</a></li>' +
             '<li><a class="dropdown-item" href="' + editUrl + '">Редактировать</a></li>' +
-            '<li><a class="dropdown-item delete-complex" href="#" data-id="' + row.id + '">Удалить</a></li>' +
-            '<li><a class="dropdown-item" href="#">Отложить</a></li>' +
-            '<li><a class="dropdown-item" href="#">Передать</a></li>' +
             '</ul>' +
             '</div>' +
             '</div>' +
