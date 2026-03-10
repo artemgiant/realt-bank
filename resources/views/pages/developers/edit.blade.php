@@ -468,26 +468,8 @@
 
 @push('scripts')
     {{-- Общие функции (PhoneInputManager, PhotoLoaderMini и т.д.) --}}
-    <script type="module">
-        import { PhoneInputManager, PhotoLoaderMini } from '{{ asset('js/pages/function_on_pages-create.js') }}';
-        window.PhoneInputManager = PhoneInputManager;
-        window.PhotoLoaderMini = PhotoLoaderMini;
-
-        // Загружаем page-create-developers после того как классы доступны
-        const scripts = [
-            '{{ asset('js/pages/developers/page-create-developers.js') }}'
-        ];
-
-        for (const src of scripts) {
-            await new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = src;
-                script.onload = resolve;
-                script.onerror = reject;
-                document.body.appendChild(script);
-            });
-        }
-    </script>
+    <script src="{{ asset('js/pages/function_on_pages-create.js') }}"></script>
+    <script src="{{ asset('js/pages/developers/page-create-developers.js') }}"></script>
 
     {{-- Модуль контактов --}}
     @include('components.contact-modal-scripts', ['context' => 'developers', 'maxContacts' => 0, 'behavior' => ['requireRoles' => false, 'skipApiForExisting' => false, 'phoneDialCodeMapping' => true, 'hasPendingContactData' => false]])
