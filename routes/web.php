@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\Company\CompanyController;
-use App\Http\Controllers\Property\ComplexController;
-use App\Http\Controllers\Property\DeveloperController;
-use App\Http\Controllers\Company\EmployeeController;
+use App\Http\Controllers\Company\Company\CompanyController;
+use App\Http\Controllers\Property\Complex\ComplexController;
+use App\Http\Controllers\Property\Developer\DeveloperController;
+use App\Http\Controllers\Company\Employee\EmployeeController;
 use App\Http\Controllers\Import\ComplexImportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Property\Property\PropertyController;
@@ -67,22 +67,22 @@ Route::middleware('auth')->group(function () {
 
 // Location routes (существующие)
     Route::prefix('location')->group(function () {
-        Route::get('/search', [App\Http\Controllers\LocationController::class, 'search'])->name('location.search');
-        Route::get('/street/{id}', [App\Http\Controllers\LocationController::class, 'show'])->name('location.show');
+        Route::get('/search', [App\Http\Controllers\Location\LocationController::class, 'search'])->name('location.search');
+        Route::get('/street/{id}', [App\Http\Controllers\Location\LocationController::class, 'show'])->name('location.show');
 
         // Регионы (новые routes)
-        Route::get('/states/search', [App\Http\Controllers\LocationController::class, 'searchStates'])->name('location.states.search');
-        Route::get('/states/default', [App\Http\Controllers\LocationController::class, 'getDefaultState'])->name('location.states.default');
-        Route::get('/states/{id}', [App\Http\Controllers\LocationController::class, 'showState'])->name('location.states.show');
+        Route::get('/states/search', [App\Http\Controllers\Location\LocationController::class, 'searchStates'])->name('location.states.search');
+        Route::get('/states/default', [App\Http\Controllers\Location\LocationController::class, 'getDefaultState'])->name('location.states.default');
+        Route::get('/states/{id}', [App\Http\Controllers\Location\LocationController::class, 'showState'])->name('location.states.show');
 
         // Районы области по state_id
-        Route::get('/regions/by-state', [App\Http\Controllers\LocationController::class, 'getRegionsByState'])->name('location.regions.by-state');
+        Route::get('/regions/by-state', [App\Http\Controllers\Location\LocationController::class, 'getRegionsByState'])->name('location.regions.by-state');
 
         // Данные для фильтра локаций
-        Route::get('/filter-data', [App\Http\Controllers\LocationController::class, 'getFilterData'])->name('location.filter-data');
+        Route::get('/filter-data', [App\Http\Controllers\Location\LocationController::class, 'getFilterData'])->name('location.filter-data');
 
         // Универсальный поиск локации (страна/область/город)
-        Route::get('/search-all', [App\Http\Controllers\LocationController::class, 'searchAll'])->name('location.search-all');
+        Route::get('/search-all', [App\Http\Controllers\Location\LocationController::class, 'searchAll'])->name('location.search-all');
     });
 
 
@@ -90,35 +90,35 @@ Route::middleware('auth')->group(function () {
 
 // ========== Contacts AJAX endpoints ==========
 // Поиск контактов (для select2 / autocomplete)
-    Route::get('/contacts/ajax-search', [App\Http\Controllers\ContactController::class, 'ajaxSearch'])
+    Route::get('/contacts/ajax-search', [App\Http\Controllers\Contact\ContactController::class, 'ajaxSearch'])
         ->name('contacts.ajax-search');
 
 // Поиск контакта по номеру телефона
-    Route::get('/contacts/ajax-search-by-phone', [App\Http\Controllers\ContactController::class, 'ajaxSearchByPhone'])
+    Route::get('/contacts/ajax-search-by-phone', [App\Http\Controllers\Contact\ContactController::class, 'ajaxSearchByPhone'])
         ->name('contacts.ajax-search-by-phone');
 
 // Создание контакта через AJAX (из модального окна)
-    Route::post('/contacts/ajax-store', [App\Http\Controllers\ContactController::class, 'ajaxStore'])
+    Route::post('/contacts/ajax-store', [App\Http\Controllers\Contact\ContactController::class, 'ajaxStore'])
         ->name('contacts.ajax-store');
 
 // Получение данных контакта через AJAX
-    Route::get('/contacts/{contact}/ajax', [App\Http\Controllers\ContactController::class, 'ajaxShow'])
+    Route::get('/contacts/{contact}/ajax', [App\Http\Controllers\Contact\ContactController::class, 'ajaxShow'])
         ->name('contacts.ajax-show');
 
 // Обновление контакта через AJAX
-    Route::put('/contacts/{contact}/ajax', [App\Http\Controllers\ContactController::class, 'ajaxUpdate'])
+    Route::put('/contacts/{contact}/ajax', [App\Http\Controllers\Contact\ContactController::class, 'ajaxUpdate'])
         ->name('contacts.ajax-update');
 
 // Удаление контакта через AJAX
-    Route::delete('/contacts/{contact}/ajax', [App\Http\Controllers\ContactController::class, 'ajaxDestroy'])
+    Route::delete('/contacts/{contact}/ajax', [App\Http\Controllers\Contact\ContactController::class, 'ajaxDestroy'])
         ->name('contacts.ajax-destroy');
 
     // Привязать контакт к объекту
-    Route::post('/properties/{property}/contacts', [App\Http\Controllers\ContactController::class, 'attachToProperty'])
+    Route::post('/properties/{property}/contacts', [App\Http\Controllers\Contact\ContactController::class, 'attachToProperty'])
         ->name('properties.contacts.attach');
 
 // Отвязать контакт от объекта
-    Route::delete('/properties/{property}/contacts/{contact}', [App\Http\Controllers\ContactController::class, 'detachFromProperty'])
+    Route::delete('/properties/{property}/contacts/{contact}', [App\Http\Controllers\Contact\ContactController::class, 'detachFromProperty'])
         ->name('properties.contacts.detach');
 
 
