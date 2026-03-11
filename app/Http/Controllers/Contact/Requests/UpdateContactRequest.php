@@ -31,7 +31,7 @@ class UpdateContactRequest extends FormRequest
             'last_name'          => 'nullable|string|max:255',
             'middle_name'        => 'nullable|string|max:255',
             'email'              => 'nullable|email|max:255',
-            'tags'               => 'nullable|string|max:500',
+            'tags'               => 'nullable',
             'telegram'           => 'nullable|string|max:255',
             'viber'              => 'nullable|string|max:255',
             'whatsapp'           => 'nullable|string|max:255',

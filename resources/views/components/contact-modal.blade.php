@@ -15,7 +15,8 @@
     $showExtendedSocials = $showExtendedSocials ?? true;
     $showBirthday = $showBirthday ?? true;
     $showHistory = $showHistory ?? true;
-    $tagsMultiple = $tagsMultiple ?? false;
+    $tagsMultiple = true;
+    $contactTags = $contactTags ?? \App\Models\Reference\Dictionary::getContactTags();
 @endphp
 
 <div class="modal fade" id="add-contact-modal" tabindex="-1" aria-labelledby="add-contact-modal-label" aria-hidden="true">

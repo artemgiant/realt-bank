@@ -59,9 +59,9 @@ window.ContactModal.Form = {
             $(Config.selectors.contactRoleSelect).val(null).trigger('change');
         }
 
-        // Теги
-        if (contact.tags) {
-            $('#tags-client-modal').val(contact.tags).trigger('change');
+        // Теги (используем tag_ids для корректного выбора в Select2)
+        if (contact.tag_ids && contact.tag_ids.length) {
+            $('#tags-client-modal').val(contact.tag_ids).trigger('change');
         }
 
         // Фото

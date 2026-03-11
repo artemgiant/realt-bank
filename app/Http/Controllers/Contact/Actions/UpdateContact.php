@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Contact\Actions;
 use App\Helpers\PhoneFormatter;
 use App\Models\Contact\Contact;
 use App\Models\Contact\ContactPhone;
+use App\Models\Reference\Dictionary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -49,6 +50,13 @@ class UpdateContact
                 $photoPath = $request->file('photo')->store('contacts/photos', 'public');
             }
 
+            // Нормализация tags (companies отправляет массив ID, остальные — строку)
+            $tags = $data['tags'] ?? null;
+            if (is_array($tags)) {
+                $tagNames = Dictionary::whereIn('id', $tags)->pluck('name');
+                $tags = $tagNames->implode(',');
+            }
+
             // Определение ролей
             $roles = $data['roles'] ?? $data['contact_role'] ?? [];
 
@@ -60,7 +68,7 @@ class UpdateContact
                 'middle_name'  => $data['middle_name'] ?? null,
                 'email'        => $data['email'] ?? null,
                 'contact_role' => $roles,
-                'tags'         => $data['tags'] ?? null,
+                'tags'         => $tags,
                 'telegram'     => $data['telegram'] ?? null,
                 'viber'        => $data['viber'] ?? null,
                 'whatsapp'     => $data['whatsapp'] ?? null,

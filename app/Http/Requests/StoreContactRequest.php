@@ -56,7 +56,7 @@ class StoreContactRequest extends FormRequest
             default => array_merge($baseRules, [
                 'roles' => 'nullable|array',
                 'roles.*' => 'exists:dictionaries,id',
-                'tags' => 'nullable|string|max:500',
+                'tags' => 'nullable',
             ]),
         };
     }

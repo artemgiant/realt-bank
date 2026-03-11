@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Contact\Presenters;
 
 use App\Models\Contact\Contact;
+use App\Models\Reference\Dictionary;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -33,6 +34,7 @@ class ContactPresenter
             'roles'              => $contact->roles->pluck('id')->toArray(),
             'tags'               => $contact->tags,
             'tags_array'         => $contact->tags_array,
+            'tag_ids'            => $this->resolveTagIds($contact->tags_array),
             'telegram'           => $contact->telegram,
             'viber'              => $contact->viber,
             'whatsapp'           => $contact->whatsapp,
@@ -55,6 +57,21 @@ class ContactPresenter
      * Краткий формат контакта для ответов ajaxStore, ajaxUpdate, attachToProperty.
      * Содержит основные данные для отображения в карточке/списке.
      */
+    /**
+     * Поиск ID тегов по именам в справочнике (contact_tag + agent_tag).
+     */
+    private function resolveTagIds(array $tagNames): array
+    {
+        if (empty($tagNames)) {
+            return [];
+        }
+
+        return Dictionary::whereIn('type', [Dictionary::TYPE_CONTACT_TAG, Dictionary::TYPE_AGENT_TAG])
+            ->whereIn('name', $tagNames)
+            ->pluck('id')
+            ->toArray();
+    }
+
     public function toShortResponse(Contact $contact): array
     {
         return [
