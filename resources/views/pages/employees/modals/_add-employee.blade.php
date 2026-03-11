@@ -79,10 +79,10 @@
                                 <div class="invalid-feedback" data-field="email"></div>
                             </div>
                             <div class="item" id="password-field-wrapper">
-                                <label for="password" class="green">Пароль <span class="text-danger">*</span></label>
+                                <label for="password" class="green">Пароль <span class="text-danger password-required-star">*</span></label>
                                 <div class="item-inputText-wrapper">
                                     <input class="item-inputText" id="password" name="password" type="password"
-                                        autocomplete="new-password" required>
+                                        autocomplete="new-password" placeholder="Оставьте пустым, чтобы не менять">
                                 </div>
                                 <div class="invalid-feedback" data-field="password"></div>
                             </div>

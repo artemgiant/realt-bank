@@ -343,7 +343,8 @@
         $('#modal-title').text('Новый сотрудник');
         $('#save-btn-text').text('Сохранить');
         $('#password-field-wrapper').show();
-        $('#password').prop('required', true);
+        $('#password').prop('required', true).attr('placeholder', '');
+        $('.password-required-star').show();
         $('#employee-id').val('');
 
         // Сброс формы
@@ -363,8 +364,9 @@
         // Установить UI для редактирования
         $('#modal-title').text('Редактировать сотрудника');
         $('#save-btn-text').text('Сохранить изменения');
-        $('#password-field-wrapper').hide();
-        $('#password').prop('required', false).val('');
+        $('#password-field-wrapper').show();
+        $('#password').prop('required', false).val('').attr('placeholder', 'Оставьте пустым, чтобы не менять');
+        $('.password-required-star').hide();
         $('#employee-id').val(employeeId);
 
         // Открыть модалку (данные загрузятся после shown.bs.modal)

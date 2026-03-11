@@ -39,6 +39,7 @@ class UpdateEmployeeRequest extends FormRequest
             'tag_ids'     => 'nullable|array',
             'passport'    => 'nullable|string|max:50',
             'inn'         => 'nullable|string|max:20',
+            'password'    => 'nullable|string|min:6',
             'comment'     => 'nullable|string',
             'photo'       => 'nullable|image|max:5120',
             'active_until' => 'nullable|date',

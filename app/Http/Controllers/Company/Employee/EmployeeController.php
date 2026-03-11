@@ -14,6 +14,7 @@ use App\Models\Reference\Dictionary;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -166,6 +167,14 @@ class EmployeeController extends Controller
             }
             $validated['photo_path'] = $request->file('photo')->store('employees', 'public');
         }
+
+        // Обновление пароля пользователя
+        if (!empty($validated['password']) && $employee->user) {
+            $employee->user->update([
+                'password' => Hash::make($validated['password']),
+            ]);
+        }
+        unset($validated['password']);
 
         $employee->update($validated);
 
