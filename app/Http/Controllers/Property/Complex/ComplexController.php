@@ -220,7 +220,7 @@ class ComplexController extends Controller
             ]);
         }
 
-        $query = Block::with(['street.zone', 'street.district', 'street.city'])
+        $query = Block::with(['street.zone', 'street.district', 'street.city.region', 'street.city.state'])
             ->where('complex_id', $complexId)
             ->active();
 
@@ -248,6 +248,10 @@ class ComplexController extends Controller
                 'district_name' => $street?->district?->name ?? '',
                 'city_id' => $street?->city_id,
                 'city_name' => $street?->city?->name ?? '',
+                'region_id' => $street?->city?->region_id,
+                'region_name' => $street?->city?->region?->name ?? '',
+                'state_id' => $street?->city?->state_id,
+                'state_name' => $street?->city?->state?->name ?? '',
             ];
         });
 

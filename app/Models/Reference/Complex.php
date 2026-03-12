@@ -5,6 +5,7 @@ namespace App\Models\Reference;
 use App\Models\Contact\Contact;
 use App\Models\Location\City;
 use App\Models\Location\District;
+use App\Models\Location\Region;
 use App\Models\Location\Zone;
 use App\Models\Property\Property;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,6 +26,7 @@ class Complex extends Model
         'name',
         'developer_id',
         'city_id',
+        'region_id',
         'district_id',
         'zone_id',
         'description',
@@ -84,6 +86,11 @@ class Complex extends Model
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class);
     }
 
     public function district(): BelongsTo

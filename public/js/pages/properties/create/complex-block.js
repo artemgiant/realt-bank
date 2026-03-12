@@ -231,6 +231,46 @@
         $(CONFIG.selectors.cityId).val(blockData.city_id || '');
         $(CONFIG.selectors.cityName).val(blockData.city_name || '');
 
+        // Заполняем область и район региона
+        if (blockData.state_id) {
+            $('input[name="state_id"]').val(blockData.state_id);
+            $('input[name="state_name"]').val(blockData.state_name || '');
+
+            // Загружаем районы для области и выбираем нужный
+            const regionSelect = document.querySelector('#region_id');
+            if (regionSelect && blockData.region_id) {
+                fetch(`/location/regions/by-state?state_id=${blockData.state_id}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Destroy Select2
+                            if ($(regionSelect).hasClass('select2-hidden-accessible')) {
+                                $(regionSelect).select2('destroy');
+                            }
+
+                            // Rebuild options
+                            regionSelect.innerHTML = '<option value=""></option>';
+                            data.results.forEach(region => {
+                                const option = document.createElement('option');
+                                option.value = region.id;
+                                option.textContent = region.name;
+                                if (String(region.id) === String(blockData.region_id)) {
+                                    option.selected = true;
+                                }
+                                regionSelect.appendChild(option);
+                            });
+
+                            // Reinitialize Select2
+                            $(regionSelect).select2({
+                                placeholder: 'Район региона',
+                                allowClear: true,
+                                width: '100%',
+                            });
+                        }
+                    });
+            }
+        }
+
         // Показываем кнопку очистки в поле локации
         const $clearBtn = $locationInput.siblings('.location-search-clear');
         if ($clearBtn.length && blockData.street_name) {
