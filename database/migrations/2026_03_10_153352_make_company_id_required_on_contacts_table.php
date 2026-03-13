@@ -2,16 +2,17 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('contacts', function (Blueprint $table) {
-            // Удаляем старый FK (nullOnDelete несовместим с NOT NULL)
-            $table->dropForeign(['company_id']);
+        // Удаляем старый FK если существует
+        $this->dropForeignIfExists('contacts', 'company_id');
 
+        Schema::table('contacts', function (Blueprint $table) {
             // Делаем колонку NOT NULL
             $table->foreignId('company_id')->nullable(false)->change();
 
@@ -24,14 +25,32 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('contacts', function (Blueprint $table) {
-            $table->dropForeign(['company_id']);
+        $this->dropForeignIfExists('contacts', 'company_id');
 
+        Schema::table('contacts', function (Blueprint $table) {
             $table->foreignId('company_id')->nullable()->change();
 
             $table->foreign('company_id')
                 ->references('id')->on('companies')
                 ->nullOnDelete();
         });
+    }
+
+    private function dropForeignIfExists(string $table, string $column): void
+    {
+        $fk = DB::selectOne("
+            SELECT CONSTRAINT_NAME
+            FROM information_schema.KEY_COLUMN_USAGE
+            WHERE TABLE_NAME = ?
+              AND COLUMN_NAME = ?
+              AND TABLE_SCHEMA = DATABASE()
+              AND REFERENCED_TABLE_NAME IS NOT NULL
+        ", [$table, $column]);
+
+        if ($fk) {
+            Schema::table($table, function (Blueprint $t) use ($fk) {
+                $t->dropForeign($fk->CONSTRAINT_NAME);
+            });
+        }
     }
 };
