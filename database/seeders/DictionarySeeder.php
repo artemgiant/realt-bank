@@ -103,6 +103,7 @@ class DictionarySeeder extends Seeder
 
                 // Тип стен
             Dictionary::TYPE_WALL_TYPE => [
+                'Строений нет',
                 'Кирпич',
                 'Силикатный кирпич',
                 'Панель',
