@@ -639,6 +639,8 @@
 {{--    LOcation SEARCH--}}
     <script src="{{ asset('js/pages/properties/create/complex-block.js') }}"></script>
     <script src="{{ asset('js/pages/properties/create/location-search.js') }}" type="module"></script>
+{{--    Проверка дублирования адреса--}}
+    <script src="{{ asset('js/pages/properties/create/duplicate-address-check.js') }}"></script>
 {{--ТЕГИ И ОСОБЕННОСТИ--}}
     <script src="{{ asset('js/pages/properties/create/features-tags.js') }}"></script>
 

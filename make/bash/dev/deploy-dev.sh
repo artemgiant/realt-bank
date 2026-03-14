@@ -28,7 +28,7 @@ php artisan migrate
 
 
 
-#php artisan db:seed --class=DictionarySeeder --force
+php artisan db:seed --class=DictionarySeeder --force
 #
 #php artisan db:seed --class=RoleSeeder
 #

@@ -103,4 +103,10 @@
         <input class="item-inputText" id="number-apartment" name="apartment_number" type="text" autocomplete="off" value="{{ old('apartment_number', $property->apartment_number) }}">
     </div>
 </div>
+{{-- Предупреждение о дубликате адреса --}}
+<div class="w-100">
+    <div id="duplicate-address-warning" style="display:none;"></div>
+</div>
+{{-- Hidden input для исключения текущего объекта из проверки --}}
+<input type="hidden" name="property_id" value="{{ $property->id }}">
 {{-- ========== /ЛОКАЦИЯ ========== --}}

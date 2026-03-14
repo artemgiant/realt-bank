@@ -182,6 +182,58 @@ class PropertyController extends Controller
     }
 
     /**
+     * AJAX: Проверка дублирования адреса объекта.
+     */
+    public function checkDuplicateAddress(Request $request): JsonResponse
+    {
+        $streetId = $request->input('street_id');
+        $buildingNumber = $request->input('building_number');
+
+        if (!$streetId || !$buildingNumber) {
+            return response()->json(['exists' => false]);
+        }
+
+        $query = Property::where('street_id', $streetId)
+            ->where('building_number', $buildingNumber);
+
+        $apartmentNumber = $request->input('apartment_number');
+        if ($apartmentNumber) {
+            $query->where('apartment_number', $apartmentNumber);
+        }
+
+        // Исключаем текущий объект при редактировании
+        if ($request->filled('exclude_id')) {
+            $query->where('id', '!=', $request->input('exclude_id'));
+        }
+
+        $duplicates = $query->with(['street', 'city', 'employee'])
+            ->limit(5)
+            ->get();
+
+        if ($duplicates->isEmpty()) {
+            return response()->json(['exists' => false]);
+        }
+
+        $items = $duplicates->map(function (Property $p) {
+            return [
+                'id' => $p->id,
+                'address' => $p->full_address,
+                'apartment_number' => $p->apartment_number,
+                'price' => $p->price ? number_format($p->price, 0, '.', ' ') : null,
+                'currency' => $p->currency?->code,
+                'agent' => $p->employee?->full_name,
+                'status' => $p->status,
+                'edit_url' => route('properties.edit', $p->id),
+            ];
+        });
+
+        return response()->json([
+            'exists' => true,
+            'duplicates' => $items,
+        ]);
+    }
+
+    /**
      * AJAX: Изменить порядок фотографий объекта (drag & drop).
      */
     public function reorderPhotos(Request $request, Property $property): JsonResponse

@@ -49,6 +49,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/properties/ajax-data', [PropertyController::class, 'ajaxData'])
         ->name('properties.ajax-data');
 
+    // AJAX: проверка дублирования адреса
+    Route::get('/properties/check-duplicate-address', [PropertyController::class, 'checkDuplicateAddress'])
+        ->name('properties.check-duplicate-address');
+
 
     Route::get('documents/{hash}/download', [PropertyDocumentController::class, 'download'])
         ->name('documents.download');
