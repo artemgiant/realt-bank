@@ -38,6 +38,7 @@ class CompanyOffice extends Model
         'street_id',
         'building_number',
         'office_number',
+        'phone',
         'full_address',
         'is_active',
         'sort_order',

@@ -374,7 +374,7 @@
                     <div class="block-row">
 
 
-                        <div class="item w25">
+                        <div class="item w16">
                             <div class="tab-the-name">
                                 <ul class="nav nav-tabs" id="tab-office-name-__INDEX__" role="tablist">
                                     <li class="nav-item" role="presentation">
@@ -426,9 +426,13 @@
 
 
 
+                        <div class="item" style="flex: 0 0 250px;">
+                            <label class="item-label">Телефон офиса <span class="text-danger">*</span></label>
+                            <input class="item-inputText" name="offices[__INDEX__][phone]" type="tel" autocomplete="off" required>
+                        </div>
 
 
-                        <div class="item office-photos-item">
+                        <div class="item  office-photos-item">
                             <label class="item-label green">Фото офиса</label>
                             <div class="office-photos-upload" data-office-index="__INDEX__">
                                 <div class="office-photos-preview"></div>

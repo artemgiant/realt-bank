@@ -455,6 +455,10 @@
                                         </label>
                                     </div>
                                 </div>
+                                <div class="item" style="flex: 0 0 250px;">
+                                    <label class="item-label">Телефон офиса <span class="text-danger">*</span></label>
+                                    <input class="item-inputText" name="offices[{{ $index }}][phone]" type="tel" autocomplete="off" value="{{ old("offices.{$index}.phone", $office->phone) }}" required>
+                                </div>
                             </div>
                             <div class="block-row">
                                 <div class="item selects w16">
@@ -592,6 +596,10 @@
                                     <span>Добавить фото</span>
                                 </label>
                             </div>
+                        </div>
+                        <div class="item" style="flex: 0 0 250px;">
+                            <label class="item-label">Телефон офиса <span class="text-danger">*</span></label>
+                            <input class="item-inputText" name="offices[__INDEX__][phone]" type="tel" autocomplete="off" required>
                         </div>
                     </div>
                     <div class="block-row">

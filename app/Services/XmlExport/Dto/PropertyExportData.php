@@ -75,7 +75,7 @@ class PropertyExportData
         return new self(
             id: $property->id,
             email: $property->employee?->email,
-            phone: $property->employee?->phone,
+            phone: $property->employee?->office?->phone,
 
             employeeId: $property->employee_id,
             employeeName: $property->employee?->full_name,

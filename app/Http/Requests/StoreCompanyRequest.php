@@ -57,6 +57,7 @@ class StoreCompanyRequest extends FormRequest
             'offices.*.street_id' => ['nullable', 'exists:streets,id'],
             'offices.*.building_number' => ['nullable', 'string', 'max:50'],
             'offices.*.office_number' => ['nullable', 'string', 'max:50'],
+            'offices.*.phone' => ['required', 'string', 'max:50'],
             'offices.*.contact_ids' => ['required', 'array', 'min:1'],
             'offices.*.contact_ids.*' => ['exists:contacts,id'],
             'offices.*.photos' => ['nullable', 'array'],
@@ -91,6 +92,7 @@ class StoreCompanyRequest extends FormRequest
             'offices.*.name_ru' => 'название офиса (RU)',
             'offices.*.name_en' => 'название офиса (EN)',
             'offices.*.photos' => 'фото офиса',
+            'offices.*.phone' => 'телефон офиса',
             'offices.*.contact_ids' => 'контакты офиса',
         ];
     }
@@ -115,6 +117,7 @@ class StoreCompanyRequest extends FormRequest
             'offices.*.photos.*.image' => 'Файл должен быть изображением',
             'offices.*.photos.*.mimes' => 'Разрешены только: JPEG, PNG, WebP',
             'offices.*.photos.*.max' => 'Максимальный размер фото 5MB',
+            'offices.*.phone.required' => 'Укажите номер телефона офиса',
             'offices.*.contact_ids.required' => 'Каждый офис должен иметь хотя бы один контакт',
             'offices.*.contact_ids.min' => 'Каждый офис должен иметь хотя бы один контакт',
         ];

@@ -146,6 +146,7 @@ class CreateCompany
                 'street_id' => $officeData['street_id'] ?? null,
                 'building_number' => $officeData['building_number'] ?? null,
                 'office_number' => $officeData['office_number'] ?? null,
+                'phone' => $officeData['phone'] ?? null,
                 'sort_order' => $index,
                 'is_active' => true,
             ]);

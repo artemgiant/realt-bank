@@ -10,6 +10,19 @@
     // Хранилище файлов фотографий для каждого офиса
     const officePhotos = {};
 
+    // Маски телефонов по странам (такие же как в контактном модале)
+    const countryMasks = {
+        'ua': '(99) 999-99-99',
+        'us': '(999) 999-9999',
+        'gb': '9999 999999',
+        'de': '999 99999999',
+        'fr': '9 99-99-99-99',
+        'pl': '999 999-999',
+        'it': '999 999-9999',
+        'es': '999 99-99-99',
+        'default': '(999) 999-99-99'
+    };
+
     const elements = {
         container: null,
         emptyState: null,
@@ -34,11 +47,12 @@
         const existingOffices = elements.container.querySelectorAll('.block-offices-item');
         if (existingOffices.length > 0) {
             officeIndex = existingOffices.length;
-            // Инициализируем поиск локации для существующих офисов
+            // Инициализируем поиск локации и маску телефона для существующих офисов
             existingOffices.forEach(officeElement => {
                 if (typeof window.initLocationSearchForOffice === 'function') {
                     window.initLocationSearchForOffice(officeElement);
                 }
+                initOfficePhone(officeElement);
             });
         }
 
@@ -111,6 +125,9 @@
         if (typeof window.initLocationSearchForOffice === 'function') {
             window.initLocationSearchForOffice(officeElement);
         }
+
+        // Инициализируем маску телефона для нового офиса
+        initOfficePhone(officeElement);
 
         // Фокус на название офиса
         const nameInput = officeElement.querySelector('.office-name-input');
@@ -261,6 +278,54 @@
         }
 
         hiddenInput.files = dataTransfer.files;
+    }
+
+    /**
+     * Инициализация intlTelInput + маска для поля телефона офиса.
+     */
+    function initOfficePhone(officeElement) {
+        var phoneInput = officeElement.querySelector('input[name*="[phone]"]');
+        if (!phoneInput || phoneInput._iti) return;
+
+        var iti = window.intlTelInput(phoneInput, {
+            initialCountry: 'ua',
+            utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js',
+            separateDialCode: true,
+            nationalMode: true,
+            autoPlaceholder: 'aggressive',
+            customPlaceholder: function(placeholder) {
+                return placeholder.replace(/[0-9]/g, '_');
+            }
+        });
+
+        phoneInput._iti = iti;
+
+        var $input = $(phoneInput);
+
+        var applyPhoneMask = function(countryCode) {
+            var mask = countryMasks[countryCode] || countryMasks['default'];
+            var currentValue = $input.val();
+            $input.unmask().mask(mask, { clearIfNotMatch: false });
+            if (currentValue) {
+                $input.val(currentValue);
+            }
+        };
+
+        $input.on('countrychange', function() {
+            applyPhoneMask(iti.getSelectedCountryData().iso2);
+        });
+
+        $input.on('keypress', function(e) {
+            if (!/[0-9]/.test(String.fromCharCode(e.which))) {
+                e.preventDefault();
+            }
+        });
+
+        applyPhoneMask(iti.getSelectedCountryData().iso2);
+
+        setTimeout(function() {
+            $input.trigger('countrychange');
+        }, 100);
     }
 
     // Инициализация при загрузке DOM
