@@ -191,4 +191,63 @@ class Dictionary extends Model
     {
         return static::getByType($type)->pluck('name', 'id');
     }
+
+    // ========== Deal Type → Property Type Mapping ==========
+
+    /**
+     * Маппинг: название типа сделки → названия типов недвижимости.
+     */
+    public static function getDealTypePropertyTypeMap(): array
+    {
+        $комнаты = ['Комната'];
+        $квартиры = ['Квартира', 'Пентхаус', 'Студия', 'Апартаменты', 'Квартира на земле'];
+        $дома = ['Дом', 'Таунхаус', 'Дуплекс', 'Часть дома', 'Коттедж', 'Вилла', 'Дача'];
+        $земля = ['Земля под жилую застройку', 'Земля под садоводство', 'Земля коммерческого назначения', 'Земля сельскохозяйственного назначения', 'Земля рекреационного назначения'];
+        $коммерция = ['Офисное помещение', 'Торговое помещение', 'Ресторан/кафе', 'Гостиница/отель', 'Медицинское помещение', 'Складские помещения', 'Производственные помещения', 'Здание', 'Готовый бизнес', 'Помещение свободного назначения'];
+        $паркинг = ['Паркинг', 'Машино-место', 'Гараж', 'Бокс'];
+
+        return [
+            'Продажа комнат' => $комнаты,
+            'Аренда комнат' => $комнаты,
+            'Продажа квартир' => $квартиры,
+            'Аренда квартир' => $квартиры,
+            'Продажа домов' => $дома,
+            'Аренда домов' => $дома,
+            'Продажа земли' => $земля,
+            'Аренда земли' => $земля,
+            'Продажа коммерции' => $коммерция,
+            'Аренда коммерции' => $коммерция,
+            'Продажа паркинг/гараж' => $паркинг,
+            'Аренда паркинг/гараж' => $паркинг,
+        ];
+    }
+
+    /**
+     * Маппинг в формате ID: deal_type_id → [property_type_id, ...]
+     */
+    public static function getDealTypePropertyTypeMapIds(): array
+    {
+        $map = static::getDealTypePropertyTypeMap();
+        $dealTypes = static::getDealTypes()->keyBy('name');
+        $propertyTypes = static::getPropertyTypes()->keyBy('name');
+
+        $result = [];
+        foreach ($map as $dealTypeName => $propertyTypeNames) {
+            $dealType = $dealTypes->get($dealTypeName);
+            if (!$dealType) {
+                continue;
+            }
+
+            $propertyTypeIds = [];
+            foreach ($propertyTypeNames as $ptName) {
+                $pt = $propertyTypes->get($ptName);
+                if ($pt) {
+                    $propertyTypeIds[] = $pt->id;
+                }
+            }
+            $result[$dealType->id] = $propertyTypeIds;
+        }
+
+        return $result;
+    }
 }

@@ -57,6 +57,9 @@ class PropertyFormData
 
             // Годы постройки
             'yearsBuilt' => Dictionary::getYearsBuilt(),
+
+            // Маппинг тип сделки → типы недвижимости (для JS-фильтрации)
+            'dealTypePropertyTypeMap' => Dictionary::getDealTypePropertyTypeMapIds(),
         ];
     }
 }

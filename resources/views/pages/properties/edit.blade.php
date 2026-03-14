@@ -615,8 +615,16 @@
     {{-- SortableJS для перемещения фотографий --}}
     <script src="{{ asset('js/lib/sortable.min.js') }}"></script>
 
+    {{-- Маппинг тип сделки → типы недвижимости --}}
+    <script>
+        window.dealTypePropertyTypeMap = @json($dealTypePropertyTypeMap);
+    </script>
+
     {{-- Основной скрипт страницы --}}
     <script src="{{ asset('js/pages/properties/create/page-create.js') }}" type="module"></script>
+
+    {{-- Фильтрация типов недвижимости по типу сделки --}}
+    <script src="{{ asset('js/pages/properties/create/deal-property-filter.js') }}"></script>
 
     {{-- Интеграция PhotoLoader с формой --}}
     <script src="{{ asset('js/pages/properties/create/form-submit.js') }}"></script>
