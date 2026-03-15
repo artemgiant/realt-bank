@@ -2321,6 +2321,36 @@ class PhoneInputManager {
 	}
 
 	/**
+	 * Отримання повного номера телефону з кодом країни
+	 * @param {HTMLElement} inputElement - Елемент input
+	 * @returns {string} - Повний номер у форматі E.164 (наприклад +380111111111)
+	 */
+	getFullNumber (inputElement) {
+		const iti = inputElement._iti;
+		if (iti) {
+			return iti.getNumber();
+		}
+		return inputElement.value || '';
+	}
+
+	/**
+	 * Отримання повних номерів всіх телефонних полів
+	 * @returns {Array<string>} - Масив повних номерів
+	 */
+	getFullNumbers () {
+		const numbers = [];
+		if (!this.wrapper) return numbers;
+
+		this.wrapper.querySelectorAll(`.${this.options.inputClass}`).forEach((input) => {
+			const number = this.getFullNumber(input);
+			if (number) {
+				numbers.push(number);
+			}
+		});
+		return numbers;
+	}
+
+	/**
 	 * Очищення стану валідації
 	 * @param {HTMLElement} inputElement - Елемент input
 	 */

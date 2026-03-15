@@ -10,6 +10,57 @@
     let currentEmployeeId = null;
 
     /**
+     * Форматирование номера телефона с кодом страны (аналог ContactModal.Utils.formatPhoneWithCountryCode)
+     */
+    function formatPhoneWithCountryCode(phone, inputElement) {
+        var digits, countryData, countryCode;
+
+        // Пробуем получить intl-tel-input instance
+        var iti = inputElement && (inputElement._iti || $(inputElement).data('iti'));
+
+        if (iti) {
+            countryData = iti.getSelectedCountryData();
+            countryCode = countryData ? countryData.iso2 : null;
+            var dialCode = countryData ? countryData.dialCode : '';
+            digits = (phone || '').replace(/\D/g, '');
+
+            // Украинский номер — формат +38 (0XX) XXX-XX-XX
+            if (countryCode === 'ua' && digits.length === 9) {
+                var areaCode = digits.substring(0, 2);
+                var p1 = digits.substring(2, 5);
+                var p2 = digits.substring(5, 7);
+                var p3 = digits.substring(7, 9);
+                return '+38 (0' + areaCode + ') ' + p1 + '-' + p2 + '-' + p3;
+            }
+
+            // Для остальных стран — E.164 через intl-tel-input
+            var fullNumber = iti.getNumber();
+            if (fullNumber) return fullNumber;
+
+            // Fallback: dialCode + digits
+            if (dialCode && digits) {
+                return '+' + dialCode + digits;
+            }
+        }
+
+        // Fallback без intl-tel-input
+        var cleaned = (phone || '').trim();
+        digits = cleaned.replace(/\D/g, '');
+
+        if (cleaned.startsWith('+')) {
+            return '+' + digits;
+        }
+
+        // Локальный украинский номер
+        if (digits.startsWith('0') && digits.length === 10) {
+            var sub = digits.substring(1);
+            return '+38 (0' + sub.substring(0, 2) + ') ' + sub.substring(2, 5) + '-' + sub.substring(5, 7) + '-' + sub.substring(7, 9);
+        }
+
+        return '+380' + digits;
+    }
+
+    /**
      * Инициализация PhoneInputManager для телефонов
      */
     function initPhoneInput() {
@@ -54,8 +105,9 @@
                 separateDialCode: true,
                 utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js'
             });
-            // Сохраняем instance для возможного уничтожения
+            // Сохраняем instance для возможного уничтожения и получения полного номера
             $(phoneInput).data('iti', iti);
+            phoneInput._iti = iti;
             console.log('Simple intl-tel-input initialized');
         }
     }
@@ -394,6 +446,15 @@
 
         // Собрать данные формы
         const formData = new FormData($form[0]);
+
+        // Получить полный номер телефона с кодом страны из intl-tel-input
+        const phoneInput = document.querySelector('#employee-modal #phone');
+        if (phoneInput) {
+            const fullPhone = formatPhoneWithCountryCode(phoneInput.value, phoneInput);
+            if (fullPhone) {
+                formData.set('phone', fullPhone);
+            }
+        }
 
         // Конвертация дат в формат Y-m-d
         const birthday = $('#birthday').val();
