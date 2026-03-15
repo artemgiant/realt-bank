@@ -77,7 +77,7 @@ class PropertyTablePresenter
         $complexName = $property->complex?->name ?? null;
 
         $streetParts = [];
-        if ($property->building_number) {
+        if ($property->building_number && $property->is_visible_to_agents) {
             $streetParts[] = $property->building_number;
         }
         if ($property->street) {
