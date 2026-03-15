@@ -5,7 +5,7 @@
     <x-alerts />
 
     Требуется подключить стили:
-    <link rel="stylesheet" href="{{ asset('css/components/alerts.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/components/alerts.css') }}">
 --}}
 
 {{-- Сообщение об успехе --}}

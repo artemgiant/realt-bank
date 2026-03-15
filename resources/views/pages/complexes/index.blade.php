@@ -3,8 +3,8 @@
 @section('title', 'Комплексы - Realt Bank')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/pages/complexes/index/page-complex.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pages/complexes/index/location-filter.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/complexes/index/page-complex.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/complexes/index/location-filter.css') }}">
 @endpush
 
 
@@ -46,14 +46,14 @@
 
 @push('scripts')
     {{-- Location filter --}}
-    <script src="{{ asset('js/pages/complexes/index/location-filter.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/complexes/index/location-filter.js') }}"></script>
 
     {{-- Table modules --}}
-    <script src="{{ asset('js/pages/complexes/index/table-renderers.js') }}"></script>
-    <script src="{{ asset('js/pages/complexes/index/table-config.js') }}"></script>
-    <script src="{{ asset('js/pages/complexes/index/table-filters.js') }}"></script>
-    <script src="{{ asset('js/pages/complexes/index/table-tags.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/complexes/index/table-renderers.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/complexes/index/table-config.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/complexes/index/table-filters.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/complexes/index/table-tags.js') }}"></script>
 
     {{-- Main table initialization --}}
-    <script src="{{ asset('js/pages/complexes/index/page-complex-table.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/complexes/index/page-complex-table.js') }}"></script>
 @endpush

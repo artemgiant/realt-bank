@@ -45,7 +45,7 @@
         </div>
     </form>
 
-    <script src="{{ asset('js/lib/jquery.v3.7.1.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/jquery.v3.7.1.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <script>
         $(function() {

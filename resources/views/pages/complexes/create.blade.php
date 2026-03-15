@@ -3,17 +3,17 @@
 @section('title', 'Создание объекта - Realt Bank')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/pages/complexes/create/page-create-complex.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/complexes/create/page-create-complex.css') }}">
 
 
-    <link rel="stylesheet" href="{{ asset('css/pages/properties/create/location-search.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/properties/create/location-search.css') }}">
 
     {{--Плагин по редактированию изображений--}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-image-editor/3.15.0/tui-image-editor.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-color-picker/2.2.6/tui-color-picker.min.css">
 
     {{---- Плагин по автосохранению форм ----}}
-    <link rel="stylesheet" href="{{ asset('css/pages/properties/create/field-widths.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/properties/create/field-widths.css') }}">
 @endpush
 
 @section('header')
@@ -804,12 +804,12 @@
 
 @push('scripts')
     <!-- Спочатку залежності -->
-    <script src="{{ asset('js/lib/tui-code-snippet.min.js') }}"></script>
-    <script src="{{ asset('js/lib/fabric.min.js') }}"></script>
-    <script src="{{ asset('js/lib/tui-color-picker.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/tui-code-snippet.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/fabric.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/tui-color-picker.min.js') }}"></script>
     <!-- Потім основний редактор -->
-    <script src="{{ asset('js/lib/tui-image-editor.min.js') }}"></script>
-    <script src="{{ asset('js/lib/heic2any.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/tui-image-editor.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/heic2any.min.js') }}"></script>
 
 
 
@@ -819,17 +819,17 @@
 
 
 
-    <script src="{{ asset('js/pages/complexes/create/function_on_pages-create.js') }}" type="module"></script>
-    <script src="{{ asset('js/pages/complexes/create/page-create-complex.js') }}" type="module"></script>
+    <script src="{{ versioned_asset('js/pages/complexes/create/function_on_pages-create.js') }}" type="module"></script>
+    <script src="{{ versioned_asset('js/pages/complexes/create/page-create-complex.js') }}" type="module"></script>
     <!--<script src="./js/pages/full-filter.min.js"></script>-->
 
 
     {{--    LOcation SEARCH--}}
-    <script src="{{ asset('js/pages/properties/create/location-search.js') }}" type="module"></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/location-search.js') }}" type="module"></script>
 
 
 
     {{--ТЕГИ И ОСОБЕННОСТИ--}}
-    <script src="{{ asset('js/pages/properties/create/features-tags.js') }}" defer></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/features-tags.js') }}" defer></script>
 
 @endpush

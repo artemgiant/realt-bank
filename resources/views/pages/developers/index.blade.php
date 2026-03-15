@@ -3,8 +3,8 @@
 @section('title', 'Developers - Realt Bank')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/pages/developers/page-developers.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pages/properties/index/location-filter.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/developers/page-developers.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/properties/index/location-filter.css') }}">
 @endpush
 
 
@@ -52,9 +52,9 @@
 
 @push('scripts')
     {{-- Модули таблицы (порядок важен!) --}}
-    <script src="{{ asset('js/pages/developers/index/table-renderers.js') }}"></script>
-    <script src="{{ asset('js/pages/developers/index/table-config.js') }}"></script>
-    <script src="{{ asset('js/pages/developers/index/table-filters.js') }}"></script>
-    <script src="{{ asset('js/pages/developers/index/page-developers-table.js') }}"></script>
-    <script src="{{ asset('js/pages/developers/index/location-filter.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/developers/index/table-renderers.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/developers/index/table-config.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/developers/index/table-filters.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/developers/index/page-developers-table.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/developers/index/location-filter.js') }}"></script>
 @endpush

@@ -3,8 +3,8 @@
 @section('title', 'Редактирование комплекса - Realt Bank')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/pages/complexes/create/page-create-complex.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pages/properties/create/location-search.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/complexes/create/page-create-complex.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/properties/create/location-search.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-image-editor/3.15.0/tui-image-editor.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-color-picker/2.2.6/tui-color-picker.min.css">
 @endpush
@@ -920,18 +920,18 @@
 
 
 @push('scripts')
-    <script src="{{ asset('js/lib/tui-code-snippet.min.js') }}"></script>
-    <script src="{{ asset('js/lib/fabric.min.js') }}"></script>
-    <script src="{{ asset('js/lib/tui-color-picker.min.js') }}"></script>
-    <script src="{{ asset('js/lib/tui-image-editor.min.js') }}"></script>
-    <script src="{{ asset('js/lib/heic2any.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/tui-code-snippet.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/fabric.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/tui-color-picker.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/tui-image-editor.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/heic2any.min.js') }}"></script>
 
     {{-- Модуль контактов --}}
     @include('components.contact-modal-scripts', ['context' => 'complexes', 'maxContacts' => 0, 'behavior' => ['requireRoles' => false, 'skipApiForExisting' => true, 'phoneDialCodeMapping' => true, 'hasPendingContactData' => false]])
 
-    <script src="{{ asset('js/pages/complexes/create/function_on_pages-create.js') }}" type="module"></script>
-    <script src="{{ asset('js/pages/complexes/create/page-create-complex.js') }}" type="module"></script>
+    <script src="{{ versioned_asset('js/pages/complexes/create/function_on_pages-create.js') }}" type="module"></script>
+    <script src="{{ versioned_asset('js/pages/complexes/create/page-create-complex.js') }}" type="module"></script>
 
-    <script src="{{ asset('js/pages/properties/create/location-search.js') }}" type="module"></script>
-    <script src="{{ asset('js/pages/properties/create/features-tags.js') }}" defer></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/location-search.js') }}" type="module"></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/features-tags.js') }}" defer></script>
 @endpush

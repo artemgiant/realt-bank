@@ -3,11 +3,11 @@
 @section('title', 'Настройки — FAKTOR CRM')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/pages/settings/base.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pages/settings/layout.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pages/settings/components.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pages/settings/tables.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pages/settings/locations.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/settings/base.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/settings/layout.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/settings/components.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/settings/tables.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/settings/locations.css') }}">
 @endpush
 
 @section('content')
@@ -68,6 +68,6 @@
         var zonesData = @json(isset($zonesList) ? $zonesList->keyBy('id') : collect());
         var streetsData = @json(isset($streetsList) ? $streetsList->keyBy('id') : collect());
     </script>
-    <script src="{{ asset('js/pages/settings/settings.js') }}"></script>
-    <script src="{{ asset('js/pages/settings/settings-locations.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/settings/settings.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/settings/settings-locations.js') }}"></script>
 @endpush

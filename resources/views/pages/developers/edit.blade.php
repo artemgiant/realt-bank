@@ -3,7 +3,7 @@
 @section('title', 'Редактирование девелопера - Realt Bank')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/pages/developers/page-create-developers.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/developers/page-create-developers.css') }}">
 @endpush
 
 @section('header')
@@ -468,8 +468,8 @@
 
 @push('scripts')
     {{-- Общие функции (PhoneInputManager, PhotoLoaderMini и т.д.) --}}
-    <script src="{{ asset('js/pages/function_on_pages-create.js') }}"></script>
-    <script src="{{ asset('js/pages/developers/page-create-developers.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/function_on_pages-create.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/developers/page-create-developers.js') }}"></script>
 
     {{-- Модуль контактов --}}
     @include('components.contact-modal-scripts', ['context' => 'developers', 'maxContacts' => 0, 'behavior' => ['requireRoles' => false, 'skipApiForExisting' => false, 'phoneDialCodeMapping' => true, 'hasPendingContactData' => false]])

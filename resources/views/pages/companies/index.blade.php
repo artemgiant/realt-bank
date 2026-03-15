@@ -3,8 +3,8 @@
 @section('title', 'Компании - Realt Bank')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/pages/companies/index/page-company-company.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pages/companies/index/location-filter.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/companies/index/page-company-company.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/companies/index/location-filter.css') }}">
 @endpush
 
 @section('header')
@@ -43,9 +43,9 @@
 
 @push('scripts')
     {{-- Модули таблицы (порядок важен!) --}}
-    <script src="{{ asset('js/pages/companies/index/table-renderers.js') }}"></script>
-    <script src="{{ asset('js/pages/companies/index/table-config.js') }}"></script>
-    <script src="{{ asset('js/pages/companies/index/table-filters.js') }}"></script>
-    <script src="{{ asset('js/pages/companies/index/page-companies-table.js') }}"></script>
-    <script src="{{ asset('js/pages/companies/index/location-filter.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/companies/index/table-renderers.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/companies/index/table-config.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/companies/index/table-filters.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/companies/index/page-companies-table.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/companies/index/location-filter.js') }}"></script>
 @endpush

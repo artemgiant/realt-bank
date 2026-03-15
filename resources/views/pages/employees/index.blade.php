@@ -3,7 +3,7 @@
 @section('title', 'Сотрудники - Realt Bank')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/pages/employees/index/page-employees.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/employees/index/page-employees.css') }}">
 @endpush
 
 @section('header')
@@ -30,14 +30,14 @@
 
 @push('scripts')
     {{-- Модули таблицы (порядок важен!) --}}
-    <script src="{{ asset('js/pages/employees/index/table-config.js') }}"></script>
-    <script src="{{ asset('js/pages/employees/index/table-renderers.js') }}"></script>
-    <script src="{{ asset('js/pages/employees/index/table-filters.js') }}"></script>
-    <script src="{{ asset('js/pages/employees/index/page-employees-table.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/employees/index/table-config.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/employees/index/table-renderers.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/employees/index/table-filters.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/employees/index/page-employees-table.js') }}"></script>
 
     {{-- Общие утилиты --}}
-    <script src="{{ asset('js/pages/filter2.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/filter2.js') }}"></script>
     {{-- PhoneInputManager для модалки добавления сотрудника --}}
-    <script src="{{ asset('js/pages/function_on_pages-create.js') }}"></script>
-    <script src="{{ asset('js/pages/add-employee-modal.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/function_on_pages-create.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/add-employee-modal.js') }}"></script>
 @endpush

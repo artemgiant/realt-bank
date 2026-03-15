@@ -3,9 +3,9 @@
 @section('title', 'Редактирование объекта #' . $property->id . ' - Realt Bank')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/pages/properties/create/page-create.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pages/properties/create/location-search.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pages/properties/create/field-widths.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/properties/create/page-create.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/properties/create/location-search.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/properties/create/field-widths.css') }}">
 
 
 {{--Плагин по редактированию изображений--}}
@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-color-picker/2.2.6/tui-color-picker.min.css">
 
 {{---- Плагин по автосохранению форм ----}}
-    <link rel="stylesheet" href="{{ asset('css/pages/properties/create/form-autosave.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/properties/create/form-autosave.css') }}">
 
 @endpush
 
@@ -604,16 +604,16 @@
 
 
 @push('scripts')
-    <script src="{{ asset('js/pages/page-home-table.min.js') }}"></script>
-    <script src="{{ asset('js/pages/filter1.min.js') }}"></script>
-    <script src="{{ asset('js/pages/full-filter.min.js') }}"></script>
-    <script src="{{ asset('js/pages/my-dropdown.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/page-home-table.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/filter1.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/full-filter.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/my-dropdown.min.js') }}"></script>
 
 
 
 
     {{-- SortableJS для перемещения фотографий --}}
-    <script src="{{ asset('js/lib/sortable.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/sortable.min.js') }}"></script>
 
     {{-- Маппинг тип сделки → типы недвижимости --}}
     <script>
@@ -621,46 +621,46 @@
     </script>
 
     {{-- Основной скрипт страницы --}}
-    <script src="{{ asset('js/pages/properties/create/page-create.js') }}" type="module"></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/page-create.js') }}" type="module"></script>
 
     {{-- Фильтрация типов недвижимости по типу сделки --}}
-    <script src="{{ asset('js/pages/properties/create/deal-property-filter.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/deal-property-filter.js') }}"></script>
 
     {{-- Интеграция PhotoLoader с формой --}}
-    <script src="{{ asset('js/pages/properties/create/form-submit.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/form-submit.js') }}"></script>
 
 
     {{-- Модуль контактов --}}
     @include('components.contact-modal-scripts', ['context' => 'properties', 'maxContacts' => 5, 'behavior' => ['requireRoles' => true, 'skipApiForExisting' => false, 'phoneDialCodeMapping' => true, 'hasPendingContactData' => true]])
 
     {{-- Модуль передачи агенту --}}
-    <script src="{{ asset('js/pages/properties/create/modal/transfer-agent/main.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/modal/transfer-agent/main.js') }}"></script>
 
 {{--    LOcation SEARCH--}}
-    <script src="{{ asset('js/pages/properties/create/complex-block.js') }}"></script>
-    <script src="{{ asset('js/pages/properties/create/location-search.js') }}" type="module"></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/complex-block.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/location-search.js') }}" type="module"></script>
 {{--    Проверка дублирования адреса--}}
-    <script src="{{ asset('js/pages/properties/create/duplicate-address-check.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/duplicate-address-check.js') }}"></script>
 {{--ТЕГИ И ОСОБЕННОСТИ--}}
-    <script src="{{ asset('js/pages/properties/create/features-tags.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/features-tags.js') }}"></script>
 
 {{--    Маски для цыфровых полей--}}
-    <script src="{{ asset('js/pages/properties/create/number-mask.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/number-mask.js') }}"></script>
 
 {{--АВТОЗАПОЛНЕНИЕ ТИПА ЗДАНИЯ--}}
-    <script src="{{ asset('js/pages/properties/create/building-type-autofill.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/building-type-autofill.js') }}"></script>
 
 
     {{---- Плагин по автосохранению форм ----}}
-    <script src="{{ asset('js/pages/properties/create/form-autosave.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/properties/create/form-autosave.js') }}"></script>
     {{--Плагин по редактированию изображений--}}
     <!-- Спочатку залежності -->
-    <script src="{{ asset('js/lib/tui-code-snippet.min.js') }}"></script>
-    <script src="{{ asset('js/lib/fabric.min.js') }}"></script>
-    <script src="{{ asset('js/lib/tui-color-picker.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/tui-code-snippet.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/fabric.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/tui-color-picker.min.js') }}"></script>
     <!-- Потім основний редактор -->
-    <script src="{{ asset('js/lib/tui-image-editor.min.js') }}"></script>
-    <script src="{{ asset('js/lib/heic2any.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/tui-image-editor.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/lib/heic2any.min.js') }}"></script>
 
     {{-- Загрузка существующих фото в PhotoLoader --}}
     @if($property->photos->count() > 0)

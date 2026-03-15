@@ -5,9 +5,9 @@
 
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/components/alerts.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pages/companies/create/page-create-company.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/pages/properties/create/location-search.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/components/alerts.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/companies/create/page-create-company.css') }}">
+    <link rel="stylesheet" href="{{ versioned_asset('css/pages/properties/create/location-search.css') }}">
 @endpush
 
 @section('header')
@@ -697,11 +697,11 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/pages/my-dropdown.min.js') }}"></script>
-    <script src="{{ asset('js/pages/companies/create/function_on_pages-create.js') }}" type="module"></script>
-    <script src="{{ asset('js/pages/companies/create/page-create-agency.js') }}" type="module"></script>
-    <script src="{{ asset('js/pages/companies/create/location-search.js') }}"></script>
-    <script src="{{ asset('js/pages/companies/create/office-manager.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/my-dropdown.min.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/companies/create/function_on_pages-create.js') }}" type="module"></script>
+    <script src="{{ versioned_asset('js/pages/companies/create/page-create-agency.js') }}" type="module"></script>
+    <script src="{{ versioned_asset('js/pages/companies/create/location-search.js') }}"></script>
+    <script src="{{ versioned_asset('js/pages/companies/create/office-manager.js') }}"></script>
 
     {{-- Модуль контактов --}}
     @include('components.contact-modal-scripts', ['context' => 'companies', 'maxContacts' => 0, 'behavior' => ['requireRoles' => true, 'skipApiForExisting' => false, 'phoneDialCodeMapping' => true, 'hasPendingContactData' => true]])
