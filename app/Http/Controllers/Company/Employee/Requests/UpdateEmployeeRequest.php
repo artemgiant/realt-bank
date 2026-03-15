@@ -34,7 +34,7 @@ class UpdateEmployeeRequest extends FormRequest
             'birthday'    => 'nullable|date',
             'company_id'  => 'nullable|exists:companies,id',
             'office_id'   => 'nullable|exists:company_offices,id',
-            'position_id' => 'nullable|exists:dictionaries,id',
+            'position_id' => 'required|exists:dictionaries,id',
             'status_id'   => 'nullable|exists:dictionaries,id',
             'tag_ids'     => 'nullable|array',
             'passport'    => 'nullable|string|max:50',

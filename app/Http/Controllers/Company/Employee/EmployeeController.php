@@ -14,6 +14,7 @@ use App\Models\Reference\Dictionary;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Helpers\PhoneFormatter;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -84,10 +85,14 @@ class EmployeeController extends Controller
     {
         $validated = $request->validated();
 
+        // Форматирование телефона
+        $validated['phone'] = PhoneFormatter::format($validated['phone']);
+
         // Создание пользователя
         $user = User::create([
             'name'     => trim($validated['first_name'] . ' ' . $validated['last_name']),
             'email'    => $validated['email'],
+            'phone'    => $validated['phone'],
             'password' => $validated['password'], // автоматически хешируется благодаря cast
         ]);
 
@@ -168,11 +173,26 @@ class EmployeeController extends Controller
             $validated['photo_path'] = $request->file('photo')->store('employees', 'public');
         }
 
-        // Обновление пароля пользователя
-        if (!empty($validated['password']) && $employee->user) {
-            $employee->user->update([
-                'password' => Hash::make($validated['password']),
-            ]);
+        // Форматирование телефона
+        if (!empty($validated['phone'])) {
+            $validated['phone'] = PhoneFormatter::format($validated['phone']);
+        }
+
+        // Синхронизация данных пользователя
+        if ($employee->user) {
+            $userData = [
+                'name' => trim($validated['first_name'] . ' ' . $validated['last_name']),
+            ];
+            if (!empty($validated['email'])) {
+                $userData['email'] = $validated['email'];
+            }
+            if (!empty($validated['phone'])) {
+                $userData['phone'] = $validated['phone'];
+            }
+            if (!empty($validated['password'])) {
+                $userData['password'] = Hash::make($validated['password']);
+            }
+            $employee->user->update($userData);
         }
         unset($validated['password']);
 

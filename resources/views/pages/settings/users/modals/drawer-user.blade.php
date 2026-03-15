@@ -41,6 +41,12 @@
                            placeholder="ivan.petrov@company.com" required>
                     <span class="form-hint">Используется для входа в систему</span>
                 </div>
+                <div class="form-group">
+                    <label class="form-label">Телефон <span class="required">*</span></label>
+                    <input class="form-input" type="tel" id="userPhone" required>
+                    <input type="hidden" name="phone" id="userPhoneHidden">
+                    <span class="form-hint">Используется для входа в систему</span>
+                </div>
                 <div class="form-group" id="passwordGroup">
                     <label class="form-label">Пароль <span class="required">*</span></label>
                     <input class="form-input" type="password" name="password" id="userPassword"

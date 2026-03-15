@@ -34,6 +34,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
+            'phone' => 'required|string|max:255|unique:users,phone',
             'password' => ['required', Password::min(8)],
             'role_id' => 'required|exists:roles,id',
             'employee_id' => 'nullable|exists:employees,id|unique:employees,user_id',
@@ -43,6 +44,7 @@ class UserController extends Controller
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'phone' => $validated['phone'],
             'password' => Hash::make($validated['password']),
             'is_active' => $request->has('is_active'),
         ]);
@@ -73,6 +75,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'phone' => 'required|string|max:255|unique:users,phone,' . $user->id,
             'password' => ['nullable', Password::min(8)],
             'role_id' => 'required|exists:roles,id',
             'employee_id' => [
@@ -94,6 +97,7 @@ class UserController extends Controller
         $user->update([
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'phone' => $validated['phone'],
             'is_active' => $request->has('is_active'),
         ]);
 
@@ -165,7 +169,8 @@ class UserController extends Controller
         $users = User::with(['roles', 'employee.office'])
             ->when($request->search, function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             })
             ->get();
 

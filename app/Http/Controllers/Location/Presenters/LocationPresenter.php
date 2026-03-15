@@ -35,6 +35,7 @@ class LocationPresenter
             'district_name' => $street->district?->name,
             'zone_id' => $street->zone_id,
             'zone_name' => $street->zone?->name,
+            'region_id' => $street->city?->region_id,
             'full_address' => $street->full_address,
             'short_address' => $street->short_address,
         ];

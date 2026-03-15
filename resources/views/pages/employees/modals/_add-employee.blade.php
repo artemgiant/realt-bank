@@ -63,10 +63,10 @@
                                             </svg>
                                         </button>
                                     </div>
-                                    <label for="phone" class="green">Телефон</label>
+                                    <label for="phone" class="green">Телефон <span class="text-danger">*</span></label>
                                     <div class="item-inputText-wrapper">
                                         <input class="item-inputText tel-contact" id="phone" name="phone" type="tel"
-                                            autocomplete="off">
+                                            autocomplete="off" required>
                                     </div>
                                 </div>
                             </div>
@@ -93,7 +93,7 @@
                         {{-- Должность, Офис, День рождения --}}
                         <div class="modal-row">
                             <div class="item selects">
-                                <label class="item-label" for="position_id">Должность</label>
+                                <label class="item-label" for="position_id">Должность <span class="text-danger">*</span></label>
                                 <select id="position_id" name="position_id" class="js-example-responsive2 my-select2"
                                     autocomplete="off">
                                     <option></option>

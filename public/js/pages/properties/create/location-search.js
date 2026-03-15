@@ -604,6 +604,14 @@ class StreetSearchManager {
         this.wrapper.classList.add('has-value');
         this.closeDropdown();
 
+        // Устанавливаем район региона если есть region_id
+        if (street.region_id) {
+            const regionSelect = document.querySelector('#region_id');
+            if (regionSelect) {
+                $(regionSelect).val(street.region_id).trigger('change');
+            }
+        }
+
         // Диспатчим событие
         document.dispatchEvent(new CustomEvent('streetSelected', { detail: street }));
     }

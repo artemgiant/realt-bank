@@ -38,7 +38,7 @@ class LocationController extends Controller
             ]);
         }
 
-        $streetsQuery = Street::with(['city', 'district', 'zone'])
+        $streetsQuery = Street::with(['city', 'city.region', 'district', 'zone'])
             ->active()
             ->search($query);
 
@@ -66,7 +66,7 @@ class LocationController extends Controller
      */
     public function show(int $id, LocationPresenter $presenter): JsonResponse
     {
-        $street = Street::with(['city', 'district', 'zone'])->find($id);
+        $street = Street::with(['city', 'city.region', 'district', 'zone'])->find($id);
 
         if (!$street) {
             return response()->json([

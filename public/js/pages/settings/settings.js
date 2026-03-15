@@ -164,6 +164,16 @@ function openUserDrawer(userId = null) {
         document.getElementById('userName').value = user.name || '';
         document.getElementById('userEmail').value = user.email || '';
 
+        // Set phone via intl-tel-input
+        if (userPhoneIti && user.phone) {
+            // Phone format: "+38 (095) 090-22-93" -> need to convert to E.164 for setNumber
+            // Extract digits: 380950902293 -> +380950902293
+            var digits = user.phone.replace(/\D/g, '');
+            userPhoneIti.setNumber('+' + digits);
+        } else {
+            document.getElementById('userPhone').value = '';
+        }
+
         // Password: leave empty, not required for edit
         passwordInput.value = '';
         passwordInput.removeAttribute('required');
@@ -206,6 +216,9 @@ function openUserDrawer(userId = null) {
     overlay.classList.add('open');
     drawer.classList.add('open');
     document.body.style.overflow = 'hidden';
+
+    // Initialize phone with intl-tel-input
+    initUserPhoneInput();
 
     // Initialize Select2 after drawer opens
     initDrawerSelect2();
@@ -367,6 +380,67 @@ function initDrawerSelect2() {
     });
 }
 
+// ========== PHONE INPUT (intl-tel-input) ==========
+var userPhoneIti = null;
+
+function initUserPhoneInput() {
+    var phoneInput = document.getElementById('userPhone');
+    if (!phoneInput || typeof intlTelInput === 'undefined') return;
+
+    // Destroy previous instance
+    if (userPhoneIti) {
+        userPhoneIti.destroy();
+        userPhoneIti = null;
+    }
+
+    userPhoneIti = intlTelInput(phoneInput, {
+        initialCountry: 'ua',
+        separateDialCode: true,
+        nationalMode: true,
+        autoPlaceholder: 'off',
+        utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/utils.js',
+    });
+
+    var countryMasks = {
+        'ua': '(99) 999-99-99',
+        'us': '(999) 999-9999',
+        'gb': '9999 999999',
+        'de': '999 99999999',
+        'pl': '999 999 999',
+        'default': '999 999 9999'
+    };
+
+    function applyPhoneMask(countryCode) {
+        var mask = countryMasks[countryCode] || countryMasks['default'];
+        if (typeof $ !== 'undefined' && $.fn.mask) {
+            $(phoneInput).unmask().mask(mask, { placeholder: '_' });
+        }
+    }
+
+    applyPhoneMask('ua');
+
+    phoneInput.addEventListener('countrychange', function() {
+        var data = userPhoneIti.getSelectedCountryData();
+        applyPhoneMask(data.iso2);
+    });
+}
+
+function buildFullPhone() {
+    if (!userPhoneIti) return '';
+    var data = userPhoneIti.getSelectedCountryData();
+    var dialCode = '+' + data.dialCode;
+    var national = document.getElementById('userPhone').value.trim();
+    if (!national) return '';
+
+    // UA: plugin shows +380, mask gives "(95) 090-22-93" (9 digits, no leading 0)
+    // DB stores: "+38 (095) 090-22-93" — need to insert 0 after "("
+    if (data.iso2 === 'ua') {
+        var digits = national.replace(/\D/g, '');
+        return '+38 (0' + digits.substr(0, 2) + ') ' + digits.substr(2, 3) + '-' + digits.substr(5, 2) + '-' + digits.substr(7, 2);
+    }
+    return dialCode + ' ' + national;
+}
+
 // ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', function() {
     // ===== DRAWER: ROLE =====
@@ -415,6 +489,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const confirmDeleteSubmit = document.getElementById('confirmDeleteSubmit');
     if (confirmDeleteSubmit) {
         confirmDeleteSubmit.addEventListener('click', confirmDelete);
+    }
+
+    // ===== USER FORM SUBMIT: build full phone =====
+    var userForm = document.getElementById('userForm');
+    if (userForm) {
+        userForm.addEventListener('submit', function() {
+            document.getElementById('userPhoneHidden').value = buildFullPhone();
+        });
     }
 
     // ===== CLOSE ALL MODALS ON ESCAPE =====

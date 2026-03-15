@@ -36,6 +36,7 @@
                     <th>Пользователь</th>
                     <th>Сотрудник</th>
                     <th>Email</th>
+                    <th>Телефон</th>
                     <th>Роль</th>
                     <th>Офис</th>
                     <th>Статус</th>
@@ -44,10 +45,11 @@
                 </thead>
                 <tbody>
                 @forelse($users as $user)
-                    <tr data-search="{{ mb_strtolower($user->name . ' ' . $user->email . ' ' . ($user->employee->full_name ?? '')) }}">
+                    <tr data-search="{{ mb_strtolower($user->name . ' ' . $user->email . ' ' . ($user->phone ?? '') . ' ' . ($user->employee->full_name ?? '')) }}">
                         <td><span class="role-name">{{ $user->name }}</span></td>
                         <td style="font-size:13px">{{ $user->employee->full_name ?? '—' }}</td>
                         <td style="color:var(--text-muted);font-size:13px">{{ $user->email }}</td>
+                        <td style="color:var(--text-muted);font-size:13px">{{ $user->phone ?? '—' }}</td>
                         <td>
                             @if($user->roles->first())
                                 @php
@@ -94,7 +96,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center" style="padding: 40px; color: var(--text-muted);">
+                        <td colspan="8" class="text-center" style="padding: 40px; color: var(--text-muted);">
                             Нет пользователей
                         </td>
                     </tr>

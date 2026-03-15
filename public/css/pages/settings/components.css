@@ -1266,3 +1266,8 @@ a.nav-item {
   align-items: center;
   gap: 10px;
 }
+
+/* intl-tel-input full width in drawer */
+.drawer .iti {
+  width: 100%;
+}
