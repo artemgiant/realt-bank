@@ -61,6 +61,73 @@
     }
 
     /**
+     * Установка телефона в input с корректным разбором dial code
+     * (аналог ContactModal.Form._fillPhones)
+     */
+    function setPhoneValue(phone) {
+        var input = document.querySelector('#employee-modal #phone');
+        if (!input || !phone) {
+            $('#phone').val(phone);
+            return;
+        }
+
+        var $input = $(input);
+        var phoneClean = (phone + '').trim().replace(/\s/g, '');
+        var digits = phoneClean.replace(/\D/g, '');
+
+        // Маппинг dial code -> ISO2
+        var dialCodeMap = [
+            ['380','ua'],['375','by'],['373','md'],['374','am'],['371','lv'],['370','lt'],['372','ee'],
+            ['995','ge'],['994','az'],['993','tm'],['992','tj'],['998','uz'],['996','kg'],['971','ae'],['972','il'],
+            ['49','de'],['48','pl'],['47','no'],['46','se'],['45','dk'],['44','gb'],
+            ['43','at'],['42','cz'],['41','ch'],['40','ro'],['39','it'],['38','ba'],
+            ['36','hu'],['35','pt'],['34','es'],['33','fr'],['32','be'],['31','nl'],['30','gr'],
+            ['90','tr'],['86','cn'],['82','kr'],['81','jp'],['61','au'],['55','br'],
+            ['1','us'],['7','ru']
+        ];
+
+        var countryIso2 = 'ua';
+        var dcLen = 0;
+        for (var i = 0; i < dialCodeMap.length; i++) {
+            if (digits.indexOf(dialCodeMap[i][0]) === 0) {
+                countryIso2 = dialCodeMap[i][1];
+                dcLen = dialCodeMap[i][0].length;
+                break;
+            }
+        }
+        var nationalDigits = dcLen ? digits.slice(dcLen) : digits;
+
+        // Для Украины: если 10 цифр с ведущим 0 — убираем 0 (маска ожидает 9 цифр)
+        if (countryIso2 === 'ua' && nationalDigits.length === 10 && nationalDigits.charAt(0) === '0') {
+            nationalDigits = nationalDigits.slice(1);
+        }
+
+        var countryMasks = {
+            'ua': '(00) 000-00-00',
+            'ru': '(000) 000-00-00',
+            'by': '(00) 000-00-00',
+            'kz': '(000) 000-00-00',
+            'default': '(000) 000-00-00'
+        };
+
+        if (input._iti) {
+            var iti = input._iti;
+            $input.unmask();
+            iti.setCountry(countryIso2);
+            input.value = nationalDigits;
+            var mask = countryMasks[countryIso2] || countryMasks['default'];
+            $input.mask(mask, { clearIfNotMatch: false });
+        } else {
+            // _iti ещё не инициализирован — ставим только национальные цифры
+            // (intl-tel-input покажет dial code отдельно после инициализации)
+            $input.unmask();
+            input.value = nationalDigits;
+            var mask = countryMasks[countryIso2] || countryMasks['default'];
+            $input.mask(mask, { clearIfNotMatch: false });
+        }
+    }
+
+    /**
      * Инициализация PhoneInputManager для телефонов
      */
     function initPhoneInput() {
@@ -338,7 +405,7 @@
         $('#last_name').val(employee.last_name || '');
         $('#middle_name').val(employee.middle_name || '');
         $('#email').val(employee.email || '');
-        $('#phone').val(employee.phone || '');
+        setPhoneValue(employee.phone || '');
         $('#passport').val(employee.passport || '');
         $('#inn').val(employee.inn || '');
         $('#comment').val(employee.comment || '');
@@ -421,13 +488,8 @@
         $('.password-required-star').hide();
         $('#employee-id').val(employeeId);
 
-        // Открыть модалку (данные загрузятся после shown.bs.modal)
+        // Открыть модалку (данные загрузятся после инициализации компонентов)
         $('#employee-modal').modal('show');
-
-        // Загрузить данные сотрудника с небольшой задержкой чтобы Select2 успел инициализироваться
-        setTimeout(function() {
-            loadEmployeeData(employeeId);
-        }, 200);
     }
 
     /**
@@ -556,7 +618,13 @@
 
         // При открытии модалки
         $modal.on('shown.bs.modal', function () {
-            setTimeout(initModalComponents, 100);
+            initModalComponents();
+            // Загружаем данные сотрудника ПОСЛЕ инициализации компонентов (intl-tel-input и т.д.)
+            if (isEditMode && currentEmployeeId) {
+                setTimeout(function() {
+                    loadEmployeeData(currentEmployeeId);
+                }, 150);
+            }
         });
 
         // При закрытии модалки

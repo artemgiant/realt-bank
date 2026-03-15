@@ -26,7 +26,7 @@ php artisan migrate
 #php artisan db:seed --class=CountrySeeder
 
 
-
+php artisan storage:link
 
 php artisan db:seed --class=DictionarySeeder --force
 #
