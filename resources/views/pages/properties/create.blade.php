@@ -544,9 +544,9 @@
                     <div class="photo-info-btnGroup">
                         <div class="photo-info-btnGroup-wrapper">
                             <div class="photo-info-btnGroup-left">
-                                <button class="btn btn-outline-primary" type="button">
+                                <a class="btn btn-outline-primary" href="{{ route('properties.create') }}">
                                     Отменить изменения
-                                </button>
+                                </a>
 
                             </div>
                             <div class="photo-info-btnGroup-right">

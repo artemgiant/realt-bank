@@ -68,7 +68,8 @@
                                 </picture>
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Обновить</a></li>
+                                <li><a class="dropdown-item" href="#">Печать</a></li>
+                                <li><a class="dropdown-item" href="#">Отправить</a></li>
                             </ul>
                         </div>
                     </div>
