@@ -77,7 +77,7 @@ trait PropertyValidationRules
             'assigned_agent_id' => 'nullable|exists:employees,id',
 
             // Привязка контактов (клиентов) к объекту
-            'contact_ids' => 'nullable|array',
+            'contact_ids' => 'required|array|min:1',
             'contact_ids.*' => 'exists:contacts,id',
 
             // Загрузка документов (макс. 10 файлов по 5MB)
@@ -108,6 +108,8 @@ trait PropertyValidationRules
             'year_built.exists' => 'Выбранный год постройки не существует',
             'floors_total.integer' => 'Этажность должна быть целым числом',
             'youtube_url.url' => 'Введите корректную ссылку на YouTube',
+            'contact_ids.required' => 'Необходимо добавить хотя бы один контакт',
+            'contact_ids.min' => 'Необходимо добавить хотя бы один контакт',
             'contact_ids.array' => 'Неверный формат контактов',
             'contact_ids.*.exists' => 'Выбранный контакт не существует',
             'documents.array' => 'Неверный формат документов',

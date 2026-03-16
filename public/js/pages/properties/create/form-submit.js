@@ -182,20 +182,38 @@
 
         // Показываем новые ошибки
         for (const [field, messages] of Object.entries(errors)) {
+            const message = Array.isArray(messages) ? messages[0] : messages;
+
+            // Специальная обработка для contact_ids — инпуты существуют только когда есть контакты
+            if (field === 'contact_ids') {
+                const contactBlock = document.querySelector('#add-contact-block') || document.querySelector('#contacts-list-container');
+                if (contactBlock) {
+                    contactBlock.classList.add('is-invalid');
+
+                    const feedback = document.createElement('div');
+                    feedback.className = 'invalid-feedback d-block';
+                    feedback.style.cssText = 'font-size: 14px; margin-top: 8px;';
+                    feedback.textContent = message;
+
+                    contactBlock.parentNode.insertBefore(feedback, contactBlock.nextSibling);
+                }
+                continue;
+            }
+
             const input = document.querySelector(`[name="${field}"], [name="${field}[]"]`);
             if (input) {
                 input.classList.add('is-invalid');
 
                 const feedback = document.createElement('div');
                 feedback.className = 'invalid-feedback d-block';
-                feedback.textContent = Array.isArray(messages) ? messages[0] : messages;
+                feedback.textContent = message;
 
                 input.parentNode.appendChild(feedback);
             }
         }
 
         // Скроллим к первой ошибке
-        const firstError = document.querySelector('.is-invalid');
+        const firstError = document.querySelector('.invalid-feedback');
         if (firstError) {
             firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
