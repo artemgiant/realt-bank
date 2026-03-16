@@ -22,17 +22,19 @@
         <div class="header-tabs">
             <div class="btn-group">
                 @foreach($tabs as $tab)
-                    @php
-                        $isActive = ($currentRoute ?? '') === $tab['route'];
-                        $url = \Illuminate\Support\Facades\Route::has($tab['route'])
-                            ? route($tab['route'])
-                            : '#';
-                    @endphp
-                    <a href="{{ $url }}"
-                       class="btn btn-outline-primary {{ $isActive ? 'active' : '' }}"
-                            {{ $isActive ? 'aria-current=page' : '' }}>
-                        {{ $tab['label'] }}
-                    </a>
+                    @if(empty($tab['permission']) || auth()->user()?->can($tab['permission']))
+                        @php
+                            $isActive = ($currentRoute ?? '') === $tab['route'];
+                            $url = \Illuminate\Support\Facades\Route::has($tab['route'])
+                                ? route($tab['route'])
+                                : '#';
+                        @endphp
+                        <a href="{{ $url }}"
+                           class="btn btn-outline-primary {{ $isActive ? 'active' : '' }}"
+                                {{ $isActive ? 'aria-current=page' : '' }}>
+                            {{ $tab['label'] }}
+                        </a>
+                    @endif
                 @endforeach
             </div>
         </div>

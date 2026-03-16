@@ -55,7 +55,10 @@ class UserController extends Controller
 
         // Link employee to user (set user_id in employees table)
         if (!empty($validated['employee_id'])) {
-            Employee::where('id', $validated['employee_id'])->update(['user_id' => $user->id]);
+            Employee::where('id', $validated['employee_id'])->update([
+                'user_id' => $user->id,
+                'phone' => $validated['phone'],
+            ]);
         }
 
         return redirect()
@@ -115,9 +118,12 @@ class UserController extends Controller
         if ($oldEmployeeId && $oldEmployeeId != $newEmployeeId) {
             Employee::where('id', $oldEmployeeId)->update(['user_id' => null]);
         }
-        // Add link to new employee
+        // Add link to new employee and sync phone
         if ($newEmployeeId) {
-            Employee::where('id', $newEmployeeId)->update(['user_id' => $user->id]);
+            Employee::where('id', $newEmployeeId)->update([
+                'user_id' => $user->id,
+                'phone' => $validated['phone'],
+            ]);
         }
 
         return redirect()

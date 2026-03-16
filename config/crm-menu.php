@@ -19,35 +19,22 @@ return [
         [
             'name' => 'Объекты',
             'route' => 'properties.index',
+            'permission' => 'properties.view',
             'icon' => 'img/icon/side-bar/Finanse.svg',
             'tabs' => [
-                ['label' => 'Объекты', 'route' => 'properties.index'],
-                ['label' => 'Комплексы', 'route' => 'complexes.index'],
-                ['label' => 'Девелоперы', 'route' => 'developers.index'],
-//                ['label' => 'Девелоперы', 'route' => 'developers.index'],
+                ['label' => 'Объекты', 'route' => 'properties.index', 'permission' => 'properties.view'],
+                ['label' => 'Комплексы', 'route' => 'complexes.index', 'permission' => 'complexes.view'],
+                ['label' => 'Девелоперы', 'route' => 'developers.index', 'permission' => 'developers.view'],
             ],
         ],
-//        [
-//            'name' => 'Сделки',
-//            'route' => 'deals.index',
-//            'icon' => 'img/icon/side-bar/Deals.svg',
-//            'tabs' => [],
-//        ],
-//        [
-//            'name' => 'Задачи',
-//            'route' => 'tasks.index',
-//            'icon' => 'img/icon/side-bar/Tasks.svg',
-//            'tabs' => [],
-//        ],
         [
             'name' => 'Компания',
             'route' => 'employees.index',
+            'permission' => 'employees.view',
             'icon' => 'img/icon/side-bar/Company1.svg',
             'tabs' => [
-                ['label' => 'Сотрудники', 'route' => 'employees.index'],
-
-                ['label' => 'Компания', 'route' => 'companies.index'],
-
+                ['label' => 'Сотрудники', 'route' => 'employees.index', 'permission' => 'employees.view'],
+                ['label' => 'Компания', 'route' => 'companies.index', 'permission' => 'companies.view'],
             ],
         ],
     ],

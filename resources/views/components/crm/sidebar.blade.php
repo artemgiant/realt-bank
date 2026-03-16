@@ -6,19 +6,21 @@
     </a>
     <nav class="sidebar-nav">
         @foreach($sidebarMenu as $menuItem)
-            @php
-                $routePrefix = explode('.', $menuItem['route'])[0] ?? '';
-                $isActive = str_starts_with($currentRoute ?? '', $routePrefix);
-                $url = \Illuminate\Support\Facades\Route::has($menuItem['route'])
-                    ? route($menuItem['route'])
-                    : '#';
-            @endphp
-            <a class="sidebar-item {{ $isActive ? 'active' : '' }}" href="{{ $url }}">
-                <picture>
-                    <img src="{{ asset($menuItem['icon']) }}" alt="">
-                </picture>
-                <span>{{ $menuItem['name'] }}</span>
-            </a>
+            @if(empty($menuItem['permission']) || auth()->user()?->can($menuItem['permission']))
+                @php
+                    $routePrefix = explode('.', $menuItem['route'])[0] ?? '';
+                    $isActive = str_starts_with($currentRoute ?? '', $routePrefix);
+                    $url = \Illuminate\Support\Facades\Route::has($menuItem['route'])
+                        ? route($menuItem['route'])
+                        : '#';
+                @endphp
+                <a class="sidebar-item {{ $isActive ? 'active' : '' }}" href="{{ $url }}">
+                    <picture>
+                        <img src="{{ asset($menuItem['icon']) }}" alt="">
+                    </picture>
+                    <span>{{ $menuItem['name'] }}</span>
+                </a>
+            @endif
         @endforeach
     </nav>
     <div class="sidebar-bottom">
