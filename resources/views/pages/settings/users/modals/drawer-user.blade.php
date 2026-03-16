@@ -26,30 +26,41 @@
         <input type="hidden" name="_method" id="userMethod" value="POST">
 
         <div class="drawer-body">
+            {{-- Validation errors --}}
+            @if($errors->any())
+                <div class="drawer-section" style="padding-bottom: 0;">
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px 16px;">
+                        @foreach($errors->all() as $error)
+                            <div style="color: #dc2626; font-size: 13px; line-height: 1.5;">{{ $error }}</div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             {{-- Основная информация --}}
             <div class="drawer-section">
                 <div class="drawer-section-title">Основная информация</div>
                 <div class="form-group">
                     <label class="form-label">Имя пользователя <span class="required">*</span></label>
-                    <input class="form-input" type="text" name="name" id="userName"
-                           placeholder="Например: Иван Петров" required>
+                    <input class="form-input @error('name') is-invalid @enderror" type="text" name="name" id="userName"
+                           placeholder="Например: Иван Петров" required value="{{ old('name') }}">
                     <span class="form-hint">Отображаемое имя в системе</span>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Email <span class="required">*</span></label>
-                    <input class="form-input" type="email" name="email" id="userEmail"
-                           placeholder="ivan.petrov@company.com" required>
+                    <input class="form-input @error('email') is-invalid @enderror" type="email" name="email" id="userEmail"
+                           placeholder="ivan.petrov@company.com" required value="{{ old('email') }}">
                     <span class="form-hint">Используется для входа в систему</span>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Телефон <span class="required">*</span></label>
-                    <input class="form-input" type="tel" id="userPhone" required>
-                    <input type="hidden" name="phone" id="userPhoneHidden">
+                    <input class="form-input @error('phone') is-invalid @enderror" type="tel" id="userPhone" required>
+                    <input type="hidden" name="phone" id="userPhoneHidden" value="{{ old('phone') }}">
                     <span class="form-hint">Используется для входа в систему</span>
                 </div>
                 <div class="form-group" id="passwordGroup">
                     <label class="form-label">Пароль <span class="required">*</span></label>
-                    <input class="form-input" type="password" name="password" id="userPassword"
+                    <input class="form-input @error('password') is-invalid @enderror" type="password" name="password" id="userPassword"
                            placeholder="Минимум 8 символов" required autocomplete="new-password">
                 </div>
             </div>

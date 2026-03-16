@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Property\Property;
@@ -23,6 +24,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // super_admin обходит все permission-проверки
+        Gate::before(function ($user) {
+            return $user->hasRole('super_admin') ? true : null;
+        });
+
         $this->registerMenuComposer();
         Property::observe(PropertyObserver::class);
     }

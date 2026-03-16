@@ -70,4 +70,55 @@
     </script>
     <script src="{{ versioned_asset('js/pages/settings/settings.js') }}"></script>
     <script src="{{ versioned_asset('js/pages/settings/settings-locations.js') }}"></script>
+
+    {{-- Show flash messages --}}
+    @if(session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                showToast(@json(session('success')), 'success');
+            });
+        </script>
+    @endif
+    @if(session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                showToast(@json(session('error')), 'error');
+            });
+        </script>
+    @endif
+
+    {{-- Show validation errors and re-open user drawer --}}
+    @if($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var errorMessages = @json($errors->all());
+                showToast(errorMessages.join('<br>'), 'error');
+
+                @if(old('_method') === 'PUT' && old('email'))
+                    {{-- Re-open drawer in edit mode with old input --}}
+                    var oldAction = '{{ url()->previous() }}';
+                    var userIdMatch = oldAction.match(/\/settings\/users\/(\d+)/);
+                    if (!userIdMatch) {
+                        {{-- Try to extract from old form action stored in request --}}
+                        var formAction = document.getElementById('userForm');
+                        if (formAction) {
+                            {{-- Fallback: find user by email from old input --}}
+                            var oldEmail = @json(old('email'));
+                            for (var key in usersData) {
+                                if (usersData[key].email === oldEmail) {
+                                    openUserDrawer(parseInt(key));
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        openUserDrawer(parseInt(userIdMatch[1]));
+                    }
+                @elseif(old('name') && !old('_method'))
+                    {{-- Re-open drawer in create mode --}}
+                    openUserDrawer();
+                @endif
+            });
+        </script>
+    @endif
 @endpush

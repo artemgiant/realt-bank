@@ -31,9 +31,10 @@
         @php
             $groupLabels = [
                 'properties' => 'Объекты',
-                'contacts' => 'Клиенты',
-                'deals' => 'Сделки',
-                'reports' => 'Отчёты',
+                'companies' => 'Компании',
+                'employees' => 'Сотрудники',
+                'complexes' => 'Комплексы',
+                'developers' => 'Девелоперы',
                 'settings' => 'Настройки',
             ];
         @endphp

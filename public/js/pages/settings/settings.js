@@ -164,15 +164,8 @@ function openUserDrawer(userId = null) {
         document.getElementById('userName').value = user.name || '';
         document.getElementById('userEmail').value = user.email || '';
 
-        // Set phone via intl-tel-input
-        if (userPhoneIti && user.phone) {
-            // Phone format: "+38 (095) 090-22-93" -> need to convert to E.164 for setNumber
-            // Extract digits: 380950902293 -> +380950902293
-            var digits = user.phone.replace(/\D/g, '');
-            userPhoneIti.setNumber('+' + digits);
-        } else {
-            document.getElementById('userPhone').value = '';
-        }
+        // Phone will be set AFTER initUserPhoneInput() is called (see below)
+        document.getElementById('userPhone').value = '';
 
         // Password: leave empty, not required for edit
         passwordInput.value = '';
@@ -217,8 +210,17 @@ function openUserDrawer(userId = null) {
     drawer.classList.add('open');
     document.body.style.overflow = 'hidden';
 
-    // Initialize phone with intl-tel-input
+    // Initialize phone with intl-tel-input FIRST
     initUserPhoneInput();
+
+    // Set phone value AFTER intl-tel-input is initialized
+    if (userKey && usersData && usersData[userKey]) {
+        const user = usersData[userKey];
+        if (userPhoneIti && user.phone) {
+            var digits = user.phone.replace(/\D/g, '');
+            userPhoneIti.setNumber('+' + digits);
+        }
+    }
 
     // Initialize Select2 after drawer opens
     initDrawerSelect2();
