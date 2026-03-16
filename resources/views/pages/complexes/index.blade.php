@@ -14,7 +14,7 @@
             :addButton="true"
             addButtonText="Добавить"
             addButtonUrl="{{ route('complexes.create') }}"
-            addButtonPermission="complexes.manage"
+            addButtonPermission="complexes.create"
     />
 @endsection
 
@@ -47,7 +47,8 @@
 
 @push('scripts')
     <script>
-        window.canManageComplexes = @json(auth()->user()->can('complexes.manage'));
+        window.canEditComplexes = @json(auth()->user()->can('complexes.edit'));
+        window.canDeleteComplexes = @json(auth()->user()->can('complexes.delete'));
     </script>
     {{-- Location filter --}}
     <script src="{{ versioned_asset('js/pages/complexes/index/location-filter.js') }}"></script>

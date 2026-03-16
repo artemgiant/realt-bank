@@ -111,13 +111,17 @@ Route::middleware('auth')->group(function () {
         ->name('properties.contacts.detach');
 
     // ========== Developers ==========
-    // Manage routes BEFORE view (developers.manage) — /create must precede /{developer}
-    Route::middleware('permission:developers.manage')->group(function () {
+    // CRUD routes BEFORE view — /create must precede /{developer}
+    Route::middleware('permission:developers.create')->group(function () {
         Route::get('/developers/create', [DeveloperController::class, 'create'])->name('developers.create');
         Route::post('/developers', [DeveloperController::class, 'store'])->name('developers.store');
+    });
+    Route::middleware('permission:developers.edit')->group(function () {
         Route::get('/developers/{developer}/edit', [DeveloperController::class, 'edit'])->name('developers.edit');
         Route::put('/developers/{developer}', [DeveloperController::class, 'update'])->name('developers.update');
         Route::patch('/developers/{developer}', [DeveloperController::class, 'update']);
+    });
+    Route::middleware('permission:developers.delete')->group(function () {
         Route::delete('/developers/{developer}', [DeveloperController::class, 'destroy'])->name('developers.destroy');
     });
 
@@ -132,13 +136,17 @@ Route::middleware('auth')->group(function () {
     });
 
     // ========== Complexes ==========
-    // Manage routes BEFORE view (complexes.manage) — /create must precede /{complex}
-    Route::middleware('permission:complexes.manage')->group(function () {
+    // CRUD routes BEFORE view — /create must precede /{complex}
+    Route::middleware('permission:complexes.create')->group(function () {
         Route::get('/complexes/create', [ComplexController::class, 'create'])->name('complexes.create');
         Route::post('/complexes', [ComplexController::class, 'store'])->name('complexes.store');
+    });
+    Route::middleware('permission:complexes.edit')->group(function () {
         Route::get('/complexes/{complex}/edit', [ComplexController::class, 'edit'])->name('complexes.edit');
         Route::put('/complexes/{complex}', [ComplexController::class, 'update'])->name('complexes.update');
         Route::patch('/complexes/{complex}', [ComplexController::class, 'update']);
+    });
+    Route::middleware('permission:complexes.delete')->group(function () {
         Route::delete('/complexes/{complex}', [ComplexController::class, 'destroy'])->name('complexes.destroy');
     });
 
@@ -151,20 +159,24 @@ Route::middleware('auth')->group(function () {
         Route::get('/complexes/{complex}', [ComplexController::class, 'show'])->name('complexes.show');
     });
 
-    // Импорт комплексов (complexes.manage)
-    Route::middleware('permission:complexes.manage')->prefix('import')->name('import.')->group(function () {
+    // Импорт комплексов (complexes.create)
+    Route::middleware('permission:complexes.create')->prefix('import')->name('import.')->group(function () {
         Route::get('complexes', [ComplexImportController::class, 'index'])->name('complexes.index');
         Route::post('complexes', [ComplexImportController::class, 'import'])->name('complexes.import');
     });
 
     // ========== Companies ==========
-    // Manage routes BEFORE view (companies.manage) — /create must precede /{company}
-    Route::middleware('permission:companies.manage')->group(function () {
+    // CRUD routes BEFORE view — /create must precede /{company}
+    Route::middleware('permission:companies.create')->group(function () {
         Route::get('/companies/create', [CompanyController::class, 'create'])->name('companies.create');
         Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
+    });
+    Route::middleware('permission:companies.edit')->group(function () {
         Route::get('/companies/{company}/edit', [CompanyController::class, 'edit'])->name('companies.edit');
         Route::put('/companies/{company}', [CompanyController::class, 'update'])->name('companies.update');
         Route::patch('/companies/{company}', [CompanyController::class, 'update']);
+    });
+    Route::middleware('permission:companies.delete')->group(function () {
         Route::delete('/companies/{company}', [CompanyController::class, 'destroy'])->name('companies.destroy');
     });
 
@@ -181,18 +193,22 @@ Route::middleware('auth')->group(function () {
     });
 
     // ========== Employees ==========
-    // Manage routes BEFORE view (employees.manage) — /create must precede /{employee}
-    Route::middleware('permission:employees.manage')->group(function () {
+    // CRUD routes BEFORE view — /create must precede /{employee}
+    Route::middleware('permission:employees.create')->group(function () {
         Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
         Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
+    });
+    Route::middleware('permission:employees.edit')->group(function () {
         Route::get('/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
         Route::put('/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
         Route::patch('/employees/{employee}', [EmployeeController::class, 'update']);
-        Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
         Route::patch('/employees/{employee}/position', [EmployeeController::class, 'updatePosition'])
             ->name('employees.update-position');
         Route::patch('/employees/{employee}/office', [EmployeeController::class, 'updateOffice'])
             ->name('employees.update-office');
+    });
+    Route::middleware('permission:employees.delete')->group(function () {
+        Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
     });
 
     // View routes (employees.view)

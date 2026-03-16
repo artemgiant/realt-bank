@@ -109,20 +109,27 @@ window.CompanyRenderers = {
     // Действия
     actions: function (data, type, row) {
         var editUrl = '/companies/' + data + '/edit';
-        var canManage = window.canManageCompanies || false;
+        var canEdit = window.canEditCompanies || false;
+        var canDelete = window.canDeleteCompanies || false;
 
         var html = '<div class="tbody-wrapper block-actions">' +
             '<div class="block-actions-wrapper">';
 
-        if (canManage) {
+        if (canEdit || canDelete) {
+            var menuItems = '';
+            if (canEdit) {
+                menuItems += '<li><a class="dropdown-item" href="' + editUrl + '">Редактировать</a></li>';
+            }
+            if (canDelete) {
+                menuItems += '<li><a class="dropdown-item delete-company" href="#" data-id="' + data + '">Удалить</a></li>';
+            }
+
             html += '<div class="menu-burger">' +
                 '<div class="dropdown">' +
                 '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                 '<img src="/img/icon/burger-blue.svg" alt="">' +
                 '</button>' +
-                '<ul class="dropdown-menu">' +
-                '<li><a class="dropdown-item" href="' + editUrl + '">Редактировать</a></li>' +
-                '</ul>' +
+                '<ul class="dropdown-menu">' + menuItems + '</ul>' +
                 '</div>' +
                 '</div>';
         }

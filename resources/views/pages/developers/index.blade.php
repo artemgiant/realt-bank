@@ -15,7 +15,7 @@
             :addButton="true"
             addButtonText="Добавить"
             addButtonUrl="{{ route('developers.create') }}"
-            addButtonPermission="developers.manage"
+            addButtonPermission="developers.create"
     />
 @endsection
 
@@ -53,7 +53,8 @@
 
 @push('scripts')
     <script>
-        window.canManageDevelopers = @json(auth()->user()->can('developers.manage'));
+        window.canEditDevelopers = @json(auth()->user()->can('developers.edit'));
+        window.canDeleteDevelopers = @json(auth()->user()->can('developers.delete'));
     </script>
     {{-- Модули таблицы (порядок важен!) --}}
     <script src="{{ versioned_asset('js/pages/developers/index/table-renderers.js') }}"></script>

@@ -45,7 +45,17 @@
         @endforeach
     </div>
 
+    @php
+        // Базовые CRUD суффиксы — всё остальное считается дополнительным
+        $crudSuffixes = ['.view', '.create', '.edit', '.delete'];
+    @endphp
+
     @foreach($permissionGroups as $group => $perms)
+        @php
+            // Разделяем на базовые CRUD и дополнительные
+            $crudPerms = $perms->filter(fn($p) => collect($crudSuffixes)->contains(fn($s) => str_ends_with($p->name, $s)));
+            $extraPerms = $perms->filter(fn($p) => !collect($crudSuffixes)->contains(fn($s) => str_ends_with($p->name, $s)));
+        @endphp
         <div class="card perm-tab-content {{ $loop->first ? 'active' : '' }}" id="perm-{{ $group }}">
             <div class="card-body" style="padding:0;overflow-x:auto;">
                 <table class="perm-matrix">
@@ -58,7 +68,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($perms as $permission)
+                    {{-- Базовые CRUD права --}}
+                    @foreach($crudPerms as $permission)
                         <tr>
                             <td>{{ $permission->display_name ?? $permission->name }}</td>
                             @foreach($roles as $role)
@@ -72,6 +83,27 @@
                             @endforeach
                         </tr>
                     @endforeach
+
+                    {{-- Разделитель + дополнительные права --}}
+                    @if($extraPerms->isNotEmpty())
+                        <tr class="perm-section-divider">
+                            <td colspan="{{ $roles->count() + 1 }}">Дополнительные права</td>
+                        </tr>
+                        @foreach($extraPerms as $permission)
+                            <tr>
+                                <td>{{ $permission->display_name ?? $permission->name }}</td>
+                                @foreach($roles as $role)
+                                    <td>
+                                        <input type="checkbox"
+                                               class="perm-check"
+                                               data-permission="{{ $permission->name }}"
+                                               data-role="{{ $role->id }}"
+                                               {{ ($permissionsMatrix[$permission->name][$role->id] ?? false) ? 'checked' : '' }}>
+                                    </td>
+                                @endforeach
+                            </tr>
+                        @endforeach
+                    @endif
                     </tbody>
                 </table>
             </div>

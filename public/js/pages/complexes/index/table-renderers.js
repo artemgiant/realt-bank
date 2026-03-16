@@ -157,20 +157,27 @@ window.ComplexRenderers = {
     // Действия
     actions: function (data, type, row) {
         var editUrl = '/complexes/' + row.id + '/edit';
-        var canManage = window.canManageComplexes || false;
+        var canEdit = window.canEditComplexes || false;
+        var canDelete = window.canDeleteComplexes || false;
 
         var html = '<div class="tbody-wrapper block-actions">' +
             '<div class="block-actions-wrapper">';
 
-        if (canManage) {
+        if (canEdit || canDelete) {
+            var menuItems = '';
+            if (canEdit) {
+                menuItems += '<li><a class="dropdown-item" href="' + editUrl + '">Редактировать</a></li>';
+            }
+            if (canDelete) {
+                menuItems += '<li><a class="dropdown-item delete-complex" href="#" data-id="' + row.id + '">Удалить</a></li>';
+            }
+
             html += '<div class="menu-burger">' +
                 '<div class="dropdown">' +
                 '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                 '<picture><source srcset="./img/icon/burger-blue.svg" type="image/webp"><img src="./img/icon/burger-blue.svg" alt=""></picture>' +
                 '</button>' +
-                '<ul class="dropdown-menu">' +
-                '<li><a class="dropdown-item" href="' + editUrl + '">Редактировать</a></li>' +
-                '</ul>' +
+                '<ul class="dropdown-menu">' + menuItems + '</ul>' +
                 '</div>' +
                 '</div>';
         }

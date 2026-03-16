@@ -17,7 +17,7 @@ class PermissionSeeder extends Seeder
         // Очищаем кеш permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Все permissions, сгруппированные по категориям (28 шт.)
+        // Все permissions, сгруппированные по категориям (32 шт.)
         $permissions = [
             // ===== ОБЪЕКТЫ (properties) =====
             'properties' => [
@@ -27,32 +27,38 @@ class PermissionSeeder extends Seeder
                 'properties.delete' => 'Удаление объектов',
                 'properties.view_all' => 'Просмотр чужих объектов',
                 'properties.reassign' => 'Смена агента у объекта',
-                'properties.archive' => 'Архивирование объектов',
-                'properties.restore' => 'Восстановление объектов',
             ],
 
             // ===== КОМПАНИИ (companies) =====
             'companies' => [
                 'companies.view' => 'Просмотр компаний',
-                'companies.manage' => 'Управление компаниями',
+                'companies.create' => 'Создание компаний',
+                'companies.edit' => 'Редактирование компаний',
+                'companies.delete' => 'Удаление компаний',
             ],
 
             // ===== СОТРУДНИКИ (employees) =====
             'employees' => [
                 'employees.view' => 'Просмотр сотрудников',
-                'employees.manage' => 'Управление сотрудниками',
+                'employees.create' => 'Создание сотрудников',
+                'employees.edit' => 'Редактирование сотрудников',
+                'employees.delete' => 'Удаление сотрудников',
             ],
 
             // ===== КОМПЛЕКСЫ (complexes) =====
             'complexes' => [
                 'complexes.view' => 'Просмотр комплексов',
-                'complexes.manage' => 'Управление комплексами',
+                'complexes.create' => 'Создание комплексов',
+                'complexes.edit' => 'Редактирование комплексов',
+                'complexes.delete' => 'Удаление комплексов',
             ],
 
             // ===== ДЕВЕЛОПЕРЫ (developers) =====
             'developers' => [
                 'developers.view' => 'Просмотр девелоперов',
-                'developers.manage' => 'Управление девелоперами',
+                'developers.create' => 'Создание девелоперов',
+                'developers.edit' => 'Редактирование девелоперов',
+                'developers.delete' => 'Удаление девелоперов',
             ],
 
             // ===== НАСТРОЙКИ (settings) =====
@@ -62,8 +68,6 @@ class PermissionSeeder extends Seeder
                 'settings.roles.manage' => 'Управление ролями',
                 'settings.permissions.manage' => 'Управление правами',
                 'settings.company.manage' => 'Настройки компании',
-                'settings.integrations.manage' => 'Интеграции',
-                'settings.dictionaries.manage' => 'Справочники',
                 'settings.locations.manage' => 'Управление локациями',
             ],
         ];
@@ -118,10 +122,10 @@ class PermissionSeeder extends Seeder
         $agencyDirector->syncPermissions([
             'properties.view', 'properties.create', 'properties.edit', 'properties.delete',
             'properties.view_all', 'properties.reassign', 'properties.archive', 'properties.restore',
-            'companies.view', 'companies.manage',
-            'employees.view', 'employees.manage',
-            'complexes.view', 'complexes.manage',
-            'developers.view', 'developers.manage',
+            'companies.view', 'companies.create', 'companies.edit', 'companies.delete',
+            'employees.view', 'employees.create', 'employees.edit', 'employees.delete',
+            'complexes.view', 'complexes.create', 'complexes.edit', 'complexes.delete',
+            'developers.view', 'developers.create', 'developers.edit', 'developers.delete',
             'settings.view', 'settings.company.manage',
             'settings.dictionaries.manage', 'settings.locations.manage',
         ]);
@@ -131,10 +135,10 @@ class PermissionSeeder extends Seeder
         $agencyAdmin->syncPermissions([
             'properties.view', 'properties.create', 'properties.edit', 'properties.delete',
             'properties.view_all', 'properties.reassign', 'properties.archive', 'properties.restore',
-            'companies.view', 'companies.manage',
-            'employees.view', 'employees.manage',
-            'complexes.view', 'complexes.manage',
-            'developers.view', 'developers.manage',
+            'companies.view', 'companies.create', 'companies.edit', 'companies.delete',
+            'employees.view', 'employees.create', 'employees.edit', 'employees.delete',
+            'complexes.view', 'complexes.create', 'complexes.edit', 'complexes.delete',
+            'developers.view', 'developers.create', 'developers.edit', 'developers.delete',
             'settings.dictionaries.manage', 'settings.locations.manage',
         ]);
 
@@ -143,10 +147,8 @@ class PermissionSeeder extends Seeder
         $officeDirector->syncPermissions([
             'properties.view', 'properties.create', 'properties.edit', 'properties.delete',
             'properties.view_all', 'properties.reassign', 'properties.archive', 'properties.restore',
-            'contacts.view', 'contacts.create', 'contacts.edit', 'contacts.delete',
-            'contacts.view_all',
             'companies.view',
-            'employees.view', 'employees.manage',
+            'employees.view', 'employees.create', 'employees.edit', 'employees.delete',
             'complexes.view',
             'developers.view',
             'settings.view',
