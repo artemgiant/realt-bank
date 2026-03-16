@@ -79,21 +79,26 @@ window.DeveloperRenderers = {
     // Действия
     actions: function (data, type, row) {
         var editUrl = '/developers/' + data + '/edit';
+        var canManage = window.canManageDevelopers || false;
 
-        return '<div class="tbody-wrapper block-actions">' +
-            '<div class="block-actions-wrapper">' +
-            '<div class="menu-burger">' +
-            '<div class="dropdown">' +
-            '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-            '<img src="/img/icon/burger-blue.svg" alt="">' +
-            '</button>' +
-            '<ul class="dropdown-menu">' +
-            '<li><a class="dropdown-item" href="' + editUrl + '">Редактировать</a></li>' +
-            '<li><a class="dropdown-item delete-developer" href="#" data-id="' + data + '">Удалить</a></li>' +
-            '</ul>' +
-            '</div>' +
-            '</div>' +
-            '<div class="menu-info">' +
+        var html = '<div class="tbody-wrapper block-actions">' +
+            '<div class="block-actions-wrapper">';
+
+        if (canManage) {
+            html += '<div class="menu-burger">' +
+                '<div class="dropdown">' +
+                '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                '<img src="/img/icon/burger-blue.svg" alt="">' +
+                '</button>' +
+                '<ul class="dropdown-menu">' +
+                '<li><a class="dropdown-item" href="' + editUrl + '">Редактировать</a></li>' +
+                '<li><a class="dropdown-item delete-developer" href="#" data-id="' + data + '">Удалить</a></li>' +
+                '</ul>' +
+                '</div>' +
+                '</div>';
+        }
+
+        html += '<div class="menu-info">' +
             '<div class="dropdown">' +
             '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
             '<img src="/img/icon/copylinked.svg" alt="">' +
@@ -109,5 +114,7 @@ window.DeveloperRenderers = {
             '<img src="/img/icon/plus.svg" alt="">' +
             '</button>' +
             '</div>';
+
+        return html;
     }
 };

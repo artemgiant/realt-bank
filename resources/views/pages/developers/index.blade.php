@@ -15,6 +15,7 @@
             :addButton="true"
             addButtonText="Добавить"
             addButtonUrl="{{ route('developers.create') }}"
+            addButtonPermission="developers.manage"
     />
 @endsection
 
@@ -51,6 +52,9 @@
 
 
 @push('scripts')
+    <script>
+        window.canManageDevelopers = @json(auth()->user()->can('developers.manage'));
+    </script>
     {{-- Модули таблицы (порядок важен!) --}}
     <script src="{{ versioned_asset('js/pages/developers/index/table-renderers.js') }}"></script>
     <script src="{{ versioned_asset('js/pages/developers/index/table-config.js') }}"></script>

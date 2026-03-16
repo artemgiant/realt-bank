@@ -14,6 +14,7 @@
             :addButton="true"
             addButtonText="Добавить"
             addButtonUrl="{{ route('properties.create') }}"
+            addButtonPermission="properties.create"
     />
 @endsection
 

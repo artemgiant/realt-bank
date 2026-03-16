@@ -109,20 +109,26 @@ window.CompanyRenderers = {
     // Действия
     actions: function (data, type, row) {
         var editUrl = '/companies/' + data + '/edit';
+        var canManage = window.canManageCompanies || false;
 
-        return '<div class="tbody-wrapper block-actions">' +
-            '<div class="block-actions-wrapper">' +
-            '<div class="menu-burger">' +
-            '<div class="dropdown">' +
-            '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-            '<img src="/img/icon/burger-blue.svg" alt="">' +
-            '</button>' +
-            '<ul class="dropdown-menu">' +
-            '<li><a class="dropdown-item" href="' + editUrl + '">Редактировать</a></li>' +
-            '</ul>' +
-            '</div>' +
-            '</div>' +
-            (row.website ? '<div class="menu-info">' +
+        var html = '<div class="tbody-wrapper block-actions">' +
+            '<div class="block-actions-wrapper">';
+
+        if (canManage) {
+            html += '<div class="menu-burger">' +
+                '<div class="dropdown">' +
+                '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                '<img src="/img/icon/burger-blue.svg" alt="">' +
+                '</button>' +
+                '<ul class="dropdown-menu">' +
+                '<li><a class="dropdown-item" href="' + editUrl + '">Редактировать</a></li>' +
+                '</ul>' +
+                '</div>' +
+                '</div>';
+        }
+
+        if (row.website) {
+            html += '<div class="menu-info">' +
                 '<div class="dropdown">' +
                 '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                 '<img src="/img/icon/copylinked.svg" alt="">' +
@@ -131,8 +137,10 @@ window.CompanyRenderers = {
                 '<li><a class="dropdown-item" href="' + row.website + '" target="_blank"><span>Сайт компании</span></a></li>' +
                 '</ul>' +
                 '</div>' +
-                '</div>' : '') +
-            '</div>' +
-            '</div>';
+                '</div>';
+        }
+
+        html += '</div></div>';
+        return html;
     }
 };

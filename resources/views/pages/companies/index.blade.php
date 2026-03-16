@@ -13,6 +13,7 @@
             title="Компания"
             addButtonText="Добавить"
             addButtonUrl="{{ route('companies.create') }}"
+            addButtonPermission="companies.manage"
     />
 @endsection
 
@@ -42,6 +43,9 @@
 @endsection
 
 @push('scripts')
+    <script>
+        window.canManageCompanies = @json(auth()->user()->can('companies.manage'));
+    </script>
     {{-- Модули таблицы (порядок важен!) --}}
     <script src="{{ versioned_asset('js/pages/companies/index/table-renderers.js') }}"></script>
     <script src="{{ versioned_asset('js/pages/companies/index/table-config.js') }}"></script>
