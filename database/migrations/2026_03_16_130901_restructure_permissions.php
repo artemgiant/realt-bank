@@ -109,8 +109,6 @@ return new class extends Migration
             'office_director' => [
                 'properties.view', 'properties.create', 'properties.edit', 'properties.delete',
                 'properties.view_all', 'properties.reassign', 'properties.archive', 'properties.restore',
-                'contacts.view', 'contacts.create', 'contacts.edit', 'contacts.delete',
-                'contacts.view_all',
                 'companies.view',
                 'employees.view', 'employees.manage',
                 'complexes.view',
