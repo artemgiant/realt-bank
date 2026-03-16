@@ -595,7 +595,7 @@ class StreetSearchManager {
         this.streetNameInput.value = street.name;
         this.zoneIdInput.value = street.zone_id || '';
         this.zoneNameInput.value = street.zone_name || '';
-        this.districtIdInput.value = street.district_id || '';
+        this.districtIdInput.value = street.district_name ? (street.district_id || '') : '';
         this.districtNameInput.value = street.district_name || '';
         this.cityIdInput.value = street.city_id || '';
         this.cityNameInput.value = street.city_name || '';

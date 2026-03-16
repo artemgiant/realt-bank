@@ -14,16 +14,29 @@
         return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     }
 
+    function getDealTypeId() {
+        var select = document.getElementById('deal_type_id');
+        return select ? parseInt(select.value, 10) : 0;
+    }
+
+    function isApartmentDealType() {
+        var select = document.getElementById('deal_type_id');
+        if (!select) return false;
+        var text = select.options[select.selectedIndex]?.text?.toLowerCase() || '';
+        return text.indexOf('комнат') !== -1 || text.indexOf('квартир') !== -1;
+    }
+
     function getAddressFields() {
         return {
             street_id: document.querySelector('input[name="street_id"]')?.value || '',
             building_number: document.querySelector('#number-house')?.value?.trim() || '',
             apartment_number: document.querySelector('#number-apartment')?.value?.trim() || '',
+            deal_type_id: getDealTypeId(),
         };
     }
 
     function buildCheckKey(fields) {
-        return [fields.street_id, fields.building_number, fields.apartment_number].join('|');
+        return [fields.street_id, fields.building_number, fields.apartment_number, fields.deal_type_id].join('|');
     }
 
     function getContainer() {
@@ -74,8 +87,16 @@
 
     function checkDuplicate() {
         var fields = getAddressFields();
+        var hasApartment = isApartmentDealType();
 
         if (!fields.street_id || !fields.building_number) {
+            hideWarning();
+            lastCheckedKey = '';
+            return;
+        }
+
+        // Для типов с квартирой — ждём пока заполнят номер квартиры
+        if (hasApartment && !fields.apartment_number) {
             hideWarning();
             lastCheckedKey = '';
             return;
@@ -89,7 +110,11 @@
             street_id: fields.street_id,
             building_number: fields.building_number,
         });
-        if (fields.apartment_number) {
+        if (fields.deal_type_id) {
+            params.append('deal_type_id', fields.deal_type_id);
+        }
+        // Тип не выбран или тип с квартирой — отправляем номер квартиры
+        if ((!fields.deal_type_id || hasApartment) && fields.apartment_number) {
             params.append('apartment_number', fields.apartment_number);
         }
 
@@ -135,6 +160,15 @@
         if (aptInput) {
             aptInput.addEventListener('input', debouncedCheck);
             aptInput.addEventListener('blur', checkDuplicate);
+        }
+
+        // При смене типа сделки — перепроверяем
+        var dealTypeSelect = document.getElementById('deal_type_id');
+        if (dealTypeSelect) {
+            $(dealTypeSelect).on('change', function () {
+                lastCheckedKey = '';
+                debouncedCheck();
+            });
         }
 
         // При выборе улицы — проверяем если дом уже заполнен

@@ -331,7 +331,6 @@ class DictionarySeeder extends Seeder
             Dictionary::TYPE_CONTACT_ROLE => [
                 'Покупатель',
                 'Продавец',
-                'Инвестор',
                 'Арендатор',
                 'Арендодатель',
             ],

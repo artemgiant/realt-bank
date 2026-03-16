@@ -196,9 +196,29 @@ class PropertyController extends Controller
         $query = Property::where('street_id', $streetId)
             ->where('building_number', $buildingNumber);
 
+        // Определяем по типу сделки, нужен ли номер квартиры
+        $dealTypeId = $request->input('deal_type_id');
         $apartmentNumber = $request->input('apartment_number');
-        if ($apartmentNumber) {
-            $query->where('apartment_number', $apartmentNumber);
+
+        if ($dealTypeId) {
+            // Ищем дубликаты только среди объектов с таким же типом сделки
+            $query->where('deal_type_id', $dealTypeId);
+
+            $dealType = \App\Models\Reference\Dictionary::find($dealTypeId);
+            $dealTypeName = $dealType ? $dealType->name : '';
+            $hasApartment = str_contains(mb_strtolower($dealTypeName), 'комнат')
+                || str_contains(mb_strtolower($dealTypeName), 'квартир');
+
+            if ($hasApartment && $apartmentNumber) {
+                // Тип сделки с квартирой — проверяем точное совпадение номера квартиры
+                $query->where('apartment_number', $apartmentNumber);
+            }
+            // Тип без квартиры — ищем только по улице + дому
+        } else {
+            // Тип сделки не выбран — проверяем по номеру квартиры если указан
+            if ($apartmentNumber) {
+                $query->where('apartment_number', $apartmentNumber);
+            }
         }
 
         // Исключаем текущий объект при редактировании
