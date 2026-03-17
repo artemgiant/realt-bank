@@ -38,14 +38,6 @@
     </div>
 </div>
 
-{{-- Район региона --}}
-<div class="item selects w16">
-    <label class="item-label">Район региона <span class="text-danger">*</span></label>
-    <select name="region_id" id="region_id" class="js-example-responsive3 my-select2">
-        <option value=""></option>
-    </select>
-</div>
-
 <div class="item w33">
     <label class="item-label">Локация (улица) <span class="text-danger">*</span></label>
     <div class="location-search-wrapper">
@@ -87,6 +79,14 @@
         <input type="hidden" name="city_id" value="{{ old('city_id') }}">
         <input type="hidden" name="city_name" value="{{ old('city_name') }}">
     </div>
+</div>
+
+{{-- Район региона --}}
+<div class="item selects w16">
+    <label class="item-label">Район региона <span class="text-danger">*</span></label>
+    <select name="region_id" id="region_id" class="js-example-responsive3 my-select2">
+        <option value=""></option>
+    </select>
 </div>
 
 {{-- Номер дома / квартиры --}}
