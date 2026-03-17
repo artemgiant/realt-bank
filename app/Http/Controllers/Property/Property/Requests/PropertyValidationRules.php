@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Property\Property\Requests;
 
+use App\Models\Reference\Dictionary;
+
 /**
  * Общие правила валидации для создания и обновления объекта недвижимости.
  *
@@ -91,6 +93,34 @@ trait PropertyValidationRules
     }
 
     /**
+     * Применяет условные правила валидации на основе типа сделки:
+     * - квартиры/комнаты → building_number и apartment_number обязательны
+     * - дома → building_number обязателен
+     */
+    protected function applyDealTypeRules(array $rules): array
+    {
+        $dealTypeId = $this->input('deal_type_id');
+
+        if ($dealTypeId) {
+            $dealType = Dictionary::find($dealTypeId);
+            $dealTypeName = $dealType ? mb_strtolower($dealType->name) : '';
+
+            $isApartment = str_contains($dealTypeName, 'квартир')
+                || str_contains($dealTypeName, 'комнат');
+            $isHouse = str_contains($dealTypeName, 'домов');
+
+            if ($isApartment) {
+                $rules['building_number'] = 'required|string|max:50';
+                $rules['apartment_number'] = 'required|string|max:50';
+            } elseif ($isHouse) {
+                $rules['building_number'] = 'required|string|max:50';
+            }
+        }
+
+        return $rules;
+    }
+
+    /**
      * Кастомные сообщения об ошибках валидации на русском языке.
      */
     protected function baseMessages(): array
@@ -121,6 +151,8 @@ trait PropertyValidationRules
             'photos.*.file' => 'Ошибка загрузки фото',
             'photos.*.mimes' => 'Разрешены только: JPEG, PNG, WebP, HEIC',
             'photos.*.max' => 'Максимальный размер фото 10MB',
+            'building_number.required' => 'Укажите номер дома',
+            'apartment_number.required' => 'Укажите номер квартиры',
         ];
     }
 }

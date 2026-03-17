@@ -28,7 +28,7 @@ class UpdatePropertyRequest extends FormRequest
      */
     public function rules(): array
     {
-        return array_merge($this->baseRules(), [
+        return array_merge($this->applyDealTypeRules($this->baseRules()), [
             'tiktok_url' => 'nullable|url|max:255',      // Ссылка на TikTok
             'external_url' => 'nullable|url|max:255',    // Внешняя ссылка
         ]);

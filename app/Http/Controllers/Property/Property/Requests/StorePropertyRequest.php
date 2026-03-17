@@ -27,7 +27,7 @@ class StorePropertyRequest extends FormRequest
      */
     public function rules(): array
     {
-        return $this->baseRules();
+        return $this->applyDealTypeRules($this->baseRules());
     }
 
     /**
