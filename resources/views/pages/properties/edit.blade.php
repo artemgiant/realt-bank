@@ -27,7 +27,7 @@
 @section('header')
     <div class="create-header">
         <div class="create-header-left">
-            <a class="create-header-back" href="{{ route('properties.index') }}">
+            <a class="create-header-back" href="{{ $backUrl ?? route('properties.index') }}">
                 <picture>
                     <source srcset="{{ asset('img/icon/arrow-back-link.svg') }}" type="image/webp">
                     <img src="{{ asset('img/icon/arrow-back-link.svg') }}" alt="Back">
@@ -59,6 +59,7 @@
         <form id="property-form" action="{{ route('properties.update', $property) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+            <input type="hidden" name="redirect_to" value="{{ $backUrl ?? '' }}">
 
             <div class="create-filter">
                 <div class="create-filter-data">

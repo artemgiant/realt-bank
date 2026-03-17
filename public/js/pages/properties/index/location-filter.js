@@ -526,7 +526,65 @@
         if (e.key === 'Escape' && state.isOpen) close();
     });
 
-    // Инициализация с Одесской регионю по умолчанию
+    // Восстановление состояния из URL-параметров
+    const restoreFromUrl = () => {
+        const params = new URLSearchParams(window.location.search);
+
+        const locationType = params.get('location_type');
+        const locationId = params.get('location_id');
+        const locationName = params.get('location_name');
+        const countryId = params.get('lf_country_id');
+        const countryName = params.get('lf_country_name');
+        const regionId = params.get('lf_region_id');
+        const regionName = params.get('lf_region_name');
+        const citiesJson = params.get('city_ids');
+        const cityNamesJson = params.get('lf_city_names');
+        const detailsJson = params.get('detail_ids');
+        const detailNamesJson = params.get('lf_detail_names');
+
+        if (!locationType && !citiesJson && !detailsJson) return false;
+
+        // Восстанавливаем path
+        if (countryId && countryName) {
+            state.path.country = { id: +countryId, name: countryName };
+        }
+        if (regionId && regionName) {
+            state.path.region = { id: +regionId, name: regionName };
+        }
+
+        // Восстанавливаем location
+        if (locationType && locationId && locationName) {
+            state.location = { type: locationType, id: +locationId, name: locationName };
+        }
+
+        // Восстанавливаем города
+        if (citiesJson) {
+            try {
+                const cityIds = JSON.parse(citiesJson);
+                const cityNames = cityNamesJson ? JSON.parse(cityNamesJson) : [];
+                state.cities = cityIds.map((id, i) => ({ id: +id, name: cityNames[i] || 'Город #' + id }));
+            } catch (e) {}
+        }
+
+        // Восстанавливаем детали
+        if (detailsJson) {
+            try {
+                const details = JSON.parse(detailsJson);
+                const detailNames = detailNamesJson ? JSON.parse(detailNamesJson) : [];
+                state.details = details.map((d, i) => ({
+                    type: d.type,
+                    id: +d.id,
+                    name: detailNames[i] || d.type + ' #' + d.id
+                }));
+            } catch (e) {}
+        }
+
+        renderTags();
+        updateHidden(false);
+        return true;
+    };
+
+    // Инициализация с Одесской областью по умолчанию
     const initDefaultLocation = async () => {
         try {
             // Загружаем страны
@@ -564,8 +622,20 @@
         }
     };
 
-    // Запускаем инициализацию
-    initDefaultLocation();
+    // Проверяем URL-параметры, если нет — используем дефолт
+    if (!restoreFromUrl()) {
+        initDefaultLocation();
+    }
 
     updatePlaceholder();
+
+    // Экспортируем состояние для синхронизации с URL
+    window.LocationFilterState = {
+        getState: () => ({
+            location: state.location,
+            path: state.path,
+            cities: state.cities,
+            details: state.details
+        })
+    };
 })();

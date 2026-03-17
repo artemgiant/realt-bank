@@ -12,6 +12,10 @@ $(document).ready(function () {
     // Инициализация DatePicker
     Filters.initDatePicker();
 
+    // Восстановление фильтров из URL-параметров (до инициализации DataTables)
+    Filters.restoreFromUrl();
+    Filters.updateCounter();
+
     // ========== Debounce функция ==========
     // Задержка перед выполнением запроса после окончания ввода
     function debounce(func, wait) {
@@ -57,6 +61,9 @@ $(document).ready(function () {
 
         // Обновляем счетчик фильтров после каждой перезагрузки
         Filters.updateCounter();
+
+        // Синхронизируем фильтры в URL
+        Filters.syncToUrl();
 
         // Инициализация FancyBox для фото в таблице
         if (typeof Fancybox !== 'undefined') {

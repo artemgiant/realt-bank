@@ -141,9 +141,12 @@ class PropertyController extends Controller
 
         $agent = Employee::where('user_id', auth()->id())->first();
 
+        $backUrl = url()->previous();
+
         return view('pages.properties.edit', [
             'property' => $property,
             'agent' => $agent,
+            'backUrl' => $backUrl,
             ...PropertyFormData::get(),
         ]);
     }
@@ -156,8 +159,15 @@ class PropertyController extends Controller
         try {
             $action->execute($property, $request->validated(), $request);
 
+            $redirectTo = $request->input('redirect_to');
+
+            if ($redirectTo && str_starts_with($redirectTo, url('/'))) {
+                return redirect($redirectTo)
+                    ->with('success', 'Объект успешно обновлён!');
+            }
+
             return redirect()
-                ->route('properties.edit', $property)
+                ->route('properties.index')
                 ->with('success', 'Объект успешно обновлён!');
         } catch (\Exception $e) {
             return back()
