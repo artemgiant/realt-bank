@@ -56,6 +56,9 @@
         window.canEditDevelopers = @json(auth()->user()->can('developers.edit'));
         window.canDeleteDevelopers = @json(auth()->user()->can('developers.delete'));
     </script>
+    {{-- Shared URL filter sync utility --}}
+    <script src="{{ versioned_asset('js/lib/url-filter-sync.js') }}"></script>
+
     {{-- Модули таблицы (порядок важен!) --}}
     <script src="{{ versioned_asset('js/pages/developers/index/table-renderers.js') }}"></script>
     <script src="{{ versioned_asset('js/pages/developers/index/table-config.js') }}"></script>

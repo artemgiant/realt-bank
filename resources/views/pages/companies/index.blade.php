@@ -47,6 +47,9 @@
         window.canEditCompanies = @json(auth()->user()->can('companies.edit'));
         window.canDeleteCompanies = @json(auth()->user()->can('companies.delete'));
     </script>
+    {{-- Shared URL filter sync utility --}}
+    <script src="{{ versioned_asset('js/lib/url-filter-sync.js') }}"></script>
+
     {{-- Модули таблицы (порядок важен!) --}}
     <script src="{{ versioned_asset('js/pages/companies/index/table-renderers.js') }}"></script>
     <script src="{{ versioned_asset('js/pages/companies/index/table-config.js') }}"></script>

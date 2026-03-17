@@ -388,6 +388,54 @@
         reset: clearAll
     };
 
+    // Экспортируем состояние для URL-синхронизации
+    window.LocationFilterState = {
+        getState: () => ({
+            location: state.location,
+            path: state.path,
+            details: state.details
+        })
+    };
+
+    // Восстановление состояния из URL-параметров
+    const restoreFromUrl = () => {
+        const params = new URLSearchParams(window.location.search);
+        const locType = params.get('location_type');
+        const locId = params.get('location_id');
+        const locName = params.get('location_name');
+
+        if (!locType || !locId || !locName) return false;
+
+        // Восстанавливаем location
+        state.location = { type: locType, id: +locId, name: locName };
+
+        // Восстанавливаем path
+        if (params.get('lf_country_id')) {
+            state.path.country = { id: +params.get('lf_country_id'), name: params.get('lf_country_name') || '' };
+        }
+        if (params.get('lf_region_id')) {
+            state.path.region = { id: +params.get('lf_region_id'), name: params.get('lf_region_name') || '' };
+        }
+        if (params.get('lf_city_id')) {
+            state.path.city = { id: +params.get('lf_city_id'), name: params.get('lf_city_name') || '' };
+        }
+
+        // Восстанавливаем details
+        if (params.get('detail_ids')) {
+            try {
+                var detailIds = JSON.parse(params.get('detail_ids'));
+                var detailNames = params.get('lf_detail_names') ? JSON.parse(params.get('lf_detail_names')) : [];
+                state.details = detailIds.map(function (d, i) {
+                    return { type: d.type, id: d.id, name: detailNames[i] || '' };
+                });
+            } catch (e) { /* ignore parse errors */ }
+        }
+
+        renderTags();
+        updateHidden(false);
+        return true;
+    };
+
     el.input.addEventListener('click', e => {
         if (!e.target.closest('button') && !state.isOpen) open();
     });
@@ -478,6 +526,9 @@
         }
     };
 
-    initDefaultLocation();
+    // Проверяем URL-параметры, если нет — используем дефолт
+    if (!restoreFromUrl()) {
+        initDefaultLocation();
+    }
     updatePlaceholder();
 })();

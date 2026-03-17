@@ -101,6 +101,79 @@ window.EmployeeFilters = {
 
         // Обновить счетчик
         this.updateFilterCount();
+
+        // Очищаем URL от параметров фильтров
+        UrlFilterSync.clearUrl();
+    },
+
+    /**
+     * Синхронизация фильтров в URL
+     */
+    syncToUrl: function () {
+        var params = this.getParams();
+        var urlParams = new URLSearchParams();
+
+        // Записываем все непустые параметры
+        for (var key in params) {
+            if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+                if (Array.isArray(params[key])) {
+                    urlParams.set(key, params[key].join(','));
+                } else {
+                    urlParams.set(key, params[key]);
+                }
+            }
+        }
+
+        var qs = urlParams.toString();
+        history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : ''));
+    },
+
+    /**
+     * Восстановление фильтров из URL
+     */
+    restoreFromUrl: function () {
+        var params = new URLSearchParams(window.location.search);
+        if (params.toString() === '') return false;
+
+        // Поиск
+        if (params.get('search')) {
+            $('#search-name-email-phone').val(params.get('search'));
+        }
+
+        // Select2 фильтры
+        if (params.get('position_id')) {
+            $('#position').val(params.get('position_id')).trigger('change.select2');
+        }
+        if (params.get('status')) {
+            $('#statusagents').val(params.get('status')).trigger('change.select2');
+        }
+        if (params.get('company_id')) {
+            $('#company').val(params.get('company_id')).trigger('change.select2');
+        }
+        if (params.get('office_id')) {
+            $('#offices').val(params.get('office_id')).trigger('change.select2');
+        }
+
+        // Теги (чекбоксы)
+        if (params.get('tags')) {
+            var tags = params.get('tags').split(',');
+            $('.multiple-menu-list input[data-name="checkbox-all"]').prop('checked', false);
+            tags.forEach(function (tagName) {
+                $('.multiple-menu-list input[name="' + tagName + '"]').prop('checked', true);
+            });
+        }
+
+        // Дата
+        if (params.get('date_range')) {
+            $('#datapiker').val(params.get('date_range'));
+        }
+
+        // Сортировка
+        if (params.get('sort_column')) {
+            this.setSort(params.get('sort_column'), params.get('sort_direction') || 'asc');
+        }
+
+        return true;
     },
 
     /**

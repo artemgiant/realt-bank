@@ -50,6 +50,9 @@
         window.canEditComplexes = @json(auth()->user()->can('complexes.edit'));
         window.canDeleteComplexes = @json(auth()->user()->can('complexes.delete'));
     </script>
+    {{-- Shared URL filter sync utility --}}
+    <script src="{{ versioned_asset('js/lib/url-filter-sync.js') }}"></script>
+
     {{-- Location filter --}}
     <script src="{{ versioned_asset('js/pages/complexes/index/location-filter.js') }}"></script>
 

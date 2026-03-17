@@ -29,6 +29,9 @@
 @endpush
 
 @push('scripts')
+    {{-- Shared URL filter sync utility --}}
+    <script src="{{ versioned_asset('js/lib/url-filter-sync.js') }}"></script>
+
     {{-- Модули таблицы (порядок важен!) --}}
     <script src="{{ versioned_asset('js/pages/employees/index/table-config.js') }}"></script>
     <script src="{{ versioned_asset('js/pages/employees/index/table-renderers.js') }}"></script>

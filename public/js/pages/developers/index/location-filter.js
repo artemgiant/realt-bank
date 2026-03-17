@@ -395,6 +395,51 @@
         if (e.key === 'Escape' && state.isOpen) close();
     });
 
+    // Экспортируем состояние для URL-синхронизации
+    window.LocationFilterState = {
+        getState: () => ({
+            location: state.location,
+            path: state.path,
+            cities: state.cities
+        })
+    };
+
+    // Восстановление состояния из URL-параметров
+    const restoreFromUrl = () => {
+        const params = new URLSearchParams(window.location.search);
+        const locType = params.get('location_type');
+        const locId = params.get('location_id');
+        const locName = params.get('location_name');
+
+        if (!locType || !locId || !locName) return false;
+
+        // Восстанавливаем location
+        state.location = { type: locType, id: +locId, name: locName };
+
+        // Восстанавливаем path
+        if (params.get('lf_country_id')) {
+            state.path.country = { id: +params.get('lf_country_id'), name: params.get('lf_country_name') || '' };
+        }
+        if (params.get('lf_region_id')) {
+            state.path.region = { id: +params.get('lf_region_id'), name: params.get('lf_region_name') || '' };
+        }
+
+        // Восстанавливаем cities
+        if (params.get('city_ids')) {
+            try {
+                var cityIds = JSON.parse(params.get('city_ids'));
+                var cityNames = params.get('lf_city_names') ? JSON.parse(params.get('lf_city_names')) : [];
+                state.cities = cityIds.map(function (id, i) {
+                    return { id: id, name: cityNames[i] || '' };
+                });
+            } catch (e) { /* ignore parse errors */ }
+        }
+
+        renderTags();
+        updateHidden(false);
+        return true;
+    };
+
     // Инициализация с Одесской областью по умолчанию
     const initDefaultLocation = async () => {
         try {
@@ -433,8 +478,10 @@
         }
     };
 
-    // Запускаем инициализацию
-    initDefaultLocation();
+    // Проверяем URL-параметры, если нет — используем дефолт
+    if (!restoreFromUrl()) {
+        initDefaultLocation();
+    }
 
     updatePlaceholder();
 })();

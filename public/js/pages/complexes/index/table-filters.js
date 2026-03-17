@@ -95,6 +95,32 @@ window.ComplexFilters = {
 
         // Скрываем счетчик фильтров
         $('.full-filter-counter').hide();
+
+        // Очищаем URL от параметров фильтров
+        UrlFilterSync.clearUrl();
+    },
+
+    // Синхронизация фильтров в URL
+    syncToUrl: function () {
+        UrlFilterSync.syncToUrl({
+            formSelector: this.formSelector,
+            skipTextNames: ['search-features'],
+            sortField: this.sortField,
+            sortDir: this.sortDir,
+            defaultSortField: 'created_at',
+            defaultSortDir: 'desc'
+        });
+    },
+
+    // Восстановление фильтров из URL
+    restoreFromUrl: function () {
+        var self = this;
+        return UrlFilterSync.restoreFromUrl({
+            formSelector: this.formSelector,
+            onSort: function (field, dir) {
+                self.setSort(field, dir);
+            }
+        });
     },
 
     // Обновление счетчика активных фильтров

@@ -27,6 +27,10 @@ $(document).ready(function () {
 
     var DEBOUNCE_DELAY = 600;
 
+    // Восстановление фильтров из URL-параметров (до инициализации DataTables)
+    Filters.restoreFromUrl();
+    Filters.updateCounter();
+
     // ========== Инициализация DataTables ==========
     var settings = Config.getBaseSettings();
 
@@ -48,6 +52,7 @@ $(document).ready(function () {
         $('#example_info').html('Всего: <b>' + info.recordsDisplay + '</b>');
         $('#select-all-checkbox').prop('checked', false);
         Filters.updateCounter();
+        Filters.syncToUrl();
         initTooltips();
         initPhotoHoverPreview();
     };

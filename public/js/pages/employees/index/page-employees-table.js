@@ -44,6 +44,10 @@
             { data: null, render: renderers.actions }
         ];
 
+        // Восстановление фильтров из URL-параметров (до инициализации DataTables)
+        filters.restoreFromUrl();
+        filters.updateFilterCount();
+
         // Инициализация DataTables
         employeesTable = $('#example').DataTable({
             processing: config.processing,
@@ -70,6 +74,8 @@
                 // После отрисовки таблицы
                 initTooltips();
                 initSelect2InTable();
+                // Синхронизируем фильтры в URL
+                filters.syncToUrl();
             }
         });
 

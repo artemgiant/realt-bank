@@ -26,6 +26,10 @@ $(document).ready(function () {
     // Задержка в миллисекундах (600ms)
     var DEBOUNCE_DELAY = 600;
 
+    // Восстановление фильтров из URL-параметров (до инициализации DataTables)
+    Filters.restoreFromUrl();
+    Filters.updateCounter();
+
     // ========== Инициализация DataTables ==========
     var settings = Config.getBaseSettings();
 
@@ -52,6 +56,9 @@ $(document).ready(function () {
 
         // Обновляем счетчик фильтров
         Filters.updateCounter();
+
+        // Синхронизируем фильтры в URL
+        Filters.syncToUrl();
 
         // Инициализация тултипов для новых строк
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
