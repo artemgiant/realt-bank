@@ -415,6 +415,14 @@ class DictionarySeeder extends Seeder
                 'Газ в объекте',
             ],
 
+                // Статус объекта (фильтр "Объекты")
+            Dictionary::TYPE_PROPERTY_STATUS => [
+                ['name' => 'Все объекты', 'value' => ''],
+                ['name' => 'Открытые объекты', 'value' => 'open'],
+                ['name' => 'Мои объекты', 'value' => 'my'],
+                ['name' => 'Моя компания', 'value' => 'my_company'],
+            ],
+
                 // Должности сотрудников
             Dictionary::TYPE_EMPLOYEE_POSITION => [
                 'Агент',

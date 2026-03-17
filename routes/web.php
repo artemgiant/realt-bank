@@ -55,6 +55,8 @@ Route::middleware('auth')->group(function () {
             ->name('properties.photos.delete');
         Route::post('/properties/{property}/photos/reorder', [PropertyController::class, 'reorderPhotos'])
             ->name('properties.photos.reorder');
+        Route::post('/properties/{property}/refresh-updated', [PropertyController::class, 'refreshUpdatedAt'])
+            ->name('properties.refresh-updated');
     });
 
     // Delete routes (properties.delete)

@@ -405,8 +405,8 @@ $(document).ready(function () {
             '<div class="info-footer">' +
             '<p class="info-footer-data">ID: <span>' + id + '</span></p>' +
             '<p class="info-footer-data">Добавлено: <span>' + createdAt + '</span></p>' +
-            '<p class="info-footer-data">Обновлено: <span>' + updatedAt + '</span>' +
-            '<button class="btn" type="button">' +
+            '<p class="info-footer-data">Обновлено: <span class="updated-at-text">' + updatedAt + '</span>' +
+            '<button class="btn btn-refresh-updated" type="button" data-property-id="' + id + '" data-bs-toggle="tooltip" data-bs-placement="top" title="Обновить дату актуальности объекта">' +
             '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#5FB343" class="bi bi-arrow-repeat" viewBox="0 0 16 16">' +
             '<path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9"></path>' +
             '<path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"></path>' +
@@ -429,6 +429,11 @@ $(document).ready(function () {
         if (row.child.isShown()) {
             // Плавное закрытие: анимация, затем скрытие
             var childTr = $(row.child());
+            // Уничтожаем тултипы перед закрытием
+            childTr.find('[data-bs-toggle="tooltip"]').each(function () {
+                var tooltip = bootstrap.Tooltip.getInstance(this);
+                if (tooltip) tooltip.dispose();
+            });
             childTr.addClass('dop-info-row-closed');
             childTr.one('transitionend', function () {
                 row.child.hide();
@@ -477,14 +482,54 @@ $(document).ready(function () {
         $blockInfo.find('.block-info-detail').toggleClass('block-info-detail-hidden');
     });
 
+    // Обработчик кнопки "Обновить дату актуальности"
+    $('#example tbody').on('click', '.btn-refresh-updated', function () {
+        var $btn = $(this);
+        var propertyId = $btn.data('property-id');
+        var $span = $btn.closest('.info-footer-data').find('.updated-at-text');
+        var $svg = $btn.find('svg');
+
+        $svg.css('animation', 'spin 0.5s linear infinite');
+
+        $.ajax({
+            url: '/properties/' + propertyId + '/refresh-updated',
+            type: 'POST',
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            success: function (response) {
+                if (response.success) {
+                    $span.text(response.updated_at_formatted);
+                }
+            },
+            error: function () {
+                alert('Ошибка при обновлении даты');
+            },
+            complete: function () {
+                $svg.css('animation', '');
+            }
+        });
+    });
+
     // ========== Инициализация ==========
 
     // Инициализация тегов при загрузке страницы (если есть выбранные фильтры)
     Tags.update();
 
-    // Инициализация тултипов
+    // Инициализация тултипов (для статических элементов)
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Инициализация тултипов для динамических элементов (child rows)
+    $('#example tbody').on('mouseenter', '[data-bs-toggle="tooltip"]', function () {
+        if (!bootstrap.Tooltip.getInstance(this)) {
+            new bootstrap.Tooltip(this, { container: 'body' });
+        }
+        bootstrap.Tooltip.getInstance(this).show();
+    }).on('mouseleave', '[data-bs-toggle="tooltip"]', function () {
+        var tooltip = bootstrap.Tooltip.getInstance(this);
+        if (tooltip) {
+            tooltip.hide();
+        }
     });
 });

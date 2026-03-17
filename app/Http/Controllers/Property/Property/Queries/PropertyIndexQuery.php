@@ -344,19 +344,16 @@ class PropertyIndexQuery
         }
     }
 
-    /** Фильтр по контакту (поиск по имени, email, ИНН, телефону) */
+    /** Фильтр по контакту — ответственный сотрудник (employee) */
     private function filterByContact(Request $request): void
     {
         if ($request->filled('contact_search')) {
             $search = $request->contact_search;
-            $this->query->whereHas('contacts', function ($q) use ($search) {
+            $this->query->whereHas('employee', function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
                     ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('inn', 'like', "%{$search}%")
-                    ->orWhereHas('phones', function ($pq) use ($search) {
-                        $pq->where('phone', 'like', "%{$search}%");
-                    });
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
     }

@@ -78,14 +78,11 @@
                     <div class="item">
                         <label class="item-label" for="status">Объекты</label>
                         <select id="status" name="status" class="js-example-responsive2" autocomplete="off">
-                            <option value="" {{ empty($filters['status']) ? 'selected' : '' }}>Все объекты</option>
-                            <option value="my" {{ ($filters['status'] ?? '') == 'my' ? 'selected' : '' }}>Мои объекты</option>
-                            <option value="my_company" {{ ($filters['status'] ?? '') == 'my_company' ? 'selected' : '' }}>Моя компания</option>
-                            <option value="on_review" {{ ($filters['status'] ?? '') == 'on_review' ? 'selected' : '' }}>На проверке</option>
-                            <option value="draft" {{ ($filters['status'] ?? '') == 'draft' ? 'selected' : '' }}>Черновики</option>
-                            <option value="active" {{ ($filters['status'] ?? '') == 'active' ? 'selected' : '' }}>Активные</option>
-                            <option value="favorite" {{ ($filters['status'] ?? '') == 'favorite' ? 'selected' : '' }}>Избранные</option>
-                            <option value="archive" {{ ($filters['status'] ?? '') == 'archive' ? 'selected' : '' }}>Архив</option>
+                            @foreach($propertyStatuses as $propertyStatus)
+                                <option value="{{ $propertyStatus->value }}" {{ ($filters['status'] ?? '') == $propertyStatus->value ? 'selected' : '' }}>
+                                    {{ $propertyStatus->name }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 

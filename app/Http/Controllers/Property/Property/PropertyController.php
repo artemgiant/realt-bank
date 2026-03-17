@@ -51,6 +51,7 @@ class PropertyController extends Controller
             'currencies' => Currency::active()->get(),
             'developers' => Developer::active()->orderBy('name')->get(),
             'yearsBuilt' => Dictionary::getYearsBuilt(),
+            'propertyStatuses' => Dictionary::getPropertyStatuses(),
             'filters' => $request->only([
                 'deal_type_id', 'price_from', 'price_to', 'currency_id',
                 'area_from', 'area_to', 'area_living_from', 'area_living_to',
@@ -260,6 +261,19 @@ class PropertyController extends Controller
         return response()->json([
             'exists' => true,
             'duplicates' => $items,
+        ]);
+    }
+
+    /**
+     * AJAX: Обновить дату актуальности объекта (updated_at = now).
+     */
+    public function refreshUpdatedAt(Property $property): JsonResponse
+    {
+        $property->touch();
+
+        return response()->json([
+            'success' => true,
+            'updated_at_formatted' => $property->updated_at->format('d.m.Y'),
         ]);
     }
 

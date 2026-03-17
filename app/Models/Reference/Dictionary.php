@@ -47,6 +47,7 @@ class Dictionary extends Model
     public const TYPE_AGENT_TAG = 'agent_tag';             // Теги агентов
     public const TYPE_EMPLOYEE_POSITION = 'employee_position'; // Должности сотрудников
     public const TYPE_EMPLOYEE_STATUS = 'employee_status';     // Статусы сотрудников
+    public const TYPE_PROPERTY_STATUS = 'property_status';     // Статус объекта (фильтр)
 
     // ========== Scopes ==========
 
@@ -183,6 +184,11 @@ class Dictionary extends Model
     public static function getEmployeeStatuses(): Collection
     {
         return static::getByType(self::TYPE_EMPLOYEE_STATUS);
+    }
+
+    public static function getPropertyStatuses(): Collection
+    {
+        return static::getByType(self::TYPE_PROPERTY_STATUS);
     }
 
     // ========== Helper for Select Options ==========
