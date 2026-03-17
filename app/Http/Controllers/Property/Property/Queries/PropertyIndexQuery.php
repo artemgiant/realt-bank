@@ -87,7 +87,7 @@ class PropertyIndexQuery
         }
 
         $this->query->where(function ($q) use ($searchValue) {
-            $q->where('id', 'like', "%{$searchValue}%")
+            $q->where('properties.id', 'like', "%{$searchValue}%")
                 ->orWhereHas('translations', function ($tq) use ($searchValue) {
                     $tq->where('title', 'like', "%{$searchValue}%");
                 })
@@ -340,7 +340,7 @@ class PropertyIndexQuery
     private function filterBySearchId(Request $request): void
     {
         if ($request->filled('search_id')) {
-            $this->query->where('id', $request->search_id);
+            $this->query->where('properties.id', $request->search_id);
         }
     }
 
@@ -362,10 +362,10 @@ class PropertyIndexQuery
     private function filterByDate(Request $request): void
     {
         if ($request->filled('created_from')) {
-            $this->query->whereDate('created_at', '>=', $request->created_from);
+            $this->query->whereDate('properties.created_at', '>=', $request->created_from);
         }
         if ($request->filled('created_to')) {
-            $this->query->whereDate('created_at', '<=', $request->created_to);
+            $this->query->whereDate('properties.created_at', '<=', $request->created_to);
         }
     }
 
