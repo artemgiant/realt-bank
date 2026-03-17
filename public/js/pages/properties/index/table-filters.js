@@ -108,6 +108,11 @@ window.PropertyFilters = {
         this.sortField = 'created_at';
         this.sortDir = 'desc';
 
+        // Сбрасываем фильтр локации
+        if (window.LocationFilterState && window.LocationFilterState.reset) {
+            window.LocationFilterState.reset();
+        }
+
         // Скрываем счетчик фильтров
         $('.full-filter-counter').hide();
 

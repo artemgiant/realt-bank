@@ -1,6 +1,6 @@
 {{-- ========== ЛОКАЦИЯ (Область + Улица) ========== --}}
 <div class="item selects w16">
-    <label class="item-label">Регион <span class="text-danger">*</span></label>
+    <label class="item-label">Регион (Область) <span class="text-danger">*</span></label>
     <div class="state-search-wrapper">
         <input type="text"
                class="state-search-input"

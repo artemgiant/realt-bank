@@ -67,15 +67,15 @@ class LocationFilterQuery
         }
 
         // Режим Detail (Район, Улица, Зона, Комплекс, Блок, Девелопер)
-        if ($this->cityId && ($this->detailType === 'district' || $this->detailType === null)) {
+        if (($this->cityId || ($this->locationType === 'region' && $this->locationId)) && ($this->detailType === 'district' || $this->detailType === null)) {
             $data['districts'] = $this->districts();
         }
 
-        if ($this->cityId && ($this->detailType === 'street' || $this->detailType === null)) {
+        if (($this->cityId || ($this->locationType === 'region' && $this->locationId)) && ($this->detailType === 'street' || $this->detailType === null)) {
             $data['streets'] = $this->streets();
         }
 
-        if ($this->cityId && ($this->detailType === 'landmark' || $this->detailType === null)) {
+        if (($this->cityId || ($this->locationType === 'region' && $this->locationId)) && ($this->detailType === 'landmark' || $this->detailType === null)) {
             $data['landmarks'] = $this->landmarks();
         }
 
@@ -170,18 +170,26 @@ class LocationFilterQuery
      */
     private function districts(): \Illuminate\Support\Collection
     {
-        return District::where('city_id', $this->cityId)
-            ->when($this->search, function ($q) {
+        $query = District::when($this->search, function ($q) {
                 $q->where('name', 'like', "%{$this->search}%");
             })
-            ->with('city')
-            ->limit(100)
+            ->with('city');
+
+        if ($this->cityId) {
+            $query->where('city_id', $this->cityId);
+        } else {
+            $query->whereHas('city', function ($q) {
+                $q->where('state_id', $this->locationId);
+            });
+        }
+
+        return $query->limit(100)
             ->get()
             ->map(function ($district) {
                 return [
                     'id' => $district->id,
                     'name' => $district->name,
-                    'cityId' => $this->cityId,
+                    'cityId' => $this->cityId ?? $district->city_id,
                     'city' => $district->city->name ?? '',
                     'count' => Property::where('district_id', $district->id)->count(),
                 ];
@@ -193,19 +201,27 @@ class LocationFilterQuery
      */
     private function streets(): \Illuminate\Support\Collection
     {
-        return Street::where('city_id', $this->cityId)
-            ->active()
+        $query = Street::active()
             ->when($this->search, function ($q) {
                 $q->where('name', 'like', "%{$this->search}%");
             })
-            ->with('city')
-            ->limit(100)
+            ->with('city');
+
+        if ($this->cityId) {
+            $query->where('city_id', $this->cityId);
+        } else {
+            $query->whereHas('city', function ($q) {
+                $q->where('state_id', $this->locationId);
+            });
+        }
+
+        return $query->limit(100)
             ->get()
             ->map(function ($street) {
                 return [
                     'id' => $street->id,
                     'name' => $street->name,
-                    'cityId' => $this->cityId,
+                    'cityId' => $this->cityId ?? $street->city_id,
                     'city' => $street->city->name ?? '',
                     'count' => Property::where('street_id', $street->id)->count(),
                 ];
@@ -217,18 +233,26 @@ class LocationFilterQuery
      */
     private function landmarks(): \Illuminate\Support\Collection
     {
-        return Zone::where('city_id', $this->cityId)
-            ->when($this->search, function ($q) {
+        $query = Zone::when($this->search, function ($q) {
                 $q->where('name', 'like', "%{$this->search}%");
             })
-            ->with('city')
-            ->limit(100)
+            ->with('city');
+
+        if ($this->cityId) {
+            $query->where('city_id', $this->cityId);
+        } else {
+            $query->whereHas('city', function ($q) {
+                $q->where('state_id', $this->locationId);
+            });
+        }
+
+        return $query->limit(100)
             ->get()
             ->map(function ($zone) {
                 return [
                     'id' => $zone->id,
                     'name' => $zone->name,
-                    'cityId' => $this->cityId,
+                    'cityId' => $this->cityId ?? $zone->city_id,
                     'city' => $zone->city->name ?? '',
                     'count' => Property::where('zone_id', $zone->id)->count(),
                 ];

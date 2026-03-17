@@ -744,9 +744,7 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
 
 #example tbody tr td .tbody-wrapper.photo .photo-hover-preview {
   display: none;
-  position: absolute;
-  left: 60px;
-  top: 60px;
+  position: fixed;
   z-index: 9999;
   padding: 4px;
   background: #fff;
@@ -764,10 +762,6 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   height: auto;
   border-radius: 6px;
   object-fit: contain;
-}
-
-#example tbody tr td .tbody-wrapper.photo:hover .photo-hover-preview {
-  display: block;
 }
 
 #example tbody tr td .tbody-wrapper.price p {

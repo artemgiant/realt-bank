@@ -636,6 +636,10 @@
             path: state.path,
             cities: state.cities,
             details: state.details
-        })
+        }),
+        reset: () => {
+            clearAll();
+            initDefaultLocation();
+        }
     };
 })();

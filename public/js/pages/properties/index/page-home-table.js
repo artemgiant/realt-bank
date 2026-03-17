@@ -77,6 +77,24 @@ $(document).ready(function () {
             });
         }
 
+        // Hover-превью фото: позиционирование через fixed
+        $('#example tbody .tbody-wrapper.photo').off('mouseenter.preview mousemove.preview mouseleave.preview');
+        $('#example tbody .tbody-wrapper.photo').on('mouseenter.preview', function (e) {
+            var $preview = $(this).find('.photo-hover-preview');
+            $preview.css({ left: e.clientX + 15, top: e.clientY + 15 }).show();
+        }).on('mousemove.preview', function (e) {
+            var $preview = $(this).find('.photo-hover-preview');
+            var previewW = $preview.outerWidth() || 300;
+            var previewH = $preview.outerHeight() || 300;
+            var left = e.clientX + 15;
+            var top = e.clientY + 15;
+            if (left + previewW > window.innerWidth) left = e.clientX - previewW - 15;
+            if (top + previewH > window.innerHeight) top = e.clientY - previewH - 15;
+            $preview.css({ left: left, top: top });
+        }).on('mouseleave.preview', function () {
+            $(this).find('.photo-hover-preview').hide();
+        });
+
         // Инициализация тултипов для новых элементов таблицы
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('#example [data-bs-toggle="tooltip"]'));
         tooltipTriggerList.map(function (tooltipTriggerEl) {
