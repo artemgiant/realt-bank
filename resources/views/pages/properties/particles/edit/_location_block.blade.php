@@ -95,9 +95,7 @@
     </div>
 </div>
 {{-- Предупреждение о дубликате адреса --}}
-<div class="w-100">
-    <div id="duplicate-address-warning" style="display:none;"></div>
-</div>
+<div id="duplicate-address-warning" class="w-100" style="display:none;"></div>
 {{-- Hidden input для исключения текущего объекта из проверки --}}
 <input type="hidden" name="property_id" value="{{ $property->id }}">
 {{-- ========== /ЛОКАЦИЯ ========== --}}
