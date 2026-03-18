@@ -316,89 +316,6 @@ class StateSearchManager {
     }
 }
 
-// ========== Класс управления районом области ==========
-class RegionSelectManager {
-    constructor() {
-        this.select = document.querySelector('#region_id');
-        if (!this.select) return;
-
-        this.init();
-    }
-
-    init() {
-        // Слушаем выбор области
-        document.addEventListener('stateSelected', (e) => {
-            this.loadRegions(e.detail.id);
-        });
-
-        document.addEventListener('stateCleared', () => {
-            this.clear();
-        });
-
-        // Если уже есть state_id при загрузке (edit mode) — загружаем районы
-        const stateIdInput = document.querySelector('input[name="state_id"]');
-        if (stateIdInput && stateIdInput.value) {
-            this.loadRegions(stateIdInput.value);
-        }
-    }
-
-    async loadRegions(stateId) {
-        if (!stateId) {
-            this.clear();
-            return;
-        }
-
-        const url = `/location/regions/by-state?state_id=${stateId}`;
-        const data = await LocationUtils.fetchJson(url);
-
-        if (data.success) {
-            this.populateSelect(data.results);
-        }
-    }
-
-    populateSelect(regions) {
-        const currentValue = this.select.value;
-
-        // Destroy Select2 if initialized
-        if ($(this.select).hasClass('select2-hidden-accessible')) {
-            $(this.select).select2('destroy');
-        }
-
-        // Clear and rebuild options
-        this.select.innerHTML = '<option value=""></option>';
-
-        regions.forEach(region => {
-            const option = document.createElement('option');
-            option.value = region.id;
-            option.textContent = region.name;
-            if (String(region.id) === String(currentValue)) {
-                option.selected = true;
-            }
-            this.select.appendChild(option);
-        });
-
-        // Reinitialize Select2
-        $(this.select).select2({
-            placeholder: 'Район региона',
-            allowClear: true,
-            width: '100%',
-        });
-    }
-
-    clear() {
-        if ($(this.select).hasClass('select2-hidden-accessible')) {
-            $(this.select).select2('destroy');
-        }
-
-        this.select.innerHTML = '<option value=""></option>';
-
-        $(this.select).select2({
-            minimumResultsForSearch: Infinity,
-            width: '100%',
-        });
-    }
-}
-
 // ========== Класс поиска улицы ==========
 class StreetSearchManager {
     constructor(stateSearchManager) {
@@ -418,6 +335,8 @@ class StreetSearchManager {
         this.districtNameInput = this.wrapper.querySelector('input[name="district_name"]');
         this.cityIdInput = this.wrapper.querySelector('input[name="city_id"]');
         this.cityNameInput = this.wrapper.querySelector('input[name="city_name"]');
+        this.regionIdInput = this.wrapper.querySelector('input[name="region_id"]');
+        this.regionNameInput = this.wrapper.querySelector('input[name="region_name"]');
 
         // Связь с поиском региона
         this.stateSearchManager = stateSearchManager;
@@ -451,6 +370,9 @@ class StreetSearchManager {
             if (this.cityNameInput.value) {
                 addressParts.push(this.cityNameInput.value);
             }
+            if (this.regionNameInput.value) {
+                addressParts.push(this.regionNameInput.value);
+            }
 
             this.input.value = addressParts.join(', ');
             this.wrapper.classList.add('has-value');
@@ -460,6 +382,7 @@ class StreetSearchManager {
                 zone_name: this.zoneNameInput.value,
                 district_name: this.districtNameInput.value,
                 city_name: this.cityNameInput.value,
+                region_name: this.regionNameInput.value,
             };
         }
     }
@@ -552,7 +475,7 @@ class StreetSearchManager {
                     <div class="location-dropdown-item ${index === this.activeIndex ? 'is-active' : ''}"
                          data-index="${index}">
                         <div class="location-item-main">${street.name}</div>
-                        <div class="location-item-sub">${[street.zone_name, street.district_name, street.city_name].filter(Boolean).join(', ')}</div>
+                        <div class="location-item-sub">${[street.zone_name, street.district_name, street.city_name, street.region_name].filter(Boolean).join(', ')}</div>
                     </div>
                 `).join('')}
             </div>
@@ -586,6 +509,9 @@ class StreetSearchManager {
         if (street.city_name) {
             addressParts.push(street.city_name);
         }
+        if (street.region_name) {
+            addressParts.push(street.region_name);
+        }
 
         // Заполняем input полным адресом
         this.input.value = addressParts.join(', ');
@@ -599,18 +525,12 @@ class StreetSearchManager {
         this.districtNameInput.value = street.district_name || '';
         this.cityIdInput.value = street.city_id || '';
         this.cityNameInput.value = street.city_name || '';
+        this.regionIdInput.value = street.region_id || '';
+        this.regionNameInput.value = street.region_name || '';
 
         // Обновляем UI
         this.wrapper.classList.add('has-value');
         this.closeDropdown();
-
-        // Устанавливаем район региона если есть region_id
-        if (street.region_id) {
-            const regionSelect = document.querySelector('#region_id');
-            if (regionSelect) {
-                $(regionSelect).val(street.region_id).trigger('change');
-            }
-        }
 
         // Диспатчим событие
         document.dispatchEvent(new CustomEvent('streetSelected', { detail: street }));
@@ -630,6 +550,8 @@ class StreetSearchManager {
         this.districtNameInput.value = '';
         this.cityIdInput.value = '';
         this.cityNameInput.value = '';
+        this.regionIdInput.value = '';
+        this.regionNameInput.value = '';
         this.wrapper.classList.remove('has-value');
         this.results = [];
         this.closeDropdown();
@@ -683,16 +605,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Инициализируем поиск региона (области)
     const stateSearch = new StateSearchManager();
 
-    // Инициализируем выбор района области
-    const regionSelect = new RegionSelectManager();
-
     // Инициализируем поиск улицы с передачей менеджера региона
     const streetSearch = new StreetSearchManager(stateSearch);
 
     // Экспортируем для внешнего использования
     window.LocationSearch = {
         state: stateSearch,
-        region: regionSelect,
         street: streetSearch,
     };
 });

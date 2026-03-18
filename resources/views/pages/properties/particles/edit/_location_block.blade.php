@@ -78,18 +78,9 @@
         <input type="hidden" name="district_name" value="{{ old('district_name', $property->district?->name) }}">
         <input type="hidden" name="city_id" value="{{ old('city_id', $property->city_id) }}">
         <input type="hidden" name="city_name" value="{{ old('city_name', $property->city?->name) }}">
+        <input type="hidden" name="region_id" value="{{ old('region_id', $property->region_id) }}">
+        <input type="hidden" name="region_name" value="{{ old('region_name', $property->region?->name) }}">
     </div>
-</div>
-
-{{-- Район региона --}}
-<div class="item selects w16">
-    <label class="item-label">Район региона <span class="text-danger">*</span></label>
-    <select name="region_id" id="region_id" class="js-example-responsive3 my-select2">
-        <option value=""></option>
-        @if($property->region_id)
-            <option value="{{ $property->region_id }}" selected>{{ $property->region?->name }}</option>
-        @endif
-    </select>
 </div>
 
 {{-- Номер дома / квартиры --}}
