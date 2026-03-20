@@ -30,7 +30,8 @@ php artisan migrate
 php artisan assets:bust
 
 php artisan db:seed --class=DictionarySeeder --force
-php artisan db:seed --class=PermissionSeeder --force
+
+#php artisan db:seed --class=PermissionSeeder --force
 #
 #php artisan db:seed --class=RoleSeeder
 #

@@ -2,10 +2,12 @@
 
 namespace App\Services\Migration;
 
+use App\Services\Migration\Mappers\ComplexMapper;
 use App\Services\Migration\Mappers\DictionaryMapper;
 use App\Services\Migration\Mappers\FilialMapper;
 use App\Services\Migration\Mappers\LocationMapper;
 use App\Services\Migration\Mappers\UserMapper;
+use App\Services\Migration\Migrators\ContactMigrator;
 use App\Services\Migration\Migrators\FilialMigrator;
 use App\Services\Migration\Migrators\PropertyMigrator;
 use App\Services\Migration\Migrators\PropertyPhotoMigrator;
@@ -16,11 +18,12 @@ use Illuminate\Console\OutputStyle;
  * Оркестратор миграции данных из factor_dump в realt_bank.
  *
  * Управляет порядком выполнения:
- * 1. Строит маперы (локации, справочники)
+ * 1. Строит маперы (локации, справочники, ЖК)
  * 2. Филиалы → компания + офисы
  * 3. Пользователи → users + employees
- * 4. Объекты → properties + features
+ * 4. Объекты → properties + features + translations + contacts
  * 5. Фото → property_photos
+ * 6. Отчёт о немаппящихся полях
  *
  * Поддерживает выборочный запуск через параметр $only.
  */
@@ -35,6 +38,7 @@ class DataMigrationService
     protected DictionaryMapper $dictionaryMapper;   // справочники (тип здания, состояние и т.д.)
     protected UserMapper $userMapper;               // old user_id → new user_id
     protected FilialMapper $filialMapper;           // old filial_id → new office_id
+    protected ComplexMapper $complexMapper;         // old complex_id → new complex_id
 
     // Результаты миграции по каждой сущности
     protected array $results = [];
@@ -50,6 +54,7 @@ class DataMigrationService
         $this->dictionaryMapper = new DictionaryMapper();
         $this->userMapper = new UserMapper();
         $this->filialMapper = new FilialMapper();
+        $this->complexMapper = new ComplexMapper();
     }
 
     /**
@@ -68,7 +73,6 @@ class DataMigrationService
         $this->buildMappers();
 
         // Шаг 2: Филиалы → Компания "Factor" + офисы
-        // Должен идти первым — от него зависит привязка сотрудников к офисам
         if ($this->shouldRun('filials', $only)) {
             $this->output?->section('Migrating filials...');
             $migrator = new FilialMigrator($this->filialMapper, $this->output);
@@ -76,38 +80,47 @@ class DataMigrationService
         }
 
         // Шаг 3: Пользователи → users + employees + роли
-        // Должен идти после филиалов — employees привязываются к офисам
         if ($this->shouldRun('users', $only)) {
             $this->output?->section('Migrating users...');
             $migrator = new UserMigrator($this->userMapper, $this->filialMapper, $this->output);
             $this->results['users'] = $migrator->migrate();
         }
 
-        // Шаг 4: Объекты → properties + features
-        // Только status IN(1,2,3), rent=0, deleted=0 (квартиры, дома, коммерция)
+        // Шаг 4: Объекты → properties + features + translations + contacts
         $propertyMap = [];
         if ($this->shouldRun('properties', $only)) {
             $this->output?->section('Migrating properties...');
+            $contactMigrator = new ContactMigrator();
             $migrator = new PropertyMigrator(
                 $this->locationMapper,
                 $this->dictionaryMapper,
                 $this->userMapper,
+                $this->complexMapper,
+                $contactMigrator,
                 $this->output,
                 $this->chunkSize,
                 $this->limit
             );
             $this->results['properties'] = $migrator->migrate();
-            // Маппинг old object_id → new property_id (нужен для фото)
             $propertyMap = $migrator->getPropertyMap();
+
+            // Статистика контактов
+            $this->results['contacts'] = $contactMigrator->getStats();
         }
 
         // Шаг 5: Фото объектов → property_photos
-        // Переносятся только фото для объектов из propertyMap
         if ($this->shouldRun('photos', $only) && !empty($propertyMap)) {
             $this->output?->section('Migrating photos...');
             $migrator = new PropertyPhotoMigrator($propertyMap, $this->output, $this->chunkSize * 2);
             $this->results['photos'] = $migrator->migrate();
         }
+
+        // Шаг 6: Отчёт о немаппящихся полях
+        $this->output?->section('Generating unmapped fields report...');
+        $report = new UnmappedFieldsReport();
+        $reportPath = $report->generate();
+        $this->output?->info("Unmapped fields report: {$reportPath}");
+        $this->results['unmapped_report'] = $reportPath;
 
         $duration = round(microtime(true) - $startTime, 2);
         $this->results['duration_seconds'] = $duration;
@@ -132,12 +145,14 @@ class DataMigrationService
         $this->dictionaryMapper->build();
         $dictStats = $this->dictionaryMapper->getStats();
         $this->output?->info("  Mapped: {$dictStats['mapped']} / {$dictStats['total_old_items']} items");
+
+        // ЖК: lib_other (complex) → complexes
+        $this->output?->info('Building complex mapper...');
+        $this->complexMapper->build();
+        $complexStats = $this->complexMapper->getStats();
+        $this->output?->info("  Complexes: {$complexStats['mapped']} mapped / {$complexStats['total_old']} total");
     }
 
-    /**
-     * Проверка: нужно ли запускать миграцию для данной сущности.
-     * Если --only не указан, запускаем все.
-     */
     protected function shouldRun(string $entity, ?array $only): bool
     {
         return $only === null || in_array($entity, $only);

@@ -3,10 +3,13 @@
 namespace App\Services\Migration\Migrators;
 
 use App\Models\Property\Property;
+use App\Models\Property\PropertyTranslation;
 use App\Models\Reference\Dictionary;
+use App\Services\Migration\Mappers\ComplexMapper;
 use App\Services\Migration\Mappers\DictionaryMapper;
 use App\Services\Migration\Mappers\LocationMapper;
 use App\Services\Migration\Mappers\UserMapper;
+use App\Services\Migration\Migrators\ContactMigrator;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Support\Facades\DB;
 
@@ -28,6 +31,8 @@ class PropertyMigrator
     protected LocationMapper $locationMapper;     // маппинг локаций
     protected DictionaryMapper $dictionaryMapper;  // маппинг справочников
     protected UserMapper $userMapper;              // маппинг пользователей
+    protected ComplexMapper $complexMapper;        // маппинг ЖК
+    protected ContactMigrator $contactMigrator;    // миграция контактов
     protected ?OutputStyle $output;
 
     // Результат: old object.id → new property.id
@@ -47,10 +52,21 @@ class PropertyMigrator
         3 => 40, // Коммерция → Помещение свободного назначения (dictionaries.id=40)
     ];
 
+    /**
+     * Маппинг type_sale → contact_type_id в dictionaries.
+     * Определяет тип контакта продавца на объекте.
+     */
+    protected const TYPE_SALE_TO_CONTACT_TYPE = [
+        1 => 202, // Риелтор → "Агент (50/50)"
+        2 => 195, // Собственник → "Эксклюзив / Владелец"
+    ];
+
     public function __construct(
         LocationMapper $locationMapper,
         DictionaryMapper $dictionaryMapper,
         UserMapper $userMapper,
+        ComplexMapper $complexMapper,
+        ContactMigrator $contactMigrator,
         ?OutputStyle $output = null,
         int $chunkSize = 500,
         int $limit = 0
@@ -58,6 +74,8 @@ class PropertyMigrator
         $this->locationMapper = $locationMapper;
         $this->dictionaryMapper = $dictionaryMapper;
         $this->userMapper = $userMapper;
+        $this->complexMapper = $complexMapper;
+        $this->contactMigrator = $contactMigrator;
         $this->output = $output;
         $this->chunkSize = $chunkSize;
         $this->limit = $limit;
@@ -142,34 +160,36 @@ class PropertyMigrator
      */
     protected function migrateOne(object $obj, ?int $countryId, ?int $stateId): Property
     {
+        // --- JSON data ---
+        // Многие поля хранятся в JSON-поле data (title, description, notes, контакты и т.д.)
+        $data = json_decode($obj->data ?? '{}', false);
+
         // --- Локации ---
-        // Старые lib_towns/regions/zones/streets → новые cities/districts/zones/streets
         $cityId = $this->locationMapper->getCityId($obj->town_id);
         $districtId = $this->locationMapper->getDistrictId($obj->region_id);
         $zoneId = $this->locationMapper->getZoneId($obj->zone_id);
         $streetId = $this->locationMapper->getStreetId($obj->street_id);
 
         // --- Справочники ---
-        // Старые lib_other записи → новые dictionaries записи
-        $dealKindId = $this->dictionaryMapper->resolve($obj->type_object, 'type_object');     // вид сделки
-        $buildingTypeId = $this->dictionaryMapper->resolve($obj->project, 'project');           // тип здания
-        $conditionId = $this->dictionaryMapper->resolve($obj->situation, 'situation');           // состояние
-        $heatingTypeId = $this->dictionaryMapper->resolve($obj->type_height ?? null, 'type_height'); // отопление
-        $roomCountId = $this->dictionaryMapper->resolveRoomCount($obj->rooms);                   // кол-во комнат
-        $bathroomCountId = $this->dictionaryMapper->resolveBathroomCount($obj->bothroom);        // кол-во санузлов
+        $dealKindId = $this->dictionaryMapper->resolve($obj->type_object, 'type_object');
+        $buildingTypeId = $this->dictionaryMapper->resolve($obj->project, 'project');
+        $conditionId = $this->dictionaryMapper->resolve($obj->situation, 'situation');
+        $heatingTypeId = $this->dictionaryMapper->resolve($obj->type_height ?? null, 'type_height');
+        $roomCountId = $this->dictionaryMapper->resolveRoomCount($obj->rooms);
+        $bathroomCountId = $this->dictionaryMapper->resolveBathroomCount($obj->bothroom);
 
-        // Тип стен: для квартир wall_type_g, для домов wall_type_home
+        // Тип стен: wall_type_g → wall_type_home → material (fallback)
         $wallTypeId = $this->dictionaryMapper->resolve($obj->wall_type_g ?? null, 'wall_type_g')
-            ?? $this->dictionaryMapper->resolve($obj->wall_type_home ?? null, 'wall_type_home');
+            ?? $this->dictionaryMapper->resolve($obj->wall_type_home ?? null, 'wall_type_home')
+            ?? $this->dictionaryMapper->resolveMaterial($obj->material ?? null);
 
-        // Тип недвижимости: определяется по status (1=квартира, 2=дом, 3=коммерция)
         $propertyTypeId = self::STATUS_TO_PROPERTY_TYPE[$obj->status] ?? null;
-
-        // Тип сделки: rent=0 → Продажа (переносим только продажи)
         $dealTypeId = $this->dictionaryMapper->resolveDealType($obj->rent ?? 0);
 
+        // --- ЖК (жилой комплекс) ---
+        $complexId = $this->complexMapper->getComplexId($obj->complex ?? null);
+
         // --- Координаты ---
-        // В старой базе хранятся строкой "lat,lng"
         $latitude = null;
         $longitude = null;
         if (!empty($obj->coords)) {
@@ -180,8 +200,38 @@ class PropertyMigrator
             }
         }
 
-        // --- Заметки ---
-        // Поля без маппинга (kitchen, plan, lest и т.д.) собираются в текст
+        // --- Год постройки ---
+        $yearBuilt = !empty($data->year_building) ? (int) $data->year_building : null;
+
+        // --- Комиссия ---
+        // commission_type NOT NULL в БД — ставим только если есть значение комиссии
+        $commission = null;
+        $commissionType = 'percent'; // default
+        if (!empty($data->price_rieltor_proc)) {
+            $commission = $data->price_rieltor_proc;
+            $commissionType = 'percent';
+        } elseif (!empty($data->price_rieltor)) {
+            $commission = $data->price_rieltor;
+            $commissionType = 'fixed';
+        }
+
+        // --- Ссылка: приоритет linkToAd → rem_url ---
+        $externalUrl = !empty($data->linkToAd) ? $data->linkToAd : ($obj->rem_url ?: null);
+
+        // --- Employee ID: через маппинг user_id → Employee ---
+        $newUserId = $this->userMapper->get($obj->user_id);
+        $employeeId = null;
+        if ($newUserId) {
+            $employeeId = \App\Models\Employee\Employee::where('user_id', $newUserId)->value('id');
+        }
+
+        // --- Заметки для коллег (agent_notes) ---
+        $agentNotes = !empty($data->notes) ? $data->notes : null;
+
+        // --- contact_type_id из type_sale ---
+        $contactTypeId = self::TYPE_SALE_TO_CONTACT_TYPE[$obj->type_sale ?? 0] ?? null;
+
+        // --- Notes (поля без маппинга) ---
         $notes = $this->buildNotes($obj);
 
         $property = new Property();
@@ -190,8 +240,11 @@ class PropertyMigrator
             'id' => $obj->id,
 
             // Relations
-            'user_id' => $this->userMapper->get($obj->user_id),
-            'currency_id' => 1, // default currency
+            'user_id' => $newUserId,
+            'employee_id' => $employeeId,
+            'currency_id' => 1,
+            'complex_id' => $complexId,
+            'contact_type_id' => $contactTypeId,
 
             // Location
             'country_id' => $countryId,
@@ -221,21 +274,26 @@ class PropertyMigrator
             'area_living' => $obj->area_live ?: null,
             'area_kitchen' => $obj->area_kitchen ?: null,
             'area_land' => $obj->area_total_ych_t ?: ($this->parseAreaHome($obj->area_home)),
-            'floor' => $obj->floor_build ?: null,
-            'floors_total' => $obj->all_floors ?: null,
-            'year_built' => null,
+            // В старой базе поля перепутаны: floor_build = этажность, all_floors = этаж
+            'floor' => $obj->all_floors ?: null,
+            'floors_total' => $obj->floor_build ?: null,
+            'year_built' => $yearBuilt,
 
             // Price
             'price' => $obj->price ?: null,
             'price_per_m2' => $obj->price_area ?: null,
+            'commission' => $commission,
+            'commission_type' => $commissionType,
 
             // Media
-            'external_url' => $obj->rem_url ?: null,
+            'youtube_url' => !empty($data->youtube) ? $data->youtube : null,
+            'external_url' => $externalUrl,
 
             // Settings
             'is_visible_to_agents' => (bool) ($obj->open ?? 1),
             'status' => 'active',
             'notes' => $notes ?: null,
+            'agent_notes' => $agentNotes,
 
             // Timestamps
             'created_at' => $obj->date_created,
@@ -243,8 +301,14 @@ class PropertyMigrator
         ]);
         $property->save();
 
-        // Migrate features (many-to-many)
+        // Перенос характеристик (features: балкон, парковка, вид)
         $this->migrateFeatures($property, $obj);
+
+        // Перенос заголовка и описания → property_translations
+        $this->migrateTranslations($property, $data);
+
+        // Перенос контакта продавца → contacts + contactables
+        $this->contactMigrator->migrateForProperty($property, $data, $obj->type_sale ?? null);
 
         return $property;
     }
@@ -275,19 +339,38 @@ class PropertyMigrator
     }
 
     /**
+     * Перенос заголовка и описания → property_translations.
+     * Данные берутся из JSON data (title, description).
+     */
+    protected function migrateTranslations(Property $property, ?object $data): void
+    {
+        if (!$data) return;
+
+        $title = !empty($data->title) ? $data->title : null;
+        $description = !empty($data->description) ? $data->description : null;
+
+        if ($title || $description) {
+            PropertyTranslation::create([
+                'property_id' => $property->id,
+                'locale' => 'ru',
+                'title' => $title ?? '',
+                'description' => $description,
+            ]);
+        }
+    }
+
+    /**
      * Сборка текста заметок из полей без маппинга.
-     * Включает: data, kitchen, plan, lest, type_material, orient, скидка, комментарий модератора.
+     * Включает: kitchen, plan, lest, type_material, orient, скидка, модератор,
+     * а также немаппящиеся поля (окна, санузел и т.д.)
+     *
+     * ВАЖНО: JSON data.notes теперь идёт в agent_notes, а не сюда.
      */
     protected function buildNotes(object $obj): string
     {
         $parts = [];
 
-        // Original data field
-        if (!empty($obj->data)) {
-            $parts[] = $obj->data;
-        }
-
-        // Unmapped dictionary fields → text
+        // Справочники без прямого маппинга → текст
         $unmapped = [
             'kitchen' => 'Кухня',
             'plan' => 'Планировка',
@@ -305,7 +388,26 @@ class PropertyMigrator
             }
         }
 
-        // Text fields
+        // Немаппящиеся справочники → текст
+        $unmappedExtras = [
+            'the_windows' => 'Окна',
+            'the_sanuzel' => 'Санузел',
+            'the_sanuzel_tip' => 'Кол-во санузлов',
+            'the_catnedv' => 'Категория недвижимости',
+            'the_tipvhoda' => 'Тип входа',
+        ];
+
+        foreach ($unmappedExtras as $field => $label) {
+            $val = $obj->$field ?? null;
+            if ($val) {
+                $name = $this->dictionaryMapper->getOldName($val, $field);
+                if ($name) {
+                    $parts[] = "{$label}: {$name}";
+                }
+            }
+        }
+
+        // Текстовые поля
         if (!empty($obj->sale_off_comment)) {
             $parts[] = "Скидка: {$obj->sale_off_comment}";
         }

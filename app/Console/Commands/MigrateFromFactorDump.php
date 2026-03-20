@@ -101,6 +101,12 @@ class MigrateFromFactorDump extends Command
         $this->table(['Сущность', 'Метрика', 'Кол-во'], $rows);
         $this->info("Время: {$results['duration_seconds']}s");
 
+        // Путь к отчёту немаппящихся полей
+        if (!empty($results['unmapped_report']) && is_string($results['unmapped_report'])) {
+            $this->newLine();
+            $this->info("Отчёт немаппящихся полей: {$results['unmapped_report']}");
+        }
+
         return self::SUCCESS;
     }
 }

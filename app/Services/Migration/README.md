@@ -4,7 +4,9 @@
 ./vendor/bin/sail artisan app:migrate-from-factor-dump --fresh --force --limit=10
 ---
 Запустить тест  
-#### ./vendor/bin/sail artisan test --filter=VerifyMigrationTest  
+#### ./vendor/bin/sail artisan test --filter=VerifyMigrationTest 
+Запустиь тест конктеного метода
+#### ./vendor/bin/sail artisan test --filter=VerifyMigrationTest::test_property_locations_match_source
 Запуститься частрично миграцыю для теста    
 #### ./vendor/bin/sail artisan app:migrate-from-factor-dump --fresh --force --limit=10
 

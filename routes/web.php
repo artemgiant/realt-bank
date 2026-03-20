@@ -223,6 +223,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
     });
 
+    // ========== Migration Verify (страница визуальной проверки миграции) ==========
+    Route::prefix('migration')->group(function () {
+        Route::get('/verify', [\App\Http\Controllers\Migration\MigrationVerifyController::class, 'index'])
+            ->name('migration.verify');
+        Route::get('/verify/{property}', [\App\Http\Controllers\Migration\MigrationVerifyController::class, 'verifyOne'])
+            ->name('migration.verify-one');
+        Route::post('/verify-batch', [\App\Http\Controllers\Migration\MigrationVerifyController::class, 'verifyBatch'])
+            ->name('migration.verify-batch');
+    });
+
     // ========== Settings ==========
     Route::prefix('settings')->name('settings.')->group(function () {
         // Settings pages (settings.view)

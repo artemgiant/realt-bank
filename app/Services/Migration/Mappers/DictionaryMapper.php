@@ -195,6 +195,36 @@ class DictionaryMapper
         }
     }
 
+    /**
+     * Маппинг material (тип стен из поля material) → wall_type_id.
+     * Используется как fallback если wall_type_g и wall_type_home пустые.
+     * Ищет название из lib_other и сопоставляет с dictionaries(type=wall_type) по имени.
+     */
+    public function resolveMaterial(?int $materialId): ?int
+    {
+        if (!$materialId) return null;
+
+        // Получаем название материала из кеша old lib_other
+        // material — это тоже lib_other запись, но без отдельного type
+        $name = $this->nameCache['material:' . $materialId]
+            ?? $this->nameCache['wall_type_g:' . $materialId]
+            ?? null;
+
+        // Если нет в кеше — подгружаем из БД
+        if (!$name) {
+            $name = DB::connection('factor_dump')
+                ->table('lib_other')
+                ->where('id', $materialId)
+                ->value('name');
+        }
+
+        if (!$name) return null;
+
+        // Ищем в dictionaries(type=wall_type) по имени (case-insensitive)
+        $key = Dictionary::TYPE_WALL_TYPE . '|' . mb_strtolower(trim($name));
+        return $this->dictionaryCache[$key] ?? null;
+    }
+
     public function getStats(): array
     {
         return [
