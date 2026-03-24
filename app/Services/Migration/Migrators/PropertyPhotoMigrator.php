@@ -108,7 +108,14 @@ class PropertyPhotoMigrator
 
     protected function buildPath(object $img): string
     {
-        // Preserve original path structure: object_images/{img_name}
-        return 'legacy/' . ($img->img_name ?? 'unknown_' . $img->id);
+        $imgName = $img->img_name ?? '';
+
+        // Если img_name — полный URL (AWS S3 и т.п.), сохраняем как есть
+        if (str_starts_with($imgName, 'http')) {
+            return $imgName;
+        }
+
+        // Локальный путь — сохраняем с префиксом legacy
+        return 'legacy' . ($imgName ?: '/unknown_' . $img->id);
     }
 }

@@ -47,6 +47,11 @@ class PropertyPhoto extends Model
      */
     public function getUrlAttribute(): string
     {
+        // Legacy-фото хранятся как полный URL (Linode/AWS)
+        if (str_starts_with($this->path, 'http')) {
+            return $this->path;
+        }
+
         return Storage::disk(config('photos.disk', 'public'))->url($this->path);
     }
 
@@ -55,6 +60,11 @@ class PropertyPhoto extends Model
      */
     public function getThumbnailUrlAttribute(): string
     {
+        // Legacy-фото не имеют миниатюр — возвращаем оригинал
+        if (str_starts_with($this->path, 'http')) {
+            return $this->path;
+        }
+
         $thumbnailPath = $this->getThumbnailPath();
 
         if ($thumbnailPath && Storage::disk(config('photos.disk', 'public'))->exists($thumbnailPath)) {
@@ -70,6 +80,10 @@ class PropertyPhoto extends Model
      */
     public function getFullPathAttribute(): string
     {
+        if (str_starts_with($this->path, 'http')) {
+            return $this->path;
+        }
+
         return Storage::disk(config('photos.disk', 'public'))->path($this->path);
     }
 
@@ -116,6 +130,10 @@ class PropertyPhoto extends Model
      */
     public function fileExists(): bool
     {
+        if (str_starts_with($this->path, 'http')) {
+            return true; // Legacy — файл на внешнем хранилище
+        }
+
         return Storage::disk(config('photos.disk', 'public'))->exists($this->path);
     }
 
@@ -124,6 +142,10 @@ class PropertyPhoto extends Model
      */
     public function thumbnailExists(): bool
     {
+        if (str_starts_with($this->path, 'http')) {
+            return false; // Legacy-фото не имеют миниатюр
+        }
+
         $thumbnailPath = $this->getThumbnailPath();
         return $thumbnailPath && Storage::disk(config('photos.disk', 'public'))->exists($thumbnailPath);
     }

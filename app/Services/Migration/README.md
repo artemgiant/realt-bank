@@ -10,6 +10,9 @@
 Запуститься частрично миграцыю для теста    
 #### ./vendor/bin/sail artisan app:migrate-from-factor-dump --fresh --force --limit=10
 
+перейсти на страницу и соотвецвиям обьектов
+#### http://localhost:8000/migration/verify
+
 ## Структура файлов
 
 ```

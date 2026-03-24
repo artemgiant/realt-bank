@@ -220,10 +220,11 @@ class PropertyMigrator
 
         // --- Employee ID: через маппинг user_id → Employee ---
         $newUserId = $this->userMapper->get($obj->user_id);
-        $employeeId = null;
-        if ($newUserId) {
-            $employeeId = \App\Models\Employee\Employee::where('user_id', $newUserId)->value('id');
+        // Если пользователь удалён в старой базе — назначаем admin (id=1)
+        if (!$newUserId) {
+            $newUserId = 1;
         }
+        $employeeId = \App\Models\Employee\Employee::where('user_id', $newUserId)->value('id');
 
         // --- Заметки для коллег (agent_notes) ---
         $agentNotes = !empty($data->notes) ? $data->notes : null;
