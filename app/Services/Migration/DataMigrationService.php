@@ -10,7 +10,6 @@ use App\Services\Migration\Mappers\UserMapper;
 use App\Services\Migration\Migrators\ContactMigrator;
 use App\Services\Migration\Migrators\FilialMigrator;
 use App\Services\Migration\Migrators\PropertyMigrator;
-use App\Services\Migration\Migrators\PropertyPhotoMigrator;
 use App\Services\Migration\Migrators\UserMigrator;
 use Illuminate\Console\OutputStyle;
 
@@ -108,14 +107,7 @@ class DataMigrationService
             $this->results['contacts'] = $contactMigrator->getStats();
         }
 
-        // Шаг 5: Фото объектов → property_photos
-        if ($this->shouldRun('photos', $only) && !empty($propertyMap)) {
-            $this->output?->section('Migrating photos...');
-            $migrator = new PropertyPhotoMigrator($propertyMap, $this->output, $this->chunkSize * 2);
-            $this->results['photos'] = $migrator->migrate();
-        }
-
-        // Шаг 6: Отчёт о немаппящихся полях
+        // Шаг 5: Отчёт о немаппящихся полях
         $this->output?->section('Generating unmapped fields report...');
         $report = new UnmappedFieldsReport();
         $reportPath = $report->generate();
