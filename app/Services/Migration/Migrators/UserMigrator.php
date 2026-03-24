@@ -2,6 +2,7 @@
 
 namespace App\Services\Migration\Migrators;
 
+use App\Helpers\PhoneFormatter;
 use App\Models\Employee\Employee;
 use App\Models\Reference\Dictionary;
 use App\Models\User;
@@ -105,8 +106,8 @@ class UserMigrator
                     $email = $generatedEmail;
                 }
 
-                // Если телефон пустой или уже занят — генерируем уникальный
-                $phone = $oldUser->tel ?: null;
+                // Форматируем телефон, если пустой или уже занят — генерируем уникальный
+                $phone = !empty($oldUser->tel) ? PhoneFormatter::format($oldUser->tel) : null;
                 if (!$phone || User::where('phone', $phone)->exists()) {
                     $phone = 'factor_' . $oldUser->id;
                 }

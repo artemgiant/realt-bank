@@ -2,6 +2,7 @@
 
 namespace App\Services\Migration\Migrators;
 
+use App\Helpers\PhoneFormatter;
 use App\Models\Contact\Contact;
 use App\Models\Contact\ContactPhone;
 use App\Models\Property\Property;
@@ -78,7 +79,7 @@ class ContactMigrator
             return;
         }
 
-        $normalizedPhone = $this->normalizePhone($phone);
+        $normalizedPhone = $phone ? PhoneFormatter::format($phone) : null;
         $contact = null;
 
         // Дедупликация по телефону
@@ -142,16 +143,6 @@ class ContactMigrator
         }
     }
 
-    /**
-     * Нормализация телефона: убираем всё кроме цифр.
-     */
-    protected function normalizePhone(?string $phone): ?string
-    {
-        if (empty($phone)) return null;
-
-        $digits = preg_replace('/\D/', '', $phone);
-        return !empty($digits) ? $digits : null;
-    }
 
     public function getStats(): array
     {

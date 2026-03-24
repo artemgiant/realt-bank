@@ -291,7 +291,7 @@ class PropertyMigrator
             'external_url' => $externalUrl,
 
             // Settings
-            'is_visible_to_agents' => (bool) ($obj->open ?? 1),
+            'is_visible_to_agents' => ($obj->open ?? 1) == 1,
             'status' => 'active',
             'notes' => $notes ?: null,
             'agent_notes' => $agentNotes,

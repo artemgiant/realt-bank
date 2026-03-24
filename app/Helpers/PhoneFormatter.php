@@ -32,8 +32,18 @@ class PhoneFormatter
             return true;
         }
 
+        // 80XXXXXXXXX (11 цифр, старый формат без 3)
+        if (str_starts_with($digits, '80') && strlen($digits) === 11) {
+            return true;
+        }
+
         // 0XXXXXXXXX (10 цифр, локальный формат)
         if (str_starts_with($digits, '0') && strlen($digits) === 10) {
+            return true;
+        }
+
+        // 9 цифр без ведущего 0 (абонентский номер)
+        if (!str_starts_with($digits, '0') && strlen($digits) === 9) {
             return true;
         }
 
@@ -45,6 +55,8 @@ class PhoneFormatter
         // Нормализуем до абонентского номера (9 цифр после 0)
         if (str_starts_with($digits, '380')) {
             $subscriber = substr($digits, 3); // 9 цифр
+        } elseif (str_starts_with($digits, '80') && strlen($digits) === 11) {
+            $subscriber = substr($digits, 2); // 80XXXXXXXXX → 9 цифр
         } elseif (str_starts_with($digits, '0')) {
             $subscriber = substr($digits, 1); // 9 цифр
         } else {
