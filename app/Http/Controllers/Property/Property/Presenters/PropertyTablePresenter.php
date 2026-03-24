@@ -143,9 +143,11 @@ class PropertyTablePresenter
 
         $mainPhoto = $photos->firstWhere('is_main', true) ?? $photos->first();
 
+        $resolveUrl = fn($path) => str_starts_with($path, 'http') ? $path : Storage::url($path);
+
         return [
-            'main' => Storage::url($mainPhoto->path),
-            'all' => $photos->map(fn($photo) => Storage::url($photo->path))->values()->toArray(),
+            'main' => $resolveUrl($mainPhoto->path),
+            'all' => $photos->map(fn($photo) => $resolveUrl($photo->path))->values()->toArray(),
         ];
     }
 
