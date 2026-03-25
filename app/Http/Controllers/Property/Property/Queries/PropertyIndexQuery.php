@@ -312,6 +312,9 @@ class PropertyIndexQuery
         }
 
         switch ($request->status) {
+            case 'open':
+                $this->query->where('properties.is_visible_to_agents', true);
+                break;
             case 'my':
                 $this->query->where('user_id', auth()->id());
                 break;

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
  * Переносить тільки фото для існуючих properties (object_id = property_id).
  * Зберігає оригінальний ID з factor_dump.
  *
- * ./vendor/bin/sail artisan app:migrate-photos --fresh
+ * ./vendor/bin/sail artisan app:migrate-photos --fresh --force
  * ./vendor/bin/sail artisan app:migrate-photos --fresh --dry-run
  */
 class MigratePhotosFromFactorDump extends Command

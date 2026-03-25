@@ -8,8 +8,8 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    // Базовый диск хранения
-    'disk' => 'public',
+    // Базовый диск хранения (s3 для Linode Object Storage)
+    'disk' => env('PHOTOS_DISK', 's3'),
 
     // Структура папок: properties/{property_id}/photos/
     'paths' => [

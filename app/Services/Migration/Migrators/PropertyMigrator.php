@@ -132,8 +132,7 @@ class PropertyMigrator
                 ->whereIn('status', array_keys(self::STATUS_TO_PROPERTY_TYPE))
                 ->where('rent', 0)
                 ->where('deleted', 0)
-                ->orderBy('id')
-                ->chunk($this->chunkSize, function ($objects) use (&$stats, $countryId, $stateId) {
+                ->chunkById($this->chunkSize, function ($objects) use (&$stats, $countryId, $stateId) {
                     foreach ($objects as $obj) {
                         try {
                             $property = $this->migrateOne($obj, $countryId, $stateId);

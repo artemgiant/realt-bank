@@ -191,12 +191,9 @@ class PhotoUploadService
             $quality = $this->config['thumbnails']['quality'] ?? 80;
             $mode = $this->config['thumbnails']['mode'] ?? 'fit';
 
-            // Создаем директорию
-            Storage::disk($this->disk)->makeDirectory($thumbnailDir);
-
-            // Читаем оригинал
-            $fullPath = Storage::disk($this->disk)->path($originalPath);
-            $image = Image::read($fullPath);
+            // Читаем оригинал из хранилища (работает и с S3, и с локальным диском)
+            $imageContent = Storage::disk($this->disk)->get($originalPath);
+            $image = Image::read($imageContent);
 
             // Применяем режим обрезки
             if ($mode === 'crop') {
@@ -255,6 +252,7 @@ class PhotoUploadService
 
     /**
      * Получить пути для хранения фото объекта
+     * Структура: properties/{year}/{month}/{property_id}/photos/{originals|thumbnails}/
      */
     protected function getPaths(int $propertyId): array
     {
@@ -263,7 +261,10 @@ class PhotoUploadService
         $originals = $this->config['paths']['originals'] ?? 'originals';
         $thumbnails = $this->config['paths']['thumbnails'] ?? 'thumbnails';
 
-        $propertyPath = "{$base}/{$propertyId}/{$photos}";
+        $year = now()->format('Y');
+        $month = now()->format('m');
+
+        $propertyPath = "{$base}/{$year}/{$month}/{$propertyId}/{$photos}";
 
         return [
             'base' => $propertyPath,
