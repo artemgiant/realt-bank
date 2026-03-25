@@ -24,6 +24,7 @@ class PropertyTablePresenter
         return [
             'id' => $property->id,
             'checkbox' => $property->id,
+            'deal_type' => $property->dealType?->name ?? '-',
             'location' => $this->location($property),
             'property_type' => $property->propertyType?->name ?? '-',
             'room_count' => $property->roomCount?->name ?? null,

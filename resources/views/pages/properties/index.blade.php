@@ -50,18 +50,27 @@
 
     {{-- Модалка подтверждения удаления объекта --}}
     <div class="modal fade" id="deletePropertyModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width:280px;">
-            <div class="modal-content">
-                <div class="modal-body p-3">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="fw-bold">Удалить объект <span id="delete-property-id"></span>?</span>
-                        <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered" style="max-width:320px;">
+            <div class="modal-content" style="border-radius:12px;overflow:hidden;">
+                <div class="modal-body p-0">
+                    <div style="padding:16px 16px 12px;border-bottom:1px solid #eee;">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="fw-bold" style="font-size:15px;">Удалить объект <span id="delete-property-id"></span>?</span>
+                            <button type="button" class="btn-close" style="font-size:12px;" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
                     </div>
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <img id="delete-property-photo" src="" alt="" style="width:60px;height:45px;object-fit:cover;border-radius:4px;display:none;">
-                        <span id="delete-property-price" class="fw-bold"></span>
+                    <div style="padding:12px 16px;">
+                        <div class="d-flex gap-3 align-items-start">
+                            <img id="delete-property-photo" src="" alt="" style="width:80px;height:60px;object-fit:cover;border-radius:6px;display:none;flex-shrink:0;">
+                            <div style="font-size:13px;line-height:1.5;">
+                                <div id="delete-property-deal-type" class="text-muted" style="display:none;"></div>
+                                <div id="delete-property-type" style="display:none;"></div>
+                                <div id="delete-property-address" class="text-muted" style="display:none;"></div>
+                                <div id="delete-property-price" class="fw-bold" style="font-size:15px;margin-top:4px;"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="d-flex gap-2 justify-content-end">
+                    <div style="padding:12px 16px;border-top:1px solid #eee;" class="d-flex gap-2 justify-content-end">
                         <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Отмена</button>
                         <form id="delete-property-form" method="POST">
                             @csrf
@@ -99,18 +108,24 @@
             var id = $btn.data('id');
             var photo = $btn.data('photo');
             var price = $btn.data('price');
+            var dealType = $btn.data('deal-type');
+            var propertyType = $btn.data('property-type');
+            var address = $btn.data('address');
 
             $('#delete-property-id').text('#' + id);
             $('#delete-property-form').attr('action', '/properties/' + id);
 
             var $img = $('#delete-property-photo');
-            if (photo) {
-                $img.attr('src', photo).show();
-            } else {
-                $img.hide();
+            if (photo) { $img.attr('src', photo).show(); } else { $img.hide(); }
+
+            function showField(sel, val) {
+                if (val && val !== '-') { $(sel).text(val).show(); } else { $(sel).hide(); }
             }
 
-            $('#delete-property-price').text(price && price !== '-' ? price : '');
+            showField('#delete-property-deal-type', dealType);
+            showField('#delete-property-type', propertyType);
+            showField('#delete-property-address', address);
+            showField('#delete-property-price', price);
 
             new bootstrap.Modal(document.getElementById('deletePropertyModal')).show();
         });

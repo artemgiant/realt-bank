@@ -605,22 +605,37 @@
 
     {{-- Модалка подтверждения удаления объекта --}}
     <div class="modal fade" id="deletePropertyModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width:280px;">
-            <div class="modal-content">
-                <div class="modal-body p-3">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="fw-bold">Удалить объект #{{ $property->id }}?</span>
-                        <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered" style="max-width:320px;">
+            <div class="modal-content" style="border-radius:12px;overflow:hidden;">
+                <div class="modal-body p-0">
+                    <div style="padding:16px 16px 12px;border-bottom:1px solid #eee;">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="fw-bold" style="font-size:15px;">Удалить объект #{{ $property->id }}?</span>
+                            <button type="button" class="btn-close" style="font-size:12px;" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
                     </div>
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        @if($property->photos->first())
-                            <img src="{{ $property->photos->first()->thumbnail_url }}" alt="" style="width:60px;height:45px;object-fit:cover;border-radius:4px;">
-                        @endif
-                        @if($property->price)
-                            <span class="fw-bold">{{ number_format($property->price, 0, '.', ' ') }} {{ $property->currency?->code }}</span>
-                        @endif
+                    <div style="padding:12px 16px;">
+                        <div class="d-flex gap-3 align-items-start">
+                            @if($property->photos->first())
+                                <img src="{{ $property->photos->first()->thumbnail_url }}" alt="" style="width:80px;height:60px;object-fit:cover;border-radius:6px;flex-shrink:0;">
+                            @endif
+                            <div style="font-size:13px;line-height:1.5;">
+                                @if($property->dealType)
+                                    <div class="text-muted">{{ $property->dealType->name }}</div>
+                                @endif
+                                @if($property->propertyType)
+                                    <div>{{ $property->propertyType->name }}</div>
+                                @endif
+                                @if($property->street)
+                                    <div class="text-muted">{{ $property->building_number ? $property->building_number . ', ' : '' }}{{ $property->street->name }}</div>
+                                @endif
+                                @if($property->price)
+                                    <div class="fw-bold" style="font-size:15px;margin-top:4px;">{{ number_format($property->price, 0, '.', ' ') }} {{ $property->currency?->code }}</div>
+                                @endif
+                            </div>
+                        </div>
                     </div>
-                    <div class="d-flex gap-2 justify-content-end">
+                    <div style="padding:12px 16px;border-top:1px solid #eee;" class="d-flex gap-2 justify-content-end">
                         <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Отмена</button>
                         <form action="{{ route('properties.destroy', $property) }}" method="POST">
                             @csrf
