@@ -3,6 +3,7 @@
 namespace App\Services\Migration\Mappers;
 
 use App\Models\Reference\Block;
+use App\Models\Reference\Complex;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -732,18 +733,21 @@ class BlockMapper
      */
     protected function createBlock(string $oldName, ?object $obj = null): array
     {
-        $streetId = null;
         $buildingNumber = null;
-
         if ($obj) {
-            // Получаем street_id через LocationMapper, если доступен
-            // Пока просто берём номер дома из объекта
             $buildingNumber = $obj->number_house ?: null;
         }
+
+        // complex_id NOT NULL в blocks — создаём комплекс с тем же именем
+        $complex = Complex::firstOrCreate(
+            ['name' => $oldName],
+            ['slug' => Str::slug($oldName), 'is_active' => true]
+        );
 
         $block = Block::create([
             'name' => $oldName,
             'slug' => Str::slug($oldName),
+            'complex_id' => $complex->id,
             'building_number' => $buildingNumber,
             'is_active' => true,
             'source' => 'migration',
@@ -751,7 +755,7 @@ class BlockMapper
 
         $result = [
             'block_id' => $block->id,
-            'complex_id' => $block->complex_id, // null — без комплекса
+            'complex_id' => $complex->id,
         ];
 
         // Добавляем в кеш

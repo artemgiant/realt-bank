@@ -231,6 +231,17 @@ class PropertyMigrator
         $zoneId = $this->locationMapper->getZoneId($obj->zone_id);
         $streetId = $this->locationMapper->getStreetId($obj->street_id);
 
+        // state_id и region_id берём из города (а не хардкодим)
+        $cityStateId = null;
+        $cityRegionId = null;
+        if ($cityId) {
+            $city = \App\Models\Location\City::find($cityId);
+            if ($city) {
+                $cityStateId = $city->state_id;
+                $cityRegionId = $city->region_id;
+            }
+        }
+
         // --- Справочники ---
         $dealKindId = $this->dictionaryMapper->resolve($obj->type_object, 'type_object');
         $buildingTypeId = $this->dictionaryMapper->resolve($obj->project, 'project');
@@ -319,7 +330,8 @@ class PropertyMigrator
 
             // Location
             'country_id' => $countryId,
-            'state_id' => $stateId,
+            'state_id' => $cityStateId ?? $stateId,
+            'region_id' => $cityRegionId,
             'city_id' => $cityId,
             'district_id' => $districtId,
             'zone_id' => $zoneId,
