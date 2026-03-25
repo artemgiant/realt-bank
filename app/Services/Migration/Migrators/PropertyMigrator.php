@@ -248,14 +248,13 @@ class PropertyMigrator
 
         // --- Блок + ЖК ---
         // BlockMapper определяет block_id и complex_id по таблице соответствий.
-        // Если BlockMapper не нашёл (блок не в маппинге) — fallback на ComplexMapper.
         $blockResult = $this->blockMapper->resolve($obj->complex ?? null, $obj);
         $blockId = $blockResult['block_id'];
         $complexId = $blockResult['complex_id'];
 
-        // Fallback: если BlockMapper не определил complex — пробуем ComplexMapper
-        if (!$complexId && !$this->blockMapper->isIgnored($obj->complex ?? null)) {
-            $complexId = $this->complexMapper->getComplexId($obj->complex ?? null);
+        // Если блок не найден и не ignored — логируем в JSON для разбора
+        if (!$blockId && ($obj->complex ?? 0) > 0 && !$this->blockMapper->isIgnored($obj->complex)) {
+            $this->logUnmappedBlock($obj, $streetId);
         }
 
         // --- Координаты ---
@@ -527,4 +526,70 @@ class PropertyMigrator
         $val = (float) preg_replace('/[^\d.]/', '', $areaHome);
         return $val > 0 ? $val : null;
     }
+
+    /**
+     * Логирование незамапленного блока в JSON-файл.
+     * Файл: storage/app/migration/unmapped_blocks.json
+     *
+     * Собирает данные о старом блоке и связанном объекте,
+     * чтобы потом можно было разобрать и добавить соответствия.
+     */
+    protected function logUnmappedBlock(object $obj, ?int $newStreetId): void
+    {
+        $oldName = $this->blockMapper->getOldName($obj->complex);
+        if (!$oldName) return;
+
+        // Ключ — old complex ID, чтобы не дублировать записи
+        $key = (string) $obj->complex;
+
+        // Если уже логировали этот блок — только добавляем object_id
+        if (isset($this->unmappedBlocks[$key])) {
+            $this->unmappedBlocks[$key]['object_ids'][] = $obj->id;
+            $this->unmappedBlocks[$key]['objects_count'] = count($this->unmappedBlocks[$key]['object_ids']);
+            $this->saveUnmappedBlocks();
+            return;
+        }
+
+        // Получаем название улицы
+        $streetName = null;
+        if ($newStreetId) {
+            $streetName = \App\Models\Location\Street::where('id', $newStreetId)->value('name');
+        }
+
+        $this->unmappedBlocks[$key] = [
+            'old_complex_id' => $obj->complex,
+            'old_block_name' => $oldName,
+            'object_ids' => [$obj->id],
+            'objects_count' => 1,
+            'sample_object' => [
+                'id' => $obj->id,
+                'street' => $streetName,
+                'building_number' => $obj->number_house ?: null,
+                'city' => $obj->town_id ?? null,
+                'price' => $obj->price ?: null,
+                'status' => $obj->status,
+            ],
+        ];
+
+        $this->saveUnmappedBlocks();
+    }
+
+    /**
+     * Сохранить unmapped блоки в JSON.
+     */
+    protected function saveUnmappedBlocks(): void
+    {
+        $dir = storage_path('app/migration');
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        file_put_contents(
+            $dir . '/unmapped_blocks.json',
+            json_encode(array_values($this->unmappedBlocks), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+        );
+    }
+
+    /** @var array Кеш незамапленных блоков для JSON-отчёта */
+    protected array $unmappedBlocks = [];
 }
