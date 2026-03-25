@@ -6,6 +6,7 @@ use App\Models\Contact\Contact;
 use App\Models\Location\City;
 use App\Models\Location\Country;
 use App\Models\Location\District;
+use App\Models\Location\Region;
 use App\Models\Location\State;
 use App\Models\Location\Street;
 use App\Models\Location\Zone;
@@ -39,6 +40,7 @@ class Company extends Model
         'district_id',
         'zone_id',
         'street_id',
+        'region_id',
         'building_number',
         'office_number',
         'website',
@@ -119,6 +121,11 @@ class Company extends Model
     public function zone(): BelongsTo
     {
         return $this->belongsTo(Zone::class);
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class);
     }
 
     public function street(): BelongsTo

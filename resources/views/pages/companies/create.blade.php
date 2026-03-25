@@ -471,6 +471,7 @@
                                 <input type="hidden" name="offices[__INDEX__][city_id]">
                                 <input type="hidden" name="offices[__INDEX__][district_id]">
                                 <input type="hidden" name="offices[__INDEX__][zone_id]">
+                                <input type="hidden" name="offices[__INDEX__][region_id]">
                             </div>
                         </div>
                         <div class="item w16">

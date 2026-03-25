@@ -25,8 +25,10 @@ class UpdateContactRequest extends FormRequest
      */
     public function rules(): array
     {
+        $context = $this->input('context', 'properties');
+
         return [
-            'company_id'         => 'required|exists:companies,id',
+            'company_id'         => ($context === 'companies') ? 'nullable|exists:companies,id' : 'required|exists:companies,id',
             'first_name'         => 'required|string|max:255',
             'last_name'          => 'nullable|string|max:255',
             'middle_name'        => 'nullable|string|max:255',
@@ -45,6 +47,7 @@ class UpdateContactRequest extends FormRequest
             'phones.*.is_primary' => 'nullable|boolean',
             'roles'              => 'required|array|min:1',
             'roles.*'            => 'exists:dictionaries,id',
+            'context'            => 'nullable|string|in:properties,companies,complexes,developers',
         ];
     }
 

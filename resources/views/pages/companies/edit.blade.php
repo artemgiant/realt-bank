@@ -485,6 +485,7 @@
                                         <input type="hidden" name="offices[{{ $index }}][city_id]" value="{{ old("offices.{$index}.city_id", $office->city_id) }}">
                                         <input type="hidden" name="offices[{{ $index }}][district_id]" value="{{ old("offices.{$index}.district_id", $office->district_id) }}">
                                         <input type="hidden" name="offices[{{ $index }}][zone_id]" value="{{ old("offices.{$index}.zone_id", $office->zone_id) }}">
+                                        <input type="hidden" name="offices[{{ $index }}][region_id]" value="{{ old("offices.{$index}.region_id", $office->region_id) }}">
                                     </div>
                                 </div>
                                 <div class="item w16">
@@ -627,6 +628,7 @@
                                 <input type="hidden" name="offices[__INDEX__][city_id]">
                                 <input type="hidden" name="offices[__INDEX__][district_id]">
                                 <input type="hidden" name="offices[__INDEX__][zone_id]">
+                                <input type="hidden" name="offices[__INDEX__][region_id]">
                             </div>
                         </div>
                         <div class="item w16">

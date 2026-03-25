@@ -242,62 +242,6 @@ class OfficeStateSearch {
     }
 }
 
-// ========== Класс управления районом области (для основного блока) ==========
-class MainRegionSelect {
-    constructor() {
-        this.select = document.querySelector('.block-all-info #region_id');
-        if (!this.select) return;
-
-        this.init();
-    }
-
-    init() {
-        document.addEventListener('mainStateSelected', (e) => {
-            this.loadRegions(e.detail.id);
-        });
-        document.addEventListener('mainStateCleared', () => {
-            this.clear();
-        });
-
-        const stateIdInput = document.querySelector('input[name="state_id"]');
-        if (stateIdInput && stateIdInput.value) {
-            this.loadRegions(stateIdInput.value);
-        }
-    }
-
-    async loadRegions(stateId) {
-        if (!stateId) { this.clear(); return; }
-
-        const url = `/location/regions/by-state?state_id=${stateId}`;
-        const data = await LocationUtils.fetchJson(url);
-        if (data.success) this.populateSelect(data.results);
-    }
-
-    populateSelect(regions) {
-        const currentValue = this.select.value;
-        if ($(this.select).hasClass('select2-hidden-accessible')) {
-            $(this.select).select2('destroy');
-        }
-        this.select.innerHTML = '<option value=""></option>';
-        regions.forEach(r => {
-            const opt = document.createElement('option');
-            opt.value = r.id;
-            opt.textContent = r.name;
-            if (String(r.id) === String(currentValue)) opt.selected = true;
-            this.select.appendChild(opt);
-        });
-        $(this.select).select2({ placeholder: 'Район региона', allowClear: true, width: '100%' });
-    }
-
-    clear() {
-        if ($(this.select).hasClass('select2-hidden-accessible')) {
-            $(this.select).select2('destroy');
-        }
-        this.select.innerHTML = '<option value=""></option>';
-        $(this.select).select2({ placeholder: 'Район региона', allowClear: true, width: '100%' });
-    }
-}
-
 // ========== Класс поиска улицы (для офиса) ==========
 class OfficeStreetSearch {
     constructor(wrapper, officeIndex, stateSearch) {
@@ -314,6 +258,7 @@ class OfficeStreetSearch {
         this.cityIdInput = wrapper.querySelector(`input[name="offices[${officeIndex}][city_id]"]`);
         this.districtIdInput = wrapper.querySelector(`input[name="offices[${officeIndex}][district_id]"]`);
         this.zoneIdInput = wrapper.querySelector(`input[name="offices[${officeIndex}][zone_id]"]`);
+        this.regionIdInput = wrapper.querySelector(`input[name="offices[${officeIndex}][region_id]"]`);
 
         this.selectedStreet = null;
         this.results = [];
@@ -398,7 +343,7 @@ class OfficeStreetSearch {
                 ${this.results.map((street, index) => `
                     <div class="location-dropdown-item ${index === this.activeIndex ? 'is-active' : ''}" data-index="${index}">
                         <div class="location-item-main">${street.name}</div>
-                        <div class="location-item-sub">${[street.zone_name, street.district_name, street.city_name].filter(Boolean).join(', ')}</div>
+                        <div class="location-item-sub">${[street.zone_name, street.district_name, street.city_name, street.region_name].filter(Boolean).join(', ')}</div>
                     </div>
                 `).join('')}
             </div>
@@ -419,6 +364,7 @@ class OfficeStreetSearch {
         if (street.zone_name) addressParts.push(street.zone_name);
         if (street.district_name) addressParts.push(street.district_name);
         if (street.city_name) addressParts.push(street.city_name);
+        if (street.region_name) addressParts.push(street.region_name);
 
         this.input.value = addressParts.join(', ');
 
@@ -426,6 +372,7 @@ class OfficeStreetSearch {
         if (this.cityIdInput) this.cityIdInput.value = street.city_id || '';
         if (this.districtIdInput) this.districtIdInput.value = street.district_id || '';
         if (this.zoneIdInput) this.zoneIdInput.value = street.zone_id || '';
+        if (this.regionIdInput) this.regionIdInput.value = street.region_id || '';
 
         this.wrapper.classList.add('has-value');
         this.closeDropdown();
@@ -438,6 +385,7 @@ class OfficeStreetSearch {
         if (this.cityIdInput) this.cityIdInput.value = '';
         if (this.districtIdInput) this.districtIdInput.value = '';
         if (this.zoneIdInput) this.zoneIdInput.value = '';
+        if (this.regionIdInput) this.regionIdInput.value = '';
         this.wrapper.classList.remove('has-value');
         this.results = [];
         this.closeDropdown();
@@ -718,6 +666,8 @@ class MainStreetSearch {
         this.districtNameInput = document.querySelector('input[name="district_name"]');
         this.cityIdInput = document.querySelector('input[name="city_id"]');
         this.cityNameInput = document.querySelector('input[name="city_name"]');
+        this.regionIdInput = document.querySelector('input[name="region_id"]');
+        this.regionNameInput = document.querySelector('input[name="region_name"]');
 
         this.selectedStreet = null;
         this.results = [];
@@ -737,6 +687,7 @@ class MainStreetSearch {
             if (this.zoneNameInput?.value) addressParts.push(this.zoneNameInput.value);
             if (this.districtNameInput?.value) addressParts.push(this.districtNameInput.value);
             if (this.cityNameInput?.value) addressParts.push(this.cityNameInput.value);
+            if (this.regionNameInput?.value) addressParts.push(this.regionNameInput.value);
 
             this.input.value = addressParts.filter(Boolean).join(', ');
             this.wrapper.classList.add('has-value');
@@ -809,7 +760,7 @@ class MainStreetSearch {
                 ${this.results.map((street, index) => `
                     <div class="location-dropdown-item ${index === this.activeIndex ? 'is-active' : ''}" data-index="${index}">
                         <div class="location-item-main">${street.name}</div>
-                        <div class="location-item-sub">${[street.zone_name, street.district_name, street.city_name].filter(Boolean).join(', ')}</div>
+                        <div class="location-item-sub">${[street.zone_name, street.district_name, street.city_name, street.region_name].filter(Boolean).join(', ')}</div>
                     </div>
                 `).join('')}
             </div>
@@ -830,6 +781,7 @@ class MainStreetSearch {
         if (street.zone_name) addressParts.push(street.zone_name);
         if (street.district_name) addressParts.push(street.district_name);
         if (street.city_name) addressParts.push(street.city_name);
+        if (street.region_name) addressParts.push(street.region_name);
 
         this.input.value = addressParts.join(', ');
 
@@ -841,6 +793,8 @@ class MainStreetSearch {
         if (this.districtNameInput) this.districtNameInput.value = street.district_name || '';
         if (this.cityIdInput) this.cityIdInput.value = street.city_id || '';
         if (this.cityNameInput) this.cityNameInput.value = street.city_name || '';
+        if (this.regionIdInput) this.regionIdInput.value = street.region_id || '';
+        if (this.regionNameInput) this.regionNameInput.value = street.region_name || '';
 
         this.wrapper.classList.add('has-value');
         this.closeDropdown();
@@ -857,6 +811,8 @@ class MainStreetSearch {
         if (this.districtNameInput) this.districtNameInput.value = '';
         if (this.cityIdInput) this.cityIdInput.value = '';
         if (this.cityNameInput) this.cityNameInput.value = '';
+        if (this.regionIdInput) this.regionIdInput.value = '';
+        if (this.regionNameInput) this.regionNameInput.value = '';
         this.wrapper.classList.remove('has-value');
         this.results = [];
         this.closeDropdown();
@@ -906,13 +862,11 @@ class MainStreetSearch {
 document.addEventListener('DOMContentLoaded', () => {
     // Инициализация для основного блока компании
     const mainStateSearch = new MainStateSearch();
-    const mainRegionSelect = new MainRegionSelect();
     const mainStreetSearch = new MainStreetSearch(mainStateSearch);
 
     window.LocationSearch = {
         main: {
             state: mainStateSearch,
-            region: mainRegionSelect,
             street: mainStreetSearch
         },
         initForOffice: initLocationSearchForOffice

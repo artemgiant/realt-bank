@@ -31,6 +31,7 @@ class StoreCompanyRequest extends FormRequest
             'district_id' => ['nullable', 'exists:districts,id'],
             'zone_id' => ['nullable', 'exists:zones,id'],
             'street_id' => ['nullable', 'exists:streets,id'],
+            'region_id' => ['nullable', 'exists:regions,id'],
             'building_number' => ['nullable', 'string', 'max:50'],
             'office_number' => ['nullable', 'string', 'max:50'],
 
@@ -55,10 +56,11 @@ class StoreCompanyRequest extends FormRequest
             'offices.*.district_id' => ['nullable', 'exists:districts,id'],
             'offices.*.zone_id' => ['nullable', 'exists:zones,id'],
             'offices.*.street_id' => ['nullable', 'exists:streets,id'],
+            'offices.*.region_id' => ['nullable', 'exists:regions,id'],
             'offices.*.building_number' => ['nullable', 'string', 'max:50'],
             'offices.*.office_number' => ['nullable', 'string', 'max:50'],
             'offices.*.phone' => ['required', 'string', 'max:50'],
-            'offices.*.contact_ids' => ['required', 'array', 'min:1'],
+            'offices.*.contact_ids' => ['nullable', 'array'],
             'offices.*.contact_ids.*' => ['exists:contacts,id'],
             'offices.*.photos' => ['nullable', 'array'],
             'offices.*.photos.*' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
@@ -93,7 +95,6 @@ class StoreCompanyRequest extends FormRequest
             'offices.*.name_en' => 'название офиса (EN)',
             'offices.*.photos' => 'фото офиса',
             'offices.*.phone' => 'телефон офиса',
-            'offices.*.contact_ids' => 'контакты офиса',
         ];
     }
 
@@ -118,8 +119,6 @@ class StoreCompanyRequest extends FormRequest
             'offices.*.photos.*.mimes' => 'Разрешены только: JPEG, PNG, WebP',
             'offices.*.photos.*.max' => 'Максимальный размер фото 5MB',
             'offices.*.phone.required' => 'Укажите номер телефона офиса',
-            'offices.*.contact_ids.required' => 'Каждый офис должен иметь хотя бы один контакт',
-            'offices.*.contact_ids.min' => 'Каждый офис должен иметь хотя бы один контакт',
         ];
     }
 
