@@ -165,6 +165,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('permission:complexes.create')->prefix('import')->name('import.')->group(function () {
         Route::get('complexes', [ComplexImportController::class, 'index'])->name('complexes.index');
         Route::post('complexes', [ComplexImportController::class, 'import'])->name('complexes.import');
+        Route::delete('complexes/clear', [ComplexImportController::class, 'clear'])->name('complexes.clear');
     });
 
     // ========== Companies ==========

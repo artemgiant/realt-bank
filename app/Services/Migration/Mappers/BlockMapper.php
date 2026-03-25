@@ -4,6 +4,7 @@ namespace App\Services\Migration\Mappers;
 
 use App\Models\Reference\Block;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * Маппинг блоков (корпусов/секций) из старой базы → новые blocks.
@@ -571,15 +572,27 @@ class BlockMapper
     protected array $newBlockCache = [];
 
     /**
-     * Индекс игнорируемых и ожидающих блоков (lower name → true).
-     * При resolve() возвращаем явно null, чтобы объект сохранился без блока/комплекса.
+     * Индекс игнорируемых блоков (lower name → true).
+     * При resolve() возвращаем null — объект без блока/комплекса.
      */
-    protected array $skipIndex = [];
+    protected array $ignoredIndex = [];
 
     /**
-     * old lib_other.id для которых нужно пропустить блок (ignored + pending).
+     * Индекс pending блоков (lower name → old name).
+     * Если блок уже есть в системе — маппится в build().
+     * Если нет — создаётся на лету в resolve() с адресом объекта.
      */
-    protected array $skippedIds = [];
+    protected array $pendingIndex = [];
+
+    /**
+     * old lib_other.id → 'ignored' (для игнорируемых блоков).
+     */
+    protected array $ignoredIds = [];
+
+    /**
+     * old lib_other.id → old_name (pending блоки, которых нет в системе — нужно создать).
+     */
+    protected array $pendingToCreate = [];
 
     /**
      * Загрузить блоки из старой базы и построить маппинг.
@@ -591,18 +604,24 @@ class BlockMapper
             $this->oldNameToNewName[mb_strtolower(trim($oldName))] = $newName;
         }
 
-        // 2. Строим индекс блоков для пропуска (ignored + pending)
+        // 2. Строим индексы ignored и pending
         foreach (self::IGNORED_BLOCKS as $name) {
-            $this->skipIndex[mb_strtolower(trim($name))] = 'ignored';
+            $this->ignoredIndex[mb_strtolower(trim($name))] = true;
         }
         foreach (self::PENDING_BLOCKS as $name) {
-            $this->skipIndex[mb_strtolower(trim($name))] = 'pending';
+            $this->pendingIndex[mb_strtolower(trim($name))] = $name;
         }
 
         // 3. Кешируем наши блоки: name → {id, complex_id}
+        //    + индекс по lower name для поиска pending
         $blocks = Block::all(['id', 'name', 'complex_id']);
+        $newByNameLower = [];
         foreach ($blocks as $block) {
             $this->newBlockCache[$block->name] = [
+                'block_id' => $block->id,
+                'complex_id' => $block->complex_id,
+            ];
+            $newByNameLower[mb_strtolower(trim($block->name))] = [
                 'block_id' => $block->id,
                 'complex_id' => $block->complex_id,
             ];
@@ -635,13 +654,25 @@ class BlockMapper
         foreach ($this->nameCache as $oldId => $oldName) {
             $key = mb_strtolower(trim($oldName));
 
-            // Проверяем: нужно ли пропустить (удалить/добавить позже)
-            if (isset($this->skipIndex[$key])) {
-                $this->skippedIds[$oldId] = $this->skipIndex[$key];
+            // Ignored — всегда пропускаем
+            if (isset($this->ignoredIndex[$key])) {
+                $this->ignoredIds[$oldId] = 'ignored';
                 continue;
             }
 
-            // Ищем по таблице соответствий
+            // Pending — проверяем, может блок уже добавили в систему
+            if (isset($this->pendingIndex[$key])) {
+                // Ищем по старому имени (case-insensitive) в наших блоках
+                if (isset($newByNameLower[$key])) {
+                    $this->map[$oldId] = $newByNameLower[$key];
+                    continue;
+                }
+                // Не нашли — пометим для создания на лету
+                $this->pendingToCreate[$oldId] = $oldName;
+                continue;
+            }
+
+            // Ищем по таблице соответствий BLOCK_MAP
             $newName = $this->oldNameToNewName[$key] ?? null;
 
             if ($newName && isset($this->newBlockCache[$newName])) {
@@ -650,11 +681,8 @@ class BlockMapper
             }
 
             // Fallback: точное совпадение по имени (case-insensitive)
-            foreach ($this->newBlockCache as $blockName => $blockData) {
-                if (mb_strtolower(trim($blockName)) === $key) {
-                    $this->map[$oldId] = $blockData;
-                    break;
-                }
+            if (isset($newByNameLower[$key])) {
+                $this->map[$oldId] = $newByNameLower[$key];
             }
         }
     }
@@ -662,34 +690,82 @@ class BlockMapper
     /**
      * Получить block_id и complex_id по старому objects.complex (lib_other.id).
      *
-     * Для ignored/pending блоков возвращает null — объект сохраняется без блока.
+     * - Ignored блоки → null (объект без блока/комплекса).
+     * - Pending блоки, которых нет в системе → создаём блок с адресом объекта.
+     * - Замапленные → возвращаем из кеша.
      *
+     * @param int|null    $oldComplexId  Старый objects.complex (lib_other.id)
+     * @param object|null $obj           Объект из старой базы (для создания блока: street_id, number_house)
      * @return array{block_id: int|null, complex_id: int|null}
      */
-    public function resolve(?int $oldComplexId): array
+    public function resolve(?int $oldComplexId, ?object $obj = null): array
     {
         if (!$oldComplexId || $oldComplexId <= 0) {
             return ['block_id' => null, 'complex_id' => null];
         }
 
-        // Пропущенные блоки (удалить / добавить позже) → null
-        if (isset($this->skippedIds[$oldComplexId])) {
+        // Ignored блоки — всегда null
+        if (isset($this->ignoredIds[$oldComplexId])) {
             return ['block_id' => null, 'complex_id' => null];
         }
 
+        // Уже замаплен (включая pending, которые нашлись в системе)
         if (isset($this->map[$oldComplexId])) {
             return $this->map[$oldComplexId];
+        }
+
+        // Pending блок, которого нет в системе — создаём
+        if (isset($this->pendingToCreate[$oldComplexId])) {
+            $result = $this->createBlock($this->pendingToCreate[$oldComplexId], $obj);
+            // Кешируем, чтобы не создавать повторно
+            $this->map[$oldComplexId] = $result;
+            unset($this->pendingToCreate[$oldComplexId]);
+            return $result;
         }
 
         return ['block_id' => null, 'complex_id' => null];
     }
 
     /**
-     * Проверить, является ли старый complex игнорируемым/ожидающим.
+     * Создать новый блок в нашей системе.
+     * Берёт адрес (улицу, номер дома) из объекта старой базы.
      */
-    public function isSkipped(?int $oldComplexId): bool
+    protected function createBlock(string $oldName, ?object $obj = null): array
     {
-        return isset($this->skippedIds[$oldComplexId]);
+        $streetId = null;
+        $buildingNumber = null;
+
+        if ($obj) {
+            // Получаем street_id через LocationMapper, если доступен
+            // Пока просто берём номер дома из объекта
+            $buildingNumber = $obj->number_house ?: null;
+        }
+
+        $block = Block::create([
+            'name' => $oldName,
+            'slug' => Str::slug($oldName),
+            'building_number' => $buildingNumber,
+            'is_active' => true,
+            'source' => 'migration',
+        ]);
+
+        $result = [
+            'block_id' => $block->id,
+            'complex_id' => $block->complex_id, // null — без комплекса
+        ];
+
+        // Добавляем в кеш
+        $this->newBlockCache[$block->name] = $result;
+
+        return $result;
+    }
+
+    /**
+     * Проверить, является ли старый complex игнорируемым.
+     */
+    public function isIgnored(?int $oldComplexId): bool
+    {
+        return isset($this->ignoredIds[$oldComplexId]);
     }
 
     /**
@@ -702,19 +778,12 @@ class BlockMapper
 
     public function getStats(): array
     {
-        $ignored = 0;
-        $pending = 0;
-        foreach ($this->skippedIds as $type) {
-            if ($type === 'ignored') $ignored++;
-            else $pending++;
-        }
-
         return [
             'mapped' => count($this->map),
-            'ignored' => $ignored,
-            'pending' => $pending,
+            'ignored' => count($this->ignoredIds),
+            'pending_to_create' => count($this->pendingToCreate),
             'total_old' => count($this->nameCache),
-            'unmapped' => count($this->nameCache) - count($this->map) - count($this->skippedIds),
+            'unmapped' => count($this->nameCache) - count($this->map) - count($this->ignoredIds) - count($this->pendingToCreate),
         ];
     }
 
@@ -726,7 +795,7 @@ class BlockMapper
     {
         $unmapped = [];
         foreach ($this->nameCache as $oldId => $oldName) {
-            if (!isset($this->map[$oldId]) && !isset($this->skippedIds[$oldId])) {
+            if (!isset($this->map[$oldId]) && !isset($this->ignoredIds[$oldId]) && !isset($this->pendingToCreate[$oldId])) {
                 $unmapped[$oldId] = $oldName;
             }
         }
@@ -734,16 +803,10 @@ class BlockMapper
     }
 
     /**
-     * Список ожидающих добавления блоков (old_id → old_name).
+     * Список pending блоков, которые будут созданы при миграции (old_id → old_name).
      */
-    public function getPending(): array
+    public function getPendingToCreate(): array
     {
-        $pending = [];
-        foreach ($this->skippedIds as $oldId => $type) {
-            if ($type === 'pending') {
-                $pending[$oldId] = $this->nameCache[$oldId] ?? '?';
-            }
-        }
-        return $pending;
+        return $this->pendingToCreate;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Migration;
 
+use App\Services\Migration\Mappers\BlockMapper;
 use App\Services\Migration\Mappers\ComplexMapper;
 use App\Services\Migration\Mappers\DictionaryMapper;
 use App\Services\Migration\Mappers\FilialMapper;
@@ -38,6 +39,7 @@ class DataMigrationService
     protected UserMapper $userMapper;               // old user_id → new user_id
     protected FilialMapper $filialMapper;           // old filial_id → new office_id
     protected ComplexMapper $complexMapper;         // old complex_id → new complex_id
+    protected BlockMapper $blockMapper;             // old complex_id → new block_id + complex_id
 
     // Результаты миграции по каждой сущности
     protected array $results = [];
@@ -54,6 +56,7 @@ class DataMigrationService
         $this->userMapper = new UserMapper();
         $this->filialMapper = new FilialMapper();
         $this->complexMapper = new ComplexMapper();
+        $this->blockMapper = new BlockMapper();
     }
 
     /**
@@ -95,6 +98,7 @@ class DataMigrationService
                 $this->dictionaryMapper,
                 $this->userMapper,
                 $this->complexMapper,
+                $this->blockMapper,
                 $contactMigrator,
                 $this->output,
                 $this->chunkSize,
@@ -143,6 +147,12 @@ class DataMigrationService
         $this->complexMapper->build();
         $complexStats = $this->complexMapper->getStats();
         $this->output?->info("  Complexes: {$complexStats['mapped']} mapped / {$complexStats['total_old']} total");
+
+        // Блоки: lib_other (complex) → blocks + complexes
+        $this->output?->info('Building block mapper...');
+        $this->blockMapper->build();
+        $blockStats = $this->blockMapper->getStats();
+        $this->output?->info("  Blocks: {$blockStats['mapped']} mapped, {$blockStats['ignored']} ignored, {$blockStats['pending_to_create']} to create, {$blockStats['unmapped']} unmapped");
     }
 
     protected function shouldRun(string $entity, ?array $only): bool

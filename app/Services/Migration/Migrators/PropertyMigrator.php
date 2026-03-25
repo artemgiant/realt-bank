@@ -5,6 +5,7 @@ namespace App\Services\Migration\Migrators;
 use App\Models\Property\Property;
 use App\Models\Property\PropertyTranslation;
 use App\Models\Reference\Dictionary;
+use App\Services\Migration\Mappers\BlockMapper;
 use App\Services\Migration\Mappers\ComplexMapper;
 use App\Services\Migration\Mappers\DictionaryMapper;
 use App\Services\Migration\Mappers\LocationMapper;
@@ -31,7 +32,8 @@ class PropertyMigrator
     protected LocationMapper $locationMapper;     // маппинг локаций
     protected DictionaryMapper $dictionaryMapper;  // маппинг справочников
     protected UserMapper $userMapper;              // маппинг пользователей
-    protected ComplexMapper $complexMapper;        // маппинг ЖК
+    protected ComplexMapper $complexMapper;        // маппинг ЖК (fallback)
+    protected BlockMapper $blockMapper;            // маппинг блоков → block_id + complex_id
     protected ContactMigrator $contactMigrator;    // миграция контактов
     protected ?OutputStyle $output;
 
@@ -124,6 +126,7 @@ class PropertyMigrator
         DictionaryMapper $dictionaryMapper,
         UserMapper $userMapper,
         ComplexMapper $complexMapper,
+        BlockMapper $blockMapper,
         ContactMigrator $contactMigrator,
         ?OutputStyle $output = null,
         int $chunkSize = 500,
@@ -133,6 +136,7 @@ class PropertyMigrator
         $this->dictionaryMapper = $dictionaryMapper;
         $this->userMapper = $userMapper;
         $this->complexMapper = $complexMapper;
+        $this->blockMapper = $blockMapper;
         $this->contactMigrator = $contactMigrator;
         $this->output = $output;
         $this->chunkSize = $chunkSize;
@@ -242,8 +246,17 @@ class PropertyMigrator
 
         [$propertyTypeId, $dealTypeId] = $this->resolvePropertyAndDealType($obj);
 
-        // --- ЖК (жилой комплекс) ---
-        $complexId = $this->complexMapper->getComplexId($obj->complex ?? null);
+        // --- Блок + ЖК ---
+        // BlockMapper определяет block_id и complex_id по таблице соответствий.
+        // Если BlockMapper не нашёл (блок не в маппинге) — fallback на ComplexMapper.
+        $blockResult = $this->blockMapper->resolve($obj->complex ?? null, $obj);
+        $blockId = $blockResult['block_id'];
+        $complexId = $blockResult['complex_id'];
+
+        // Fallback: если BlockMapper не определил complex — пробуем ComplexMapper
+        if (!$complexId && !$this->blockMapper->isIgnored($obj->complex ?? null)) {
+            $complexId = $this->complexMapper->getComplexId($obj->complex ?? null);
+        }
 
         // --- Координаты ---
         $latitude = null;
@@ -302,6 +315,7 @@ class PropertyMigrator
             'currency_id' => 1,
             'source_id' => 55, // Запрос по телефону
             'complex_id' => $complexId,
+            'block_id' => $blockId,
             'contact_type_id' => $contactTypeId,
 
             // Location

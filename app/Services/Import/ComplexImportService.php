@@ -189,24 +189,33 @@ class ComplexImportService
         }
         $result['city_id'] = $city->id;
 
-        // District - только поиск
+        // District - поиск
         if (!empty($data['district'])) {
             $district = $this->findDistrict($data['district'], $result['city_id']);
-            if (!$district) {
-                $this->addError($rowNumber, "Район \"{$data['district']}\" не найден в городе \"{$data['city']}\"");
-                return null;
+            if ($district) {
+                $result['district_id'] = $district->id;
             }
-            $result['district_id'] = $district->id;
         }
 
-        // Zone - только поиск
+        // Zone - поиск
         if (!empty($data['zone'])) {
             $zone = $this->findZone($data['zone'], $result['city_id'], $result['district_id']);
-            if (!$zone) {
-                $this->addError($rowNumber, "Зона \"{$data['zone']}\" не найдена");
-                return null;
+            if ($zone) {
+                $result['zone_id'] = $zone->id;
             }
-            $result['zone_id'] = $zone->id;
+        }
+
+        // Если district или zone не найдены — пробуем подтянуть из улицы в городе
+        if (!empty($data['street']) && (!$result['district_id'] || !$result['zone_id'])) {
+            $existingStreet = $this->findStreet($data['street'], $result['city_id'], null, null);
+            if ($existingStreet) {
+                if (!$result['district_id'] && $existingStreet->district_id) {
+                    $result['district_id'] = $existingStreet->district_id;
+                }
+                if (!$result['zone_id'] && $existingStreet->zone_id) {
+                    $result['zone_id'] = $existingStreet->zone_id;
+                }
+            }
         }
 
         // Street - создаём если не найдена
@@ -418,10 +427,15 @@ class ComplexImportService
         $key = $slug;
 
         if (!isset($this->cache['developers'][$key])) {
-            // Ищем по slug (уникальный индекс)
-            $developer = Developer::where('slug', $slug)->first();
+            $developer = Developer::withTrashed()->where('slug', $slug)->first();
 
-            if (!$developer) {
+            if ($developer) {
+                // Восстанавливаем если был soft-deleted
+                if ($developer->trashed()) {
+                    $developer->restore();
+                }
+                $this->result['skipped']['developers']++;
+            } else {
                 $developer = Developer::create([
                     'name' => $name,
                     'slug' => $slug,
@@ -429,8 +443,6 @@ class ComplexImportService
                     'source' => 'import',
                 ]);
                 $this->result['created']['developers']++;
-            } else {
-                $this->result['skipped']['developers']++;
             }
 
             $this->cache['developers'][$key] = $developer;
@@ -454,15 +466,20 @@ class ComplexImportService
         $key = $slug . '_' . $developerId . '_' . $cityId . '_' . $districtId . '_' . $zoneId;
 
         if (!isset($this->cache['complexes'][$key])) {
-            // Ищем по полям уникального индекса
-            $complex = Complex::where('developer_id', $developerId)
+            $complex = Complex::withTrashed()
+                ->where('developer_id', $developerId)
                 ->where('city_id', $cityId)
                 ->where('district_id', $districtId)
                 ->where('zone_id', $zoneId)
                 ->where('slug', $slug)
                 ->first();
 
-            if (!$complex) {
+            if ($complex) {
+                if ($complex->trashed()) {
+                    $complex->restore();
+                }
+                $this->result['skipped']['complexes']++;
+            } else {
                 $complex = Complex::create([
                     'name' => $name,
                     'slug' => $slug,
@@ -473,8 +490,6 @@ class ComplexImportService
                     'is_active' => true,
                 ]);
                 $this->result['created']['complexes']++;
-            } else {
-                $this->result['skipped']['complexes']++;
             }
 
             $this->cache['complexes'][$key] = $complex;
@@ -496,14 +511,19 @@ class ComplexImportService
     ): Block {
         $slug = Str::slug($name);
 
-        // Ищем по полям уникального индекса
-        $block = Block::where('complex_id', $complexId)
+        $block = Block::withTrashed()
+            ->where('complex_id', $complexId)
             ->where('street_id', $streetId)
             ->where('slug', $slug)
             ->where('building_number', $buildingNumber)
             ->first();
 
-        if (!$block) {
+        if ($block) {
+            if ($block->trashed()) {
+                $block->restore();
+            }
+            $this->result['skipped']['blocks']++;
+        } else {
             $block = Block::create([
                 'name' => $name,
                 'slug' => $slug,
@@ -514,8 +534,6 @@ class ComplexImportService
                 'is_active' => true,
             ]);
             $this->result['created']['blocks']++;
-        } else {
-            $this->result['skipped']['blocks']++;
         }
 
         return $block;

@@ -18,6 +18,84 @@
                 <h1 class="h3 mb-0">Импорт комплексов</h1>
             </div>
 
+            {{-- Сообщение об очистке --}}
+            @if (session('cleared'))
+                <div class="alert alert-success alert-dismissible fade show">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Данные очищены{{ session('cleared.source') ? ' (source: ' . session('cleared.source') . ')' : '' }}:
+                    блоков — {{ session('cleared.blocks') }},
+                    комплексов — {{ session('cleared.complexes') }},
+                    застройщиков — {{ session('cleared.developers') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            {{-- Текущие данные и очистка --}}
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Текущие данные</h5>
+                    @if ($counts['developers'] + $counts['complexes'] + $counts['blocks'] > 0)
+                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#clearModal">
+                            <i class="bi bi-trash me-1"></i>Очистить все
+                        </button>
+                    @endif
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="fs-3 fw-bold">{{ $counts['developers'] }}</div>
+                            <div class="text-muted">Застройщиков</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="fs-3 fw-bold">{{ $counts['complexes'] }}</div>
+                            <div class="text-muted">Комплексов</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="fs-3 fw-bold">{{ $counts['blocks'] }}</div>
+                            <div class="text-muted">Блоков</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Модалка подтверждения очистки --}}
+            <div class="modal fade" id="clearModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form action="{{ route('import.complexes.clear') }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <div class="modal-header">
+                                <h5 class="modal-title">Подтверждение очистки</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Источник (source)</label>
+                                    <select name="source" class="form-select" id="clearSource">
+                                        <option value="">Все источники</option>
+                                        @foreach ($sources as $source)
+                                            <option value="{{ $source }}">{{ $source }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="form-text">Выберите конкретный source или оставьте пустым для удаления всех</div>
+                                </div>
+                                <div class="alert alert-warning mb-0">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                    Это действие необратимо!
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash me-1"></i>Очистить
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             {{-- Форма загрузки --}}
             <div class="card">
                 <div class="card-header">
