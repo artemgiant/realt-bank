@@ -155,8 +155,8 @@ window.ContactModal.Api = {
         var formData = new FormData(form);
         var phones = this.collectPhones();
 
-        // Добавляем company_id из конфигурации
-        if (Config.companyId) {
+        // Добавляем company_id из конфигурации (не для контекста companies — компания ещё не создана)
+        if (Config.companyId && Config.context !== 'companies') {
             formData.set('company_id', Config.companyId);
         }
 

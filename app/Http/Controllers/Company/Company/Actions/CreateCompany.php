@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Company\Company\Actions;
 
+use App\Models\Contact\Contact;
 use App\Models\Reference\Company;
 use App\Models\Reference\CompanyOffice;
 use Illuminate\Http\Request;
@@ -84,6 +85,11 @@ class CreateCompany
                 $contactData[$id] = ['role' => ($index === 0 ? 'primary' : 'secondary')];
             }
             $company->contacts()->attach($contactData);
+
+            // Обновляем company_id у контактов, созданных до компании
+            Contact::whereIn('id', $data['contact_ids'])
+                ->whereNull('company_id')
+                ->update(['company_id' => $company->id]);
         }
     }
 

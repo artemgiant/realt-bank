@@ -58,7 +58,7 @@ class CreateContact
 
             // Создание контакта
             $contact = Contact::create([
-                'company_id'   => $data['company_id'],
+                'company_id'   => $data['company_id'] ?? null,
                 'first_name'   => $data['first_name'],
                 'last_name'    => $data['last_name'] ?? null,
                 'middle_name'  => $data['middle_name'] ?? null,

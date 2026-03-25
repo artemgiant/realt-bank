@@ -243,6 +243,7 @@ class PropertyMigrator
             'user_id' => $newUserId,
             'employee_id' => $employeeId,
             'currency_id' => 1,
+            'source_id' => 55, // Запрос по телефону
             'complex_id' => $complexId,
             'contact_type_id' => $contactTypeId,
 
