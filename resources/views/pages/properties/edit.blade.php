@@ -579,7 +579,9 @@
                                 <a class="btn btn-outline-primary" href="{{ route('properties.edit', $property) }}">
                                     Отменить изменения
                                 </a>
-
+                                <button type="button" class="btn btn-outline-danger" id="btn-delete-property">
+                                    Удалить объект
+                                </button>
                             </div>
                             <div class="photo-info-btnGroup-right">
                                 <button class="btn btn-outline-success" type="button">
@@ -600,6 +602,36 @@
     @include('components.contact-modal', ['context' => 'properties', 'contactRoles' => $contactRoles, 'contactTags' => $contactTags ?? [], 'showExtendedSocials' => false, 'showBirthday' => false, 'showHistory' => false])
     @include('pages.properties.modals.employee-modal')
     @include('pages.properties.modals.transfer-agent-modal')
+
+    {{-- Модалка подтверждения удаления объекта --}}
+    <div class="modal fade" id="deletePropertyModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:280px;">
+            <div class="modal-content">
+                <div class="modal-body p-3">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="fw-bold">Удалить объект #{{ $property->id }}?</span>
+                        <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        @if($property->photos->first())
+                            <img src="{{ $property->photos->first()->thumbnail_url }}" alt="" style="width:60px;height:45px;object-fit:cover;border-radius:4px;">
+                        @endif
+                        @if($property->price)
+                            <span class="fw-bold">{{ number_format($property->price, 0, '.', ' ') }} {{ $property->currency?->code }}</span>
+                        @endif
+                    </div>
+                    <div class="d-flex gap-2 justify-content-end">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <form action="{{ route('properties.destroy', $property) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @endsection
 
@@ -701,5 +733,12 @@
             })();
         </script>
     @endif
+
+    {{-- Удаление объекта --}}
+    <script>
+        document.getElementById('btn-delete-property').addEventListener('click', function () {
+            new bootstrap.Modal(document.getElementById('deletePropertyModal')).show();
+        });
+    </script>
 
 @endpush

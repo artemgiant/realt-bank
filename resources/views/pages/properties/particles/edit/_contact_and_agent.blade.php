@@ -77,7 +77,13 @@
 
         <div class="left-items-wrapper">
             <div class="item">
-                <label for="link-on-the-ad">Ссылка на объявление</label>
+                <label for="link-on-the-ad">
+                    @if($property->external_url)
+                        <a href="{{ $property->external_url }}" target="_blank" rel="noopener noreferrer">Ссылка на объявление</a>
+                    @else
+                        Ссылка на объявление
+                    @endif
+                </label>
                 <div class="item-inputText-wrapper">
                     <input class="item-inputText" type="url" id="link-on-the-ad" name="external_url" autocomplete="off" placeholder="Вставьте ссылку"
                            value="{{ old('external_url', $property->external_url) }}">

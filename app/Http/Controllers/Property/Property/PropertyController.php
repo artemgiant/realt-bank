@@ -178,6 +178,18 @@ class PropertyController extends Controller
     }
 
     /**
+     * Удаление объекта (soft delete).
+     */
+    public function destroy(Property $property): RedirectResponse
+    {
+        $property->delete();
+
+        return redirect()
+            ->route('properties.index')
+            ->with('success', 'Объект #' . $property->id . ' успешно удалён.');
+    }
+
+    /**
      * AJAX: Удалить фото объекта. Проверяет принадлежность фото к объекту.
      */
     public function deletePhoto(Property $property, PropertyPhoto $photo): JsonResponse

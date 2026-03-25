@@ -47,6 +47,32 @@
     </div>
 
     {{-- Пагинация теперь рендерится через DataTables --}}
+
+    {{-- Модалка подтверждения удаления объекта --}}
+    <div class="modal fade" id="deletePropertyModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:280px;">
+            <div class="modal-content">
+                <div class="modal-body p-3">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="fw-bold">Удалить объект <span id="delete-property-id"></span>?</span>
+                        <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <img id="delete-property-photo" src="" alt="" style="width:60px;height:45px;object-fit:cover;border-radius:4px;display:none;">
+                        <span id="delete-property-price" class="fw-bold"></span>
+                    </div>
+                    <div class="d-flex gap-2 justify-content-end">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <form id="delete-property-form" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 
@@ -65,5 +91,29 @@
     <script src="{{ versioned_asset('js/pages/my-dropdown.min.js') }}"></script>
     <script src="{{ versioned_asset('js/pages/page-home.min.js') }}" type="module"></script>
 
+    {{-- Удаление объекта из таблицы --}}
+    <script>
+        $(document).on('click', '.btn-delete-property', function (e) {
+            e.preventDefault();
+            var $btn = $(this);
+            var id = $btn.data('id');
+            var photo = $btn.data('photo');
+            var price = $btn.data('price');
+
+            $('#delete-property-id').text('#' + id);
+            $('#delete-property-form').attr('action', '/properties/' + id);
+
+            var $img = $('#delete-property-photo');
+            if (photo) {
+                $img.attr('src', photo).show();
+            } else {
+                $img.hide();
+            }
+
+            $('#delete-property-price').text(price && price !== '-' ? price : '');
+
+            new bootstrap.Modal(document.getElementById('deletePropertyModal')).show();
+        });
+    </script>
 
 @endpush

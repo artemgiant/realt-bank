@@ -212,6 +212,7 @@ window.PropertyRenderers = {
             '                                 </button>\n' +
             '                                 <ul class="dropdown-menu" style="">\n' +
             '                                    <li><a class="dropdown-item" href="/properties/' + row.id + '/edit">Редактировать</a></li>\n' +
+            '                                    <li><a class="dropdown-item text-danger btn-delete-property" href="#" data-id="' + row.id + '" data-price="' + (row.price || '') + '" data-photo="' + (row.photo && row.photo.main ? row.photo.main : '') + '">Удалить</a></li>\n' +
             '                                 </ul>\n' +
             '                              </div>\n' +
             '                           </div>\n' +
