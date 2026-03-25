@@ -43,13 +43,71 @@ class PropertyMigrator
     protected int $limit;  // лимит объектов (0 = все)
 
     /**
-     * Маппинг старого status → новый property_type_id в dictionaries.
-     * ВАЖНО: status в старой базе — это тип недвижимости, НЕ статус объекта!
+     * Маппинг status=1 (Квартиры): type_nedvizemos → property_type_id.
      */
-    protected const STATUS_TO_PROPERTY_TYPE = [
-        1 => 23, // Квартиры → Квартира (dictionaries.id=23)
-        2 => 28, // Дома → Дом (dictionaries.id=28)
-        3 => 40, // Коммерция → Помещение свободного назначения (dictionaries.id=40)
+    protected const APARTMENT_TYPE_MAP = [
+        'комната'  => 27, // Комната
+        'квартира' => 23, // Квартира
+    ];
+    protected const APARTMENT_TYPE_DEFAULT = 23; // Квартира
+
+    /**
+     * Маппинг status=2 (Дома): type_nedviz_t → property_type_id.
+     */
+    protected const HOUSE_TYPE_MAP = [
+        'участок' => 33, // Земля под жилую застройку
+        'дом'     => 28, // Дом
+    ];
+    protected const HOUSE_TYPE_DEFAULT = 28; // Дом
+
+    /**
+     * Маппинг status=3 (Коммерция): type_nedviz_t → property_type_id.
+     */
+    protected const COMMERCIAL_TYPE_MAP = [
+        'помещения свободного назначения'         => 40,  // Помещение свободного назначения
+        'здание свободного назначения'            => 41,  // Здание
+        'офисное помещение'                       => 36,  // Офисное помещение
+        'офисное здание'                          => 41,  // Здание
+        'земля коммерческого назначения'           => 34,  // Земля коммерческого назначения
+        'земля рекреационного назначения'          => 383, // Земля рекреационного назначения
+        'земля сельскохозяйственного назначения'   => 35,  // Земля сельскохозяйственного назначения
+        'участок под жилую застройку'              => 33,  // Земля под жилую застройку
+        'гостинично- оздоровительные объекты'      => 385, // Гостиница/отель
+        'объект сферы услуг'                       => 40,  // Помещение свободного назначения
+        'кафе, бар, ресторан'                      => 384, // Ресторан/кафе
+        'торговые площади'                         => 37,  // Торговое помещение
+        'складские помещения'                      => 38,  // Складские помещения
+        'производственные помещения'                => 39,  // Производственные помещения
+        'готовый бизнес'                           => 42,  // Готовый бизнес
+        'подземный паркинг'                        => 43,  // Паркинг
+        'отдельно стоящий гараж'                   => 45,  // Гараж
+    ];
+    protected const COMMERCIAL_TYPE_DEFAULT = 40; // Помещение свободного назначения
+
+    /**
+     * property_type_id → deal_type_id (продажа, т.к. rent=0).
+     * Группировка: квартиры=1, комнаты=2, дома=3, земля=4, коммерция=5, паркинг/гараж=6.
+     */
+    protected const PROPERTY_TYPE_TO_DEAL_TYPE = [
+        23  => 1, // Квартира → Продажа квартир
+        27  => 2, // Комната → Продажа комнат
+        28  => 3, // Дом → Продажа домов
+        33  => 4, // Земля под жилую застройку → Продажа земли
+        34  => 4, // Земля коммерческого назначения → Продажа земли
+        35  => 4, // Земля сельскохозяйственного назначения → Продажа земли
+        383 => 4, // Земля рекреационного назначения → Продажа земли
+        43  => 6, // Паркинг → Продажа паркинг/гараж
+        45  => 6, // Гараж → Продажа паркинг/гараж
+        // Всё остальное — коммерция
+        36  => 5, // Офисное помещение → Продажа коммерции
+        37  => 5, // Торговое помещение → Продажа коммерции
+        38  => 5, // Складские помещения → Продажа коммерции
+        39  => 5, // Производственные помещения → Продажа коммерции
+        40  => 5, // Помещение свободного назначения → Продажа коммерции
+        41  => 5, // Здание → Продажа коммерции
+        42  => 5, // Готовый бизнес → Продажа коммерции
+        384 => 5, // Ресторан/кафе → Продажа коммерции
+        385 => 5, // Гостиница/отель → Продажа коммерции
     ];
 
     /**
@@ -92,7 +150,7 @@ class PropertyMigrator
 
         $query = DB::connection('factor_dump')
             ->table('objects')
-            ->whereIn('status', array_keys(self::STATUS_TO_PROPERTY_TYPE))
+            ->whereIn('status', [1, 2, 3])
             ->where('rent', 0)
             ->where('deleted', 0);
 
@@ -109,7 +167,7 @@ class PropertyMigrator
         if ($this->limit > 0) {
             $objects = DB::connection('factor_dump')
                 ->table('objects')
-                ->whereIn('status', array_keys(self::STATUS_TO_PROPERTY_TYPE))
+                ->whereIn('status', [1, 2, 3])
                 ->where('rent', 0)
                 ->where('deleted', 0)
                 ->orderBy('id','DESC')
@@ -129,7 +187,7 @@ class PropertyMigrator
         } else {
             DB::connection('factor_dump')
                 ->table('objects')
-                ->whereIn('status', array_keys(self::STATUS_TO_PROPERTY_TYPE))
+                ->whereIn('status', [1, 2, 3])
                 ->where('rent', 0)
                 ->where('deleted', 0)
                 ->chunkById($this->chunkSize, function ($objects) use (&$stats, $countryId, $stateId) {
@@ -182,8 +240,7 @@ class PropertyMigrator
             ?? $this->dictionaryMapper->resolve($obj->wall_type_home ?? null, 'wall_type_home')
             ?? $this->dictionaryMapper->resolveMaterial($obj->material ?? null);
 
-        $propertyTypeId = self::STATUS_TO_PROPERTY_TYPE[$obj->status] ?? null;
-        $dealTypeId = $this->dictionaryMapper->resolveDealType($obj->rent ?? 0);
+        [$propertyTypeId, $dealTypeId] = $this->resolvePropertyAndDealType($obj);
 
         // --- ЖК (жилой комплекс) ---
         $complexId = $this->complexMapper->getComplexId($obj->complex ?? null);
@@ -312,6 +369,32 @@ class PropertyMigrator
         $this->contactMigrator->migrateForProperty($property, $data, $obj->type_sale ?? null);
 
         return $property;
+    }
+
+    /**
+     * Определение property_type_id и deal_type_id по полям старой базы.
+     *
+     * status=1 (Квартиры) → type_nedvizemos (квартира/комната)
+     * status=2 (Дома)     → type_nedviz_t (дом/участок)
+     * status=3 (Коммерция) → type_nedviz_t (офис, склад, земля и т.д.)
+     *
+     * @return array{int, int} [property_type_id, deal_type_id]
+     */
+    protected function resolvePropertyAndDealType(object $obj): array
+    {
+        $typeNedvizT = mb_strtolower(trim($obj->type_nedviz_t ?? ''));
+        $typeNedvizemos = mb_strtolower(trim($obj->type_nedvizemos ?? ''));
+
+        $propertyTypeId = match ($obj->status) {
+            1 => self::APARTMENT_TYPE_MAP[$typeNedvizemos] ?? self::APARTMENT_TYPE_DEFAULT,
+            2 => self::HOUSE_TYPE_MAP[$typeNedvizT] ?? self::HOUSE_TYPE_DEFAULT,
+            3 => self::COMMERCIAL_TYPE_MAP[$typeNedvizT] ?? self::COMMERCIAL_TYPE_DEFAULT,
+            default => self::APARTMENT_TYPE_DEFAULT,
+        };
+
+        $dealTypeId = self::PROPERTY_TYPE_TO_DEAL_TYPE[$propertyTypeId] ?? 5; // fallback: Продажа коммерции
+
+        return [$propertyTypeId, $dealTypeId];
     }
 
     /**

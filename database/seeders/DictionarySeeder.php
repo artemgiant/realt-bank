@@ -344,6 +344,7 @@ class DictionarySeeder extends Seeder
                 'Продавец',
                 'Арендатор',
                 'Арендодатель',
+                'Агент',
             ],
 
                 // Класс жилья
