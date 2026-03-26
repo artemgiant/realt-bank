@@ -10,6 +10,8 @@ git fetch origin
 # Синхронізувати з віддаленою гілкою
 git reset --hard origin/master
 
+# Оновити Composer залежності
+composer install --optimize-autoloader
 
 
 # Очистити кеш
@@ -20,6 +22,7 @@ php artisan view:clear
 #
 #
 php artisan migrate
+
 
 
 #php artisan currency:update-rates

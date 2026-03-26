@@ -67,8 +67,12 @@ class PropertyPhoto extends Model
 
         $thumbnailPath = $this->getThumbnailPath();
 
-        if ($thumbnailPath && Storage::disk(config('photos.disk', 'public'))->exists($thumbnailPath)) {
-            return Storage::disk(config('photos.disk', 'public'))->url($thumbnailPath);
+        try {
+            if ($thumbnailPath && Storage::disk(config('photos.disk', 'public'))->exists($thumbnailPath)) {
+                return Storage::disk(config('photos.disk', 'public'))->url($thumbnailPath);
+            }
+        } catch (\Exception $e) {
+            // S3 недоступен — возвращаем оригинал
         }
 
         // Если миниатюры нет - возвращаем оригинал

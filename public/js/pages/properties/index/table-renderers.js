@@ -104,16 +104,21 @@ window.PropertyRenderers = {
 
     // Площадь (общая/жилая/кухни)
     area: function (data, type, row) {
-        var parts = [];
         var areaLand = row.area_land ? '<span>' + row.area_land + ' сот.' + '</span>' : '';
-        if (data.total) parts.push(data.total);
-        if (data.living) parts.push(data.living);
-        if (data.kitchen) parts.push(data.kitchen);
+        var hasArea = data.total || data.living || data.kitchen;
 
-        var areaText = parts.length > 0 ? parts.join('/') + ' м²' : '-';
+        var areaText = '';
+        if (hasArea) {
+            areaText = (data.total || 0) + '/' + (data.living || 0) + '/' + (data.kitchen || 0) + ' м²';
+        }
+
+        if (!hasArea && !row.area_land) {
+            return '<div class="tbody-wrapper area"><span class="text-muted">-</span></div>';
+        }
 
         return '<div class="tbody-wrapper area">' +
-            (areaText !== '-' ? '<p>' + areaText + '</p>' + areaLand : '<span class="text-muted">-</span>') +
+            (hasArea ? '<p>' + areaText + '</p>' : '') +
+            areaLand +
             '</div>';
     },
 
