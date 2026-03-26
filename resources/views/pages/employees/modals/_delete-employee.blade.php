@@ -1,18 +1,22 @@
 <div class="modal fade" id="delete-employee-modal" tabindex="-1" aria-labelledby="deleteEmployeeModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="d-flex align-items-center mb-3 justify-content-between">
-                    <h2 class="modal-title" id="deleteEmployeeModalLabel">Удаление сотрудника</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-dialog-centered" style="max-width:320px;">
+        <div class="modal-content" style="border-radius:12px;overflow:hidden;">
+            <div class="modal-body p-0">
+                <div style="padding:16px 16px 12px;border-bottom:1px solid #eee;">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="fw-bold" style="font-size:15px;">Удалить сотрудника #<span id="delete-employee-id"></span>?</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size:12px;"></button>
+                    </div>
                 </div>
-                <p class="mb-1">Вы уверены, что хотите удалить сотрудника?</p>
-                <p class="fw-bold" id="delete-employee-name"></p>
+                <div style="padding:12px 16px;">
+                    <p class="mb-1" style="font-size:13px;">Вы уверены, что хотите удалить сотрудника?</p>
+                    <p class="fw-bold mb-0" style="font-size:13px;" id="delete-employee-name"></p>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-danger" id="confirm-delete-employee">Удалить</button>
+            <div style="padding:0 16px 16px;display:flex;gap:8px;justify-content:flex-end;">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-danger btn-sm" id="confirm-delete-employee">Удалить</button>
             </div>
         </div>
     </div>

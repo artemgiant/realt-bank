@@ -200,6 +200,7 @@
             const id = $(this).data('id');
             const name = $(this).closest('tr').find('.link-name').text() || '';
 
+            $('#delete-employee-id').text(id);
             $('#delete-employee-name').text(name);
             $('#confirm-delete-employee').data('id', id);
             new bootstrap.Modal('#delete-employee-modal').show();
