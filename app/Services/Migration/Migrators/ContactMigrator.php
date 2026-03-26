@@ -6,6 +6,7 @@ use App\Helpers\PhoneFormatter;
 use App\Models\Contact\Contact;
 use App\Models\Contact\ContactPhone;
 use App\Models\Property\Property;
+use App\Models\Reference\Company;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -25,6 +26,9 @@ class ContactMigrator
 {
     // Кеш: нормализованный телефон → contact_id (для дедупликации)
     protected array $phoneCache = [];
+
+    // ID компании FAKTOR (кешируется при первом обращении)
+    protected ?int $companyId = null;
 
     // Маппинг type_sale → role в contactables
     protected const TYPE_SALE_ROLES = [
@@ -105,7 +109,7 @@ class ContactMigrator
         if (!$contact) {
             $contact = Contact::create([
                 'first_name' => mb_ucfirst(trim($name ?? 'Без имени')),
-                'company_id' => 1, // Factor (компания по умолчанию)
+                'company_id' => $this->getCompanyId(),
             ]);
 
             // Создаём телефон
@@ -145,6 +149,15 @@ class ContactMigrator
         }
     }
 
+
+    protected function getCompanyId(): ?int
+    {
+        if ($this->companyId === null) {
+            $this->companyId = Company::where('slug', 'faktor-69c44c075dfac')->value('id');
+        }
+
+        return $this->companyId;
+    }
 
     public function getStats(): array
     {

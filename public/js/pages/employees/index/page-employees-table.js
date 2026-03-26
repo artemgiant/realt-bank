@@ -194,29 +194,51 @@
             $('.thead-wrapper.checkBox input[type="checkbox"]').prop('checked', total === checked && total > 0);
         });
 
-        // Удаление сотрудника
+        // Удаление сотрудника — открытие модального окна
         $(document).on('click', '.btn-delete', function (e) {
             e.preventDefault();
             const id = $(this).data('id');
+            const name = $(this).closest('tr').find('.link-name').text() || '';
 
-            if (confirm('Вы уверены, что хотите удалить этого сотрудника?')) {
-                $.ajax({
-                    url: `/employees/${id}`,
-                    type: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function (response) {
-                        if (employeesTable) {
-                            employeesTable.ajax.reload();
-                        }
-                    },
-                    error: function (xhr) {
-                        console.error('Delete error:', xhr);
+            $('#delete-employee-name').text(name);
+            $('#confirm-delete-employee').data('id', id);
+            new bootstrap.Modal('#delete-employee-modal').show();
+        });
+
+        // Подтверждение удаления сотрудника
+        $(document).on('click', '#confirm-delete-employee', function () {
+            const id = $(this).data('id');
+            const $btn = $(this);
+
+            $btn.prop('disabled', true).text('Удаление...');
+
+            $.ajax({
+                url: `/employees/${id}`,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (response) {
+                    bootstrap.Modal.getInstance(document.getElementById('delete-employee-modal')).hide();
+                    if (employeesTable) {
+                        employeesTable.ajax.reload();
+                    }
+                    if (typeof toastr !== 'undefined') {
+                        toastr.success('Сотрудник удален');
+                    }
+                },
+                error: function (xhr) {
+                    console.error('Delete error:', xhr);
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Ошибка при удалении сотрудника');
+                    } else {
                         alert('Ошибка при удалении сотрудника');
                     }
-                });
-            }
+                },
+                complete: function () {
+                    $btn.prop('disabled', false).text('Удалить');
+                }
+            });
         });
 
         // Изменение должности в таблице

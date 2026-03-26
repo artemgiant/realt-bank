@@ -71,11 +71,18 @@ class DataMigrationService
     {
         $startTime = microtime(true);
 
-        // Шаг 1: Загружаем маперы (соответствие старых ID новым)
+        // Шаг 1: Сидеры — компания FAKTOR + офисы + админ
+        $this->output?->section('Running seeders (CompanySeeder, AdminUserSeeder)...');
+        Artisan::call('db:seed', ['--class' => CompanySeeder::class, '--force' => true]);
+        $this->output?->info('CompanySeeder done.');
+        Artisan::call('db:seed', ['--class' => AdminUserSeeder::class, '--force' => true]);
+        $this->output?->info('AdminUserSeeder done.');
+
+        // Шаг 2: Загружаем маперы (соответствие старых ID новым)
         $this->output?->section('Building mappers...');
         $this->buildMappers();
 
-        // Шаг 2: Пользователи → users + employees + роли
+        // Шаг 3: Пользователи → users + employees + роли
         if ($this->shouldRun('users', $only)) {
             $this->output?->section('Migrating users...');
             $migrator = new UserMigrator($this->userMapper, $this->output);
@@ -111,13 +118,6 @@ class DataMigrationService
         $reportPath = $report->generate();
         $this->output?->info("Unmapped fields report: {$reportPath}");
         $this->results['unmapped_report'] = $reportPath;
-
-        // Шаг 5: Сидеры — компания FAKTOR + офисы + админ
-        $this->output?->section('Running seeders (CompanySeeder, AdminUserSeeder)...');
-        Artisan::call('db:seed', ['--class' => CompanySeeder::class, '--force' => true]);
-        $this->output?->info('CompanySeeder done.');
-        Artisan::call('db:seed', ['--class' => AdminUserSeeder::class, '--force' => true]);
-        $this->output?->info('AdminUserSeeder done.');
 
         $duration = round(microtime(true) - $startTime, 2);
         $this->results['duration_seconds'] = $duration;

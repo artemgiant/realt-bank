@@ -38,17 +38,6 @@
     </div>
 </div>
 
-{{-- Район региона --}}
-<div class="item selects w16">
-    <label class="item-label">Район региона</label>
-    <select name="region_id" id="region_id" class="js-example-responsive3 my-select2">
-        <option value=""></option>
-        @if($company->region_id ?? false)
-            <option value="{{ $company->region_id }}" selected>{{ $company->region?->name }}</option>
-        @endif
-    </select>
-</div>
-
 <div class="item w33">
     <label class="item-label">Локация (улица) <span class="text-danger">*</span></label>
     <div class="location-search-wrapper">
@@ -89,6 +78,8 @@
         <input type="hidden" name="district_name" value="{{ old('district_name', $company->district?->name) }}">
         <input type="hidden" name="city_id" value="{{ old('city_id', $company->city_id) }}">
         <input type="hidden" name="city_name" value="{{ old('city_name', $company->city?->name) }}">
+        <input type="hidden" name="region_id" value="{{ old('region_id', $company->region_id) }}">
+        <input type="hidden" name="region_name" value="{{ old('region_name', $company->region?->name) }}">
     </div>
 </div>
 

@@ -26,6 +26,7 @@
 
 @push('modals')
     @include('pages.employees.modals._add-employee')
+    @include('pages.employees.modals._delete-employee')
 @endpush
 
 @push('scripts')

@@ -38,8 +38,13 @@ $(document).ready(function () {
     // ========== Инициализация DataTables ==========
     var settings = Config.getBaseSettings();
 
-    // Восстановление страницы пагинации из URL
-    var urlPage = new URLSearchParams(window.location.search).get('page');
+    // Восстановление страницы пагинации и количества записей из URL
+    var urlParams = new URLSearchParams(window.location.search);
+    var urlPageLength = urlParams.get('pageLength');
+    if (urlPageLength && parseInt(urlPageLength) > 0) {
+        settings.pageLength = parseInt(urlPageLength);
+    }
+    var urlPage = urlParams.get('page');
     if (urlPage && parseInt(urlPage) > 0) {
         settings.displayStart = parseInt(urlPage) * settings.pageLength;
     }
@@ -71,14 +76,18 @@ $(document).ready(function () {
         // Синхронизируем фильтры в URL
         Filters.syncToUrl();
 
-        // Сохраняем текущую страницу в URL
+        // Сохраняем текущую страницу и количество записей в URL
         var pageInfo = table.page.info();
-        var currentPage = pageInfo.page;
         var urlParams = new URLSearchParams(window.location.search);
-        if (currentPage > 0) {
-            urlParams.set('page', currentPage);
+        if (pageInfo.page > 0) {
+            urlParams.set('page', pageInfo.page);
         } else {
             urlParams.delete('page');
+        }
+        if (pageInfo.length !== 10) {
+            urlParams.set('pageLength', pageInfo.length);
+        } else {
+            urlParams.delete('pageLength');
         }
         var qs = urlParams.toString();
         var newUrl = window.location.pathname + (qs ? '?' + qs : '');
