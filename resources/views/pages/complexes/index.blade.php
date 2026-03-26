@@ -43,6 +43,7 @@
         @include('pages.complexes.particles.index._table')
     </div>
 
+    @include('pages.complexes.modals._delete-complex')
 @endsection
 
 @push('scripts')

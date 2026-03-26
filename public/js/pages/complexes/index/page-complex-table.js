@@ -232,22 +232,45 @@ $(document).ready(function () {
     $(document).on('click', '.delete-complex', function (e) {
         e.preventDefault();
         var id = $(this).data('id');
+        var name = $(this).closest('tr').find('.tbody-wrapper.location strong').text() || '';
 
-        if (confirm('Вы уверены, что хотите удалить этот комплекс?')) {
-            $.ajax({
-                url: '/complexes/' + id,
-                type: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function (response) {
-                    table.ajax.reload();
-                },
-                error: function (xhr) {
-                    alert('Ошибка при удалении');
+        $('#delete-complex-id').text(id);
+        $('#delete-complex-name').text(name);
+        $('#confirm-delete-complex').data('id', id);
+        new bootstrap.Modal('#delete-complex-modal').show();
+    });
+
+    // Подтверждение удаления комплекса
+    $(document).on('click', '#confirm-delete-complex', function () {
+        var id = $(this).data('id');
+        var $btn = $(this);
+
+        $btn.prop('disabled', true).text('Удаление...');
+
+        $.ajax({
+            url: '/complexes/' + id,
+            type: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                bootstrap.Modal.getInstance(document.getElementById('delete-complex-modal')).hide();
+                table.ajax.reload();
+                if (typeof toastr !== 'undefined') {
+                    toastr.success('Комплекс удалён');
                 }
-            });
-        }
+            },
+            error: function (xhr) {
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('Ошибка при удалении комплекса');
+                } else {
+                    alert('Ошибка при удалении комплекса');
+                }
+            },
+            complete: function () {
+                $btn.prop('disabled', false).text('Удалить');
+            }
+        });
     });
 
     // ========== Вспомогательные функции ==========

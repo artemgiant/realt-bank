@@ -48,6 +48,8 @@
     </div>
 
     {{-- Пагинация теперь рендерится через DataTables --}}
+
+    @include('pages.developers.modals._delete-developer')
 @endsection
 
 

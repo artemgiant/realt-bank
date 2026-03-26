@@ -40,6 +40,7 @@
     <div class="table-responsive">
         @include('pages.companies.particles.index._table')
     </div>
+    @include('pages.companies.modals._delete-company')
 @endsection
 
 @push('scripts')

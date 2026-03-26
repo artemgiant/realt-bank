@@ -295,22 +295,45 @@ $(document).ready(function () {
     $('#developers-table tbody').on('click', '.delete-developer', function (e) {
         e.preventDefault();
         var id = $(this).data('id');
+        var name = $(this).closest('tr').find('.developer-wrapper strong').text() || '';
 
-        if (confirm('Вы уверены, что хотите удалить этого девелопера?')) {
-            $.ajax({
-                url: '/developers/' + id,
-                type: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function (response) {
-                    table.ajax.reload();
-                },
-                error: function (xhr) {
+        $('#delete-developer-id').text(id);
+        $('#delete-developer-name').text(name);
+        $('#confirm-delete-developer').data('id', id);
+        new bootstrap.Modal('#delete-developer-modal').show();
+    });
+
+    // Подтверждение удаления девелопера
+    $(document).on('click', '#confirm-delete-developer', function () {
+        var id = $(this).data('id');
+        var $btn = $(this);
+
+        $btn.prop('disabled', true).text('Удаление...');
+
+        $.ajax({
+            url: '/developers/' + id,
+            type: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                bootstrap.Modal.getInstance(document.getElementById('delete-developer-modal')).hide();
+                table.ajax.reload();
+                if (typeof toastr !== 'undefined') {
+                    toastr.success('Девелопер удалён');
+                }
+            },
+            error: function (xhr) {
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('Ошибка при удалении девелопера');
+                } else {
                     alert('Ошибка при удалении девелопера');
                 }
-            });
-        }
+            },
+            complete: function () {
+                $btn.prop('disabled', false).text('Удалить');
+            }
+        });
     });
 
     // ========== Инициализация ==========
