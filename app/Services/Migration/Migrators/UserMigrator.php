@@ -114,7 +114,9 @@ class UserMigrator
 
                 // 1. Создаём пользователя
                 $user = new User();
-                $user->name = trim(($oldUser->name ?? '') . ' ' . ($oldUser->sname ?? ''));
+                $firstName = mb_ucfirst(trim($oldUser->name ?? ''));
+                $lastName = mb_ucfirst(trim($oldUser->sname ?? ''));
+                $user->name = trim("$firstName $lastName");
                 $user->email = $email;
                 $user->phone = $phone;
                 $user->password = $oldUser->password; // пароль уже хеширован в старой базе
@@ -132,9 +134,9 @@ class UserMigrator
                     'office_id' => $this->filialMapper->get($oldUser->filial), // офис по старому filial_id
                     'position_id' => $positionId,       // должность "Агент"
                     'status_id' => $activeStatusId,     // статус "Активний"
-                    'first_name' => $oldUser->name ?? '',
-                    'last_name' => $oldUser->sname ?? '',
-                    'middle_name' => $oldUser->parent_name ?? '',
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'middle_name' => mb_ucfirst(trim($oldUser->parent_name ?? '')),
                     'email' => $email,
                     'phone' => $phone,
                     'is_active' => true,

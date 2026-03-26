@@ -152,6 +152,10 @@ class CreateProperty
             $title = $data['title_ru'] ?? null;
             $description = $data["description_{$locale}"] ?? null;
 
+            if ($description) {
+                $description = $property->id . ' ' . $description;
+            }
+
             if ($title || $description) {
                 PropertyTranslation::updateOrCreate(
                     [

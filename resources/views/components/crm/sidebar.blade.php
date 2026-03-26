@@ -1,7 +1,14 @@
 <aside class="sidebar">
     <a href="{{ route('properties.index') }}" class="sidebar-logo">
         <picture>
-            <img src="{{ asset('img/icon/side-bar/logo-F.svg') }}" alt="Faktor">
+            @php
+                $companyLogo = auth()->user()?->employee?->company?->logo_url;
+            @endphp
+            @if($companyLogo)
+                <img src="{{ $companyLogo }}" alt="{{ auth()->user()->employee->company->name }}">
+            @else
+                <img src="{{ asset('img/icon/side-bar/logo-F.svg') }}" alt="Faktor">
+            @endif
         </picture>
     </a>
     <nav class="sidebar-nav">

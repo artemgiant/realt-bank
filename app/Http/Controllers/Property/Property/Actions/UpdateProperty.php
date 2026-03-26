@@ -131,6 +131,13 @@ class UpdateProperty
             $title = $data['title_ru'] ?? null;
             $description = $data["description_{$locale}"] ?? null;
 
+            if ($description) {
+                $prefix = $property->id . ' ';
+                if (!str_starts_with($description, $prefix)) {
+                    $description = $prefix . $description;
+                }
+            }
+
             if ($title || $description) {
                 PropertyTranslation::updateOrCreate(
                     [

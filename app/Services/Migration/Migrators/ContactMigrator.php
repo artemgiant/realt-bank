@@ -104,7 +104,7 @@ class ContactMigrator
         // Создаём новый контакт если не нашли
         if (!$contact) {
             $contact = Contact::create([
-                'first_name' => ucfirst(trim($name ?? 'Без имени')),
+                'first_name' => mb_ucfirst(trim($name ?? 'Без имени')),
                 'company_id' => 1, // Factor (компания по умолчанию)
             ]);
 
