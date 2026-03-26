@@ -185,6 +185,7 @@ window.EmployeeRenderers = {
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item btn-edit" href="#" data-employee-id="${row.id}">Редактировать</a></li>
+                                <li><a class="dropdown-item btn-delete text-danger" href="#" data-id="${row.id}">Удалить</a></li>
                             </ul>
                         </div>
                     </div>

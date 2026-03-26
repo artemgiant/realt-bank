@@ -25,6 +25,13 @@ class DatabaseSeeder extends Seeder
 
             // Компанії
             CompanySeeder::class,
+
+            // Ролі та дозволи
+            RoleSeeder::class,
+            PermissionSeeder::class,
+
+            // Адмін-користувач
+            AdminUserSeeder::class,
         ]);
     }
 }

@@ -6,7 +6,6 @@ use App\Helpers\PhoneFormatter;
 use App\Models\Employee\Employee;
 use App\Models\Reference\Dictionary;
 use App\Models\User;
-use App\Services\Migration\Mappers\FilialMapper;
 use App\Services\Migration\Mappers\UserMapper;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Support\Facades\DB;
@@ -14,17 +13,16 @@ use Illuminate\Support\Facades\DB;
 /**
  * Мигратор пользователей: factor_dump.users → users + employees + роли.
  *
- * Шаг 2 миграции (после филиалов, до объектов).
+ * Шаг 2 миграции (до объектов).
  * Для каждого старого пользователя (deleted=0):
  *   1. Создаёт User (name, email, phone, password)
  *   2. Назначает spatie-роль (role_id 1 → super_admin, остальные → agent)
- *   3. Создаёт Employee (привязка к компании, офису, должности)
+ *   3. Создаёт Employee (без company/office — они назначаются через CompanySeeder после миграции)
  *   4. Сохраняет маппинг old user_id → new user_id
  */
 class UserMigrator
 {
     protected UserMapper $userMapper;
-    protected FilialMapper $filialMapper;
     protected ?OutputStyle $output;
 
     // Соответствие старых ролей новым spatie-ролям
@@ -38,11 +36,9 @@ class UserMigrator
 
     public function __construct(
         UserMapper $userMapper,
-        FilialMapper $filialMapper,
         ?OutputStyle $output = null
     ) {
         $this->userMapper = $userMapper;
-        $this->filialMapper = $filialMapper;
         $this->output = $output;
     }
 
@@ -55,7 +51,6 @@ class UserMigrator
      *   factor_dump.users.tel          → users.phone, employees.phone
      *   factor_dump.users.password     → users.password (уже хеширован)
      *   factor_dump.users.role_id      → spatie role (через ROLE_MAP)
-     *   factor_dump.users.filial       → employees.office_id (через FilialMapper)
      */
     public function migrate(): array
     {
@@ -85,23 +80,6 @@ class UserMigrator
                 $email = $oldUser->email ?: null;
                 $generatedEmail = 'user_' . $oldUser->id . '@factor.local';
 
-                // Проверяем: может пользователь уже создан (повторный запуск)
-                $existingUser = null;
-                if ($email) {
-                    $existingUser = User::where('email', $email)->first();
-                }
-                if (!$existingUser) {
-                    $existingUser = User::where('email', $generatedEmail)->first();
-                }
-
-                if ($existingUser) {
-                    // Пользователь уже существует — просто сохраняем маппинг
-                    $this->userMapper->set($oldUser->id, $existingUser->id);
-                    $stats['skipped']++;
-                    continue;
-                }
-
-                // Email для нового пользователя
                 if (!$email || User::where('email', $email)->exists()) {
                     $email = $generatedEmail;
                 }
@@ -127,11 +105,10 @@ class UserMigrator
                 $roleName = self::ROLE_MAP[$oldUser->role_id] ?? 'agent';
                 $user->assignRole($roleName);
 
-                // 3. Создаём сотрудника (Employee) привязанного к компании и офису
+                // 3. Создаём сотрудника (Employee)
+                //    company_id/office_id не задаём — будут назначены через CompanySeeder после миграции
                 Employee::create([
                     'user_id' => $user->id,
-                    'company_id' => $this->filialMapper->getCompanyId(),  // компания "Factor"
-                    'office_id' => $this->filialMapper->get($oldUser->filial), // офис по старому filial_id
                     'position_id' => $positionId,       // должность "Агент"
                     'status_id' => $activeStatusId,     // статус "Активний"
                     'first_name' => $firstName,

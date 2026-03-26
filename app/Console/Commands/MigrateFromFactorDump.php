@@ -15,11 +15,11 @@ use Illuminate\Support\Facades\DB;
  * Примеры запуска:
  *   sail artisan app:migrate-from-factor-dump --fresh --force    // очистка + полная миграция
  *   sail artisan app:migrate-from-factor-dump                    // миграция без очистки
- *   sail artisan app:migrate-from-factor-dump --only=filials,users  // только филиалы и пользователи
+ *   sail artisan app:migrate-from-factor-dump --only=users           // только пользователи
  *   sail artisan app:migrate-from-factor-dump --chunk=200        // меньший размер пакета
  *   sail artisan app:migrate-from-factor-dump --limit=10         // тестовый запуск: только 10 объектов
  *
- * Порядок: филиалы → пользователи → объекты → фото
+ * Порядок: пользователи → объекты → сидеры (CompanySeeder + AdminUserSeeder)
  * Подробнее: app/Services/Migration/README.md
  */
 class MigrateFromFactorDump extends Command
@@ -27,7 +27,7 @@ class MigrateFromFactorDump extends Command
     protected $signature = 'app:migrate-from-factor-dump
                             {--fresh : Очистить целевые таблицы перед переносом (через CleanupService)}
                             {--force : Пропустить подтверждения}
-                            {--only= : Только указанные сущности: filials,users,properties,photos}
+                            {--only= : Только указанные сущности: users,properties}
                             {--chunk=500 : Размер пакета для batch-обработки}
                             {--limit=0 : Лимит объектов для тестового запуска (0 = все)}';
 
@@ -48,10 +48,10 @@ class MigrateFromFactorDump extends Command
         }
 
         // --fresh: очистить целевые таблицы через CleanupService
-        // Сохраняет: users, справочники, локации, роли
-        // Удаляет: properties, contacts, employees без user_id, companies, offices
+        // Сохраняет: справочники, локации, определения ролей
+        // Удаляет: properties, contacts, users, employees, companies, offices
         if ($this->option('fresh')) {
-            $this->warn('Будут очищены целевые таблицы (properties, contacts, employees без user_id, companies, offices)');
+            $this->warn('Будут очищены целевые таблицы (users, employees, properties, contacts, companies, offices)');
 
             if (!$this->option('force') && !$this->confirm('Очистить эти таблицы и перенести данные заново?')) {
                 $this->info('Отменено.');

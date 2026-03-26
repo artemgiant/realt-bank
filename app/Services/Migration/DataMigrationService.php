@@ -9,21 +9,22 @@ use App\Services\Migration\Mappers\FilialMapper;
 use App\Services\Migration\Mappers\LocationMapper;
 use App\Services\Migration\Mappers\UserMapper;
 use App\Services\Migration\Migrators\ContactMigrator;
-use App\Services\Migration\Migrators\FilialMigrator;
 use App\Services\Migration\Migrators\PropertyMigrator;
 use App\Services\Migration\Migrators\UserMigrator;
+use Database\Seeders\AdminUserSeeder;
+use Database\Seeders\CompanySeeder;
 use Illuminate\Console\OutputStyle;
+use Illuminate\Support\Facades\Artisan;
 
 /**
  * Оркестратор миграции данных из factor_dump в realt_bank.
  *
  * Управляет порядком выполнения:
  * 1. Строит маперы (локации, справочники, ЖК)
- * 2. Филиалы → компания + офисы
- * 3. Пользователи → users + employees
- * 4. Объекты → properties + features + translations + contacts
- * 5. Фото → property_photos
- * 6. Отчёт о немаппящихся полях
+ * 2. Пользователи → users + employees
+ * 3. Объекты → properties + features + translations + contacts
+ * 4. Отчёт о немаппящихся полях
+ * 5. Сидеры: CompanySeeder + AdminUserSeeder (компания, офисы, админ)
  *
  * Поддерживает выборочный запуск через параметр $only.
  */
@@ -37,7 +38,7 @@ class DataMigrationService
     protected LocationMapper $locationMapper;      // города, районы, зоны, улицы
     protected DictionaryMapper $dictionaryMapper;   // справочники (тип здания, состояние и т.д.)
     protected UserMapper $userMapper;               // old user_id → new user_id
-    protected FilialMapper $filialMapper;           // old filial_id → new office_id
+    protected FilialMapper $filialMapper;           // old filial_id → new office_id (не используется, оставлен для совместимости)
     protected ComplexMapper $complexMapper;         // old complex_id → new complex_id
     protected BlockMapper $blockMapper;             // old complex_id → new block_id + complex_id
 
@@ -74,17 +75,10 @@ class DataMigrationService
         $this->output?->section('Building mappers...');
         $this->buildMappers();
 
-        // Шаг 2: Филиалы → Компания "Factor" + офисы
-        if ($this->shouldRun('filials', $only)) {
-            $this->output?->section('Migrating filials...');
-            $migrator = new FilialMigrator($this->filialMapper, $this->output);
-            $this->results['filials'] = $migrator->migrate();
-        }
-
-        // Шаг 3: Пользователи → users + employees + роли
+        // Шаг 2: Пользователи → users + employees + роли
         if ($this->shouldRun('users', $only)) {
             $this->output?->section('Migrating users...');
-            $migrator = new UserMigrator($this->userMapper, $this->filialMapper, $this->output);
+            $migrator = new UserMigrator($this->userMapper, $this->output);
             $this->results['users'] = $migrator->migrate();
         }
 
@@ -111,12 +105,19 @@ class DataMigrationService
             $this->results['contacts'] = $contactMigrator->getStats();
         }
 
-        // Шаг 5: Отчёт о немаппящихся полях
+        // Шаг 4: Отчёт о немаппящихся полях
         $this->output?->section('Generating unmapped fields report...');
         $report = new UnmappedFieldsReport();
         $reportPath = $report->generate();
         $this->output?->info("Unmapped fields report: {$reportPath}");
         $this->results['unmapped_report'] = $reportPath;
+
+        // Шаг 5: Сидеры — компания FAKTOR + офисы + админ
+        $this->output?->section('Running seeders (CompanySeeder, AdminUserSeeder)...');
+        Artisan::call('db:seed', ['--class' => CompanySeeder::class, '--force' => true]);
+        $this->output?->info('CompanySeeder done.');
+        Artisan::call('db:seed', ['--class' => AdminUserSeeder::class, '--force' => true]);
+        $this->output?->info('AdminUserSeeder done.');
 
         $duration = round(microtime(true) - $startTime, 2);
         $this->results['duration_seconds'] = $duration;

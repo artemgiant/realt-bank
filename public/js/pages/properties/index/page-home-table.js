@@ -38,6 +38,12 @@ $(document).ready(function () {
     // ========== Инициализация DataTables ==========
     var settings = Config.getBaseSettings();
 
+    // Восстановление страницы пагинации из URL
+    var urlPage = new URLSearchParams(window.location.search).get('page');
+    if (urlPage && parseInt(urlPage) > 0) {
+        settings.displayStart = parseInt(urlPage) * settings.pageLength;
+    }
+
     // AJAX конфигурация
     settings.ajax = {
         url: Config.ajaxUrl,
@@ -64,6 +70,19 @@ $(document).ready(function () {
 
         // Синхронизируем фильтры в URL
         Filters.syncToUrl();
+
+        // Сохраняем текущую страницу в URL
+        var pageInfo = table.page.info();
+        var currentPage = pageInfo.page;
+        var urlParams = new URLSearchParams(window.location.search);
+        if (currentPage > 0) {
+            urlParams.set('page', currentPage);
+        } else {
+            urlParams.delete('page');
+        }
+        var qs = urlParams.toString();
+        var newUrl = window.location.pathname + (qs ? '?' + qs : '');
+        history.replaceState(null, '', newUrl);
 
         // Инициализация FancyBox для фото в таблице
         if (typeof Fancybox !== 'undefined') {
