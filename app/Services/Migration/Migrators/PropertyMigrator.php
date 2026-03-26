@@ -113,13 +113,22 @@ class PropertyMigrator
     ];
 
     /**
-     * Маппинг type_sale → contact_type_id в dictionaries.
-     * Определяет тип контакта продавца на объекте.
+     * Маппинг type_sale → название в dictionaries (type=contact_type).
+     *
+     * Старая база:
+     *   0 = (пусто)
+     *   1 = Эксклюзив/Собственник
+     *   2 = Собственник/Представитель (Без комиссии)
+     *   3 = Посредник
      */
-    protected const TYPE_SALE_TO_CONTACT_TYPE = [
-        1 => 202, // Риелтор → "Агент (50/50)"
-        2 => 195, // Собственник → "Эксклюзив / Владелец"
+    protected const TYPE_SALE_TO_CONTACT_TYPE_NAME = [
+        1 => 'Эксклюзив / Владелец',
+        2 => 'Владелец  /  Представитель (Без комиссии )',
+        3 => 'Агент (50/50)',
     ];
+
+    /** Кеш: название contact_type → ID */
+    protected ?array $contactTypeCache = null;
 
     public function __construct(
         LocationMapper $locationMapper,
@@ -141,6 +150,26 @@ class PropertyMigrator
         $this->output = $output;
         $this->chunkSize = $chunkSize;
         $this->limit = $limit;
+    }
+
+    /**
+     * Резолв contact_type_id по type_sale через lookup в dictionaries.
+     */
+    protected function resolveContactTypeId(?int $typeSale): ?int
+    {
+        if (!$typeSale || !isset(self::TYPE_SALE_TO_CONTACT_TYPE_NAME[$typeSale])) {
+            return null;
+        }
+
+        if ($this->contactTypeCache === null) {
+            $this->contactTypeCache = Dictionary::where('type', Dictionary::TYPE_CONTACT_TYPE)
+                ->pluck('id', 'name')
+                ->toArray();
+        }
+
+        $name = self::TYPE_SALE_TO_CONTACT_TYPE_NAME[$typeSale];
+
+        return $this->contactTypeCache[$name] ?? null;
     }
 
     public function getPropertyMap(): array
@@ -309,7 +338,7 @@ class PropertyMigrator
         $agentNotes = !empty($data->notes) ? $data->notes : null;
 
         // --- contact_type_id из type_sale ---
-        $contactTypeId = self::TYPE_SALE_TO_CONTACT_TYPE[$obj->type_sale ?? 0] ?? null;
+        $contactTypeId = $this->resolveContactTypeId($obj->type_sale ?? null);
 
         // --- Notes (поля без маппинга) ---
         $notes = $this->buildNotes($obj);
