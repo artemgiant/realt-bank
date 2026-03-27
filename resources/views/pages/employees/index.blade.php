@@ -30,6 +30,11 @@
 @endpush
 
 @push('scripts')
+    <script>
+        window.canEditEmployees = @json(auth()->user()->can('employees.edit'));
+        window.canDeleteEmployees = @json(auth()->user()->can('employees.delete'));
+    </script>
+
     {{-- Shared URL filter sync utility --}}
     <script src="{{ versioned_asset('js/lib/url-filter-sync.js') }}"></script>
 

@@ -86,6 +86,11 @@
 
 
 @push('scripts')
+    <script>
+        window.canEditProperties = @json(auth()->user()->can('properties.edit'));
+        window.canDeleteProperties = @json(auth()->user()->can('properties.delete'));
+    </script>
+
     {{-- Модули таблицы (порядок важен!) --}}
     <script src="{{ versioned_asset('js/pages/properties/index/table-renderers.js') }}"></script>
     <script src="{{ versioned_asset('js/pages/properties/index/table-config.js') }}"></script>

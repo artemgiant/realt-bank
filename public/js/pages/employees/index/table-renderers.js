@@ -172,25 +172,35 @@ window.EmployeeRenderers = {
      * Рендер действий (меню)
      */
     actions: function(data, type, row) {
-        return `
-            <div class="tbody-wrapper block-actions">
-                <div class="block-actions-wrapper">
-                    <div class="menu-burger">
-                        <div class="dropdown">
-                            <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <picture>
-                                    <source srcset="/img/icon/burger-blue.svg" type="image/webp">
-                                    <img src="/img/icon/burger-blue.svg" alt="">
-                                </picture>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item btn-edit" href="#" data-employee-id="${row.id}">Редактировать</a></li>
-                                <li><a class="dropdown-item btn-delete text-danger" href="#" data-id="${row.id}">Удалить</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
+        var canEdit = window.canEditEmployees || false;
+        var canDelete = window.canDeleteEmployees || false;
+
+        if (!canEdit && !canDelete) {
+            return '<div class="tbody-wrapper block-actions"></div>';
+        }
+
+        var menuItems = '';
+        if (canEdit) {
+            menuItems += '<li><a class="dropdown-item btn-edit" href="#" data-employee-id="' + row.id + '">Редактировать</a></li>';
+        }
+        if (canDelete) {
+            menuItems += '<li><a class="dropdown-item btn-delete text-danger" href="#" data-id="' + row.id + '">Удалить</a></li>';
+        }
+
+        return '<div class="tbody-wrapper block-actions">' +
+            '<div class="block-actions-wrapper">' +
+            '<div class="menu-burger">' +
+            '<div class="dropdown">' +
+            '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+            '<picture>' +
+            '<source srcset="/img/icon/burger-blue.svg" type="image/webp">' +
+            '<img src="/img/icon/burger-blue.svg" alt="">' +
+            '</picture>' +
+            '</button>' +
+            '<ul class="dropdown-menu">' + menuItems + '</ul>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
     }
 };

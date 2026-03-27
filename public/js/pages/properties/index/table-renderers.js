@@ -206,43 +206,56 @@ window.PropertyRenderers = {
             '</div>';
     },
 
-    // Действия (пустая ячейка)
+    // Действия
     actions: function (data, type, row) {
-        return '<div class="tbody-wrapper block-actions">\n' +
-            '                        <div class="block-actions-wrapper">\n' +
-            '                           <div class="menu-burger">\n' +
-            '                              <div class="dropdown">\n' +
-            '                                 <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">\n' +
-            '                                     <img src="./img/icon/burger-blue.svg" alt="">\n' +
-            '                                 </button>\n' +
-            '                                 <ul class="dropdown-menu" style="">\n' +
-            '                                    <li><a class="dropdown-item" href="/properties/' + row.id + '/edit">Редактировать</a></li>\n' +
-            '                                    <li><a class="dropdown-item text-danger btn-delete-property" href="#"' +
-            ' data-id="' + row.id + '"' +
-            ' data-price="' + (row.price || '') + '"' +
-            ' data-photo="' + (row.photo && row.photo.main ? row.photo.main : '') + '"' +
-            ' data-deal-type="' + (row.deal_type || '') + '"' +
-            ' data-property-type="' + (row.property_type || '') + '"' +
-            ' data-address="' + (row.location && row.location.street ? row.location.street : '') + '"' +
-            '>Удалить</a></li>\n' +
-            '                                 </ul>\n' +
-            '                              </div>\n' +
-            '                           </div>\n' +
-            '                           <div class="menu-info">\n' +
-            '                              <div class="dropdown">\n' +
-            '                                 <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">\n' +
-            '                                     <img src="./img/icon/copylinked.svg" alt="">\n' +
-            '                                 </button>\n' +
-            '                                 <ul class="dropdown-menu">\n' +
-            (row.youtube_url ? '                                    <li><a class="dropdown-item" href="' + row.youtube_url + '" target="_blank"><span>Видео Youtube</span></a></li>\n' : '') +
-            (row.tiktok_url ? '                                    <li><a class="dropdown-item" href="' + row.tiktok_url + '" target="_blank"><span>Видео TikTok</span></a></li>\n' : '') +
-            '                                 </ul>\n' +
-            '                              </div>\n' +
-            '                           </div>\n' +
-            '                        </div>\n' +
-            '                        <button type="button" class="details-control">\n' +
-            '                            <img src="./img/icon/plus.svg" alt="">\n' +
-            '                        </button>\n' +
-            '                    </div>';
+        var canEdit = window.canEditProperties || false;
+        var canDelete = window.canDeleteProperties || false;
+
+        var menuItems = '';
+        if (canEdit) {
+            menuItems += '<li><a class="dropdown-item" href="/properties/' + row.id + '/edit">Редактировать</a></li>';
+        }
+        if (canDelete) {
+            menuItems += '<li><a class="dropdown-item text-danger btn-delete-property" href="#"' +
+                ' data-id="' + row.id + '"' +
+                ' data-price="' + (row.price || '') + '"' +
+                ' data-photo="' + (row.photo && row.photo.main ? row.photo.main : '') + '"' +
+                ' data-deal-type="' + (row.deal_type || '') + '"' +
+                ' data-property-type="' + (row.property_type || '') + '"' +
+                ' data-address="' + (row.location && row.location.street ? row.location.street : '') + '"' +
+                '>Удалить</a></li>';
+        }
+
+        var burgerMenu = '';
+        if (menuItems) {
+            burgerMenu = '<div class="menu-burger">' +
+                '<div class="dropdown">' +
+                '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                '<img src="./img/icon/burger-blue.svg" alt="">' +
+                '</button>' +
+                '<ul class="dropdown-menu">' + menuItems + '</ul>' +
+                '</div>' +
+                '</div>';
+        }
+
+        return '<div class="tbody-wrapper block-actions">' +
+            '<div class="block-actions-wrapper">' +
+            burgerMenu +
+            '<div class="menu-info">' +
+            '<div class="dropdown">' +
+            '<button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+            '<img src="./img/icon/copylinked.svg" alt="">' +
+            '</button>' +
+            '<ul class="dropdown-menu">' +
+            (row.youtube_url ? '<li><a class="dropdown-item" href="' + row.youtube_url + '" target="_blank"><span>Видео Youtube</span></a></li>' : '') +
+            (row.tiktok_url ? '<li><a class="dropdown-item" href="' + row.tiktok_url + '" target="_blank"><span>Видео TikTok</span></a></li>' : '') +
+            '</ul>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<button type="button" class="details-control">' +
+            '<img src="./img/icon/plus.svg" alt="">' +
+            '</button>' +
+            '</div>';
     }
 };
