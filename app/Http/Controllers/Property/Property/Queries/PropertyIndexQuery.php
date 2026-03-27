@@ -157,9 +157,8 @@ class PropertyIndexQuery
      * Ограничение видимости объектов по правам текущего пользователя.
      *
      * Иерархия (от широкого к узкому):
-     * - view_all     → все объекты
-     * - view_company → объекты сотрудников своей компании
-     * - view_office  → объекты сотрудников своего офиса
+     * - view_company → объекты сотрудников своей компании + свои
+     * - view_office  → объекты сотрудников своего офиса + свои
      * - (иначе)      → только свои объекты (user_id)
      */
     private function applyAccessScope(): void
@@ -168,11 +167,6 @@ class PropertyIndexQuery
 
         if (!$user) {
             $this->query->whereRaw('0 = 1');
-            return;
-        }
-
-        // view_all — видит всё, ограничений нет
-        if ($user->can('properties.view_all')) {
             return;
         }
 

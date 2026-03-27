@@ -131,9 +131,12 @@ class PropertyController extends Controller
 
     /**
      * Форма редактирования объекта. Подгружает связи + справочники из PropertyFormData.
+     * Доступ: право properties.edit ИЛИ свой объект.
      */
     public function edit(Property $property): View
     {
+        $this->authorizePropertyAction($property, 'properties.edit');
+
         $property->load([
             'contacts.phones', 'contacts.roles', 'translations', 'features',
             'photos', 'documents', 'employee.company',
@@ -154,9 +157,12 @@ class PropertyController extends Controller
 
     /**
      * Обновление объекта. Валидация → UpdatePropertyRequest, логика → UpdateProperty.
+     * Доступ: право properties.edit ИЛИ свой объект.
      */
     public function update(UpdatePropertyRequest $request, Property $property, UpdateProperty $action): RedirectResponse
     {
+        $this->authorizePropertyAction($property, 'properties.edit');
+
         try {
             $action->execute($property, $request->validated(), $request);
 
@@ -179,9 +185,12 @@ class PropertyController extends Controller
 
     /**
      * Удаление объекта (soft delete).
+     * Доступ: право properties.delete ИЛИ свой объект.
      */
     public function destroy(Property $property): RedirectResponse
     {
+        $this->authorizePropertyAction($property, 'properties.delete');
+
         $property->delete();
 
         return redirect()
@@ -194,6 +203,7 @@ class PropertyController extends Controller
      */
     public function deletePhoto(Property $property, PropertyPhoto $photo): JsonResponse
     {
+        $this->authorizePropertyAction($property, 'properties.edit');
         if ($photo->property_id !== $property->id) {
             return response()->json(['success' => false, 'message' => 'Фото не принадлежит этому объекту'], 403);
         }
@@ -281,6 +291,8 @@ class PropertyController extends Controller
      */
     public function refreshUpdatedAt(Property $property): JsonResponse
     {
+        $this->authorizePropertyAction($property, 'properties.edit');
+
         $property->touch();
 
         return response()->json([
@@ -290,10 +302,55 @@ class PropertyController extends Controller
     }
 
     /**
+     * Проверка доступа к объекту с учётом scope (свои / офис / компания).
+     *
+     * Иерархия: свой объект → scope_company → scope_office → базовое право (все).
+     * Свой объект (user_id совпадает) — всегда разрешено.
+     */
+    private function authorizePropertyAction(Property $property, string $permission): void
+    {
+        $user = auth()->user();
+
+        // Свой объект — всегда можно
+        if ($property->user_id === $user->id) {
+            return;
+        }
+
+        // Базовое право без scope (например properties.edit) — доступ ко всем
+        if ($user->can($permission)) {
+            return;
+        }
+
+        // Извлекаем action (edit/delete) из permission name
+        $action = str_replace('properties.', '', $permission);
+
+        $employee = $user->employee;
+
+        // Scope: компания
+        if ($user->can("properties.{$action}_company") && $employee && $employee->company_id) {
+            $propertyOwner = Employee::where('user_id', $property->user_id)->first();
+            if ($propertyOwner && $propertyOwner->company_id === $employee->company_id) {
+                return;
+            }
+        }
+
+        // Scope: офис
+        if ($user->can("properties.{$action}_office") && $employee && $employee->office_id) {
+            $propertyOwner = Employee::where('user_id', $property->user_id)->first();
+            if ($propertyOwner && $propertyOwner->office_id === $employee->office_id) {
+                return;
+            }
+        }
+
+        abort(403, 'У вас нет прав для этого действия.');
+    }
+
+    /**
      * AJAX: Изменить порядок фотографий объекта (drag & drop).
      */
     public function reorderPhotos(Request $request, Property $property): JsonResponse
     {
+        $this->authorizePropertyAction($property, 'properties.edit');
         $photoIds = $request->input('photo_ids', []);
 
         if (empty($photoIds)) {

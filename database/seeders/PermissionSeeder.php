@@ -25,10 +25,15 @@ class PermissionSeeder extends Seeder
                 'properties.create' => 'Создание объектов',
                 'properties.edit' => 'Редактирование объектов',
                 'properties.delete' => 'Удаление объектов',
-                'properties.view_office' => 'Просмотр объектов своего офиса',
-                'properties.view_company' => 'Просмотр объектов своей компании',
-                'properties.view_all' => 'Просмотр чужих объектов',
+                'properties.view_office' => 'Просмотр объектов офиса',
+                'properties.view_company' => 'Просмотр объектов компании',
+                'properties.edit_office' => 'Редактирование объектов офиса',
+                'properties.edit_company' => 'Редактирование объектов компании',
+                'properties.delete_office' => 'Удаление объектов офиса',
+                'properties.delete_company' => 'Удаление объектов компании',
                 'properties.reassign' => 'Смена агента у объекта',
+                'properties.reassign_office' => 'Смена агента (офис)',
+                'properties.reassign_company' => 'Смена агента (компания)',
             ],
 
             // ===== КОМПАНИИ (companies) =====
@@ -105,7 +110,7 @@ class PermissionSeeder extends Seeder
         // System Admin — технические настройки, read-only для бизнес-данных
         $systemAdmin = Role::findByName('system_admin', 'web');
         $systemAdmin->syncPermissions([
-            'properties.view', 'properties.view_all',
+            'properties.view', 'properties.view_company',
             'companies.view',
             'employees.view',
             'complexes.view',
@@ -123,7 +128,7 @@ class PermissionSeeder extends Seeder
         $agencyDirector = Role::findByName('agency_director', 'web');
         $agencyDirector->syncPermissions([
             'properties.view', 'properties.create', 'properties.edit', 'properties.delete',
-            'properties.view_office', 'properties.view_company', 'properties.view_all', 'properties.reassign',
+            'properties.view_office', 'properties.view_company', 'properties.reassign',
             'companies.view', 'companies.create', 'companies.edit', 'companies.delete',
             'employees.view', 'employees.create', 'employees.edit', 'employees.delete',
             'complexes.view', 'complexes.create', 'complexes.edit', 'complexes.delete',
@@ -136,7 +141,7 @@ class PermissionSeeder extends Seeder
         $agencyAdmin = Role::findByName('agency_admin', 'web');
         $agencyAdmin->syncPermissions([
             'properties.view', 'properties.create', 'properties.edit', 'properties.delete',
-            'properties.view_office', 'properties.view_company', 'properties.view_all', 'properties.reassign',
+            'properties.view_office', 'properties.view_company', 'properties.reassign',
             'companies.view', 'companies.create', 'companies.edit', 'companies.delete',
             'employees.view', 'employees.create', 'employees.edit', 'employees.delete',
             'complexes.view', 'complexes.create', 'complexes.edit', 'complexes.delete',
@@ -148,7 +153,7 @@ class PermissionSeeder extends Seeder
         $officeDirector = Role::findByName('office_director', 'web');
         $officeDirector->syncPermissions([
             'properties.view', 'properties.create', 'properties.edit', 'properties.delete',
-            'properties.view_office', 'properties.view_company', 'properties.view_all', 'properties.reassign',
+            'properties.view_office', 'properties.view_company', 'properties.reassign',
             'companies.view',
             'employees.view', 'employees.create', 'employees.edit', 'employees.delete',
             'complexes.view',
@@ -160,7 +165,7 @@ class PermissionSeeder extends Seeder
         $officeAdmin = Role::findByName('office_admin', 'web');
         $officeAdmin->syncPermissions([
             'properties.view', 'properties.create', 'properties.edit',
-            'properties.view_office', 'properties.view_company', 'properties.view_all',
+            'properties.view_office', 'properties.view_company',
             'companies.view',
             'employees.view',
             'complexes.view',
@@ -171,7 +176,7 @@ class PermissionSeeder extends Seeder
         $teamManager = Role::findByName('team_manager', 'web');
         $teamManager->syncPermissions([
             'properties.view', 'properties.create', 'properties.edit',
-            'properties.view_office', 'properties.view_all', 'properties.reassign',
+            'properties.view_office', 'properties.view_company', 'properties.reassign',
             'companies.view',
             'employees.view',
             'complexes.view',

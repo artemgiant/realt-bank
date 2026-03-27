@@ -87,8 +87,20 @@
 
 @push('scripts')
     <script>
-        window.canEditProperties = @json(auth()->user()->can('properties.edit'));
-        window.canDeleteProperties = @json(auth()->user()->can('properties.delete'));
+        window.currentUserId = @json(auth()->id());
+        window.currentCompanyId = @json(auth()->user()->employee?->company_id);
+        window.currentOfficeId = @json(auth()->user()->employee?->office_id);
+        // Scope уровни: 'own' | 'office' | 'company' | 'all'
+        window.editScope = @json(
+            auth()->user()->can('properties.edit') ? 'all' :
+            (auth()->user()->can('properties.edit_company') ? 'company' :
+            (auth()->user()->can('properties.edit_office') ? 'office' : 'own'))
+        );
+        window.deleteScope = @json(
+            auth()->user()->can('properties.delete') ? 'all' :
+            (auth()->user()->can('properties.delete_company') ? 'company' :
+            (auth()->user()->can('properties.delete_office') ? 'office' : 'own'))
+        );
     </script>
 
     {{-- Модули таблицы (порядок важен!) --}}

@@ -35,6 +35,7 @@
         window.canDeleteEmployees = @json(auth()->user()->can('employees.delete'));
     </script>
 
+
     {{-- Shared URL filter sync utility --}}
     <script src="{{ versioned_asset('js/lib/url-filter-sync.js') }}"></script>
 

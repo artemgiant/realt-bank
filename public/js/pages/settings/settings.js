@@ -20,6 +20,14 @@ function showSection(name) {
     if (event && event.currentTarget) {
         event.currentTarget.classList.add('active');
     }
+
+    // Update URL hash (preserve tab if on permissions)
+    var currentTab = new URLSearchParams(window.location.hash.substring(1)).get('tab');
+    var hash = 'section=' + name;
+    if (name === 'permissions' && currentTab) {
+        hash += '&tab=' + currentTab;
+    }
+    history.replaceState(null, '', '#' + hash);
 }
 
 // ========== DRAWER: ROLE ==========
@@ -523,9 +531,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelectorAll('.perm-tab-content').forEach(content => content.classList.remove('active'));
                 const targetContent = document.getElementById('perm-' + permTab);
                 if (targetContent) targetContent.classList.add('active');
+
+                // Update URL hash with tab
+                var params = new URLSearchParams(window.location.hash.substring(1));
+                params.set('tab', permTab);
+                if (!params.has('section')) params.set('section', 'permissions');
+                history.replaceState(null, '', '#' + params.toString());
             }
         });
     });
+
+    // ===== RESTORE STATE FROM URL HASH =====
+    (function restoreFromHash() {
+        var params = new URLSearchParams(window.location.hash.substring(1));
+        var section = params.get('section');
+        var tab = params.get('tab');
+
+        if (section) {
+            document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+            var target = document.getElementById('section-' + section);
+            if (target) target.classList.add('active');
+
+            document.querySelectorAll('.settings-nav .nav-item').forEach(n => {
+                n.classList.remove('active');
+                if (n.getAttribute('onclick') && n.getAttribute('onclick').indexOf("'" + section + "'") !== -1) {
+                    n.classList.add('active');
+                }
+            });
+        }
+
+        if (tab) {
+            var tabBtn = document.querySelector('.content-tab[data-perm-tab="' + tab + '"]');
+            if (tabBtn) {
+                tabBtn.parentElement.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
+                tabBtn.classList.add('active');
+
+                document.querySelectorAll('.perm-tab-content').forEach(c => c.classList.remove('active'));
+                var targetContent = document.getElementById('perm-' + tab);
+                if (targetContent) targetContent.classList.add('active');
+            }
+        }
+    })();
 
     // ===== TREE EXPAND/COLLAPSE =====
     document.querySelectorAll('.tree-item.level-1').forEach(item => {
@@ -565,44 +611,80 @@ let originalPermissions = {};
 let currentPermissions = {};
 
 function initPermissionsMatrix() {
-    const checkboxes = document.querySelectorAll('.perm-check');
-    if (checkboxes.length === 0) return;
+    var checkboxes = document.querySelectorAll('.perm-check');
+    var selects = document.querySelectorAll('.perm-scope-select');
+    if (checkboxes.length === 0 && selects.length === 0) return;
 
-    // Store original state
-    checkboxes.forEach(cb => {
-        const key = cb.dataset.permission + '_' + cb.dataset.role;
+    // Store original state — checkboxes
+    checkboxes.forEach(function(cb) {
+        var key = cb.dataset.permission + '_' + cb.dataset.role;
         originalPermissions[key] = cb.checked;
         currentPermissions[key] = cb.checked;
     });
 
-    // Add change listeners
-    checkboxes.forEach(cb => {
+    // Store original state — scope dropdowns
+    selects.forEach(function(sel) {
+        var roleId = sel.dataset.role;
+        var basePerm = sel.dataset.permission;
+        var officePerm = sel.dataset.permOffice;
+        var companyPerm = sel.dataset.permCompany;
+        var value = sel.value;
+
+        // Store base + office + company as booleans
+        originalPermissions[basePerm + '_' + roleId] = (value !== 'none');
+        originalPermissions[officePerm + '_' + roleId] = (value === 'office' || value === 'company');
+        originalPermissions[companyPerm + '_' + roleId] = (value === 'company');
+
+        currentPermissions[basePerm + '_' + roleId] = originalPermissions[basePerm + '_' + roleId];
+        currentPermissions[officePerm + '_' + roleId] = originalPermissions[officePerm + '_' + roleId];
+        currentPermissions[companyPerm + '_' + roleId] = originalPermissions[companyPerm + '_' + roleId];
+    });
+
+    // Checkbox change listeners
+    checkboxes.forEach(function(cb) {
         cb.addEventListener('change', function() {
-            const key = this.dataset.permission + '_' + this.dataset.role;
+            var key = this.dataset.permission + '_' + this.dataset.role;
             currentPermissions[key] = this.checked;
             checkPermissionsChanged();
         });
     });
 
+    // Dropdown change listeners
+    selects.forEach(function(sel) {
+        sel.addEventListener('change', function() {
+            var roleId = this.dataset.role;
+            var basePerm = this.dataset.permission;
+            var officePerm = this.dataset.permOffice;
+            var companyPerm = this.dataset.permCompany;
+            var value = this.value;
+
+            currentPermissions[basePerm + '_' + roleId] = (value !== 'none');
+            currentPermissions[officePerm + '_' + roleId] = (value === 'office' || value === 'company');
+            currentPermissions[companyPerm + '_' + roleId] = (value === 'company');
+
+            checkPermissionsChanged();
+        });
+    });
+
     // Save button
-    const saveBtn = document.getElementById('permSaveBtn');
+    var saveBtn = document.getElementById('permSaveBtn');
     if (saveBtn) {
         saveBtn.addEventListener('click', savePermissions);
     }
 
     // Reset button
-    const resetBtn = document.getElementById('permResetBtn');
+    var resetBtn = document.getElementById('permResetBtn');
     if (resetBtn) {
         resetBtn.addEventListener('click', resetPermissions);
     }
 }
 
 function checkPermissionsChanged() {
-    const saveBtn = document.getElementById('permSaveBtn');
-    const resetBtn = document.getElementById('permResetBtn');
+    var saveBtn = document.getElementById('permSaveBtn');
+    var resetBtn = document.getElementById('permResetBtn');
 
     permissionsChanged = false;
-    for (const key in currentPermissions) {
+    for (var key in currentPermissions) {
         if (currentPermissions[key] !== originalPermissions[key]) {
             permissionsChanged = true;
             break;
@@ -614,26 +696,47 @@ function checkPermissionsChanged() {
 }
 
 function resetPermissions() {
-    const checkboxes = document.querySelectorAll('.perm-check');
-    checkboxes.forEach(cb => {
-        const key = cb.dataset.permission + '_' + cb.dataset.role;
+    // Reset checkboxes
+    document.querySelectorAll('.perm-check').forEach(function(cb) {
+        var key = cb.dataset.permission + '_' + cb.dataset.role;
         cb.checked = originalPermissions[key];
         currentPermissions[key] = originalPermissions[key];
     });
+
+    // Reset dropdowns
+    document.querySelectorAll('.perm-scope-select').forEach(function(sel) {
+        var roleId = sel.dataset.role;
+        var basePerm = sel.dataset.permission;
+        var officePerm = sel.dataset.permOffice;
+        var companyPerm = sel.dataset.permCompany;
+
+        var hasCompany = originalPermissions[companyPerm + '_' + roleId];
+        var hasOffice = originalPermissions[officePerm + '_' + roleId];
+        var hasBase = originalPermissions[basePerm + '_' + roleId];
+
+        if (hasCompany) sel.value = 'company';
+        else if (hasOffice) sel.value = 'office';
+        else if (hasBase) sel.value = 'own';
+        else sel.value = 'none';
+
+        currentPermissions[basePerm + '_' + roleId] = hasBase;
+        currentPermissions[officePerm + '_' + roleId] = hasOffice;
+        currentPermissions[companyPerm + '_' + roleId] = hasCompany;
+    });
+
     checkPermissionsChanged();
 }
 
 function savePermissions() {
-    const saveBtn = document.getElementById('permSaveBtn');
-    const indicator = document.getElementById('permSaveIndicator');
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    var saveBtn = document.getElementById('permSaveBtn');
+    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     // Build matrix object
-    const matrix = {};
-    for (const key in currentPermissions) {
-        const lastUnderscore = key.lastIndexOf('_');
-        const permission = key.substring(0, lastUnderscore);
-        const roleId = key.substring(lastUnderscore + 1);
+    var matrix = {};
+    for (var key in currentPermissions) {
+        var lastUnderscore = key.lastIndexOf('_');
+        var permission = key.substring(0, lastUnderscore);
+        var roleId = key.substring(lastUnderscore + 1);
         if (!matrix[permission]) matrix[permission] = {};
         matrix[permission][roleId] = currentPermissions[key];
     }

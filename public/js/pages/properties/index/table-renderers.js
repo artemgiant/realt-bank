@@ -208,8 +208,21 @@ window.PropertyRenderers = {
 
     // Действия
     actions: function (data, type, row) {
-        var canEdit = window.canEditProperties || false;
-        var canDelete = window.canDeleteProperties || false;
+        var isOwner = row.user_id === window.currentUserId;
+        var sameCompany = window.currentCompanyId && row.owner_company_id === window.currentCompanyId;
+        var sameOffice = window.currentOfficeId && row.owner_office_id === window.currentOfficeId;
+
+        var editScope = window.editScope || 'own';
+        var canEdit = isOwner
+            || editScope === 'all'
+            || (editScope === 'company' && sameCompany)
+            || (editScope === 'office' && sameOffice);
+
+        var deleteScope = window.deleteScope || 'own';
+        var canDelete = isOwner
+            || deleteScope === 'all'
+            || (deleteScope === 'company' && sameCompany)
+            || (deleteScope === 'office' && sameOffice);
 
         var menuItems = '';
         if (canEdit) {

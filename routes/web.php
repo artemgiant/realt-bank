@@ -46,22 +46,19 @@ Route::middleware('auth')->group(function () {
         Route::post('/properties', [PropertyController::class, 'store'])->name('properties.store');
     });
 
-    // Edit routes (properties.edit)
-    Route::middleware('permission:properties.edit')->group(function () {
-        Route::get('/properties/{property}/edit', [PropertyController::class, 'edit'])->name('properties.edit');
-        Route::put('/properties/{property}', [PropertyController::class, 'update'])->name('properties.update');
-        Route::patch('/properties/{property}', [PropertyController::class, 'update']);
-        Route::delete('/properties/{property}/photos/{photo}', [PropertyController::class, 'deletePhoto'])
-            ->name('properties.photos.delete');
-        Route::post('/properties/{property}/photos/reorder', [PropertyController::class, 'reorderPhotos'])
-            ->name('properties.photos.reorder');
-        Route::post('/properties/{property}/refresh-updated', [PropertyController::class, 'refreshUpdatedAt'])
-            ->name('properties.refresh-updated');
-    });
+    // Edit routes — доступ: право properties.edit ИЛИ свой объект (проверка в контроллере)
+    Route::get('/properties/{property}/edit', [PropertyController::class, 'edit'])->name('properties.edit');
+    Route::put('/properties/{property}', [PropertyController::class, 'update'])->name('properties.update');
+    Route::patch('/properties/{property}', [PropertyController::class, 'update']);
+    Route::delete('/properties/{property}/photos/{photo}', [PropertyController::class, 'deletePhoto'])
+        ->name('properties.photos.delete');
+    Route::post('/properties/{property}/photos/reorder', [PropertyController::class, 'reorderPhotos'])
+        ->name('properties.photos.reorder');
+    Route::post('/properties/{property}/refresh-updated', [PropertyController::class, 'refreshUpdatedAt'])
+        ->name('properties.refresh-updated');
 
-    // Delete routes (properties.delete)
+    // Delete routes — доступ: право properties.delete ИЛИ свой объект (проверка в контроллере)
     Route::delete('/properties/{property}', [PropertyController::class, 'destroy'])
-        ->middleware('permission:properties.delete')
         ->name('properties.destroy');
 
     // View routes (properties.view)

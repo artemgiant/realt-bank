@@ -23,6 +23,9 @@ class PropertyTablePresenter
     {
         return [
             'id' => $property->id,
+            'user_id' => $property->user_id,
+            'owner_company_id' => $property->employee?->company_id,
+            'owner_office_id' => $property->employee?->office_id ?? $property->user?->employee?->office_id,
             'checkbox' => $property->id,
             'deal_type' => $property->dealType?->name ?? '-',
             'location' => $this->location($property),

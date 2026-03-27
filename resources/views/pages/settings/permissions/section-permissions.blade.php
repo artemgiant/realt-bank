@@ -37,6 +37,34 @@
                 'developers' => 'Девелоперы',
                 'settings' => 'Настройки',
             ];
+
+            // Scoped permissions: base action → [office_perm, company_perm]
+            // Dropdown вместо checkbox. Sub-permissions скрыты из списка.
+            $scopedPermissions = [
+                'properties.view' => [
+                    'label' => 'Просмотр объектов',
+                    'office' => 'properties.view_office',
+                    'company' => 'properties.view_company',
+                ],
+                'properties.edit' => [
+                    'label' => 'Редактирование объектов',
+                    'office' => 'properties.edit_office',
+                    'company' => 'properties.edit_company',
+                ],
+                'properties.delete' => [
+                    'label' => 'Удаление объектов',
+                    'office' => 'properties.delete_office',
+                    'company' => 'properties.delete_company',
+                ],
+                'properties.reassign' => [
+                    'label' => 'Смена агента у объекта',
+                    'office' => 'properties.reassign_office',
+                    'company' => 'properties.reassign_company',
+                ],
+            ];
+
+            // Все sub-permission имена для скрытия из общего списка
+            $hiddenPermissions = collect($scopedPermissions)->flatMap(fn($s) => [$s['office'], $s['company']])->toArray();
         @endphp
         @foreach($permissionGroups as $group => $perms)
             <button class="content-tab {{ $loop->first ? 'active' : '' }}" data-perm-tab="{{ $group }}">
@@ -46,15 +74,14 @@
     </div>
 
     @php
-        // Базовые CRUD суффиксы — всё остальное считается дополнительным
         $crudSuffixes = ['.view', '.create', '.edit', '.delete'];
     @endphp
 
     @foreach($permissionGroups as $group => $perms)
         @php
-            // Разделяем на базовые CRUD и дополнительные
-            $crudPerms = $perms->filter(fn($p) => collect($crudSuffixes)->contains(fn($s) => str_ends_with($p->name, $s)));
-            $extraPerms = $perms->filter(fn($p) => !collect($crudSuffixes)->contains(fn($s) => str_ends_with($p->name, $s)));
+            $visiblePerms = $perms->filter(fn($p) => !in_array($p->name, $hiddenPermissions));
+            $crudPerms = $visiblePerms->filter(fn($p) => collect($crudSuffixes)->contains(fn($s) => str_ends_with($p->name, $s)));
+            $extraPerms = $visiblePerms->filter(fn($p) => !collect($crudSuffixes)->contains(fn($s) => str_ends_with($p->name, $s)));
         @endphp
         <div class="card perm-tab-content {{ $loop->first ? 'active' : '' }}" id="perm-{{ $group }}">
             <div class="card-body" style="padding:0;overflow-x:auto;">
@@ -70,18 +97,7 @@
                     <tbody>
                     {{-- Базовые CRUD права --}}
                     @foreach($crudPerms as $permission)
-                        <tr>
-                            <td>{{ $permission->display_name ?? $permission->name }}</td>
-                            @foreach($roles as $role)
-                                <td>
-                                    <input type="checkbox"
-                                           class="perm-check"
-                                           data-permission="{{ $permission->name }}"
-                                           data-role="{{ $role->id }}"
-                                           {{ ($permissionsMatrix[$permission->name][$role->id] ?? false) ? 'checked' : '' }}>
-                                </td>
-                            @endforeach
-                        </tr>
+                        @include('pages.settings.permissions._permission-row', ['permission' => $permission, 'roles' => $roles])
                     @endforeach
 
                     {{-- Разделитель + дополнительные права --}}
@@ -90,18 +106,7 @@
                             <td colspan="{{ $roles->count() + 1 }}">Дополнительные права</td>
                         </tr>
                         @foreach($extraPerms as $permission)
-                            <tr>
-                                <td>{{ $permission->display_name ?? $permission->name }}</td>
-                                @foreach($roles as $role)
-                                    <td>
-                                        <input type="checkbox"
-                                               class="perm-check"
-                                               data-permission="{{ $permission->name }}"
-                                               data-role="{{ $role->id }}"
-                                               {{ ($permissionsMatrix[$permission->name][$role->id] ?? false) ? 'checked' : '' }}>
-                                    </td>
-                                @endforeach
-                            </tr>
+                            @include('pages.settings.permissions._permission-row', ['permission' => $permission, 'roles' => $roles])
                         @endforeach
                     @endif
                     </tbody>
