@@ -118,20 +118,23 @@ class PropertyTablePresenter
     }
 
     /**
-     * Форматирование этажа: "этаж/этажность" или просто "этаж".
+     * Форматирование этажа: "этаж/этажность", просто "этаж" или просто "этажность".
      */
     private function floor(Property $property): string
     {
-        if (!$property->floor) {
-            return '-';
+        if ($property->floor && $property->floors_total) {
+            return $property->floor . '/' . $property->floors_total;
         }
 
-        $floor = $property->floor;
+        if ($property->floor) {
+            return (string) $property->floor;
+        }
+
         if ($property->floors_total) {
-            $floor .= '/' . $property->floors_total;
+            return (string) $property->floors_total;
         }
 
-        return $floor;
+        return '-';
     }
 
     /**

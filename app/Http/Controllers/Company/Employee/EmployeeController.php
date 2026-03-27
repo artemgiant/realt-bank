@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use App\Helpers\PhoneFormatter;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Role;
 
 /**
  * Контроллер сотрудников — тонкий координатор.
@@ -109,6 +110,9 @@ class EmployeeController extends Controller
 
         $employee = Employee::create($validated);
 
+        // Синхронизация роли по должности
+        $this->syncRoleByPosition($user, $employee->position_id);
+
         return response()->json([
             'success'  => true,
             'message'  => 'Сотрудник создан',
@@ -198,6 +202,11 @@ class EmployeeController extends Controller
 
         $employee->update($validated);
 
+        // Синхронизация роли по должности
+        if ($employee->user && isset($validated['position_id'])) {
+            $this->syncRoleByPosition($employee->user, $validated['position_id']);
+        }
+
         return response()->json([
             'success'  => true,
             'message'  => 'Сотрудник обновлен',
@@ -236,6 +245,11 @@ class EmployeeController extends Controller
 
         $employee->update($validated);
 
+        // Синхронизация роли по должности
+        if ($employee->user && !empty($validated['position_id'])) {
+            $this->syncRoleByPosition($employee->user, $validated['position_id']);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Должность обновлена',
@@ -258,6 +272,38 @@ class EmployeeController extends Controller
             'success' => true,
             'message' => 'Офис обновлен',
         ]);
+    }
+
+    /**
+     * Маппинг slug должности → название роли Spatie.
+     */
+    private const POSITION_ROLE_MAP = [
+        'agent'                    => 'agent',
+        'menedzher-otdela'         => 'team_manager',
+        'administrator-ofisa'      => 'office_admin',
+        'rukovoditel-ofisa'        => 'office_director',
+        'administrator-agentstva'  => 'agency_admin',
+        'direktor-agentstva'       => 'agency_director',
+    ];
+
+    /**
+     * Синхронизация роли пользователя по должности сотрудника.
+     */
+    private function syncRoleByPosition(User $user, ?int $positionId): void
+    {
+        if (!$positionId) {
+            return;
+        }
+
+        $position = Dictionary::find($positionId);
+        if (!$position || !$position->slug) {
+            return;
+        }
+
+        $roleName = self::POSITION_ROLE_MAP[$position->slug] ?? null;
+        if ($roleName && Role::where('name', $roleName)->where('guard_name', 'web')->exists()) {
+            $user->syncRoles([$roleName]);
+        }
     }
 
     /**

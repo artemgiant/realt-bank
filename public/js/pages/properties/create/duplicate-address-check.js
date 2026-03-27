@@ -89,7 +89,7 @@
         var fields = getAddressFields();
         var hasApartment = isApartmentDealType();
 
-        if (!fields.street_id || !fields.building_number) {
+        if (!fields.street_id || !fields.building_number || !fields.deal_type_id) {
             hideWarning();
             lastCheckedKey = '';
             return;
@@ -109,12 +109,10 @@
         var params = new URLSearchParams({
             street_id: fields.street_id,
             building_number: fields.building_number,
+            deal_type_id: fields.deal_type_id,
         });
-        if (fields.deal_type_id) {
-            params.append('deal_type_id', fields.deal_type_id);
-        }
-        // Тип не выбран или тип с квартирой — отправляем номер квартиры
-        if ((!fields.deal_type_id || hasApartment) && fields.apartment_number) {
+        // Тип с квартирой — отправляем номер квартиры
+        if (hasApartment && fields.apartment_number) {
             params.append('apartment_number', fields.apartment_number);
         }
 

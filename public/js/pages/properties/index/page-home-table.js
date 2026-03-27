@@ -296,11 +296,7 @@ $(document).ready(function () {
     // Кнопка "Сбросить" в расширенном фильтре
     $('#reset-filters-btn').on('click', function (e) {
         e.preventDefault();
-        Filters.reset();
-        Tags.update();
-        // Убираем active класс со всех пунктов сортировки
-        $('.sort-option').removeClass('active');
-        table.ajax.reload();
+        window.location.href = '/properties';
     });
 
     // ========== Обработчик изменений фильтра локации ==========
