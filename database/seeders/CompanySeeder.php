@@ -13,12 +13,17 @@ class CompanySeeder extends Seeder
 {
     public function run(): void
     {
+        // Если компания с slug 'faktor' уже существует — не создаём
+        if (Company::where('slug', 'faktor')->exists()) {
+            return;
+        }
+
         // Компания FAKTOR
         $company = Company::updateOrCreate(
-            ['slug' => 'faktor-69c44c075dfac'],
+            ['slug' => 'faktor'],
             [
                 'name' => 'FAKTOR',
-                'slug' => 'faktor-69c44c075dfac',
+                'slug' => 'faktor',
                 'name_translations' => [
                     'en' => 'FAKTOR',
                     'ru' => 'FAKTOR',
