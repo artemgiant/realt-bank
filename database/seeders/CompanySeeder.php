@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Contact\Contact;
 use App\Models\Contact\ContactPhone;
+use App\Models\Employee\Employee;
 use App\Models\Reference\Company;
 use App\Models\Reference\CompanyOffice;
 use Illuminate\Database\Seeder;
@@ -64,7 +65,7 @@ class CompanySeeder extends Seeder
         ]);
 
         // Офис: FAKTOR Manhattan
-        CompanyOffice::updateOrCreate(
+        $office = CompanyOffice::updateOrCreate(
             ['company_id' => $company->id, 'name' => 'FAKTOR Manhattan'],
             [
                 'company_id' => $company->id,
@@ -86,5 +87,13 @@ class CompanySeeder extends Seeder
                 'sort_order' => 0,
             ]
         );
+
+        // Привязка всех сотрудников к компании и офису
+        Employee::whereNull('office_id')
+            ->orWhereNull('company_id')
+            ->update([
+                'company_id' => $company->id,
+                'office_id' => $office->id,
+            ]);
     }
 }
