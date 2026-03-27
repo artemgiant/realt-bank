@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Property\Property\Presenters;
 
+use App\Models\Employee\Employee;
 use App\Models\Property\Property;
 use App\Models\Reference\Currency;
 use Illuminate\Support\Collection;
@@ -21,6 +22,17 @@ class PropertyTablePresenter
      */
     public function toRow(Property $property, ?Currency $targetCurrency = null): array
     {
+        $isOwnScope = $this->isOwnScope($property);
+
+        // Если нет права view_open и объект не свой —
+        // принудительно считаем is_visible_to_agents = false
+        // (замочек закрыт, контакты клиента скрыты)
+        $isOwner = $property->user_id === auth()->id();
+        $visibleToAgents = (bool) $property->is_visible_to_agents;
+        if (!$isOwner && !auth()->user()?->can('properties.view_open')) {
+            $visibleToAgents = false;
+        }
+
         return [
             'id' => $property->id,
             'user_id' => $property->user_id,
@@ -28,7 +40,7 @@ class PropertyTablePresenter
             'owner_office_id' => $property->employee?->office_id ?? $property->user?->employee?->office_id,
             'checkbox' => $property->id,
             'deal_type' => $property->dealType?->name ?? '-',
-            'location' => $this->location($property),
+            'location' => $this->location($property, $visibleToAgents),
             'property_type' => $property->propertyType?->name ?? '-',
             'room_count' => $property->roomCount?->name ?? null,
             'wall_type' => $property->wallType?->name ?? null,
@@ -58,8 +70,9 @@ class PropertyTablePresenter
             'updated_at_formatted' => $property->updated_at->format('d.m.Y'),
             'updated_at' => $property->updated_at->toIso8601String(),
             // Block-info: contact vs agent visibility
-            'is_visible_to_agents' => (bool) $property->is_visible_to_agents,
-            'contact_for_display' => $this->contactForDisplay($property),
+            'is_visible_to_agents' => $visibleToAgents,
+            'is_own_scope' => $isOwnScope,
+            'contact_for_display' => $visibleToAgents || $isOwner ? $this->contactForDisplay($property) : null,
             'agent' => $this->agentForDisplay($property),
         ];
     }
@@ -73,15 +86,46 @@ class PropertyTablePresenter
     }
 
     /**
+     * Проверка — объект в scope текущего пользователя (свой/офис/компания)?
+     * Если нет (открытый чужой объект) — скрываем контакты владельцев.
+     */
+    private function isOwnScope(Property $property): bool
+    {
+        $user = auth()->user();
+        if (!$user) return false;
+
+        // Свой объект
+        if ($property->user_id === $user->id) return true;
+
+        $employee = $user->employee;
+        if (!$employee) return false;
+
+        $propertyOwner = Employee::where('user_id', $property->user_id)->first();
+        if (!$propertyOwner) return false;
+
+        // Та же компания
+        if ($user->can('properties.view_company') && $employee->company_id && $propertyOwner->company_id === $employee->company_id) {
+            return true;
+        }
+
+        // Тот же офис
+        if ($user->can('properties.view_office') && $employee->office_id && $propertyOwner->office_id === $employee->office_id) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Форматирование локации для таблицы.
      * Возвращает 3 строки: 1) ЖК (жирный), 2) Дом, Улица, Зона, 3) Район, Город, Область, Страна
      */
-    private function location(Property $property): array
+    private function location(Property $property, bool $visibleToAgents = true): array
     {
         $complexName = $property->complex?->name ?? null;
 
         $streetParts = [];
-        if ($property->building_number && $property->is_visible_to_agents) {
+        if ($property->building_number && $visibleToAgents) {
             $streetParts[] = $property->building_number;
         }
         if ($property->street) {

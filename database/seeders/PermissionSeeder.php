@@ -31,6 +31,7 @@ class PermissionSeeder extends Seeder
                 'properties.edit_company' => 'Редактирование объектов компании',
                 'properties.delete_office' => 'Удаление объектов офиса',
                 'properties.delete_company' => 'Удаление объектов компании',
+                'properties.view_open' => 'Просмотр открытых объектов',
                 'properties.reassign' => 'Смена агента у объекта',
                 'properties.reassign_office' => 'Смена агента (офис)',
                 'properties.reassign_company' => 'Смена агента (компания)',

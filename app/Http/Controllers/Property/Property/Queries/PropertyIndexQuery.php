@@ -160,6 +160,9 @@ class PropertyIndexQuery
      * - view_company → объекты сотрудников своей компании + свои
      * - view_office  → объекты сотрудников своего офиса + свои
      * - (иначе)      → только свои объекты (user_id)
+     *
+     * Дополнительно: view_open — видны открытые объекты (is_visible_to_agents)
+     * других компаний, но без контактов владельцев (фильтрация в Presenter).
      */
     private function applyAccessScope(): void
     {
@@ -171,35 +174,47 @@ class PropertyIndexQuery
         }
 
         $employee = $user->employee;
+        $canViewOpen = $user->can('properties.view_open');
 
-        // view_company — объекты всех сотрудников компании + свои
+        // view_company — объекты всех сотрудников компании + свои (+ открытые)
         if ($user->can('properties.view_company') && $employee && $employee->company_id) {
             $companyUserIds = Employee::where('company_id', $employee->company_id)
                 ->whereNotNull('user_id')
                 ->pluck('user_id');
 
-            $this->query->where(function ($q) use ($user, $companyUserIds) {
+            $this->query->where(function ($q) use ($user, $companyUserIds, $canViewOpen) {
                 $q->whereIn('properties.user_id', $companyUserIds)
                     ->orWhere('properties.user_id', $user->id);
+                if ($canViewOpen) {
+                    $q->orWhere('properties.is_visible_to_agents', true);
+                }
             });
             return;
         }
 
-        // view_office — объекты всех сотрудников офиса + свои
+        // view_office — объекты всех сотрудников офиса + свои (+ открытые)
         if ($user->can('properties.view_office') && $employee && $employee->office_id) {
             $officeUserIds = Employee::where('office_id', $employee->office_id)
                 ->whereNotNull('user_id')
                 ->pluck('user_id');
 
-            $this->query->where(function ($q) use ($user, $officeUserIds) {
+            $this->query->where(function ($q) use ($user, $officeUserIds, $canViewOpen) {
                 $q->whereIn('properties.user_id', $officeUserIds)
                     ->orWhere('properties.user_id', $user->id);
+                if ($canViewOpen) {
+                    $q->orWhere('properties.is_visible_to_agents', true);
+                }
             });
             return;
         }
 
-        // Только свои объекты
-        $this->query->where('properties.user_id', $user->id);
+        // Только свои объекты (+ открытые)
+        $this->query->where(function ($q) use ($user, $canViewOpen) {
+            $q->where('properties.user_id', $user->id);
+            if ($canViewOpen) {
+                $q->orWhere('properties.is_visible_to_agents', true);
+            }
+        });
     }
 
     // ========== Приватные методы фильтрации ==========
