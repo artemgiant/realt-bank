@@ -212,15 +212,13 @@ window.PropertyRenderers = {
         var sameCompany = window.currentCompanyId && row.owner_company_id === window.currentCompanyId;
         var sameOffice = window.currentOfficeId && row.owner_office_id === window.currentOfficeId;
 
-        var editScope = window.editScope || 'own';
-        var canEdit = isOwner
-            || editScope === 'all'
+        var editScope = window.editScope || 'none';
+        var canEdit = (isOwner && editScope !== 'none')
             || (editScope === 'company' && sameCompany)
             || (editScope === 'office' && sameOffice);
 
-        var deleteScope = window.deleteScope || 'own';
-        var canDelete = isOwner
-            || deleteScope === 'all'
+        var deleteScope = window.deleteScope || 'none';
+        var canDelete = (isOwner && deleteScope !== 'none')
             || (deleteScope === 'company' && sameCompany)
             || (deleteScope === 'office' && sameOffice);
 

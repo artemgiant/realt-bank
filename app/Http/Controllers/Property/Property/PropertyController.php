@@ -304,20 +304,17 @@ class PropertyController extends Controller
     /**
      * Проверка доступа к объекту с учётом scope (свои / офис / компания).
      *
-     * Иерархия: свой объект → scope_company → scope_office → базовое право (все).
-     * Свой объект (user_id совпадает) — всегда разрешено.
+     * Базовое право (properties.edit) = только свои объекты.
+     * _office = свои + объекты сотрудников своего офиса.
+     * _company = свои + объекты сотрудников своей компании.
+     * Полный доступ ко всем — только super_admin через Gate::before.
      */
     private function authorizePropertyAction(Property $property, string $permission): void
     {
         $user = auth()->user();
 
-        // Свой объект — всегда можно
-        if ($property->user_id === $user->id) {
-            return;
-        }
-
-        // Базовое право без scope (например properties.edit) — доступ ко всем
-        if ($user->can($permission)) {
+        // Свой объект + базовое право — можно
+        if ($property->user_id === $user->id && $user->can($permission)) {
             return;
         }
 
@@ -326,7 +323,7 @@ class PropertyController extends Controller
 
         $employee = $user->employee;
 
-        // Scope: компания
+        // Scope: компания — свои + объекты сотрудников компании
         if ($user->can("properties.{$action}_company") && $employee && $employee->company_id) {
             $propertyOwner = Employee::where('user_id', $property->user_id)->first();
             if ($propertyOwner && $propertyOwner->company_id === $employee->company_id) {
@@ -334,7 +331,7 @@ class PropertyController extends Controller
             }
         }
 
-        // Scope: офис
+        // Scope: офис — свои + объекты сотрудников офиса
         if ($user->can("properties.{$action}_office") && $employee && $employee->office_id) {
             $propertyOwner = Employee::where('user_id', $property->user_id)->first();
             if ($propertyOwner && $propertyOwner->office_id === $employee->office_id) {
