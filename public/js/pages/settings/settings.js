@@ -631,7 +631,9 @@ function savePermissions() {
     // Build matrix object
     const matrix = {};
     for (const key in currentPermissions) {
-        const [permission, roleId] = key.split('_');
+        const lastUnderscore = key.lastIndexOf('_');
+        const permission = key.substring(0, lastUnderscore);
+        const roleId = key.substring(lastUnderscore + 1);
         if (!matrix[permission]) matrix[permission] = {};
         matrix[permission][roleId] = currentPermissions[key];
     }

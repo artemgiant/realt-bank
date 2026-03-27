@@ -2,6 +2,7 @@
 
 namespace App\Services\XmlExport\Adapters;
 
+use App\Helpers\PhoneFormatter;
 use App\Services\XmlExport\Dto\PropertyExportData;
 use App\Services\XmlExport\Mappings\DimRiaMappings;
 use Spatie\ArrayToXml\ArrayToXml;
@@ -51,12 +52,10 @@ class DimRiaAdapter extends AbstractXmlAdapter
     {
         $missing = [];
 
-        if (empty($dto->email)) $missing[] = 'email';
         if (empty($dto->phone)) $missing[] = 'phone';
         if (empty($dto->stateName)) $missing[] = 'state';
         if (empty($dto->cityName)) $missing[] = 'city';
         if (empty($dto->streetName)) $missing[] = 'street';
-        if (empty($dto->buildingNumber)) $missing[] = 'building_number';
         if (empty($dto->roomCountValue)) $missing[] = 'rooms_count';
         if (empty($dto->areaTotal)) $missing[] = 'total_area';
         if (empty($dto->floorsTotal)) $missing[] = 'floors';
@@ -80,8 +79,7 @@ class DimRiaAdapter extends AbstractXmlAdapter
             'realty_sale_type' => 1,
 
             // Данные риелтора
-            'email'           => $dto->email,
-            'phone'           => self::formatPhone($dto->phone),
+            'phone'           => $dto->phone ? PhoneFormatter::format($dto->phone) : null,
             'local_realty_id' => $dto->id,
 
             // Фото
@@ -99,8 +97,6 @@ class DimRiaAdapter extends AbstractXmlAdapter
             'district'         => $dto->districtName,
             'street'           => $dto->streetName,
             'street_type'      => 'улица',
-            'building_number'  => $dto->buildingNumber,
-            'show_building_no' => 1,
             'show_flat_no'     => 1,
             'flat_number_str'  => $dto->apartmentNumber,
             'radius_location'  => 'да',
@@ -140,27 +136,4 @@ class DimRiaAdapter extends AbstractXmlAdapter
         ];
     }
 
-    /**
-     * Format phone to +38 (0XX) XXX-XX-XX
-     */
-    private static function formatPhone(?string $phone): ?string
-    {
-        if ($phone === null) {
-            return null;
-        }
-
-        $digits = preg_replace('/\D/', '', $phone);
-
-        // Ensure 12 digits starting with 38: 380XXXXXXXXX
-        if (str_starts_with($digits, '38') && strlen($digits) === 12) {
-            $code = substr($digits, 2, 3);  // 0XX
-            $part1 = substr($digits, 5, 3);
-            $part2 = substr($digits, 8, 2);
-            $part3 = substr($digits, 10, 2);
-
-            return "+38 ({$code}) {$part1}-{$part2}-{$part3}";
-        }
-
-        return $phone;
-    }
 }
