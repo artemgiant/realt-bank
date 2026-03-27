@@ -5,7 +5,7 @@
 (function ($) {
     'use strict';
 
-    // Глобальная ссылка на таблицу
+    // Глобальная ссылка на таблицу (доступна глобально для модалки)
     let employeesTable = null;
 
     // Debounce функция для текстовых полей
@@ -48,6 +48,19 @@
         filters.restoreFromUrl();
         filters.updateFilterCount();
 
+        // Восстановление страницы пагинации и количества записей из URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var pageLength = config.pageLength;
+        var displayStart = 0;
+        var urlPageLength = urlParams.get('pageLength');
+        if (urlPageLength && parseInt(urlPageLength) > 0) {
+            pageLength = parseInt(urlPageLength);
+        }
+        var urlPage = urlParams.get('page');
+        if (urlPage && parseInt(urlPage) > 0) {
+            displayStart = parseInt(urlPage) * pageLength;
+        }
+
         // Инициализация DataTables
         employeesTable = $('#example').DataTable({
             processing: config.processing,
@@ -65,7 +78,8 @@
                 }
             },
             columns: columns,
-            pageLength: config.pageLength,
+            pageLength: pageLength,
+            displayStart: displayStart,
             pagingType: config.pagingType,
             searching: config.searching,
             ordering: config.ordering,
@@ -76,8 +90,27 @@
                 initSelect2InTable();
                 // Синхронизируем фильтры в URL
                 filters.syncToUrl();
+
+                // Сохраняем текущую страницу и количество записей в URL
+                var pageInfo = employeesTable.page.info();
+                var urlParams = new URLSearchParams(window.location.search);
+                if (pageInfo.page > 0) {
+                    urlParams.set('page', pageInfo.page);
+                } else {
+                    urlParams.delete('page');
+                }
+                if (pageInfo.length !== 10) {
+                    urlParams.set('pageLength', pageInfo.length);
+                } else {
+                    urlParams.delete('pageLength');
+                }
+                var qs = urlParams.toString();
+                history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : ''));
             }
         });
+
+        // Экспорт таблицы глобально для доступа из модалки
+        window.employeesTable = employeesTable;
 
         return employeesTable;
     }
@@ -222,7 +255,7 @@
                 success: function (response) {
                     bootstrap.Modal.getInstance(document.getElementById('delete-employee-modal')).hide();
                     if (employeesTable) {
-                        employeesTable.ajax.reload();
+                        employeesTable.ajax.reload(null, false);
                     }
                     if (typeof toastr !== 'undefined') {
                         toastr.success('Сотрудник удален');

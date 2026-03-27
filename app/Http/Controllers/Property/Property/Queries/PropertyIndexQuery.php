@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Property\Property\Queries;
 
+use App\Models\Employee\Employee;
 use App\Models\Property\Property;
 use App\Models\Reference\Currency;
 use Illuminate\Http\Request;
@@ -50,7 +51,10 @@ class PropertyIndexQuery
             'features',
         ]);
 
-        $this->total = Property::count();
+        // Ограничение видимости объектов по правам пользователя
+        $this->applyAccessScope();
+
+        $this->total = (clone $this->query)->count();
     }
 
     /**
@@ -145,6 +149,63 @@ class PropertyIndexQuery
     public function paginate(int $start, int $length): Collection
     {
         return $this->query->skip($start)->take($length)->get();
+    }
+
+    // ========== Ограничение доступа ==========
+
+    /**
+     * Ограничение видимости объектов по правам текущего пользователя.
+     *
+     * Иерархия (от широкого к узкому):
+     * - view_all     → все объекты
+     * - view_company → объекты сотрудников своей компании
+     * - view_office  → объекты сотрудников своего офиса
+     * - (иначе)      → только свои объекты (user_id)
+     */
+    private function applyAccessScope(): void
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            $this->query->whereRaw('0 = 1');
+            return;
+        }
+
+        // view_all — видит всё, ограничений нет
+        if ($user->can('properties.view_all')) {
+            return;
+        }
+
+        $employee = $user->employee;
+
+        // view_company — объекты всех сотрудников компании + свои
+        if ($user->can('properties.view_company') && $employee && $employee->company_id) {
+            $companyUserIds = Employee::where('company_id', $employee->company_id)
+                ->whereNotNull('user_id')
+                ->pluck('user_id');
+
+            $this->query->where(function ($q) use ($user, $companyUserIds) {
+                $q->whereIn('properties.user_id', $companyUserIds)
+                    ->orWhere('properties.user_id', $user->id);
+            });
+            return;
+        }
+
+        // view_office — объекты всех сотрудников офиса + свои
+        if ($user->can('properties.view_office') && $employee && $employee->office_id) {
+            $officeUserIds = Employee::where('office_id', $employee->office_id)
+                ->whereNotNull('user_id')
+                ->pluck('user_id');
+
+            $this->query->where(function ($q) use ($user, $officeUserIds) {
+                $q->whereIn('properties.user_id', $officeUserIds)
+                    ->orWhere('properties.user_id', $user->id);
+            });
+            return;
+        }
+
+        // Только свои объекты
+        $this->query->where('properties.user_id', $user->id);
     }
 
     // ========== Приватные методы фильтрации ==========
@@ -319,7 +380,15 @@ class PropertyIndexQuery
                 $this->query->where('user_id', auth()->id());
                 break;
             case 'my_company':
-                // TODO: фильтр по компании пользователя
+                $employee = auth()->user()->employee;
+                if ($employee && $employee->company_id) {
+                    $companyUserIds = Employee::where('company_id', $employee->company_id)
+                        ->whereNotNull('user_id')
+                        ->pluck('user_id');
+                    $this->query->whereIn('properties.user_id', $companyUserIds);
+                } else {
+                    $this->query->where('properties.user_id', auth()->id());
+                }
                 break;
             case 'draft':
                 $this->query->where('status', 'draft');

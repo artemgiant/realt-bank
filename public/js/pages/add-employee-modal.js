@@ -556,14 +556,14 @@
                     // Закрыть модалку
                     $('#employee-modal').modal('hide');
 
-                    // Обновить таблицу
+                    // Обновить таблицу (false = не сбрасывать страницу)
                     if (window.employeesTable) {
-                        window.employeesTable.ajax.reload();
+                        window.employeesTable.ajax.reload(null, false);
                     } else {
                         // Попробовать найти таблицу через DataTable API
                         const table = $('#example').DataTable();
                         if (table) {
-                            table.ajax.reload();
+                            table.ajax.reload(null, false);
                         }
                     }
 
