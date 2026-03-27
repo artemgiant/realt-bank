@@ -45,6 +45,18 @@ class RemMappings
     ];
 
     /**
+     * Category + deal type → rem.ua URL segment
+     * Формат: '{category}' => ['продажа' => '{slug}', 'аренда' => '{slug}-rent']
+     */
+    public const URL_SEGMENT_MAP = [
+        'квартира'            => ['продажа' => 'apartments', 'аренда' => 'apartments-rent'],
+        'дом'                 => ['продажа' => 'houses',     'аренда' => 'houses-rent'],
+        'коммерция'           => ['продажа' => 'commercial', 'аренда' => 'commercial-rent'],
+        'торговые помещения'  => ['продажа' => 'commercial', 'аренда' => 'commercial-rent'],
+        'участок'             => ['продажа' => 'earth',      'аренда' => 'earth-rent'],
+    ];
+
+    /**
      * Currency code → rem.ua currency value
      * Допускаются: UAH, USD
      */
@@ -77,6 +89,19 @@ class RemMappings
         }
 
         return self::CATEGORY_MAP[$name] ?? null;
+    }
+
+    /**
+     * Map category + deal type to rem.ua URL segment.
+     * Example: ('квартира', 'продажа') → 'apartments'
+     */
+    public static function mapUrlSegment(?string $category, ?string $dealType): ?string
+    {
+        if ($category === null || $dealType === null) {
+            return null;
+        }
+
+        return self::URL_SEGMENT_MAP[$category][$dealType] ?? null;
     }
 
     public static function mapCurrency(?string $code): ?string

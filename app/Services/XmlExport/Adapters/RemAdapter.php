@@ -8,7 +8,8 @@ use Spatie\ArrayToXml\ArrayToXml;
 
 class RemAdapter extends AbstractXmlAdapter
 {
-    private const BASE_URL = 'https://rem.ua/object/base/apartments/';
+    private const FEED_ID = 40;
+    private const BASE_URL = 'https://rem.ua/feed/find/';
 
     public function getName(): string
     {
@@ -69,9 +70,15 @@ class RemAdapter extends AbstractXmlAdapter
     {
         $address = $this->buildAddress($dto->streetName, $dto->buildingNumber);
 
+        $category = RemMappings::mapCategory($dto->propertyTypeName);
+        $dealType = RemMappings::mapDealType($dto->dealTypeName);
+        $urlSegment = RemMappings::mapUrlSegment($category, $dealType);
+
         $data = [
             '_attributes' => ['internal-id' => $dto->id],
-            'url'           => self::BASE_URL . $dto->id,
+            'url'           => $urlSegment
+                ? self::BASE_URL . self::FEED_ID . '/' . $urlSegment . '/' . $dto->id
+                : null,
             'type'          => RemMappings::mapDealType($dto->dealTypeName),
             'title'         => $dto->title ?: RemMappings::buildTitle($dto->dealTypeName, $dto->propertyTypeName),
             'description'   => $dto->description ?: 'Выгодное предложение',
