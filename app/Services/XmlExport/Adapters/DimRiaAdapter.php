@@ -92,7 +92,7 @@ class DimRiaAdapter extends AbstractXmlAdapter
             'tiktok_link'  => $dto->tiktokUrl,
 
             // Расположение
-            'state'            => $dto->stateName,
+            'state'            => preg_replace('/\s*область$/iu', '', $dto->stateName),
             'city'             => $dto->cityName,
             'district'         => $dto->districtName,
             'street'           => $dto->streetName,
