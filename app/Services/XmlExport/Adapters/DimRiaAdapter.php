@@ -52,7 +52,14 @@ class DimRiaAdapter extends AbstractXmlAdapter
     {
         $missing = [];
 
-        if (empty($dto->phone)) $missing[] = 'phone';
+        if (empty($dto->phone)) {
+            $missing[] = 'phone';
+        } else {
+            $formatted = PhoneFormatter::format($dto->phone);
+            if (!PhoneFormatter::isUkrainianFormat($formatted)) {
+                $missing[] = "phone (неверный формат: {$formatted}, нужен +38 (0XX) XXX-XX-XX)";
+            }
+        }
         if (empty($dto->stateName)) $missing[] = 'state';
         if (empty($dto->cityName)) $missing[] = 'city';
         if (empty($dto->streetName)) $missing[] = 'street';
@@ -97,8 +104,6 @@ class DimRiaAdapter extends AbstractXmlAdapter
             'district'         => $dto->districtName,
             'street'           => $dto->streetName,
             'street_type'      => 'улица',
-            'show_flat_no'     => 1,
-            'flat_number_str'  => $dto->apartmentNumber,
             'radius_location'  => 'да',
 
             // Характеристики

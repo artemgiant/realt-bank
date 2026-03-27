@@ -75,4 +75,12 @@ class PhoneFormatter
 
         return "+38 (0{$areaCode}) {$part1}-{$part2}-{$part3}";
     }
+
+    /**
+     * Проверяет, соответствует ли номер формату +38 (0XX) XXX-XX-XX
+     */
+    public static function isUkrainianFormat(string $phone): bool
+    {
+        return (bool) preg_match('/^\+38 \(0\d{2}\) \d{3}-\d{2}-\d{2}$/', $phone);
+    }
 }
