@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders\Reference;
+namespace Database\Seeders;
 
 use App\Models\Location\City;
 use App\Models\Location\State;
