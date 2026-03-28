@@ -116,13 +116,21 @@ class UpdateCompany
      */
     private function saveOffices(Company $company, array $offices): void
     {
-        // Удаляем старые офисы
+        // Собираем ID офисов из формы (существующие)
+        $incomingIds = collect($offices)
+            ->pluck('id')
+            ->filter()
+            ->all();
+
+        // Удаляем офисы, которых нет в форме
         foreach ($company->offices as $office) {
-            $office->contacts()->detach();
-            $office->delete();
+            if (!in_array($office->id, $incomingIds)) {
+                $office->contacts()->detach();
+                $office->delete();
+            }
         }
 
-        // Добавляем новые офисы
+        // Обновляем/создаём офисы
         foreach ($offices as $index => $officeData) {
             // Проверяем, есть ли хотя бы одно название
             $nameUa = $officeData['name_ua'] ?? null;
@@ -143,7 +151,7 @@ class UpdateCompany
                 'en' => $nameEn,
             ]);
 
-            $office = CompanyOffice::create([
+            $attributes = [
                 'company_id' => $company->id,
                 'name' => $mainName,
                 'name_translations' => !empty($nameTranslations) ? $nameTranslations : null,
@@ -159,19 +167,33 @@ class UpdateCompany
                 'phone' => $officeData['phone'] ?? null,
                 'sort_order' => $index,
                 'is_active' => true,
-            ]);
+            ];
+
+            // Обновляем существующий или создаём новый
+            if (!empty($officeData['id'])) {
+                $office = CompanyOffice::find($officeData['id']);
+                if ($office && $office->company_id === $company->id) {
+                    $office->update($attributes);
+                } else {
+                    $office = CompanyOffice::create($attributes);
+                }
+            } else {
+                $office = CompanyOffice::create($attributes);
+            }
 
             // Кешируем полный адрес
             $office->load(['street', 'city']);
             $office->update(['full_address' => $office->full_address_computed]);
 
-            // Привязываем контакты офиса
+            // Синхронизируем контакты офиса
             if (!empty($officeData['contact_ids'])) {
                 $contactData = [];
                 foreach ($officeData['contact_ids'] as $idx => $id) {
                     $contactData[$id] = ['role' => ($idx === 0 ? 'primary' : 'secondary')];
                 }
-                $office->contacts()->attach($contactData);
+                $office->contacts()->sync($contactData);
+            } else {
+                $office->contacts()->detach();
             }
         }
     }

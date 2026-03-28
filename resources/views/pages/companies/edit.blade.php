@@ -384,6 +384,7 @@
                     {{-- Предзаполняем существующими офисами --}}
                     @foreach($company->offices as $index => $office)
                         <div class="block-offices-item" data-office-index="{{ $index }}">
+                            <input type="hidden" name="offices[{{ $index }}][id]" value="{{ $office->id }}">
                             <div class="office-header">
                                 <span class="office-number">Офис #<span class="office-num">{{ $index + 1 }}</span></span>
                                 <button type="button" class="btn btn-remove-office" title="Удалить офис">
