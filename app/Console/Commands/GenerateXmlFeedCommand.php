@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 
 class GenerateXmlFeedCommand extends Command
 {
-    protected $signature = 'xml:generate {adapter : Adapter name (e.g. dim_ria)}';
+    protected $signature = 'xml:generate {adapter : Adapter name (e.g. dim_ria)} {--skip-validation : Skip validation and export all properties}';
 
 //php artisan xml:generate dim_ria
 
@@ -28,7 +28,13 @@ class GenerateXmlFeedCommand extends Command
         $this->info("Generating XML feed [{$adapterName}]...");
 
         try {
-            $result = $service->generateFeed($adapterName);
+            $skipValidation = (bool) $this->option('skip-validation');
+
+            if ($skipValidation) {
+                $this->warn('Validation is disabled — all properties will be exported.');
+            }
+
+            $result = $service->generateFeed($adapterName, $skipValidation);
             $path = $service->getFeedPath($adapterName);
 
             $this->info("Done! Exported {$result['exported']} properties.");

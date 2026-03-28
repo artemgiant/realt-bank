@@ -31,7 +31,7 @@ class XmlExportService
      * Generate full XML feed for an adapter and save to file.
      * Returns ['exported' => int, 'skipped' => int].
      */
-    public function generateFeed(string $adapterName): array
+    public function generateFeed(string $adapterName, bool $skipValidation = false): array
     {
         $adapter = $this->adapter($adapterName);
 
@@ -67,16 +67,20 @@ class XmlExportService
         $validDtos = [];
         $skipped = [];
 
-        foreach ($dtos as $dto) {
-            $missingFields = $adapter->validate($dto);
+        if ($skipValidation) {
+            $validDtos = $dtos;
+        } else {
+            foreach ($dtos as $dto) {
+                $missingFields = $adapter->validate($dto);
 
-            if (empty($missingFields)) {
-                $validDtos[] = $dto;
-            } else {
-                $skipped[] = [
-                    'id' => $dto->id,
-                    'missing' => $missingFields,
-                ];
+                if (empty($missingFields)) {
+                    $validDtos[] = $dto;
+                } else {
+                    $skipped[] = [
+                        'id' => $dto->id,
+                        'missing' => $missingFields,
+                    ];
+                }
             }
         }
 

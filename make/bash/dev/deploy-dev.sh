@@ -78,11 +78,11 @@ php artisan db:seed --class=DictionarySeeder --force
 #Создать компании с контактами и офисами
 #  php artisan tinker --execute="use Database\Factories\CompanyFactory; CompanyFactory::cleanAll(); App\Models\Reference\Company::factory()->count(20)->withContacts(2)->withOffices(rand(1,3), 2)->create();"
 
-php artisan db:seed --class=CompanySeeder
+#php artisan db:seed --class=CompanySeeder
 
-php artisan xml:generate dim_ria
+php artisan xml:generate dim_ria --skip-validation
 
-php artisan xml:generate rem
+php artisan xml:generate rem --skip-validation
 
 
 #DIM.RIA	GET /xml-feed/dim_ria
