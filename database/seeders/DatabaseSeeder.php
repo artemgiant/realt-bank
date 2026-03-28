@@ -32,6 +32,9 @@ class DatabaseSeeder extends Seeder
 
             // Адмін-користувач
             AdminUserSeeder::class,
+
+            // Девелопери та комплекси
+            Reference\DeveloperSeeder::class,
         ]);
     }
 }
