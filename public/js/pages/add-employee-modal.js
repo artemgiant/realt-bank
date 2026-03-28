@@ -340,8 +340,7 @@
         $('#photo-preview img').attr('src', '');
 
         // Сброс ошибок валидации
-        $form.find('.is-invalid').removeClass('is-invalid');
-        $form.find('.invalid-feedback').text('');
+        clearErrors();
 
         // Восстановить UI для режима создания
         $('#modal-title').text('Новый сотрудник');
@@ -351,23 +350,104 @@
     }
 
     /**
-     * Показать ошибки валидации
+     * Скрыть все ошибки
+     */
+    function clearErrors() {
+        $('#employee-form').find('.is-invalid').removeClass('is-invalid');
+        $('#employee-form').find('.invalid-feedback').text('').hide();
+        $('#employee-errors-container').hide();
+        $('#employee-errors-list').empty();
+
+        // Убрать красную рамку с Select2
+        $('#employee-form').find('.select2-selection').css('border-color', '');
+    }
+
+    /**
+     * Показать ошибки валидации (422)
      */
     function showValidationErrors(errors) {
-        // Сброс предыдущих ошибок
-        $('#employee-form').find('.is-invalid').removeClass('is-invalid');
-        $('#employee-form').find('.invalid-feedback').text('');
+        clearErrors();
 
-        // Показать новые ошибки
-        Object.keys(errors).forEach(field => {
-            const $input = $(`[name="${field}"]`);
-            const $feedback = $(`[data-field="${field}"]`);
+        var fieldLabels = {
+            'first_name': 'Имя',
+            'last_name': 'Фамилия',
+            'middle_name': 'Отчество',
+            'phone': 'Телефон',
+            'email': 'Email',
+            'password': 'Пароль',
+            'position_id': 'Должность',
+            'office_id': 'Офис',
+            'company_id': 'Компания',
+            'status_id': 'Статус',
+            'birthday': 'День рождения',
+            'active_until': 'Активен до',
+            'tag_ids': 'Теги',
+            'comment': 'Комментарий',
+            'photo': 'Фото',
+            'passport': 'Паспорт',
+            'inn': 'ИНН'
+        };
 
+        var $errorsList = $('#employee-errors-list');
+        var errorCount = 0;
+
+        Object.keys(errors).forEach(function(field) {
+            var messages = errors[field];
+            var label = fieldLabels[field] || field;
+
+            // Добавить в общий список ошибок
+            messages.forEach(function(msg) {
+                $errorsList.append('<li>' + label + ': ' + msg + '</li>');
+                errorCount++;
+            });
+
+            // Подсветка поля
+            var $input = $('#employee-form').find('[name="' + field + '"]');
+            if (!$input.length) {
+                $input = $('#employee-form').find('[name="' + field + '[]"]');
+            }
             $input.addClass('is-invalid');
+
+            // Подсветка Select2 контейнера
+            var $select2Container = $input.next('.select2-container').find('.select2-selection');
+            if ($select2Container.length) {
+                $select2Container.css('border-color', '#dc3545');
+            }
+
+            // Показать ошибку под полем
+            var $feedback = $('#employee-form').find('[data-field="' + field + '"]');
             if ($feedback.length) {
-                $feedback.text(errors[field][0]).show();
+                $feedback.text(messages[0]).show();
             }
         });
+
+        // Показать блок ошибок вверху модалки
+        if (errorCount > 0) {
+            $('#employee-errors-title').text(
+                errorCount === 1
+                    ? 'Обнаружена ошибка:'
+                    : 'Обнаружено ошибок: ' + errorCount
+            );
+            $('#employee-errors-container').slideDown(200);
+
+            // Прокрутить к блоку ошибок
+            var $modalBody = $('#employee-modal .modal-body');
+            $modalBody.animate({ scrollTop: 0 }, 300);
+        }
+    }
+
+    /**
+     * Показать общую ошибку сервера (не 422)
+     */
+    function showGeneralError(message) {
+        clearErrors();
+        var $errorsList = $('#employee-errors-list');
+        $errorsList.append('<li>' + message + '</li>');
+        $('#employee-errors-title').text('Ошибка сервера');
+        $('#employee-errors-container').slideDown(200);
+
+        var $modalBody = $('#employee-modal .modal-body');
+        $modalBody.animate({ scrollTop: 0 }, 300);
     }
 
     /**
@@ -387,11 +467,11 @@
             },
             error: function (xhr) {
                 console.error('Error loading employee:', xhr);
-                if (typeof toastr !== 'undefined') {
-                    toastr.error('Ошибка загрузки данных сотрудника');
-                } else {
-                    alert('Ошибка загрузки данных сотрудника');
+                var msg = 'Ошибка загрузки данных сотрудника';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg += ': ' + xhr.responseJSON.message;
                 }
+                showGeneralError(msg);
             }
         });
     }
@@ -501,6 +581,9 @@
         const $btnText = $submitBtn.find('.btn-text');
         const $btnLoader = $submitBtn.find('.btn-loader');
 
+        // Очистить предыдущие ошибки
+        clearErrors();
+
         // Показать loader
         $btnText.addClass('d-none');
         $btnLoader.removeClass('d-none');
@@ -577,18 +660,20 @@
                 }
             },
             error: function (xhr) {
-                if (xhr.status === 422) {
-                    // Ошибки валидации
-                    const errors = xhr.responseJSON.errors;
-                    showValidationErrors(errors);
+                if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                    showValidationErrors(xhr.responseJSON.errors);
+                } else if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.message) {
+                    showGeneralError(xhr.responseJSON.message);
+                } else if (xhr.status === 403) {
+                    showGeneralError('У вас нет прав для выполнения этого действия');
+                } else if (xhr.status === 500) {
+                    showGeneralError('Внутренняя ошибка сервера. Попробуйте позже');
                 } else {
-                    console.error('Error saving employee:', xhr);
-                    const errorMessage = isEditMode ? 'Ошибка при обновлении сотрудника' : 'Ошибка при создании сотрудника';
-                    if (typeof toastr !== 'undefined') {
-                        toastr.error(errorMessage);
-                    } else {
-                        alert(errorMessage);
+                    var errorMessage = isEditMode ? 'Ошибка при обновлении сотрудника' : 'Ошибка при создании сотрудника';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage += ': ' + xhr.responseJSON.message;
                     }
+                    showGeneralError(errorMessage);
                 }
             },
             complete: function () {
@@ -700,10 +785,21 @@
             border-color: #dc3545 !important;
         }
         #employee-form .invalid-feedback {
-            display: block;
+            display: none;
             color: #dc3545;
             font-size: 0.875em;
             margin-top: 0.25rem;
+        }
+        #employee-errors-alert {
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+        #employee-errors-alert ul {
+            padding-left: 1.2em;
+            list-style-type: disc;
+        }
+        #employee-errors-alert li {
+            margin-bottom: 2px;
         }
     `;
     document.head.appendChild(style);

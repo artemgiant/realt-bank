@@ -28,8 +28,9 @@
                 </div>
             </th>
             <th>
-                <div class="thead-wrapper area">
+                <div class="thead-wrapper area sortable-header" data-sort-field="area_total">
                     <p>Площадь</p>
+                    <span class="sort-icon"></span>
                 </div>
             </th>
             <th>
@@ -38,8 +39,9 @@
                 </div>
             </th>
             <th>
-                <div class="thead-wrapper floor">
+                <div class="thead-wrapper floor sortable-header" data-sort-field="floor">
                     <p>Этаж</p>
+                    <span class="sort-icon"></span>
                 </div>
             </th>
             <th>
@@ -48,13 +50,15 @@
                 </div>
             </th>
             <th>
-                <div class="thead-wrapper price">
+                <div class="thead-wrapper price sortable-header" data-sort-field="price">
                     <p>Цена</p>
+                    <span class="sort-icon"></span>
                 </div>
             </th>
             <th>
-                <div class="thead-wrapper contact">
+                <div class="thead-wrapper contact sortable-header" data-sort-field="employee_name">
                     <p>Контакт</p>
+                    <span class="sort-icon"></span>
                 </div>
             </th>
             <th>

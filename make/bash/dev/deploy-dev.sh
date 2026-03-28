@@ -85,6 +85,8 @@ php artisan xml:generate dim_ria --skip-validation
 php artisan xml:generate rem --skip-validation
 
 
+php db:seed --class="Database\\Seeders\\Reference\\DeveloperSeeder"
+
 #DIM.RIA	GET /xml-feed/dim_ria
 #REM	GET /xml-feed/rem
 

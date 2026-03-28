@@ -192,7 +192,7 @@ $(document).ready(function () {
 
     // ========== Сортировка ==========
 
-    // Обработчик клика на пункты сортировки
+    // Обработчик клика на пункты сортировки (dropdown меню)
     $(document).on('click', '.sort-option', function (e) {
         e.preventDefault();
 
@@ -209,9 +209,51 @@ $(document).ready(function () {
         // Добавляем active класс текущему пункту
         $this.addClass('active');
 
+        // Обновляем индикаторы в заголовках колонок
+        updateSortableHeaders();
+
         // Перезагружаем таблицу
         reloadTable();
     });
+
+    // Обработчик клика на заголовки колонок для сортировки
+    $(document).on('click', '.sortable-header', function () {
+        var $this = $(this);
+        var sortField = $this.data('sort-field');
+        var sortDir;
+
+        // Если уже сортируем по этому полю — переключаем направление
+        if (Filters.sortField === sortField) {
+            sortDir = Filters.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortDir = 'asc';
+        }
+
+        // Устанавливаем сортировку
+        Filters.setSort(sortField, sortDir);
+
+        // Обновляем индикаторы в заголовках колонок
+        updateSortableHeaders();
+
+        // Синхронизируем с dropdown меню сортировки
+        $('.sort-option').removeClass('active');
+        $('.sort-option[data-sort-field="' + sortField + '"][data-sort-dir="' + sortDir + '"]').addClass('active');
+
+        // Перезагружаем таблицу
+        reloadTable();
+    });
+
+    // Функция обновления CSS-классов сортировки на заголовках
+    function updateSortableHeaders() {
+        $('.sortable-header').removeClass('sort-asc sort-desc');
+        var $active = $('.sortable-header[data-sort-field="' + Filters.sortField + '"]');
+        if ($active.length) {
+            $active.addClass(Filters.sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+        }
+    }
+
+    // Инициализация индикаторов сортировки при загрузке
+    updateSortableHeaders();
 
     // ========== Автоматическая фильтрация ==========
 

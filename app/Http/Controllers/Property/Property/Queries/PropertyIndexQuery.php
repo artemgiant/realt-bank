@@ -112,7 +112,7 @@ class PropertyIndexQuery
      */
     public function applySorting(string $sortField, string $sortDir): self
     {
-        $allowedSortFields = ['created_at', 'price', 'area_total', 'price_per_m2'];
+        $allowedSortFields = ['created_at', 'price', 'area_total', 'price_per_m2', 'floor', 'employee_name'];
         if (!in_array($sortField, $allowedSortFields)) {
             $sortField = 'created_at';
         }
@@ -120,6 +120,9 @@ class PropertyIndexQuery
 
         if (in_array($sortField, ['price', 'price_per_m2'])) {
             $this->query->orderByRaw("properties.{$sortField} * COALESCE(property_currency.rate, 1) {$sortDir}");
+        } elseif ($sortField === 'employee_name') {
+            $this->query->leftJoin('employees', 'properties.employee_id', '=', 'employees.id')
+                ->orderBy('employees.first_name', $sortDir);
         } else {
             $this->query->orderBy("properties.{$sortField}", $sortDir);
         }

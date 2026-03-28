@@ -70,7 +70,7 @@
                     {{-- Девелопер --}}
                     <div class="item">
                         <label class="item-label" for="developer_id">Девелопер</label>
-                        <select id="developer_id" name="developer_id" class="js-example-responsive2" autocomplete="off">
+                        <select id="developer_id" name="developer_id" class="js-example-responsive3" autocomplete="off">
                             <option value="">Все</option>
                             @foreach($developers ?? [] as $developer)
                                 <option value="{{ $developer->id }}">{{ $developer->name }}</option>

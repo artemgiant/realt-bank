@@ -396,8 +396,7 @@ $(document).ready(function () {
         });
 
         $('.js-example-responsive3').select2({
-            width: '100%',
-            minimumResultsForSearch: -1
+            width: '100%'
         });
     }
 });

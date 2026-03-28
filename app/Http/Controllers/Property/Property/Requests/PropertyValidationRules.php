@@ -55,7 +55,7 @@ trait PropertyValidationRules
             'area_total' => 'nullable|integer|min:0',      // Общая площадь (м²)
             'area_living' => 'nullable|integer|min:0',     // Жилая площадь (м²)
             'area_kitchen' => 'nullable|integer|min:0',    // Площадь кухни (м²)
-            'area_land' => 'nullable|integer|min:0',       // Площадь участка (сотки)
+            'area_land' => 'nullable|numeric|min:0',       // Площадь участка (сотки)
             'floor' => 'nullable|integer|min:0',           // Этаж
             'floors_total' => 'nullable|integer|min:1',    // Этажность здания
             'year_built' => 'nullable|exists:dictionaries,id', // Год постройки

@@ -637,6 +637,82 @@ div.dt-container div.dt-layout-row div.dt-layout-cell.dt-layout-end {
   text-transform: uppercase;
 }
 
+#example thead tr th .thead-wrapper.sortable-header {
+  cursor: pointer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 3px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-transition: color 0.15s;
+  transition: color 0.15s;
+}
+
+#example thead tr th .thead-wrapper.sortable-header:hover p {
+  color: #555;
+}
+
+#example thead tr th .thead-wrapper.sortable-header .sort-icon {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  gap: 1px;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+#example thead tr th .thead-wrapper.sortable-header .sort-icon::before,
+#example thead tr th .thead-wrapper.sortable-header .sort-icon::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+}
+
+#example thead tr th .thead-wrapper.sortable-header .sort-icon::before {
+  border-bottom: 3.5px solid #ccc;
+}
+
+#example thead tr th .thead-wrapper.sortable-header .sort-icon::after {
+  border-top: 3.5px solid #ccc;
+}
+
+#example thead tr th .thead-wrapper.sortable-header:hover .sort-icon::before {
+  border-bottom-color: #bbb;
+}
+
+#example thead tr th .thead-wrapper.sortable-header:hover .sort-icon::after {
+  border-top-color: #bbb;
+}
+
+#example thead tr th .thead-wrapper.sortable-header.sort-asc .sort-icon::before {
+  border-bottom-color: #555;
+}
+
+#example thead tr th .thead-wrapper.sortable-header.sort-asc .sort-icon::after {
+  border-top-color: #ccc;
+}
+
+#example thead tr th .thead-wrapper.sortable-header.sort-desc .sort-icon::before {
+  border-bottom-color: #ccc;
+}
+
+#example thead tr th .thead-wrapper.sortable-header.sort-desc .sort-icon::after {
+  border-top-color: #555;
+}
+
 #example tbody {
   border-radius: 8px;
 }

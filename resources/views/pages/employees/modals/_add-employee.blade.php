@@ -14,6 +14,17 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
+                    {{-- Блок ошибок --}}
+                    <div class="modal-body-l mt-3" id="employee-errors-container" style="display: none;">
+                        <div class="alert alert-danger mb-0" id="employee-errors-alert">
+                            <div class="d-flex align-items-start">
+                                <strong class="me-2" id="employee-errors-title">Ошибка</strong>
+                                <button type="button" class="btn-close ms-auto" onclick="$('#employee-errors-container').slideUp(200)"></button>
+                            </div>
+                            <ul class="mb-0 mt-2" id="employee-errors-list"></ul>
+                        </div>
+                    </div>
+
                     <div class="modal-body-l">
                         <h3 class="modal-body-title">
                             <span>Основное</span>
@@ -68,6 +79,7 @@
                                         <input class="item-inputText tel-contact" id="phone" name="phone" type="tel"
                                             autocomplete="off" required>
                                     </div>
+                                    <div class="invalid-feedback" data-field="phone"></div>
                                 </div>
                             </div>
                             <div class="item">
@@ -101,6 +113,7 @@
                                         <option value="{{ $position->id }}">{{ $position->name }}</option>
                                     @endforeach
                                 </select>
+                                <div class="invalid-feedback" data-field="position_id"></div>
                             </div>
                             <div class="item selects">
                                 <label class="item-label" for="office_id">Офис</label>
@@ -111,6 +124,7 @@
                                         <option value="{{ $office->id }}">{{ $office->name }}</option>
                                     @endforeach
                                 </select>
+                                <div class="invalid-feedback" data-field="office_id"></div>
                             </div>
                             <div class="item data">
                                 <span>
@@ -138,6 +152,7 @@
                                         <option value="{{ $company->id }}">{{ $company->name }}</option>
                                     @endforeach
                                 </select>
+                                <div class="invalid-feedback" data-field="company_id"></div>
                             </div>
                             <div class="item selects">
                                 <label class="item-label" for="status_id">Статус</label>
@@ -148,6 +163,7 @@
                                         <option value="{{ $status->id }}">{{ $status->name }}</option>
                                     @endforeach
                                 </select>
+                                <div class="invalid-feedback" data-field="status_id"></div>
                             </div>
                             <div class="item data">
                                 <span>
@@ -175,6 +191,7 @@
                                         <option value="{{ $tag->id }}">{{ $tag->name }}</option>
                                     @endforeach
                                 </select>
+                                <div class="invalid-feedback" data-field="tag_ids"></div>
                             </div>
                         </div>
 
@@ -215,7 +232,7 @@
                                         <button type="button" class="btn btn-sm btn-outline-danger ms-2"
                                             id="remove-photo">X</button>
                                     </div>
-                                    <div class="error-container"></div>
+                                    <div class="invalid-feedback" data-field="photo"></div>
                                 </div>
                             </div>
                             <div class="item-row">
