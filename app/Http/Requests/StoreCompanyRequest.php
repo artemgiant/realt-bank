@@ -47,6 +47,7 @@ class StoreCompanyRequest extends FormRequest
 
             // ========== Офисы ==========
             'offices' => ['required', 'array', 'min:1'],
+            'offices.*.id' => ['nullable', 'integer', 'exists:company_offices,id'],
             'offices.*.name_ua' => ['nullable', 'string', 'max:255'],
             'offices.*.name_ru' => ['nullable', 'string', 'max:255'],
             'offices.*.name_en' => ['nullable', 'string', 'max:255'],
