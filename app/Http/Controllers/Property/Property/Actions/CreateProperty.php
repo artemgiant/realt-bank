@@ -153,7 +153,10 @@ class CreateProperty
             $description = $data["description_{$locale}"] ?? null;
 
             if ($description) {
-                $description = $property->id . ' ' . $description;
+                $prefix = $property->id . ' ';
+                if (!str_starts_with($description, $prefix)) {
+                    $description = $prefix . $description;
+                }
             }
 
             if ($title || $description) {

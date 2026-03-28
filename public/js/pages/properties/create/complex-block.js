@@ -29,6 +29,8 @@
             districtName: 'input[name="district_name"]',
             cityId: 'input[name="city_id"]',
             cityName: 'input[name="city_name"]',
+            regionId: 'input[name="region_id"]',
+            regionName: 'input[name="region_name"]',
             stateId: 'input[name="state_id"]',
             stateName: 'input[name="state_name"]',
         },
@@ -208,6 +210,7 @@
         if (blockData.zone_name) addressParts.push(blockData.zone_name);
         if (blockData.district_name) addressParts.push(blockData.district_name);
         if (blockData.city_name) addressParts.push(blockData.city_name);
+        if (blockData.region_name) addressParts.push(blockData.region_name);
 
         const fullAddress = addressParts.join(', ');
 
@@ -232,8 +235,20 @@
         $(CONFIG.selectors.districtName).val(blockData.district_name || '');
         $(CONFIG.selectors.cityId).val(blockData.city_id || '');
         $(CONFIG.selectors.cityName).val(blockData.city_name || '');
+        $(CONFIG.selectors.regionId).val(blockData.region_id || '');
+        $(CONFIG.selectors.regionName).val(blockData.region_name || '');
         $(CONFIG.selectors.stateId).val(blockData.state_id || '');
         $(CONFIG.selectors.stateName).val(blockData.state_name || '');
+
+        // Заполняем видимое поле "Регион (Область)"
+        const $stateInput = $('.state-search-input');
+        if ($stateInput.length && blockData.state_name) {
+            $stateInput.val(blockData.state_name);
+            const $stateClearBtn = $stateInput.siblings('.state-search-clear');
+            if ($stateClearBtn.length) {
+                $stateClearBtn.show();
+            }
+        }
 
         // Показываем кнопку очистки в поле локации
         const $clearBtn = $locationInput.siblings('.location-search-clear');
@@ -256,6 +271,8 @@
         $(CONFIG.selectors.districtName).val('');
         $(CONFIG.selectors.cityId).val('');
         $(CONFIG.selectors.cityName).val('');
+        $(CONFIG.selectors.regionId).val('');
+        $(CONFIG.selectors.regionName).val('');
         $(CONFIG.selectors.stateId).val('');
         $(CONFIG.selectors.stateName).val('');
     }

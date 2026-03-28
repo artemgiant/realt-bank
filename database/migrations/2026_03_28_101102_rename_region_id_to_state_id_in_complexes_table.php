@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('complexes', function (Blueprint $table) {
-            $table->dropForeign(['region_id']);
+            $table->dropIndex('complexes_region_id_foreign');
             $table->renameColumn('region_id', 'state_id');
         });
 
