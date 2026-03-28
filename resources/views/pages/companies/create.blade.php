@@ -1,7 +1,7 @@
 @extends('layouts.crm')
 
 
-@section('title', 'Создание  агентства')
+@section('title', 'Создание агентства - Realt Bank')
 
 
 @push('styles')

@@ -1,6 +1,6 @@
 @extends('layouts.crm')
 
-@section('title', 'Верификация миграции')
+@section('title', 'Верификация миграции - Realt Bank')
 
 @push('styles')
 <style>

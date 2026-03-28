@@ -1,6 +1,6 @@
 @extends('layouts.crm')
 
-@section('title', 'Developers - Realt Bank')
+@section('title', 'Девелоперы - Realt Bank')
 
 @push('styles')
     <link rel="stylesheet" href="{{ versioned_asset('css/pages/developers/page-developers.css') }}">

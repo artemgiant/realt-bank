@@ -1,6 +1,6 @@
 @extends('layouts.crm')
 
-@section('title', 'Настройки — FAKTOR CRM')
+@section('title', 'Настройки - Realt Bank')
 
 @push('styles')
     <link rel="stylesheet" href="{{ versioned_asset('css/pages/settings/base.css') }}">
