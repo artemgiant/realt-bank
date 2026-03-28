@@ -72,12 +72,12 @@ class DeveloperSeeder extends Seeder
             $developer->complexes()->each(function (Complex $complex) use (
                 $categoryId, $objectTypeId, $conditionId, $featureIds, $wallTypeId
             ) {
-                $regionId = $complex->city_id
-                    ? City::where('id', $complex->city_id)->value('region_id')
+                $stateId = $complex->city_id
+                    ? City::where('id', $complex->city_id)->value('state_id')
                     : null;
 
                 $complex->update([
-                    'region_id' => $regionId,
+                    'state_id' => $stateId,
                     'categories' => $categoryId ? [$categoryId] : [],
                     'object_types' => $objectTypeId ? [$objectTypeId] : [],
                     'conditions' => $conditionId ? [$conditionId] : [],
