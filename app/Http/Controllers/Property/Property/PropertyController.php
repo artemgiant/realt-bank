@@ -114,15 +114,30 @@ class PropertyController extends Controller
     /**
      * Создание объекта. Валидация → StorePropertyRequest, логика → CreateProperty.
      */
-    public function store(StorePropertyRequest $request, CreateProperty $action): RedirectResponse
+    public function store(StorePropertyRequest $request, CreateProperty $action): RedirectResponse|JsonResponse
     {
         try {
             $action->execute($request->validated(), $request);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Объект успешно создан!',
+                    'redirect' => route('properties.index'),
+                ]);
+            }
 
             return redirect()
                 ->route('properties.index')
                 ->with('success', 'Объект успешно создан!');
         } catch (\Exception $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Ошибка при создании объекта: ' . $e->getMessage(),
+                ], 500);
+            }
+
             return back()
                 ->withInput()
                 ->with('error', 'Ошибка при создании объекта: ' . $e->getMessage());
@@ -159,7 +174,7 @@ class PropertyController extends Controller
      * Обновление объекта. Валидация → UpdatePropertyRequest, логика → UpdateProperty.
      * Доступ: право properties.edit ИЛИ свой объект.
      */
-    public function update(UpdatePropertyRequest $request, Property $property, UpdateProperty $action): RedirectResponse
+    public function update(UpdatePropertyRequest $request, Property $property, UpdateProperty $action): RedirectResponse|JsonResponse
     {
         $this->authorizePropertyAction($property, 'properties.edit');
 
@@ -167,16 +182,28 @@ class PropertyController extends Controller
             $action->execute($property, $request->validated(), $request);
 
             $redirectTo = $request->input('redirect_to');
+            $redirectUrl = ($redirectTo && str_starts_with($redirectTo, url('/')))
+                ? $redirectTo
+                : route('properties.index');
 
-            if ($redirectTo && str_starts_with($redirectTo, url('/'))) {
-                return redirect($redirectTo)
-                    ->with('success', 'Объект успешно обновлён!');
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Объект успешно обновлён!',
+                    'redirect' => $redirectUrl,
+                ]);
             }
 
-            return redirect()
-                ->route('properties.index')
+            return redirect($redirectUrl)
                 ->with('success', 'Объект успешно обновлён!');
         } catch (\Exception $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Ошибка при обновлении объекта: ' . $e->getMessage(),
+                ], 500);
+            }
+
             return back()
                 ->withInput()
                 ->with('error', 'Ошибка при обновлении объекта: ' . $e->getMessage());

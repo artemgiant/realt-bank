@@ -3,6 +3,7 @@
 @section('title', 'Создание объекта - Realt Bank')
 
 @push('styles')
+    <link rel="stylesheet" href="{{ versioned_asset('css/components/alerts.css') }}">
     <link rel="stylesheet" href="{{ versioned_asset('css/pages/properties/create/page-create.css') }}">
     <link rel="stylesheet" href="{{ versioned_asset('css/pages/properties/create/location-search.css') }}">
     <link rel="stylesheet" href="{{ versioned_asset('css/pages/properties/create/field-widths.css') }}">
@@ -49,7 +50,7 @@
         {{-- Сообщения об успехе/ошибке/валидации --}}
         <x-alerts />
 
-        <form id="property-form" action="{{ route('properties.store') }}" method="POST" enctype="multipart/form-data">
+        <form id="property-form" action="{{ route('properties.store') }}" method="POST" enctype="multipart/form-data" novalidate>
             @csrf
 
             <div class="create-filter">

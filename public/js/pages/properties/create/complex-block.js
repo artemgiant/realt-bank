@@ -163,8 +163,12 @@
             // clearLocationFields(); // Раскомментировать если нужно очищать
         });
 
-        // Изначально заблокирован
-        disableBlockSelect();
+        // Заблокировать если комплекс не выбран
+        if ($(CONFIG.selectors.complex).val()) {
+            enableBlockSelect();
+        } else {
+            disableBlockSelect();
+        }
     }
 
     /**
@@ -204,6 +208,11 @@
      * Заполнение полей локации из данных блока
      */
     function fillLocationFromBlock(blockData) {
+        // Не обновлять локацию если у блока нет данных по адресу
+        if (!blockData.street_name && !blockData.city_name) {
+            return;
+        }
+
         // Формируем полный адрес: улица, зона, район, город
         const addressParts = [];
         if (blockData.street_name) addressParts.push(blockData.street_name);

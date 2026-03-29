@@ -126,13 +126,8 @@
                     if (result.data) {
                         // Проверяем статус ответа
                         if (result.status === 422 && result.data.errors) {
-                            // Ошибки валидации Laravel
+                            // Ошибки валидации Laravel — показываем все ошибки в сводном блоке
                             showValidationErrors(result.data.errors);
-
-                            // Показываем общее сообщение если есть
-                            if (result.data.message) {
-                                showGeneralError(result.data.message);
-                            }
                             return;
                         }
 
@@ -179,10 +174,13 @@
         document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
         document.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
         document.querySelectorAll('.alert-validation-error').forEach(el => el.remove());
+        document.querySelectorAll('.form-validation-error').forEach(el => el.remove());
 
-        // Показываем новые ошибки
+        // Собираем все сообщения для сводного блока
+        const allMessages = [];
         for (const [field, messages] of Object.entries(errors)) {
-            const message = Array.isArray(messages) ? messages[0] : messages;
+            const fieldMessages = Array.isArray(messages) ? messages : [messages];
+            fieldMessages.forEach(msg => allMessages.push(msg));
 
             // Специальная обработка для contact_ids — инпуты существуют только когда есть контакты
             if (field === 'contact_ids') {
@@ -193,7 +191,7 @@
                     const feedback = document.createElement('div');
                     feedback.className = 'invalid-feedback d-block';
                     feedback.style.cssText = 'font-size: 14px; margin-top: 8px;';
-                    feedback.textContent = message;
+                    feedback.textContent = fieldMessages.join(', ');
 
                     contactBlock.parentNode.insertBefore(feedback, contactBlock.nextSibling);
                 }
@@ -206,16 +204,34 @@
 
                 const feedback = document.createElement('div');
                 feedback.className = 'invalid-feedback d-block';
-                feedback.textContent = message;
+                feedback.textContent = fieldMessages.join(', ');
 
                 input.parentNode.appendChild(feedback);
             }
         }
 
-        // Скроллим к первой ошибке
-        const firstError = document.querySelector('.invalid-feedback');
-        if (firstError) {
-            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Показываем сводный блок ошибок вверху формы (как <x-alerts />)
+        if (allMessages.length > 0) {
+            const errorList = allMessages.map(msg => `<li>${msg}</li>`).join('');
+            const errorBlock = document.createElement('div');
+            errorBlock.className = 'form-validation-error';
+            errorBlock.innerHTML = `
+                <div class="validation-error-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 7V13H13V7H11ZM11 15V17H13V15H11Z" fill="white"/>
+                    </svg>
+                </div>
+                <div class="validation-error-content">
+                    <strong class="validation-error-title">Пожалуйста, исправьте ошибки:</strong>
+                    <ul class="validation-error-list">${errorList}</ul>
+                </div>
+            `;
+
+            const container = document.querySelector('.create');
+            if (container) {
+                container.insertBefore(errorBlock, container.firstChild);
+                errorBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
     }
 
@@ -225,21 +241,27 @@
     function showGeneralError(message) {
         // Удаляем старые алерты
         document.querySelectorAll('.alert-validation-error').forEach(el => el.remove());
+        document.querySelectorAll('.form-validation-error').forEach(el => el.remove());
 
-        // Создаем новый алерт
-        const alert = document.createElement('div');
-        alert.className = 'alert alert-danger alert-dismissible fade show alert-validation-error';
-        alert.setAttribute('role', 'alert');
-        alert.innerHTML = `
-            <strong>Ошибка:</strong> ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        // Создаем алерт в стиле <x-alerts />
+        const errorBlock = document.createElement('div');
+        errorBlock.className = 'form-validation-error';
+        errorBlock.innerHTML = `
+            <div class="validation-error-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 7V13H13V7H11ZM11 15V17H13V15H11Z" fill="white"/>
+                </svg>
+            </div>
+            <div class="validation-error-content">
+                <strong class="validation-error-title">Ошибка:</strong>
+                <ul class="validation-error-list"><li>${message}</li></ul>
+            </div>
         `;
 
-        // Вставляем в начало формы или create контейнера
         const container = document.querySelector('.create') || document.querySelector('#property-form');
         if (container) {
-            container.insertBefore(alert, container.firstChild);
-            alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            container.insertBefore(errorBlock, container.firstChild);
+            errorBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
 })();

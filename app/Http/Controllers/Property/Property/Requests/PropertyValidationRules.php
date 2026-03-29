@@ -26,24 +26,24 @@ trait PropertyValidationRules
             // Справочники (необязательные)
             'deal_kind_id' => 'nullable|exists:dictionaries,id',      // Вид сделки
             'building_type_id' => 'nullable|exists:dictionaries,id',  // Тип здания
-            'property_type_id' => 'nullable|exists:dictionaries,id',  // Тип недвижимости (квартира/дом/участок)
+            'property_type_id' => 'required|exists:dictionaries,id',  // Тип недвижимости (квартира/дом/участок)
             'room_count_id' => 'nullable|exists:dictionaries,id',     // Количество комнат
             'condition_id' => 'nullable|exists:dictionaries,id',      // Состояние (ремонт/без ремонта)
             'bathroom_count_id' => 'nullable|exists:dictionaries,id', // Количество ванных комнат
             'ceiling_height_id' => 'nullable|exists:dictionaries,id', // Высота потолков
-            'wall_type_id' => 'nullable|exists:dictionaries,id',      // Тип стен (кирпич/панель)
+            'wall_type_id' => 'required|exists:dictionaries,id',      // Тип стен (кирпич/панель)
             'heating_type_id' => 'nullable|exists:dictionaries,id',   // Тип отопления
-            'source_id' => 'nullable|exists:sources,id',              // Источник объекта
-            'contact_type_id' => 'nullable|exists:dictionaries,id',   // Тип контакта (собственник/посредник)
+            'source_id' => 'required|exists:sources,id',              // Источник объекта
+            'contact_type_id' => 'required|exists:dictionaries,id',   // Тип контакта (собственник/посредник)
 
             // Локация (иерархия: страна → область → город → район → зона → улица)
             'country_id' => 'nullable|exists:countries,id',       // Страна
-            'state_id' => 'nullable|exists:states,id',            // Область/регион
+            'state_id' => 'required|exists:states,id',            // Область/регион
             'region_id' => 'required|exists:regions,id',          // Район региона (обязательно)
             'city_id' => 'nullable|exists:cities,id',             // Город
             'district_id' => 'nullable|exists:districts,id',      // Район
             'zone_id' => 'nullable|exists:zones,id',              // Зона/ориентир
-            'street_id' => 'nullable|exists:streets,id',          // Улица
+            'street_id' => 'required|exists:streets,id',          // Улица
             'building_number' => 'nullable|string|max:50',        // Номер дома
             'apartment_number' => 'nullable|string|max:50',       // Номер квартиры
 
@@ -59,7 +59,7 @@ trait PropertyValidationRules
             'floor' => 'nullable|integer|min:0',           // Этаж
             'floors_total' => 'nullable|integer|min:1',    // Этажность здания
             'year_built' => 'nullable|exists:dictionaries,id', // Год постройки
-            'price' => 'nullable|integer|min:0',           // Цена
+            'price' => 'required|integer|min:0',           // Цена
             'commission' => 'nullable|integer|min:0',      // Комиссия агента (%)
 
             // Настройки видимости
@@ -129,7 +129,16 @@ trait PropertyValidationRules
             'deal_type_id.required' => 'Выберите тип сделки',
             'deal_type_id.exists' => 'Выбранный тип сделки не существует',
             'currency_id.required' => 'Выберите валюту',
+            'property_type_id.required' => 'Выберите тип недвижимости',
+            'property_type_id.exists' => 'Выбранный тип недвижимости не существует',
+            'wall_type_id.required' => 'Выберите тип стен',
+            'wall_type_id.exists' => 'Выбранный тип стен не существует',
             'currency_id.exists' => 'Выбранная валюта не существует',
+            'state_id.required' => 'Выберите регион (область)',
+            'street_id.required' => 'Выберите локацию (улицу)',
+            'price.required' => 'Укажите цену на объект',
+            'source_id.required' => 'Выберите источник',
+            'contact_type_id.required' => 'Выберите тип контакта',
             'city_id.exists' => 'Выбранный город не существует',
             'price.integer' => 'Цена должна быть целым числом',
             'price.min' => 'Цена не может быть отрицательной',
