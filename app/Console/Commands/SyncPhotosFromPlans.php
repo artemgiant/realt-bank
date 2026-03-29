@@ -124,18 +124,21 @@ class SyncPhotosFromPlans extends Command
 
         foreach ($photos as $photo) {
             $id = $photo['id'] ?? null;
-            $s3Url = $photo['s3_url'] ?? null;
+            $source = $photo['source'] ?? null;
+            $url = ($source === 'aws_s3')
+                ? ($photo['img_url'] ?? $photo['s3_url'] ?? null)
+                : ($photo['s3_url'] ?? $photo['img_url'] ?? null);
             $filename = $photo['filename'] ?? null;
             $objectId = $photo['object_id'] ?? null;
 
-            if (!$id || !$s3Url) {
+            if (!$id || !$url) {
                 $this->skipped++;
                 continue;
             }
 
             if (isset($existing[$id])) {
                 // Фото є в БД — оновлюємо path/filename
-                if ($existing[$id] === $s3Url) {
+                if ($existing[$id] === $url) {
                     $this->skipped++;
                     continue;
                 }
@@ -144,8 +147,8 @@ class SyncPhotosFromPlans extends Command
                     DB::table('property_photos')
                         ->where('id', $id)
                         ->update([
-                            'path' => $s3Url,
-                            'filename' => $filename ?? basename($s3Url),
+                            'path' => $url,
+                            'filename' => $filename ?? basename($url),
                             'updated_at' => now(),
                         ]);
                 }
@@ -163,8 +166,8 @@ class SyncPhotosFromPlans extends Command
                 $toInsert[] = [
                     'id' => $id,
                     'property_id' => $propertyId,
-                    'path' => $s3Url,
-                    'filename' => $filename ?? basename($s3Url),
+                    'path' => $url,
+                    'filename' => $filename ?? basename($url),
                     'sort_order' => 0,
                     'is_main' => false,
                     'created_at' => now(),
