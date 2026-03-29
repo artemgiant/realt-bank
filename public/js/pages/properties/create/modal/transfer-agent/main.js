@@ -314,7 +314,7 @@
         const avatarEl = document.querySelector(CONFIG.selectors.agentAvatar);
 
         if (nameEl) nameEl.textContent = employee.full_name || '-';
-        if (descEl) descEl.textContent = employee.company_name || employee.position_name || '-';
+        if (descEl) descEl.textContent = employee.office_name || employee.position_name || '-';
 
         if (telEl) {
             if (employee.phone) {
@@ -452,7 +452,7 @@
         }
 
         if (companyDisplay) {
-            companyDisplay.textContent = employee.company_name || '';
+            companyDisplay.textContent = employee.office_name || '';
         }
 
         if (phoneDisplay) {

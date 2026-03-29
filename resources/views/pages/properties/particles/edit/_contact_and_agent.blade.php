@@ -137,7 +137,7 @@
                 </div>
                 <div class="info-contacts">
                     <p class="info-contacts-name" id="agent-name-display">{{ $propertyAgent->full_name ?? ($property->user?->name ?? 'Агент') }}</p>
-                    <p class="info-description" id="agent-company-display">{{ $propertyAgent->company?->name ?? '' }}</p>
+                    <p class="info-description" id="agent-company-display">{{ $propertyAgent->office?->name ?? '' }}</p>
                     @if($propertyAgent && $propertyAgent->phone)
                         <a href="tel:{{ $propertyAgent->phone }}" class="info-contacts-tel" id="agent-phone-display">{{ \App\Helpers\PhoneFormatter::format($propertyAgent->phone) }}</a>
                     @else

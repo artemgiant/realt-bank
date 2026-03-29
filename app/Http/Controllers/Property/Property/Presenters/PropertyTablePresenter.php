@@ -264,7 +264,7 @@ class PropertyTablePresenter
             'full_name' => $employee->full_name,
             'contact_role_names' => $property->contactType?->name,
             'phone' => $employee->phone,
-            'company_name' => $employee->company?->name,
+            'company_name' => $employee->office?->name,
             'position_name' => $employee->position?->name,
         ];
     }
@@ -297,7 +297,7 @@ class PropertyTablePresenter
         }
         return [
             'full_name' => $employee->full_name,
-            'company_name' => $employee->company?->name ?? '',
+            'company_name' => $employee->office?->name ?? '',
             'phone' => $employee->phone ?? '-',
             'photo_url' => $employee->photo_url,
         ];
