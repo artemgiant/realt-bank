@@ -636,18 +636,77 @@ function changePerPage(perPage, sectionRoute) {
     window.location.href = url.toString();
 }
 
+// ========== AJAX SEARCH FOR ALL LOCATIONS ==========
+function initLocationAjaxSearch(inputId, ajaxUrl, containerId, dataVarName) {
+    var input = document.getElementById(inputId);
+    if (!input) return;
+
+    var debounceTimer = null;
+    var form = input.closest('form');
+
+    // Prevent form submit on Enter — use AJAX instead
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+        });
+    }
+
+    input.addEventListener('input', function() {
+        var query = this.value;
+
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function() {
+            var container = document.getElementById(containerId);
+            if (!container) return;
+
+            $.ajax({
+                url: ajaxUrl,
+                data: { search: query },
+                dataType: 'json',
+                success: function(response) {
+                    container.innerHTML = response.html;
+
+                    // Update data variable for drawer editing
+                    if (response.data && dataVarName) {
+                        window[dataVarName] = response.data;
+                    }
+
+                    // Update URL without reload
+                    var url = new URL(window.location.href);
+                    if (query) {
+                        url.searchParams.set('search', query);
+                    } else {
+                        url.searchParams.delete('search');
+                    }
+                    url.searchParams.delete('page');
+                    history.replaceState(null, '', url.toString());
+
+                    // Reinitialize tree toggle for regions
+                    if (containerId === 'regionsCardBody') {
+                        initTreeToggle();
+                    }
+                },
+                error: function() {
+                    // Fallback: do nothing, keep current list
+                }
+            });
+        }, 300);
+    });
+}
+
 // ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', function() {
     // Tree toggle
     initTreeToggle();
 
-    // Search inputs
-    initLocationSearch('searchRegionsInput', '#regionsTreeList', '.region-parent');
-    initLocationSearch('searchOblastRegionsInput', '#oblastRegionsAddressList', '.address-item');
-    initLocationSearch('searchCitiesInput', '#citiesAddressList', '.address-item');
-    initLocationSearch('searchDistrictsInput', '#districtsAddressList', '.address-item');
-    initLocationSearch('searchZonesInput', '#zonesAddressList', '.address-item');
-    initLocationSearch('searchStreetsInput', '#streetsTable tbody', 'tr');
+    // AJAX search inputs
+    initLocationAjaxSearch('searchCountriesInput', '/settings/countries/ajax-search', 'countriesCardBody', 'countriesData');
+    initLocationAjaxSearch('searchRegionsInput', '/settings/regions/ajax-search', 'regionsCardBody', 'statesData');
+    initLocationAjaxSearch('searchOblastRegionsInput', '/settings/oblast-regions/ajax-search', 'oblastRegionsCardBody', 'regionsListData');
+    initLocationAjaxSearch('searchCitiesInput', '/settings/cities/ajax-search', 'citiesCardBody', 'citiesData');
+    initLocationAjaxSearch('searchDistrictsInput', '/settings/districts/ajax-search', 'districtsCardBody', 'districtsData');
+    initLocationAjaxSearch('searchZonesInput', '/settings/zones/ajax-search', 'zonesCardBody', 'zonesData');
+    initLocationAjaxSearch('searchStreetsInput', '/settings/streets/ajax-search', 'streetsCardBody', 'streetsData');
 
     // ===== Country drawer events =====
     var countryOverlay = document.getElementById('drawerCountryOverlay');

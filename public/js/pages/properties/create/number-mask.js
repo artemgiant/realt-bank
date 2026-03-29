@@ -15,12 +15,13 @@
             '#area_total',
             '#area_living',
             '#area_kitchen',
-            '#area_land',
             '#commission'
         ];
 
-        // Поля с десятичными числами (площади) - теперь пусты, так как заказчик хочет только целые числа
-        const decimalFields = [];
+        // Поля с десятичными числами
+        const decimalFields = [
+            '#area_land'
+        ];
 
         // Поля с большими числами (цена)
         const moneyFields = [

@@ -277,6 +277,13 @@ Route::middleware('auth')->group(function () {
         // Location CRUD (settings.locations.manage)
         Route::middleware('permission:settings.locations.manage')->group(function () {
             // AJAX helpers
+            Route::get('/countries/ajax-search', [SettingsController::class, 'countriesAjaxSearch'])->name('countries.ajax-search');
+            Route::get('/regions/ajax-search', [SettingsController::class, 'regionsAjaxSearch'])->name('regions.ajax-search');
+            Route::get('/oblast-regions/ajax-search', [SettingsController::class, 'oblastRegionsAjaxSearch'])->name('oblast-regions.ajax-search');
+            Route::get('/cities/ajax-search', [SettingsController::class, 'citiesAjaxSearch'])->name('cities.ajax-search');
+            Route::get('/districts/ajax-search', [SettingsController::class, 'districtsAjaxSearch'])->name('districts.ajax-search');
+            Route::get('/zones/ajax-search', [SettingsController::class, 'zonesAjaxSearch'])->name('zones.ajax-search');
+            Route::get('/streets/ajax-search', [SettingsController::class, 'streetsAjaxSearch'])->name('streets.ajax-search');
             Route::get('/locations/regions-by-state', [LocationSettingsController::class, 'getRegions'])->name('locations.regions-by-state');
             Route::get('/locations/cities-by-state', [LocationSettingsController::class, 'getCities'])->name('locations.cities-by-state');
             Route::get('/locations/districts-by-city', [LocationSettingsController::class, 'getDistricts'])->name('locations.districts-by-city');

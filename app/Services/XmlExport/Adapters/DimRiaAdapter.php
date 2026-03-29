@@ -140,8 +140,16 @@ class DimRiaAdapter extends AbstractXmlAdapter
         }
 
         $parts = explode('/', $number);
+
+        // X/Y/Z → X/Y (убираем номер квартиры)
         if (count($parts) > 2) {
-            return $parts[0] . '/' . $parts[1];
+            $number = $parts[0] . '/' . $parts[1];
+            $parts = explode('/', $number);
+        }
+
+        // X/а → XА (убираем слэш перед буквой и делаем заглавной: 21/а → 21А, 16/б → 16Б)
+        if (count($parts) === 2 && preg_match('/^[a-zA-Zа-яА-ЯіІїЇєЄґҐёЁ]+$/u', $parts[1])) {
+            return $parts[0] . mb_strtoupper($parts[1]);
         }
 
         return $number;

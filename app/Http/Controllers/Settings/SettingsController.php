@@ -177,10 +177,7 @@ class SettingsController extends Controller
             ->orderBy('name');
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhereHas('state', fn ($sq) => $sq->where('name', 'like', "%{$search}%"));
-            });
+            $query->where('name', 'like', "%{$search}%");
         }
 
         $data['regionsList'] = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
@@ -205,10 +202,7 @@ class SettingsController extends Controller
             ->orderBy('name');
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhereHas('state', fn ($sq) => $sq->where('name', 'like', "%{$search}%"));
-            });
+            $query->where('name', 'like', "%{$search}%");
         }
 
         $data['citiesList'] = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
@@ -217,6 +211,37 @@ class SettingsController extends Controller
         $data['perPage'] = $perPage;
 
         return view('pages.settings.index', $data);
+    }
+
+    /**
+     * AJAX search for cities — returns partial HTML.
+     */
+    public function citiesAjaxSearch(Request $request)
+    {
+        $search = $request->input('search', '');
+        $perPage = $this->getPerPage($request);
+
+        $query = City::with('state')
+            ->withCount(['streets', 'districts', 'zones'])
+            ->orderBy('name');
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $citiesList = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
+
+        $html = view('pages.settings.locations.partials.cities-list', [
+            'citiesList' => $citiesList,
+            'perPage' => $perPage,
+            'search' => $search,
+        ])->render();
+
+        return response()->json([
+            'html' => $html,
+            'total' => $citiesList->total(),
+            'data' => $citiesList->keyBy('id'),
+        ]);
     }
 
     /**
@@ -233,10 +258,7 @@ class SettingsController extends Controller
             ->orderBy('name');
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhereHas('city', fn ($sq) => $sq->where('name', 'like', "%{$search}%"));
-            });
+            $query->where('name', 'like', "%{$search}%");
         }
 
         $data['districtsList'] = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
@@ -261,11 +283,7 @@ class SettingsController extends Controller
             ->orderBy('name');
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhereHas('city', fn ($sq) => $sq->where('name', 'like', "%{$search}%"))
-                  ->orWhereHas('state', fn ($sq) => $sq->where('name', 'like', "%{$search}%"));
-            });
+            $query->where('name', 'like', "%{$search}%");
         }
 
         $data['zonesList'] = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
@@ -289,12 +307,7 @@ class SettingsController extends Controller
             ->orderBy('name');
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhereHas('city', fn ($sq) => $sq->where('name', 'like', "%{$search}%"))
-                  ->orWhereHas('district', fn ($sq) => $sq->where('name', 'like', "%{$search}%"))
-                  ->orWhereHas('zone', fn ($sq) => $sq->where('name', 'like', "%{$search}%"));
-            });
+            $query->where('name', 'like', "%{$search}%");
         }
 
         $data['streetsList'] = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
@@ -304,5 +317,182 @@ class SettingsController extends Controller
         $data['perPage'] = $perPage;
 
         return view('pages.settings.index', $data);
+    }
+
+    /**
+     * AJAX search for countries.
+     */
+    public function countriesAjaxSearch(Request $request)
+    {
+        $search = $request->input('search', '');
+        $perPage = $this->getPerPage($request);
+
+        $query = Country::withCount('states')->orderBy('name');
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $countriesList = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
+
+        return response()->json([
+            'html' => view('pages.settings.locations.partials.countries-list', [
+                'countriesList' => $countriesList,
+                'perPage' => $perPage,
+                'search' => $search,
+            ])->render(),
+            'total' => $countriesList->total(),
+            'data' => $countriesList->keyBy('id'),
+        ]);
+    }
+
+    /**
+     * AJAX search for regions (states).
+     */
+    public function regionsAjaxSearch(Request $request)
+    {
+        $search = $request->input('search', '');
+        $perPage = $this->getPerPage($request);
+
+        $query = State::withCount(['cities', 'regions', 'districts'])
+            ->with(['country', 'regions' => function ($q) {
+                $q->withCount('cities')->orderBy('name');
+            }, 'cities' => function ($q) {
+                $q->withCount('districts')->orderBy('name');
+            }, 'cities.districts' => function ($q) {
+                $q->withCount('streets')->orderBy('name');
+            }])
+            ->orderBy('name');
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $states = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
+
+        return response()->json([
+            'html' => view('pages.settings.locations.partials.regions-list', [
+                'states' => $states,
+                'perPage' => $perPage,
+                'search' => $search,
+            ])->render(),
+            'total' => $states->total(),
+            'data' => $states->keyBy('id'),
+        ]);
+    }
+
+    /**
+     * AJAX search for oblast regions.
+     */
+    public function oblastRegionsAjaxSearch(Request $request)
+    {
+        $search = $request->input('search', '');
+        $perPage = $this->getPerPage($request);
+
+        $query = Region::with('state')
+            ->withCount('cities')
+            ->orderBy('name');
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $regionsList = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
+
+        return response()->json([
+            'html' => view('pages.settings.locations.partials.oblast-regions-list', [
+                'regionsList' => $regionsList,
+                'perPage' => $perPage,
+                'search' => $search,
+            ])->render(),
+            'total' => $regionsList->total(),
+            'data' => $regionsList->keyBy('id'),
+        ]);
+    }
+
+    /**
+     * AJAX search for districts.
+     */
+    public function districtsAjaxSearch(Request $request)
+    {
+        $search = $request->input('search', '');
+        $perPage = $this->getPerPage($request);
+
+        $query = District::with('city')
+            ->withCount('streets')
+            ->orderBy('name');
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $districtsList = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
+
+        return response()->json([
+            'html' => view('pages.settings.locations.partials.districts-list', [
+                'districtsList' => $districtsList,
+                'perPage' => $perPage,
+                'search' => $search,
+            ])->render(),
+            'total' => $districtsList->total(),
+            'data' => $districtsList->keyBy('id'),
+        ]);
+    }
+
+    /**
+     * AJAX search for zones.
+     */
+    public function zonesAjaxSearch(Request $request)
+    {
+        $search = $request->input('search', '');
+        $perPage = $this->getPerPage($request);
+
+        $query = Zone::with(['city', 'state'])
+            ->withCount('streets')
+            ->orderBy('name');
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $zonesList = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
+
+        return response()->json([
+            'html' => view('pages.settings.locations.partials.zones-list', [
+                'zonesList' => $zonesList,
+                'perPage' => $perPage,
+                'search' => $search,
+            ])->render(),
+            'total' => $zonesList->total(),
+            'data' => $zonesList->keyBy('id'),
+        ]);
+    }
+
+    /**
+     * AJAX search for streets.
+     */
+    public function streetsAjaxSearch(Request $request)
+    {
+        $search = $request->input('search', '');
+        $perPage = $this->getPerPage($request);
+
+        $query = Street::with(['city.state.country', 'district', 'zone'])
+            ->orderBy('name');
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $streetsList = $query->paginate($perPage)->appends($request->only(['search', 'per_page']));
+
+        return response()->json([
+            'html' => view('pages.settings.locations.partials.streets-list', [
+                'streetsList' => $streetsList,
+                'perPage' => $perPage,
+                'search' => $search,
+            ])->render(),
+            'total' => $streetsList->total(),
+            'data' => $streetsList->keyBy('id'),
+        ]);
     }
 }
