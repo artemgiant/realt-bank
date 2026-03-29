@@ -104,8 +104,8 @@ class DimRiaAdapter extends AbstractXmlAdapter
 
         return [
             // Базовые параметры (константы)
-            'advert_type'     => 'Продажа',
-            'realty_type'     => 'Квартира',
+            'advert_type'     => DimRiaMappings::mapAdvertType($dto->dealTypeName),
+            'realty_type'     => DimRiaMappings::mapRealtyType($dto->propertyTypeName),
             'realty_sale_type' => 1,
 
             // Данные риелтора

@@ -110,7 +110,7 @@ class RemMappings
             return null;
         }
 
-        return self::CURRENCY_MAP[$code] ?? $code;
+        return self::CURRENCY_MAP[$code] ?? null;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Services\XmlExport\Adapters;
 
+use App\Models\Reference\Currency;
 use App\Services\XmlExport\Dto\PropertyExportData;
 use App\Services\XmlExport\Mappings\RemMappings;
 use Spatie\ArrayToXml\ArrayToXml;
@@ -74,6 +75,15 @@ class RemAdapter extends AbstractXmlAdapter
         $dealType = RemMappings::mapDealType($dto->dealTypeName);
         $urlSegment = RemMappings::mapUrlSegment($category, $dealType);
 
+        // Конвертация цены: если валюта не UAH/USD — конвертируем в USD через курсы НБУ
+        $price = $dto->price ? (int) $dto->price : null;
+        $currencyCode = RemMappings::mapCurrency($dto->currencyCode);
+
+        if ($price && $currencyCode && !in_array($currencyCode, ['UAH', 'USD'], true)) {
+            $price = $this->convertToUsd($price, $dto->currencyCode);
+            $currencyCode = 'USD';
+        }
+
         $data = [
             '_attributes' => ['internal-id' => $dto->id],
             'url'           => $urlSegment
@@ -104,8 +114,8 @@ class RemAdapter extends AbstractXmlAdapter
             ],
 
             'price' => [
-                'value'    => $dto->price ? (int) $dto->price : null,
-                'currency' => RemMappings::mapCurrency($dto->currencyCode),
+                'value'    => $price,
+                'currency' => $currencyCode,
             ],
 
             'area' => [
@@ -167,5 +177,24 @@ class RemAdapter extends AbstractXmlAdapter
         $parts = array_filter([$streetName, $buildingNumber]);
 
         return !empty($parts) ? implode(', ', $parts) : null;
+    }
+
+    /**
+     * Конвертация цены в USD через курсы НБУ.
+     * Логика: sourcePrice * sourceRate / usdRate
+     * (rate — сколько гривен стоит 1 единица валюты)
+     */
+    private function convertToUsd(int $price, string $fromCurrencyCode): int
+    {
+        $sourceCurrency = Currency::where('code', $fromCurrencyCode)->first();
+        $usdCurrency = Currency::where('code', 'USD')->first();
+
+        if (!$sourceCurrency || !$usdCurrency || !$usdCurrency->rate) {
+            return $price;
+        }
+
+        $priceInUah = $price * $sourceCurrency->rate;
+
+        return (int) round($priceInUah / $usdCurrency->rate);
     }
 }

@@ -11,7 +11,7 @@ git fetch origin
 git reset --hard origin/master
 
 # Оновити Composer залежності
-composer install --optimize-autoloader
+#composer install --optimize-autoloader
 
 
 # Очистити кеш
@@ -82,10 +82,10 @@ php artisan db:seed --class=DictionarySeeder --force
 
 php artisan xml:generate dim_ria --skip-validation
 
-php artisan xml:generate rem --skip-validation
+#php artisan xml:generate rem --skip-validation
 
 
-php db:seed --class="Database\\Seeders\\Reference\\DeveloperSeeder"
+#php artisan db:seed --class=DeveloperSeeder --force
 
 #DIM.RIA	GET /xml-feed/dim_ria
 #REM	GET /xml-feed/rem

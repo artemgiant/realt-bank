@@ -37,7 +37,7 @@ class XmlExportService
 
         $properties = Property::active()
             ->with([
-                'employee',
+                'employee.office',
                 'currency',
                 'country',
                 'state',
