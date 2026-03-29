@@ -159,6 +159,82 @@ class DimRiaMappings
     ];
 
     /**
+     * Property type name → category (для ветвления логики)
+     */
+    public const CATEGORY_MAP = [
+        // Комнаты
+        'Комната'                           => 'room',
+        // Квартиры
+        'Квартира'                          => 'apartment',
+        'Пентхаус'                          => 'apartment',
+        'Студия'                            => 'apartment',
+        'Апартаменты'                       => 'apartment',
+        'Квартира на земле'                 => 'apartment',
+        // Дома
+        'Дом'                               => 'house',
+        'Таунхаус'                          => 'house',
+        'Дуплекс'                           => 'house',
+        'Часть дома'                        => 'house',
+        'Коттедж'                           => 'house',
+        'Вилла'                             => 'house',
+        'Дача'                              => 'house',
+        // Участки
+        'Земля под жилую застройку'         => 'land',
+        'Земля под садоводство'             => 'land',
+        'Земля коммерческого назначения'    => 'land',
+        'Земля сельскохозяйственного назначения' => 'land',
+        'Земля рекреационного назначения'   => 'land',
+        // Коммерческая
+        'Офисное помещение'                 => 'commercial',
+        'Торговое помещение'                => 'commercial',
+        'Ресторан/кафе'                     => 'commercial',
+        'Гостиница/отель'                   => 'commercial',
+        'Медицинское помещение'             => 'commercial',
+        'Складские помещения'               => 'commercial',
+        'Производственные помещения'        => 'commercial',
+        'Здание'                            => 'commercial',
+        'Готовый бизнес'                    => 'commercial',
+        'Помещение свободного назначения'   => 'commercial',
+        // Паркинг/гараж
+        'Паркинг'                           => 'garage',
+        'Машино-место'                      => 'garage',
+        'Гараж'                             => 'garage',
+        'Бокс'                              => 'garage',
+    ];
+
+    /**
+     * Минимум фото по категории
+     */
+    public const MIN_PHOTOS_MAP = [
+        'apartment'  => 5,
+        'room'       => 5,
+        'house'      => 5,
+        'land'       => 1,
+        'commercial' => 3,
+        'garage'     => 3,
+    ];
+
+    /**
+     * Dictionary condition name → DOM.RIA house_state (для домов)
+     */
+    public const HOUSE_STATE_MAP = [
+        'С ремонтом'     => 'отличное',
+        'Жилая'          => 'хорошее',
+        'От строителей'  => 'без отделки / черновая отделка',
+        'Без ремонта'    => 'требует ремонта',
+    ];
+
+    /**
+     * Dictionary condition name → DOM.RIA condition_of_building_repair (для коммерческой)
+     */
+    public const COMMERCIAL_CONDITION_MAP = [
+        'С ремонтом'     => 'отличное',
+        'Жилая'          => 'хорошее',
+        'От строителей'  => 'без отделки / черновая отделка',
+        'Без ремонта'    => 'требует ремонта',
+    ];
+
+    /**
      * Currency symbol mapping (на случай несовпадения)
      */
     public const CURRENCY_MAP = [
@@ -167,6 +243,38 @@ class DimRiaMappings
         '€'  => '€',
         'грн'=> 'грн',
     ];
+
+    public static function mapCategory(?string $propertyTypeName): ?string
+    {
+        if ($propertyTypeName === null) {
+            return null;
+        }
+
+        return self::CATEGORY_MAP[$propertyTypeName] ?? null;
+    }
+
+    public static function minPhotos(string $category): int
+    {
+        return self::MIN_PHOTOS_MAP[$category] ?? 5;
+    }
+
+    public static function mapHouseState(?string $name): ?string
+    {
+        if ($name === null) {
+            return null;
+        }
+
+        return self::HOUSE_STATE_MAP[$name] ?? null;
+    }
+
+    public static function mapCommercialCondition(?string $name): ?string
+    {
+        if ($name === null) {
+            return null;
+        }
+
+        return self::COMMERCIAL_CONDITION_MAP[$name] ?? null;
+    }
 
     public static function mapAdvertType(?string $dealTypeName): ?string
     {
