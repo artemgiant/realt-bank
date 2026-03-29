@@ -69,9 +69,23 @@ class DimRiaAdapter extends AbstractXmlAdapter
         if (empty($dto->floor)) $missing[] = 'floor';
         if (empty($dto->price)) $missing[] = 'price';
         if (empty($dto->currencySymbol)) $missing[] = 'currency';
-        if (count($dto->photoUrls) < 5) $missing[] = 'photos_urls (минимум 5, есть: ' . count($dto->photoUrls) . ')';
+        if (count($dto->photoUrls) < 1) $missing[] = 'photos_urls (минимум 1 фото)';
 
         return $missing;
+    }
+
+    private function ensureMinPhotos(array $photos, int $min): array
+    {
+        if (empty($photos)) {
+            return $photos;
+        }
+
+        $lastPhoto = end($photos);
+        while (count($photos) < $min) {
+            $photos[] = $lastPhoto;
+        }
+
+        return $photos;
     }
 
     public function toArray(PropertyExportData $dto): array
@@ -89,9 +103,9 @@ class DimRiaAdapter extends AbstractXmlAdapter
             'phone'           => $dto->phone ? PhoneFormatter::format($dto->phone) : null,
             'local_realty_id' => $dto->id,
 
-            // Фото
+            // Фото (минимум 5, дублируем последнюю если не хватает)
             'photos_urls' => [
-                'loc' => $dto->photoUrls,
+                'loc' => $this->ensureMinPhotos($dto->photoUrls, 5),
             ],
 
             // Видео
@@ -104,7 +118,9 @@ class DimRiaAdapter extends AbstractXmlAdapter
             'district'         => $dto->districtName,
             'street'           => $dto->streetName,
             'street_type'      => 'улица',
-            'radius_location'  => 'да',
+            'building_number'   => $dto->buildingNumber,
+            'show_building_no'  => 0,
+            'radius_location'   => 'да',
 
             // Характеристики
             'characteristics' => array_merge(
