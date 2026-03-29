@@ -374,7 +374,29 @@ $(document).ready(function () {
         var btnText = 'Показать контакты';
         var btnClass = 'btn btn-outline-primary btn-block-info-toggle';
 
+        // Формируем строку с номером дома/квартиры
+        var addressParts = [];
+        if (data.block_name) {
+            addressParts.push('Секция ' + escapeHtml(data.block_name));
+        }
+        if (data.building_number) {
+            addressParts.push('Дом ' + escapeHtml(data.building_number));
+        }
+        if (data.apartment_number) {
+            addressParts.push('Кв. ' + escapeHtml(data.apartment_number));
+        }
+        var addressLine = addressParts.length ? addressParts.join(', ') : '';
+
         var detailHtml = '';
+
+        if (addressLine) {
+            detailHtml += '<li class="block-info-item block-info-detail block-info-detail-hidden">' +
+                '<div class="info-contacts" style="padding: 8px 0;">' +
+                '<p class="info-contacts-name" style="margin: 0;"><strong>' + addressLine + '</strong></p>' +
+                '</div>' +
+                '</li>';
+        }
+
         for (var i = 0; i < contacts.length; i++) {
             var contact = contacts[i];
             detailHtml += '<li class="block-info-item block-info-detail block-info-detail-hidden">' +

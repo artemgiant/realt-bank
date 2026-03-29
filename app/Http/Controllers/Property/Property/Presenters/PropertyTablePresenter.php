@@ -73,6 +73,9 @@ class PropertyTablePresenter
             'is_visible_to_agents' => $visibleToAgents,
             'is_own_scope' => $isOwnScope,
             'contact_for_display' => $visibleToAgents || $isOwner ? $this->contactForDisplay($property) : null,
+            'building_number' => $visibleToAgents || $isOwner ? $property->building_number : null,
+            'apartment_number' => $visibleToAgents || $isOwner ? $property->apartment_number : null,
+            'block_name' => $visibleToAgents || $isOwner ? $property->block?->name : null,
             'agent' => $this->agentForDisplay($property),
         ];
     }
