@@ -63,13 +63,22 @@ class DimRiaAdapter extends AbstractXmlAdapter
         if (empty($dto->stateName)) $missing[] = 'state';
         if (empty($dto->cityName)) $missing[] = 'city';
         if (empty($dto->streetName)) $missing[] = 'street';
-        if (empty($dto->roomCountValue)) $missing[] = 'rooms_count';
-        if (empty($dto->areaTotal)) $missing[] = 'total_area';
-        if (empty($dto->floorsTotal)) $missing[] = 'floors';
-        if (empty($dto->floor)) $missing[] = 'floor';
         if (empty($dto->price)) $missing[] = 'price';
         if (empty($dto->currencySymbol)) $missing[] = 'currency';
         if (count($dto->photoUrls) < 1) $missing[] = 'photos_urls (минимум 1 фото)';
+
+        $isLand = str_contains($dto->propertyTypeName ?? '', 'Земля');
+        $isHouse = in_array($dto->propertyTypeName, ['Дом', 'Таунхаус', 'Дуплекс', 'Коттедж', 'Часть дома']);
+
+        if (!$isLand) {
+            if (empty($dto->areaTotal)) $missing[] = 'total_area';
+            if (empty($dto->floorsTotal)) $missing[] = 'floors';
+            if (empty($dto->roomCountValue)) $missing[] = 'rooms_count';
+        }
+
+        if (!$isLand && !$isHouse) {
+            if (empty($dto->floor)) $missing[] = 'floor';
+        }
 
         return $missing;
     }
