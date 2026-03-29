@@ -52,9 +52,9 @@ trait PropertyValidationRules
             'block_id' => 'nullable|exists:blocks,id',         // Секция/корпус ЖК
 
             // Числовые характеристики
-            'area_total' => 'nullable|integer|min:0',      // Общая площадь (м²)
-            'area_living' => 'nullable|integer|min:0',     // Жилая площадь (м²)
-            'area_kitchen' => 'nullable|integer|min:0',    // Площадь кухни (м²)
+            'area_total' => 'required|integer|min:0',      // Общая площадь (м²)
+            'area_living' => 'required|integer|min:0',     // Жилая площадь (м²)
+            'area_kitchen' => 'required|integer|min:0',    // Площадь кухни (м²)
             'area_land' => 'nullable|numeric|min:0',       // Площадь участка (сотки)
             'floor' => 'nullable|integer|min:0',           // Этаж
             'floors_total' => 'nullable|integer|min:1',    // Этажность здания
@@ -136,6 +136,9 @@ trait PropertyValidationRules
             'currency_id.exists' => 'Выбранная валюта не существует',
             'state_id.required' => 'Выберите регион (область)',
             'street_id.required' => 'Выберите локацию (улицу)',
+            'area_total.required' => 'Укажите общую площадь',
+            'area_living.required' => 'Укажите жилую площадь',
+            'area_kitchen.required' => 'Укажите площадь кухни',
             'price.required' => 'Укажите цену на объект',
             'source_id.required' => 'Выберите источник',
             'contact_type_id.required' => 'Выберите тип контакта',

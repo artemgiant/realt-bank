@@ -207,7 +207,7 @@
                             <span>
                                 <label for="area_total">Площадь общая</label> /
                                 <label for="area_living">жилая</label> /
-                                <label for="area_kitchen">кухни</label>
+                                <label for="area_kitchen">кухни</label> <span class="text-danger">*</span>
                             </span>
                             <div class="item-inputText-wrapper shtrih2">
                                 <input class="item-inputText" id="area_total" name="area_total" type="text"
@@ -414,7 +414,7 @@
                     <div class="create-filter-row advertising-wrapper">
                         <div class="left">
                             <div class="title_advertising-wrapper">
-                                <label for="title_ru">Заголовок для рекламы</label>
+                                <label for="title_ru">Заголовок для сайта</label>
                                 <div class="item-inputText-wrapper">
                                     <input class="item-inputText" id="title_ru" name="title_ru" type="text"
                                            value="{{ old('title_ru') }}" autocomplete="off" placeholder="Введите заголовок">
@@ -453,7 +453,7 @@
                                          aria-labelledby="ua-tab-description-advertising" tabindex="0">
                                         <div class="tab-content-right">
                                             <div class="text_advertising-wrapper">
-                                                <label for="description_ua">Описание для рекламы</label>
+                                                <label for="description_ua">Описание для сайта</label>
                                                 <div class="item-inputText-wrapper">
                                                     <textarea class="item-textareaText" rows="10" data-input-lang="ua"
                                                               id="description_ua" name="description_ua" autocomplete="off"
@@ -466,7 +466,7 @@
                                          aria-labelledby="ru-tab-description-advertising" tabindex="0">
                                         <div class="tab-content-right">
                                             <div class="text_advertising-wrapper">
-                                                <label for="description_ru">Описание для рекламы</label>
+                                                <label for="description_ru">Описание для сайта</label>
                                                 <div class="item-inputText-wrapper">
                                                     <textarea class="item-textareaText" rows="10" data-input-lang="ru"
                                                               id="description_ru" name="description_ru" autocomplete="off"
