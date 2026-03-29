@@ -235,6 +235,17 @@ class DimRiaMappings
     ];
 
     /**
+     * City name mapping (Russian → Ukrainian for DOM.RIA)
+     */
+    public const CITY_NAME_MAP = [
+        'Молодёжное'                      => 'Молодіжне',
+        'Коблево'                         => 'Коблеве',
+        'Красносёлка'                     => 'Красноселка',
+        'Причерноморское (Первомайское)'  => 'Причорноморське',
+        'Дослидне'                        => 'Дослідне',
+    ];
+
+    /**
      * Currency symbol mapping (на случай несовпадения)
      */
     public const CURRENCY_MAP = [
@@ -334,6 +345,15 @@ class DimRiaMappings
         }
 
         return self::CURRENCY_MAP[$symbol] ?? $symbol;
+    }
+
+    public static function mapCityName(?string $name): ?string
+    {
+        if ($name === null) {
+            return null;
+        }
+
+        return self::CITY_NAME_MAP[$name] ?? $name;
     }
 
     /**

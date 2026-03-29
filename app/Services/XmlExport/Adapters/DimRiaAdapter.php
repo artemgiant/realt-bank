@@ -130,6 +130,31 @@ class DimRiaAdapter extends AbstractXmlAdapter
         return $photos;
     }
 
+    /**
+     * Номер дома: формат X/Y/Z → X/Y (убираем номер квартиры)
+     */
+    private function normalizeBuildingNumber(?string $number): ?string
+    {
+        if ($number === null) {
+            return null;
+        }
+
+        $parts = explode('/', $number);
+        if (count($parts) > 2) {
+            return $parts[0] . '/' . $parts[1];
+        }
+
+        return $number;
+    }
+
+    /**
+     * Этажность: фоллбэк 1, если не заполнена (DOM RIA требует floors для всех категорий кроме land)
+     */
+    private function resolveFloors(PropertyExportData $dto): int
+    {
+        return $dto->floorsTotal ?? 1;
+    }
+
     public function toArray(PropertyExportData $dto): array
     {
         $category = $this->resolveCategory($dto);
@@ -156,11 +181,11 @@ class DimRiaAdapter extends AbstractXmlAdapter
 
             // Расположение
             'state'             => preg_replace('/\s*область$/iu', '', $dto->stateName),
-            'city'              => $dto->cityName,
+            'city'              => DimRiaMappings::mapCityName($dto->cityName),
             'district'          => $dto->districtName,
             'street'            => $dto->streetName,
             'street_type'       => 'улица',
-            'building_number'   => $dto->buildingNumber,
+            'building_number'   => $this->normalizeBuildingNumber($dto->buildingNumber),
             'show_building_no'  => 0,
             'radius_location'   => 'да',
 
@@ -193,7 +218,7 @@ class DimRiaAdapter extends AbstractXmlAdapter
                 'total_area'     => $dto->areaTotal,
                 'living_area'    => $dto->areaLiving,
                 'kitchen_area'   => $dto->areaKitchen,
-                'floors'         => $dto->floorsTotal,
+                'floors'         => $this->resolveFloors($dto),
                 'floor'          => $dto->floor,
                 'flat_state'     => DimRiaMappings::mapCondition($dto->conditionName),
                 'ceiling_height' => $dto->ceilingHeightValue,
@@ -217,7 +242,7 @@ class DimRiaAdapter extends AbstractXmlAdapter
                 'total_area'     => $dto->areaTotal,
                 'living_area'    => $dto->areaLiving,
                 'kitchen_area'   => $dto->areaKitchen,
-                'floors'         => $dto->floorsTotal,
+                'floors'         => $this->resolveFloors($dto),
                 'floor'          => $dto->floor,
                 'flat_state'     => DimRiaMappings::mapCondition($dto->conditionName),
                 'ceiling_height' => $dto->ceilingHeightValue,
@@ -241,7 +266,7 @@ class DimRiaAdapter extends AbstractXmlAdapter
                 'total_area'     => $dto->areaTotal,
                 'living_area'    => $dto->areaLiving,
                 'kitchen_area'   => $dto->areaKitchen,
-                'floors'         => $dto->floorsTotal,
+                'floors'         => $this->resolveFloors($dto),
                 'plot_area'      => $dto->areaLand,
                 'plot_area_unit' => $dto->areaLand ? 'сотка' : null,
                 'house_state'    => DimRiaMappings::mapHouseState($dto->conditionName),
@@ -276,7 +301,7 @@ class DimRiaAdapter extends AbstractXmlAdapter
             [
                 'total_area'                    => $dto->areaTotal,
                 'rooms_count'                   => $dto->roomCountValue,
-                'floors'                        => $dto->floorsTotal,
+                'floors'                        => $this->resolveFloors($dto),
                 'floor'                         => $dto->floor,
                 'ceiling_height'                => $dto->ceilingHeightValue,
                 'condition_of_building_repair'  => DimRiaMappings::mapCommercialCondition($dto->conditionName),
@@ -294,6 +319,7 @@ class DimRiaAdapter extends AbstractXmlAdapter
     {
         return [
             'total_area'  => $dto->areaTotal,
+            'cars'        => 1,
             'price_type'  => 'за объект',
             'price'       => $dto->price ? (int) $dto->price : null,
             'currency'    => DimRiaMappings::mapCurrency($dto->currencySymbol),
