@@ -20,8 +20,6 @@
     <link rel="stylesheet" href="{{ versioned_asset('css/lib/daterangepicker-custom.css') }}">
     <link rel="stylesheet" href="{{ versioned_asset('css/lib/fancybox.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/css/intlTelInput.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
 
     <!-- Компоненти CSS -->
     <link rel="stylesheet" href="{{ versioned_asset('css/layouts/crm/header.css') }}">
@@ -60,9 +58,6 @@
     <script src="{{ versioned_asset('js/lib/moment.min.js') }}"></script>
     <script src="{{ versioned_asset('js/lib/data-range-picker.min.js') }}"></script>
     <script src="{{ versioned_asset('js/lib/select2.min.js') }}"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-text-icon@1.0.0/dist/leaflet.text-icon.js"></script>
-    <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
     <script src="{{ versioned_asset('js/lib/fancybox.min.js') }}"></script>
     <script src="{{ versioned_asset('js/lib/heic2any.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/intlTelInput.min.js"></script>
